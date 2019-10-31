@@ -1,0 +1,6 @@
+openapi: 2.0.0 # here
+info:
+  description: A description
+  version: 1.0.0
+  title: My API
+  # paths

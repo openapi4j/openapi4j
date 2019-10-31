@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  description: A description
+  version: 1.0.0
+  title: My API
+paths:
+  /:
+    get:
+      responses:
+        '200':
+          description: The description
+components:
+  parameters:
+    EntityId:
+      in: path
+      name: id
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+      description: The ID of the entity.
+  requestBodies:
+    ABody:
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            properties:
+              id:
+                type: string
+              email:
+                type: string
+              partner:
+                type: boolean
+  responses:
+    AResponse:
+      description: The contract
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Pet'
+  schemas:
+    EntityId:
+      type: string
+      pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+      description: The ID of the entity.
+
+    Pet:
+      allOf:
+        - $ref: '#/components/schemas/NewPet'
+        - required:
+            - id
+          properties:
+            id:
+              type: integer
+              format: int64
+
+    NewPet:
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        tag:
+          type: string

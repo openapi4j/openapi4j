@@ -1,0 +1,143 @@
+[
+  {
+    "description": "A representation of a dog.",
+    "schema": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "petType": {
+              "type": "string",
+              "enum": [
+                "companion",
+                "guard",
+                "hunting",
+                "sled"
+              ]
+            },
+            "size": {
+              "type": "object",
+              "required": [
+                "length",
+                "high"
+              ],
+              "properties": {
+                "length": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "high": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "name",
+            "petType"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "packSize": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          "required": [
+            "packSize"
+          ]
+        }
+      ]
+    },
+    "tests": [
+      {
+        "description": "valid with full data",
+        "data": {
+          "name": "medor",
+          "petType": "companion",
+          "packSize": 32,
+          "size": {
+            "length": 12,
+            "high": 4
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "valid with partial data",
+        "data": {
+          "name": "medor",
+          "petType": "companion",
+          "packSize": 32
+        },
+        "valid": true
+      },
+      {
+        "description": "enum is invalid",
+        "data": {
+          "name": "medor",
+          "petType": "foo",
+          "packSize": 32
+        },
+        "valid": false
+      },
+      {
+        "description": "enum & packSize are invalid",
+        "data": {
+          "name": "medor",
+          "petType": "foo",
+          "packSize": -1
+        },
+        "valid": false
+      },
+      {
+        "description": "packSize missing is invalid",
+        "data": {
+          "name": "medor",
+          "petType": "companion"
+        },
+        "valid": false
+      },
+      {
+        "description": "size empty is invalid",
+        "data": {
+          "name": "medor",
+          "petType": "companion",
+          "packSize": 32,
+          "size": {}
+        },
+        "valid": false
+      },
+      {
+        "description": "tags mismatch is invalid",
+        "data": {
+          "name": "medor",
+          "petType": "companion",
+          "packSize": 32,
+          "size": {
+            "length": 12,
+            "high": 4
+          },
+          "tags": [
+            1
+          ]
+        },
+        "valid": false
+      }
+    ]
+  }
+]

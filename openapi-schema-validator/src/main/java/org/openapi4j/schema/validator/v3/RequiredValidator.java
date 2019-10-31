@@ -1,0 +1,46 @@
+package org.openapi4j.schema.validator.v3;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResults;
+import org.openapi4j.schema.validator.BaseJsonValidator;
+import org.openapi4j.schema.validator.ValidationContext;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.REQUIRED;
+
+class RequiredValidator extends BaseJsonValidator<OAI3> {
+  private static final String ERR_MSG = "Field '%s' is required.";
+
+  private final List<String> fieldNames;
+
+  RequiredValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+    super(context, schemaNode, schemaParentNode, parentSchema);
+
+    if (schemaNode.isArray()) {
+      fieldNames = new ArrayList<>();
+
+      for (JsonNode fieldName : schemaNode) {
+        fieldNames.add(fieldName.asText());
+      }
+    } else {
+      fieldNames = null;
+    }
+  }
+
+  @Override
+  public void validate(final JsonNode valueNode, final ValidationResults results) {
+    if (fieldNames == null) return;
+
+    for (String fieldName : fieldNames) {
+      JsonNode propertyNode = valueNode.get(fieldName);
+
+      if (propertyNode == null) {
+        results.addError(String.format(ERR_MSG, fieldName), REQUIRED);
+      }
+    }
+  }
+}

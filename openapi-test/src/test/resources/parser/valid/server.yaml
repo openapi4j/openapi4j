@@ -1,0 +1,31 @@
+openapi: 3.0.0
+info:
+  description: A description
+  version: 1.0.0
+  title: My API
+servers:
+  - url: https://development.gigantic-server.com/v1
+    description: Development server
+  - url: https://staging.gigantic-server.com/v1
+    description: Staging server
+  - url: https://{username}.api.gigantic-server.com/{basePath}
+    description: Production server
+    variables:
+      username:
+        # note! no enum here means it is an open value
+        default: demo
+        description: this value is assigned by the service provider, in this example `gigantic-server.com`
+      port:
+        enum:
+          - '8443'
+          - '443'
+        default: '8443'
+      basePath:
+        # open meaning there is the opportunity to use special base paths as assigned by the provider, default is `v2`
+        default: v2
+paths:
+  /:
+    get:
+      responses:
+        '200':
+          description: The description

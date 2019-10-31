@@ -1,0 +1,22 @@
+plugins {
+  id "java-library"
+  id "maven-publish"
+  id "signing"
+}
+
+description = "openapi4j operation Vert.x adapter"
+
+dependencies {
+  api(project(":openapi-operation-validator"))
+  // Vert.x
+  compileOnly("io.vertx:vertx-web:3.8.1")
+  compileOnly("io.vertx:vertx-codegen:3.8.1")
+
+  testImplementation("junit:junit:4.12")
+  testImplementation("org.mockito:mockito-inline:3.1.0")
+
+  testImplementation("io.vertx:vertx-web:3.8.1")
+  testImplementation("io.vertx:vertx-codegen:3.8.1")
+}
+
+apply from: "../../publish.gradle"

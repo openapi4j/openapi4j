@@ -1,0 +1,220 @@
+[
+  {
+    "description": "anyOf shortcut discriminator",
+    "schema": {
+      "components": {
+        "schemas": {
+          "A": {
+            "type": "object",
+            "required": [
+              "prop1"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "prop1": {
+                "type": "string"
+              },
+              "prop2": {
+                "type": "string"
+              }
+            }
+          },
+          "B": {
+            "type": "object",
+            "required": [
+              "prop1"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "prop1": {
+                "type": "string"
+              },
+              "prop3": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/A"
+        },
+        {
+          "$ref": "#/components/schemas/B"
+        }
+      ],
+      "discriminator": {
+        "propertyName": "prop1"
+      }
+    },
+    "tests": [
+      {
+        "description": "A only is valid",
+        "data": {
+          "prop1": "A"
+        },
+        "valid": true
+      },
+      {
+        "description": "B only valid",
+        "data": {
+          "prop1": "B"
+        },
+        "valid": true
+      },
+      {
+        "description": "A & B is not valid",
+        "data": {
+          "prop1": "B",
+          "prop2": "wrong"
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "anyOf mapping discriminator",
+    "schema": {
+      "components": {
+        "schemas": {
+          "A": {
+            "type": "object",
+            "required": [
+              "prop1"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "prop1": {
+                "type": "string"
+              },
+              "prop2": {
+                "type": "string"
+              }
+            }
+          },
+          "B": {
+            "type": "object",
+            "required": [
+              "prop1"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "prop1": {
+                "type": "string"
+              },
+              "prop3": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/A"
+        },
+        {
+          "$ref": "#/components/schemas/B"
+        }
+      ],
+      "discriminator": {
+        "propertyName": "prop1",
+        "mapping": {
+          "a": "#/components/schemas/A",
+          "b": "#/components/schemas/B"
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "a only is valid",
+        "data": {
+          "prop1": "a"
+        },
+        "valid": true
+      },
+      {
+        "description": "b only valid",
+        "data": {
+          "prop1": "b"
+        },
+        "valid": true
+      },
+      {
+        "description": "a & b is not valid",
+        "data": {
+          "prop1": "b",
+          "prop2": "wrong"
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "anyOf",
+    "schema": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "minimum": 2
+        }
+      ]
+    },
+    "tests": [
+      {
+        "description": "first anyOf valid",
+        "data": 1,
+        "valid": true
+      },
+      {
+        "description": "second anyOf valid",
+        "data": 2.5,
+        "valid": true
+      },
+      {
+        "description": "both anyOf valid",
+        "data": 3,
+        "valid": true
+      },
+      {
+        "description": "neither anyOf valid",
+        "data": 1.5,
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "anyOf with base schema",
+    "schema": {
+      "type": "string",
+      "anyOf": [
+        {
+          "maxLength": 2
+        },
+        {
+          "minLength": 4
+        }
+      ]
+    },
+    "tests": [
+      {
+        "description": "mismatch base schema",
+        "data": 3,
+        "valid": false
+      },
+      {
+        "description": "one anyOf valid",
+        "data": "foobar",
+        "valid": true
+      },
+      {
+        "description": "both anyOf invalid",
+        "data": "foo",
+        "valid": false
+      }
+    ]
+  }
+]

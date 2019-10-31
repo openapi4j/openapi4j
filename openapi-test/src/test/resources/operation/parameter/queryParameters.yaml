@@ -1,0 +1,196 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: My API
+paths:
+  # FORM
+  /formNotExplodedPrimitive/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/formNotExplodedPrimitive'
+      responses:
+        '200':
+          description: The description
+  /formExplodedPrimitive/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/formExplodedPrimitive'
+      responses:
+        '200':
+          description: The description
+  /formNotExplodedArray/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/formNotExplodedArray'
+      responses:
+        '200':
+          description: The description
+  /formExplodedArray/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/formExplodedArray'
+      responses:
+        '200':
+          description: The description
+  /formNotExplodedObject/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/formNotExplodedObject'
+      responses:
+        '200':
+          description: The description
+  /formExplodedObject/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/formExplodedObject'
+      responses:
+        '200':
+          description: The description
+  # SPACE DELIMITED
+  /spaceNotExplodedArray/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/spaceNotExplodedArray'
+      responses:
+        '200':
+          description: The description
+  /spaceExplodedArray/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/spaceExplodedArray'
+      responses:
+        '200':
+          description: The description
+  # PIPE DELIMITED
+  /pipeNotExplodedArray/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/pipeNotExplodedArray'
+      responses:
+        '200':
+          description: The description
+  /pipeExplodedArray/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/pipeExplodedArray'
+      responses:
+        '200':
+          description: The description
+  # DEEP OBJECT
+  /deepExplodedObject/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/deepExplodedObject'
+      responses:
+        '200':
+          description: The description
+components:
+  parameters:
+    # FORM
+    formNotExplodedPrimitive:
+      in: query
+      name: formNotExplodedPrimitive
+      required: true
+      explode: false
+      schema:
+        type: integer
+    formExplodedPrimitive:
+      in: query
+      name: formExplodedPrimitive
+      required: true
+      schema:
+        type: integer
+    formNotExplodedArray:
+      in: query
+      name: formNotExplodedArray
+      required: true
+      explode: false
+      schema:
+        type: array
+        items:
+          type: integer
+    formExplodedArray:
+      in: query
+      name: formExplodedArray
+      required: true
+      schema:
+        type: array
+        items:
+          type: integer
+    formNotExplodedObject:
+      in: query
+      name: formNotExplodedObject
+      required: true
+      explode: false
+      schema:
+        type: object
+        properties:
+          stringProp:
+            type: string
+          boolProp:
+            type: boolean
+    formExplodedObject:
+      in: query
+      name: formExplodedObject
+      required: true
+      schema:
+        type: object
+        properties:
+          stringProp:
+            type: string
+          boolProp:
+            type: boolean
+    # SPACE DELIMITED
+    spaceNotExplodedArray:
+      in: query
+      name: spaceNotExplodedArray
+      required: true
+      style: spaceDelimited
+      schema:
+        type: array
+        items:
+          type: integer
+    spaceExplodedArray:
+      in: query
+      name: spaceExplodedArray
+      required: true
+      style: spaceDelimited
+      explode: true
+      schema:
+        type: array
+        items:
+          type: integer
+    # PIPE DELIMITED
+    pipeNotExplodedArray:
+      in: query
+      name: pipeNotExplodedArray
+      required: true
+      style: pipeDelimited
+      schema:
+        type: array
+        items:
+          type: integer
+    pipeExplodedArray:
+      in: query
+      name: pipeExplodedArray
+      required: true
+      style: pipeDelimited
+      explode: true
+      schema:
+        type: array
+        items:
+          type: integer
+    # DEEP OBJECT
+    deepExplodedObject:
+      in: query
+      name: deepExplodedObject
+      required: true
+      style: deepObject
+      explode: true
+      schema:
+        type: object
+        properties:
+          stringProp:
+            type: string
+          boolProp:
+            type: boolean

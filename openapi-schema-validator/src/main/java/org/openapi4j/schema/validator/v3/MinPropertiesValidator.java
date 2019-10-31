@@ -1,0 +1,33 @@
+package org.openapi4j.schema.validator.v3;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResults;
+import org.openapi4j.schema.validator.BaseJsonValidator;
+import org.openapi4j.schema.validator.ValidationContext;
+
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINPROPERTIES;
+
+class MinPropertiesValidator extends BaseJsonValidator<OAI3> {
+  private static final String ERR_MSG = "Minimum is '%s', found '%s'.";
+
+  private final int min;
+
+  MinPropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+    super(context, schemaNode, schemaParentNode, parentSchema);
+
+    min = schemaNode.isIntegralNumber() ? schemaNode.intValue() : 0;
+  }
+
+  @Override
+  public void validate(final JsonNode valueNode, final ValidationResults results) {
+    if (!valueNode.isObject()) {
+      return;
+    }
+
+    if (valueNode.size() < min) {
+      results.addError(String.format(ERR_MSG, min, valueNode.size()), MINPROPERTIES);
+    }
+  }
+}

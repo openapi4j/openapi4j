@@ -1,0 +1,210 @@
+[
+  {
+    "description": "A representation of a user with a disk.",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/definitions/positiveInt"
+            },
+            "name": {
+              "type": "string",
+              "faker": "name.findName"
+            },
+            "birthday": {
+              "type": "string",
+              "chance": {
+                "birthday": {
+                  "string": true
+                }
+              }
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "faker": "internet.email"
+            },
+            "disk": {
+              "description": "schema for an fstab entry",
+              "type": "object",
+              "required": [
+                "storage"
+              ],
+              "properties": {
+                "storage": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/definitions/diskDevice"
+                    },
+                    {
+                      "$ref": "#/definitions/diskUUID"
+                    },
+                    {
+                      "$ref": "#/definitions/nfs"
+                    },
+                    {
+                      "$ref": "#/definitions/tmpfs"
+                    }
+                  ]
+                },
+                "fstype": {
+                  "enum": [
+                    "ext3",
+                    "ext4",
+                    "btrfs"
+                  ]
+                },
+                "options": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string"
+                  },
+                  "uniqueItems": true
+                },
+                "readonly": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "birthday",
+            "email"
+          ]
+        }
+      },
+      "required": [
+        "user"
+      ],
+      "definitions": {
+        "positiveInt": {
+          "type": "integer",
+          "minimum": 0,
+          "minimumExclusive": true
+        },
+        "diskDevice": {
+          "properties": {
+            "type": {
+              "enum": [
+                "disk"
+              ]
+            },
+            "device": {
+              "type": "string",
+              "pattern": "^/dev/[^/]+(/[^/]+)*$"
+            }
+          },
+          "required": [
+            "type",
+            "device"
+          ],
+          "additionalProperties": false
+        },
+        "diskUUID": {
+          "properties": {
+            "type": {
+              "enum": [
+                "disk"
+              ]
+            },
+            "label": {
+              "type": "string",
+              "pattern": "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+            }
+          },
+          "required": [
+            "type",
+            "label"
+          ],
+          "additionalProperties": false
+        },
+        "nfs": {
+          "properties": {
+            "type": {
+              "enum": [
+                "nfs"
+              ]
+            },
+            "remotePath": {
+              "type": "string",
+              "pattern": "^(/[^/]+)+$"
+            },
+            "server": {
+              "type": "string",
+              "oneOf": [
+                {
+                  "format": "host-name"
+                },
+                {
+                  "format": "ipv4"
+                },
+                {
+                  "format": "ipv6"
+                }
+              ]
+            }
+          },
+          "required": [
+            "type",
+            "server",
+            "remotePath"
+          ],
+          "additionalProperties": false
+        },
+        "tmpfs": {
+          "properties": {
+            "type": {
+              "enum": [
+                "tmpfs"
+              ]
+            },
+            "sizeInMB": {
+              "type": "integer",
+              "minimum": 16,
+              "maximum": 512
+            }
+          },
+          "required": [
+            "type",
+            "sizeInMB"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "valid with full data",
+        "data": {
+          "user": {
+            "id": 51171202,
+            "name": "Christy Mills",
+            "birthday": "3/26/1964",
+            "email": "Ernesto.Kuphal78@gmail.com",
+            "disk": {
+              "storage": {
+                "type": "disk",
+                "device": "/dev/foo/1"
+              },
+              "fstype": "btrfs",
+              "options": [
+                "1",
+                "2",
+                "3"
+              ],
+              "readonly": false
+            }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,4 @@
+components:
+  parameters:
+    Looper1:
+      $ref: 'reference-cycling-extern3.yaml#/components/parameters/Looper2'

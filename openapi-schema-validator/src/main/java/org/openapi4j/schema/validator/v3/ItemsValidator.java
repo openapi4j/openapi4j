@@ -1,0 +1,31 @@
+package org.openapi4j.schema.validator.v3;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResults;
+import org.openapi4j.schema.validator.BaseJsonValidator;
+import org.openapi4j.schema.validator.ValidationContext;
+
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ITEMS;
+
+class ItemsValidator extends BaseJsonValidator<OAI3> {
+  private final SchemaValidator schema;
+
+  ItemsValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+    super(context, schemaNode, schemaParentNode, parentSchema);
+
+    schema = new SchemaValidator(context, ITEMS, schemaNode, schemaParentNode, parentSchema);
+  }
+
+  @Override
+  public void validate(final JsonNode valueNode, final ValidationResults results) {
+    if (!valueNode.isArray()) {
+      return;
+    }
+
+    for (JsonNode itemNode : valueNode) {
+      schema.validate(itemNode, results);
+    }
+  }
+}

@@ -1,0 +1,51 @@
+[
+  {
+    "description": "additionalProperties being false does not allow other properties (object)",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "foo": {},
+        "bar": {}
+      }
+    },
+    "tests": [
+      {
+        "description": "an additional property is invalid",
+        "data": {
+          "foo": 1,
+          "bar": 2,
+          "quux": 3
+        },
+        "valid": false
+      },
+      {
+        "description": "an additional property is invalid",
+        "data": 1,
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "additionalProperties being false does not allow other properties (array)",
+    "schema": {
+      "type": "array",
+      "items": {
+        "foo": {},
+        "bar": {}
+      }
+    },
+    "tests": [
+      {
+        "description": "an additional property is invalid",
+        "data": [
+          {
+            "foo": 1,
+            "bar": 2,
+            "quux": "boom"
+          }
+        ],
+        "valid": false
+      }
+    ]
+  }
+]

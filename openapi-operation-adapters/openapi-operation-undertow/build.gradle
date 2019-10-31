@@ -1,0 +1,19 @@
+plugins {
+  id "java-library"
+  id "maven-publish"
+  id "signing"
+}
+
+description = "openapi4j operation Undertow adapter"
+
+dependencies {
+  api(project(":openapi-operation-validator"))
+  // Undertow
+  compileOnly("io.undertow:undertow-core:2.0.1.Final")
+
+  testImplementation("junit:junit:4.12")
+  testImplementation("org.mockito:mockito-inline:3.1.0")
+  testImplementation("io.undertow:undertow-core:2.0.1.Final")
+}
+
+apply from: "../../publish.gradle"

@@ -1,0 +1,77 @@
+openapi: 3.0.0
+info:
+  title: Callback
+  version: 1.0.0
+paths:
+  /streams:
+    post:
+      parameters:
+        - name: callbackUrl
+          in: query
+          required: true
+          description: |
+            the location where data will be sent.  Must be network accessible
+            by the source server
+          schema:
+            type: string
+            example: https://tonys-server.com
+      responses:
+        '201':
+          description: subscription successfully created
+          content:
+            application/json:
+              schema:
+                description: subscription information
+      callbacks:
+        onDataRef:
+          $ref: '#/components/callbacks/onData2'
+        onData:
+          # when data is sent, it will be sent to the `callbackUrl` provided
+          # when making the subscription PLUS the suffix `/data`
+          '{$request.query.callbackUrl}/data':
+            post:
+              requestBody:
+                description: subscription payload
+                content:
+                  application/json:
+                    schema:
+                      properties:
+                        timestamp:
+                          type: string
+                          format: date-time
+                        userData:
+                          type: string
+              responses:
+                '202':
+                  description: |
+                    Your server implementation should return this HTTP status code
+                    if the data was received successfully
+                '204':
+                  description: |
+                    Your server should return this HTTP status code if no longer interested
+                    in further updates
+components:
+  callbacks:
+    onData2:
+      '{$request.query.callbackUrl}/data':
+        post:
+          requestBody:
+            description: subscription payload
+            content:
+              application/json:
+                schema:
+                  properties:
+                    timestamp:
+                      type: string
+                      format: date-time
+                    userData:
+                      type: string
+          responses:
+            '202':
+              description: |
+                Your server implementation should return this HTTP status code
+                if the data was received successfully
+            '204':
+              description: |
+                Your server should return this HTTP status code if no longer interested
+                in further updates

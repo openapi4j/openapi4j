@@ -1,0 +1,35 @@
+openapi: 3.0.0
+info:
+  description: A description
+  version: 1.0.0
+  title: My API
+paths:
+  /:
+    post:
+      operationId: test
+      requestBody:
+        content:
+          'application/x-www-form-urlencoded':
+            schema:
+              required:
+                - fieldInt
+                - field space
+                - fieldBool
+                - fieldFloat
+              properties:
+                fieldInt:
+                  type: integer
+                  format: int32
+                field space:
+                  type: string
+                fieldBool:
+                  type: boolean
+                fieldFloat:
+                  type: number
+                  format: float
+      responses:
+        '200':
+          description: foo
+          content:
+            'application/json': {}
+            'application/xml': {}

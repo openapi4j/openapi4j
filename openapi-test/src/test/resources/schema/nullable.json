@@ -1,0 +1,29 @@
+[
+  {
+    "description": "not nullable",
+    "schema": {
+      "type": "integer"
+    },
+    "tests": [
+      {
+        "description": "disallowed",
+        "data": null,
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "nullable",
+    "schema": {
+      "nullable": true,
+      "type": "integer"
+    },
+    "tests": [
+      {
+        "description": "allowed",
+        "data": null,
+        "valid": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+openapi: 3.0.0
+info:
+  description: A description
+  version: 1.0.0
+  title: My API
+paths:
+  /apath:
+    get:
+      responses:
+        '200':
+          description: The description

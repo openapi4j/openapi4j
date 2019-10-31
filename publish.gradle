@@ -1,0 +1,64 @@
+task sourcesJar(type: Jar) {
+  from sourceSets.main.allJava
+  archiveClassifier = "sources"
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      logger.warn(project.group + " : " + project.name + " : " + project.version)
+      logger.warn(project.description)
+
+      groupId = project.group
+      artifactId = project.name
+      version = project.version
+
+      from components.java
+      artifact sourcesJar
+      pom {
+        name = project.name
+        description = project.description
+        url = "https://github.com/openapi4j"
+        licenses {
+          license {
+            name = "Apache License, Version 2.0"
+            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+        scm {
+          connection = "scm:git:git@github.com:openapi4j/openapi4j.git"
+          developerConnection = "scm:git:git@github.com:openapi4j/openapi4j.git"
+          url = "https://github.com/openapi4j/openapi4j"
+        }
+      }
+    }
+  }
+  repositories {
+    // Local publication to allow checks
+    /*maven {
+        def releasesUrl = uri("$buildDir/publish/release")
+        def snapshotsUrl = uri("$buildDir/publish/snapshot")
+        url = version.endsWith("SNAPSHOT") ? snapshotsUrl : releasesUrl
+    }*/
+    maven {
+      def releasesUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+      def snapshotsUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+      url = version.endsWith("SNAPSHOT") ? snapshotsUrl : releasesUrl
+
+      if (!project.hasProperty("publishUsername") || !project.hasProperty("publishPassword")) {
+        // logger.warn("No publish credentials defined in Gradle properties file to deploy to Maven Central.")
+        project.ext.set("publishUsername", "invalid")
+        project.ext.set("publishPassword", "invalid")
+      }
+
+      credentials {
+        username = project.publishUsername
+        password = project.publishPassword
+      }
+    }
+  }
+}
+
+/*signing {
+    sign publishing.publications.mavenJava
+}*/

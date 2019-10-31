@@ -1,0 +1,15 @@
+plugins {
+  id "java-library"
+  id "maven-publish"
+  id "signing"
+}
+
+description = "openapi4j schema data validator"
+
+dependencies {
+  api(project(":openapi-core"))
+
+  testImplementation("junit:junit:4.12")
+}
+
+apply from: "../publish.gradle"

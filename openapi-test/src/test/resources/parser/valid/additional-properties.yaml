@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  description: >-
+    A description
+  version: 1.0.0
+  title: My API
+paths:
+  /:
+    post:
+      operationId: apost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                false
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  name:
+                    type: string
+  /another:
+    post:
+      operationId: anotherpost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: successful operation
+    get:
+      operationId: aget
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  properties:
+                    id:
+                      type: integer
+                      format: int64
+                    name:
+                      type: string
+                properties:
+                  name:
+                    type: string

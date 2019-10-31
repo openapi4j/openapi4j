@@ -1,0 +1,36 @@
+[
+  {
+    "description": "a schema given for items",
+    "schema": {
+      "items": {
+        "type": "integer"
+      }
+    },
+    "tests": [
+      {
+        "description": "valid items",
+        "data": [
+          1,
+          2,
+          3
+        ],
+        "valid": true
+      },
+      {
+        "description": "wrong type of items",
+        "data": [
+          1,
+          "x"
+        ],
+        "valid": false
+      },
+      {
+        "description": "ignores non-arrays",
+        "data": {
+          "foo": "bar"
+        },
+        "valid": true
+      }
+    ]
+  }
+]

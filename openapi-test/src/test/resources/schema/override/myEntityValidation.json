@@ -1,0 +1,35 @@
+[
+  {
+    "description": "myEntityValidation validation",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "aString": {
+          "type": "string"
+        },
+        "bString": {
+          "type": "string"
+        }
+      },
+      "x-myentity-val": true
+    },
+    "tests": [
+      {
+        "description": "strings are equal",
+        "data": {
+          "aString": "Cat",
+          "bString": "Cat"
+        },
+        "valid": true
+      },
+      {
+        "description": "strings are not equal",
+        "data": {
+          "aString": "Cat",
+          "bString": "Dog"
+        },
+        "valid": false
+      }
+    ]
+  }
+]

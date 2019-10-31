@@ -1,0 +1,31 @@
+plugins {
+  id "java-library"
+  id "maven-publish"
+  id "signing"
+}
+
+description = "openapi4j operation validator"
+
+dependencies {
+  api(project(":openapi-parser"))
+  api(project(":openapi-schema-validator"))
+
+  // ---------------- Optional data adapters ----------------
+  // xml
+  compileOnly("org.json:json:20190722")
+  // multipart
+  compileOnly("commons-fileupload:commons-fileupload:1.4")
+  // -------------- END Optional data adapters --------------
+
+  // ---------------- Specific adapters ----------------
+  // Vert.x
+  compileOnly("io.vertx:vertx-web:3.8.1")
+  compileOnly("io.vertx:vertx-codegen:3.8.1")
+  // Undertow
+  compileOnly("io.undertow:undertow-core:2.0.1.Final")
+  // Servlet V4
+  compileOnly("org.jboss.spec.javax.servlet:jboss-servlet-api_4.0_spec:2.0.0.Final")
+  // -------------- END Specific adapters --------------
+}
+
+apply from: "../publish.gradle"

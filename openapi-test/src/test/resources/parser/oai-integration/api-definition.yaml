@@ -1,0 +1,2270 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: API
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/admin/contract/:
+    post:
+      summary: Create a contract
+      operationId: AdminContractCreate
+      tags:
+        - admin
+        - contract
+      security:
+        - adminAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/ContractCreate'
+      responses:
+        201:
+          $ref: '#/components/responses/ContractResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    patch:
+      summary: Update a contract
+      operationId: AdminContractUpdate
+      tags:
+        - admin
+        - contract
+      security:
+        - adminAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/ContractUpdate'
+      responses:
+        200:
+          $ref: '#/components/responses/ContractResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/admin/contract/{id}:
+    delete:
+      summary: Remove a contract
+      operationId: AdminContractDel
+      tags:
+        - admin
+        - contract
+      security:
+        - adminAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntityId'
+      responses:
+        204:
+          description: The contract has been removed
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/admin/contract/find/:
+    post:
+      summary: Find contracts
+      operationId: AdminContractsFind
+      tags:
+        - admin
+        - contract
+      security:
+        - adminAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/ContractsFind'
+        description: 'The contract entity to filter'
+      responses:
+        200:
+          $ref: '#/components/responses/ContractsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /monitoring/metrics/:
+    get:
+      summary: Get the collected metrics on the platform for Prometheus. This path is excluded from API to not create session each time.
+      operationId: MonitoringMetricsGet
+      tags:
+        - admin
+        - monitoring
+      security:
+        - monitoringAuth: []
+      responses:
+        200:
+          description: The metrics in Prometheus text format
+  /api/admin/product/activate/:
+    post:
+      summary: Activate product with payment
+      operationId: AdminProductActivate
+      tags:
+        - admin
+        - event
+      security:
+        - adminAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/ContractPaymentInfo'
+      responses:
+        200:
+          $ref: '#/components/responses/EventResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/admin/product/find/:
+    post:
+      summary: Find products from given filter and product type
+      operationId: AdminProductsFind
+      tags:
+        - admin
+        - product
+      security:
+        - adminAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/ProductsFind'
+      responses:
+        200:
+          $ref: '#/components/responses/EventsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/admin/event/purge/:
+    get:
+      summary: Purge all outdated events & event subscriptions
+      operationId: AdminEventsPurge
+      tags:
+        - admin
+        - event
+      security:
+        - adminAuth: []
+      responses:
+        200:
+          description: The reap info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReapInfo'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/admin/event/media/purge/:
+    get:
+      summary: Purge all outdated and validate pending media
+      operationId: AdminMediaPurge
+      tags:
+        - admin
+        - event
+      security:
+        - adminAuth: []
+      responses:
+        200:
+          description: The reap info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReapInfo'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/admin/coupon/create/:
+    post:
+      summary: Add a coupon for event/subscription
+      operationId: AdminCouponCreate
+      tags:
+        - admin
+        - event
+      security:
+        - adminAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/CouponCreate'
+      responses:
+        201:
+          $ref: '#/components/responses/CouponResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/admin/payment/:
+    post:
+      summary: Retrieve a payment by its contract payment & payment properties
+      operationId: AdminPaymentInfoGet
+      tags:
+        - admin
+        - payment
+      security:
+        - adminAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/AdminPaymentInfoGet'
+      responses:
+        200:
+          description: The payment found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/auth/form/:
+    post:
+      summary: Authenticate a user with form like login
+      operationId: AuthForm
+      tags:
+        - auth
+      requestBody:
+        $ref: '#/components/requestBodies/AuthForm'
+      responses:
+        200:
+          $ref: '#/components/responses/EntityIdResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/auth/oauth/:
+    post:
+      summary: Authenticate a user with OAuth2 code flow
+      operationId: AuthOAuth
+      tags:
+        - auth
+      parameters:
+        - $ref: '#/components/parameters/OAuthClientName'
+      requestBody:
+        $ref: '#/components/requestBodies/AuthOAuth'
+      responses:
+        200:
+          description: The user with ID & OAuth token only
+          $ref: '#/components/responses/UserResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/auth/logout/:
+    get:
+      summary: Logout
+      operationId: AuthLogout
+      tags:
+        - auth
+      responses:
+        200:
+          description: Logout operation succeeded
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/data/currency/:
+    get:
+      summary: Detect the currency from the given IP address
+      operationId: DataCurrencyGetFromIp
+      tags:
+        - data
+        - currency
+      responses:
+        200:
+          $ref: '#/components/responses/CurrencyResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/data/currency/list/:
+    get:
+      summary: List all the available currencies
+      operationId: DataCurrencyList
+      tags:
+        - data
+        - currency
+      responses:
+        200:
+          $ref: '#/components/responses/CurrenciesResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/data/coupon/check/:
+    post:
+      summary: Check if the coupon for event/subscription is applicable
+      operationId: DataCouponCheck
+      tags:
+        - data
+        - coupon
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/CouponCheck'
+      responses:
+        200:
+          $ref: '#/components/responses/CouponResponse'
+        403:
+          description: The coupon is not applicable or already used.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/contracts/:
+    get:
+      summary: Get available event types
+      operationId: EventContracts
+      tags:
+        - event
+      security:
+        - userAuth: []
+      responses:
+        200:
+          $ref: '#/components/responses/ContractsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/:
+    post:
+      summary: Create event
+      operationId: EventCreate
+      tags:
+        - event
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/EventCreate'
+      responses:
+        201:
+          $ref: '#/components/responses/EventResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    patch:
+      summary: Update event
+      operationId: EventUpdate
+      tags:
+        - event
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/EventUpdate'
+      responses:
+        201:
+          $ref: '#/components/responses/EventResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/{id}:
+    get:
+      summary: Get an event for the current user
+      operationId: EventGet
+      tags:
+        - event
+      security:
+        - userAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntityId'
+      responses:
+        200:
+          $ref: '#/components/responses/EventResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      summary: Delete an event for the current user
+      operationId: EventDel
+      tags:
+        - event
+      security:
+        - userAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntityId'
+      responses:
+        204:
+          description: The event has been removed
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/create/:
+    post:
+      summary: Create event from subscription
+      operationId: EventCreateFromSubscription
+      tags:
+        - event
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/EventFromSubscription'
+      responses:
+        201:
+          $ref: '#/components/responses/EventResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/list/:
+    get:
+      summary: List attached events for the current user
+      operationId: EventList
+      tags:
+        - event
+      security:
+        - userAuth: []
+      responses:
+        200:
+          $ref: '#/components/responses/EventsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/media/create/:
+    patch:
+      summary: Create media references
+      operationId: EventMediaAdd
+      tags:
+        - event
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/EventMediaAdd'
+      responses:
+        200:
+          description: The partial event with media references
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  media:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MediumResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/media/del/:
+    patch:
+      summary: Remove media from the given list
+      operationId: EventMediaDel
+      tags:
+        - event
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/EventMediaDel'
+      responses:
+        200:
+          $ref: '#/components/responses/EventResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/media/dl/:
+    patch:
+      summary: Notifiy the server that a user has downloaded the given list of media
+      operationId: EventMediaDownload
+      tags:
+        - event
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/EventMediaDownload'
+      responses:
+        200:
+          $ref: '#/components/responses/EventResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/{id}/member/create/:
+    patch:
+      summary: Add a member to the given event
+      operationId: EventMemberAdd
+      tags:
+        - event
+      security:
+        - userAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntityId'
+      responses:
+        200:
+          $ref: '#/components/responses/EventResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/{tiny_code}/member/create/tiny/:
+    get:
+      summary: Add a member to an event by a tiny code
+      operationId: EventMemberTinyAdd
+      tags:
+        - event
+      security:
+        - userAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TinyCode'
+      responses:
+        200:
+          $ref: '#/components/responses/EventResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/member/:
+    patch:
+      summary: Update a user status for the given event
+      operationId: EventMemberStatusUpdate
+      tags:
+        - event
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/EventMemberStatusUpdate'
+      responses:
+        200:
+          description: The member has been updated for the given event
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/member/create/pqr/:
+    patch:
+      summary: Add a member to an event by the Picevent Code
+      operationId: EventMemberPQRAdd
+      tags:
+        - event
+      security:
+        - userAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventPhotoCode'
+      responses:
+        200:
+          $ref: '#/components/responses/EventResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/{id}/members/:
+    get:
+      summary: Get all members regardless the statuses for the owner
+      operationId: EventMembersList
+      tags:
+        - event
+      security:
+        - userAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntityId'
+      responses:
+        200:
+          description: The event with all members but deleted
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/members/invite/:
+    patch:
+      summary: Invite members for the given event
+      operationId: EventMembersInvite
+      tags:
+        - event
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/EventMembersInvitation'
+      responses:
+        200:
+          description: The updated event
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event/upload_pqr/:
+    patch:
+      summary: Upload a picevent code
+      operationId: EventPQRUpload
+      tags:
+        - event
+      security:
+        - userAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+                - photo_code_blob
+              properties:
+                id:
+                  $ref: '#/components/schemas/EntityId'
+                photo_code_blob:
+                  type: string
+                  format: binary
+                  description: MIME Base64 image string
+      responses:
+        200:
+          $ref: '#/components/responses/EventResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event_subscription/{id}:
+    get:
+      summary: Get the details of a subscription
+      operationId: EventSubscriptionGet
+      tags:
+        - subscription
+      security:
+        - userAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntityId'
+      responses:
+        200:
+          $ref: '#/components/responses/EventSubscriptionResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      summary: Cancel a subscription
+      operationId: EventSubscriptionCancel
+      tags:
+        - subscription
+      security:
+        - userAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntityId'
+      responses:
+        204:
+          description: The subscription has been successfuly cancelled
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event_subscription/list/:
+    get:
+      summary: List all subscriptions for the user
+      operationId: EventSubscriptionList
+      tags:
+        - subscription
+      security:
+        - userAuth: []
+      responses:
+        200:
+          $ref: '#/components/responses/EventSubscriptionsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event_subscription/:
+    post:
+      summary: Create the subscription to a plan
+      operationId: EventSubscriptionCreate
+      tags:
+        - subscription
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/SubscriptionAdd'
+      responses:
+        200:
+          $ref: '#/components/responses/EventSubscriptionResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    patch:
+      summary: Update the details of a subscription
+      operationId: EventSubscriptionUpdate
+      tags:
+        - subscription
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/SubscriptionUpdate'
+      responses:
+        200:
+          description: The subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/event_subscription/contracts/:
+    get:
+      summary: Filter available subscription contracts with the given parameters
+      operationId: EventSubscriptionContracts
+      tags:
+        - subscription
+      responses:
+        200:
+          $ref: '#/components/responses/ContractsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/user/:
+    post:
+      summary: Create a user
+      operationId: UserCreate
+      tags:
+        - user
+      requestBody:
+        $ref: '#/components/requestBodies/UserCreate'
+      responses:
+        200:
+          $ref: '#/components/responses/EntityIdResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    patch:
+      summary: Update a user
+      operationId: UserUpdate
+      tags:
+        - user
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/UserUpdate'
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      summary: Remove a user
+      operationId: UserDel
+      tags:
+        - user
+      security:
+        - userAuth: []
+      responses:
+        204:
+          description: The user has been successfuly removed.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/user/{id}:
+    get:
+      summary: Get the details of a user
+      operationId: UserGet
+      tags:
+        - user
+      security:
+        - userAuth: []
+      parameters:
+        - $ref: '#/components/parameters/EntityId'
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/user/pwd/:
+    post:
+      summary: Update a user password
+      operationId: UserChangePassword
+      tags:
+        - user
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/UserPassword'
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/user/email/:
+    post:
+      summary: Update a user email
+      operationId: UserChangeEmail
+      tags:
+        - user
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/UserEmail'
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/user/creditcard/:
+    post:
+      summary: Update a user creditcard
+      operationId: UserChangeCreditCard
+      tags:
+        - user
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/UserCreditCard'
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/user/find/:
+    post:
+      summary: Find users by ID, partial email
+      operationId: UsersFind
+      tags:
+        - admin
+        - user
+      security:
+        - adminAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/UsersFind'
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/user/contacts/:
+    post:
+      summary: Find contacts by ID, partial email
+      operationId: UserContactsFind
+      tags:
+        - user
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/UsersFind'
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    patch:
+      summary: Update contacts for the given user
+      operationId: UserContactsUpdate
+      tags:
+        - user
+      security:
+        - userAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/UserContactsUpdate'
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/user/notification/:
+    get:
+      summary: Get all the notifications for the current user.
+      operationId: UserGetNotifications
+      tags:
+        - user
+      security:
+        - userAuth: []
+      responses:
+        200:
+          $ref: '#/components/responses/NotificationResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    patch:
+      summary: Remove the given notifications for the current user.
+      operationId: UserDelNotifications
+      tags:
+        - user
+      security:
+        - userAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              minItems: 1
+              items:
+                $ref: '#/components/schemas/EntityId'
+      responses:
+        200:
+          $ref: '#/components/responses/NotificationResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      summary: Remove all notifications for the current user.
+      operationId: UserDelAllNotifications
+      tags:
+        - user
+      security:
+        - userAuth: []
+      responses:
+        204:
+          description: The notifications are removed.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/payment/paypal/:
+    post:
+      summary: INTERNAL USE ONLY - Paypal webhook
+      operationId: PaymentPaypalHook
+      tags:
+        - payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          description: Operation success
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/payment/paypal/event_execute/:
+    get:
+      summary: INTERNAL USE ONLY - Accept paypal payment callback for event creation
+      operationId: PaymentPaypalEventExecute
+      tags:
+        - payment
+      responses:
+        302:
+          description: Redirect to web root
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/payment/paypal/event_executecancel/:
+    get:
+      summary: INTERNAL USE ONLY - Cancel paypal payment callback for event creation
+      operationId: PaymentPaypalEventExecuteCancel
+      tags:
+        - payment
+      responses:
+        204:
+          description: Operation success
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/payment/paypal/subscription_execute/:
+    get:
+      summary: INTERNAL USE ONLY - Accept paypal payment callback for subscription creation
+      operationId: PaymentPaypalSubscriptionExecute
+      tags:
+        - payment
+      responses:
+        302:
+          description: Redirect to web root
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/payment/paypal/subscription_executecancel/:
+    get:
+      summary: INTERNAL USE ONLY - Cancel paypal payment callback for subscription creation
+      operationId: PaymentPaypalSubscriptionExecuteCancel
+      tags:
+        - payment
+      responses:
+        204:
+          description: Operation success
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /api/payment/stripe/:
+    post:
+      summary: INTERNAL USE ONLY - Handle Stripe hooks
+      operationId: PaymentStripeHook
+      tags:
+        - payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          description: Operation success
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+components:
+  parameters:
+    EntityId:
+      in: path
+      name: id
+      required: true
+      schema:
+        $ref: '#/components/schemas/EntityId'
+      description: The ID of the entity.
+    Currency:
+      in: path
+      name: currency
+      required: true
+      schema:
+        $ref: '#/components/schemas/Currency'
+      description: ISO 4217 Currency code.
+    TypeName:
+      in: path
+      name: type
+      required: true
+      schema:
+        $ref: '#/components/schemas/TypeName'
+      description: The entity type.
+    TinyCode:
+      in: path
+      name: tiny_code
+      required: true
+      schema:
+        type: string
+      description: The event tiny code.
+    OAuthClientName:
+      in: query
+      name: client_name
+      required: true
+      schema:
+        type: string
+        enum: ['google', 'facebook']
+      description: The OAuth client name.
+  responses:
+    ContractResponse:
+      description: The contract
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Contract'
+    ContractsResponse:
+      description: The contracts
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Contract'
+    CouponResponse:
+      description: The coupon
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Coupon'
+    CurrencyResponse:
+      description: The currency
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              currency:
+                $ref: '#/components/schemas/Currency'
+    CurrenciesResponse:
+      description: The currencies
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Currency'
+    EntityIdResponse:
+      description: The entity ID
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+    EventResponse:
+      description: The event
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Event'
+    EventsResponse:
+      description: The events
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Event'
+    EventSubscriptionResponse:
+      description: The event subscription
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EventSubscription'
+    EventSubscriptionsResponse:
+      description: The event subscriptions
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/EventSubscription'
+    ErrorResponse:
+      description: any error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotificationResponse:
+      description: The notification document
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Notification'
+    UserResponse:
+      description: The user
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+  requestBodies:
+    UsersFind:
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - skip
+              - limit
+            properties:
+              id:
+                type: string
+                minLength: 2
+                maxLength: 36
+              email:
+                type: string
+                minLength: 2
+                maxLength: 50
+              fullname:
+                type: string
+                minLength: 2
+                maxLength: 15
+              skip:
+                $ref: '#/components/schemas/Skip'
+              limit:
+                $ref: '#/components/schemas/Limit'
+    AdminPaymentInfoGet:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - payment
+              - payment_properties
+            additionalProperties: false
+            properties:
+              payment_properties:
+                type: object
+                required:
+                  - recurrent
+                additionalProperties: false
+                properties:
+                  recurrent:
+                    type: boolean
+              payment:
+                type: object
+                required:
+                  - id
+                  - type
+                additionalProperties: false
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                    enum: ['creditcard', 'paypal']
+    AuthForm:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            additionalProperties: false
+            properties:
+              email:
+                $ref: '#/components/schemas/Email'
+              password:
+                $ref: '#/components/schemas/Password'
+    AuthOAuth:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - clientId
+              - code
+              - redirectUri
+            additionalProperties: false
+            properties:
+              clientId:
+                type: string
+              code:
+                type: string
+              redirectUri:
+                type: string
+    ContractCreate:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+              - name
+              - type
+              - payment_properties
+              - properties
+              - product_type
+              - product_properties
+            additionalProperties: false
+            properties:
+              status:
+                type: integer
+                minimum: 0 # pending
+                maximum: 1 # validated
+              name:
+                $ref: '#/components/schemas/EntityName'
+              type:
+                $ref: '#/components/schemas/TypeName'
+              payment_properties:
+                $ref: '#/components/schemas/PaymentProperties'
+              product_type:
+                $ref: '#/components/schemas/ProductType'
+              product_properties:
+                type: object
+              properties:
+                $ref: '#/components/schemas/ContractProperties'
+    ContractsFind:
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - skip
+              - limit
+            properties:
+              id:
+                type: string
+                minLength: 2
+                maxLength: 36
+              name:
+                type: string
+                minLength: 2
+                maxLength: 70
+              product_type:
+                $ref: '#/components/schemas/ProductType'
+              properties:
+                $ref: '#/components/schemas/ContractProperties'
+              type:
+                $ref: '#/components/schemas/TypeName'
+              skip:
+                $ref: '#/components/schemas/Skip'
+              limit:
+                $ref: '#/components/schemas/Limit'
+    ContractUpdate:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - name
+              - product_type
+              - status
+              - type
+            additionalProperties: false
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              name:
+                $ref: '#/components/schemas/EntityName'
+              plan_id:
+                $ref: '#/components/schemas/EntityId'
+              properties:
+                $ref: '#/components/schemas/ContractProperties'
+              payment_properties:
+                $ref: '#/components/schemas/PaymentProperties'
+              product_type:
+                $ref: '#/components/schemas/ProductType'
+              product_properties:
+                type: object
+              type:
+                $ref: '#/components/schemas/TypeName'
+              status:
+                type: integer
+                minimum: 0
+                maximum: 1
+                description: 0 pending, 1 validated
+    ContractPaymentInfo:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - payment_properties
+              - payment
+            additionalProperties: false
+            properties:
+              payment_properties:
+                $ref: '#/components/schemas/PaymentProperties'
+              payment:
+                $ref: '#/components/schemas/Payment'
+    CouponCreate:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Coupon'
+    CouponCheck:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - product_type
+              - type
+            additionalProperties: false
+            properties:
+              id:
+                type: string
+                minLength: 8
+                maxLength: 30
+              product_type:
+                $ref: '#/components/schemas/ProductType'
+              type:
+                $ref: '#/components/schemas/TypeName'
+    EventUpdate:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - name
+            additionalProperties: false
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              config:
+                $ref: '#/components/schemas/EventConfig'
+              contract:
+                type: object
+                required:
+                  - properties
+                additionalProperties: false
+                properties:
+                  properties:
+                    type: object
+                    required:
+                      - start_at
+                    additionalProperties: false
+                    properties:
+                      start_at:
+                        $ref: '#/components/schemas/DateTime'
+              name:
+                $ref: '#/components/schemas/EntityName'
+    ProductsFind:
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - product_type
+              - skip
+              - limit
+            properties:
+              id:
+                type: string
+                minLength: 2
+                maxLength: 36
+              name:
+                type: string
+                minLength: 2
+                maxLength: 70
+              product_type:
+                $ref: '#/components/schemas/ProductType'
+              status:
+                $ref: '#/components/schemas/ProductStatus'
+              skip:
+                $ref: '#/components/schemas/Skip'
+              limit:
+                $ref: '#/components/schemas/Limit'
+    SubscriptionAdd:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - contract
+              - name
+            additionalProperties: false
+            properties:
+              contract:
+                type: object
+                required:
+                  - type
+                  - payment
+                  - properties
+                additionalProperties: false
+                properties:
+                  type:
+                    $ref: '#/components/schemas/TypeName'
+                  payment:
+                    $ref: '#/components/schemas/PaymentReq'
+                  properties:
+                    type: object
+                    required:
+                      - start_at
+                    additionalProperties: false
+                    properties:
+                      start_at:
+                        $ref: '#/components/schemas/DateTime'
+                  product_properties:
+                    type: object
+                    additionalProperties: false
+                    required:
+                      - events_retained
+                    properties:
+                      events_retained:
+                        type: array
+                        minItems: 1
+                        items:
+                          type: string
+                  product_type:
+                    $ref: '#/components/schemas/ProductType'
+              name:
+                type: string
+                minLength: 4
+                maxLength: 70
+    SubscriptionUpdate:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - name
+            additionalProperties: false
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              name:
+                $ref: '#/components/schemas/EntityName'
+    EventCreate:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - contract
+              - name
+            additionalProperties: false
+            properties:
+              contract:
+                type: object
+                required:
+                  - type
+                  - payment
+                  - properties
+                additionalProperties: false
+                properties:
+                  type:
+                    $ref: '#/components/schemas/TypeName'
+                  payment:
+                    $ref: '#/components/schemas/PaymentReq'
+                  properties:
+                    type: object
+                    required:
+                      - start_at
+                    additionalProperties: false
+                    properties:
+                      start_at:
+                        $ref: '#/components/schemas/DateTime'
+              name:
+                type: string
+                minLength: 4
+                maxLength: 70
+    EventFromSubscription:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - subscription_id
+              - contract
+            additionalProperties: false
+            properties:
+              name:
+                $ref: '#/components/schemas/EntityName'
+              subscription_id:
+                $ref: '#/components/schemas/EntityId'
+              contract:
+                type: object
+                required:
+                  - type
+                  - properties
+                additionalProperties: false
+                properties:
+                  type:
+                    $ref: '#/components/schemas/TypeName'
+                  properties:
+                    type: object
+                    required:
+                      - start_at
+                    additionalProperties: false
+                    properties:
+                      start_at:
+                        $ref: '#/components/schemas/DateTime'
+    EventMediaAdd:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - media
+            additionalProperties: false
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              media:
+                type: array
+                minItems: 1
+                maxItems: 10
+                items:
+                  $ref: '#/components/schemas/MediumBase'
+    EventMediaDel:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - media
+            additionalProperties: false
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              media:
+                type: array
+                minItems: 1
+                items:
+                  type: object
+                  required:
+                    - id
+                  additionalProperties: false
+                  properties:
+                    id:
+                      $ref: '#/components/schemas/EntityId'
+    EventMediaDownload:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - media_dl_info
+            additionalProperties: false
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              media_dl_info:
+                type: array
+                minItems: 1
+                items:
+                  type: object
+                  required:
+                    - media_id
+                  additionalProperties: false
+                  properties:
+                    media_id:
+                      $ref: '#/components/schemas/EntityId'
+    EventMemberStatusUpdate:
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            required:
+              - id
+              - user_id
+              - revoked
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              user_id:
+                $ref: '#/components/schemas/EntityId'
+              revoked:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 2
+                description: 0 - not revoked, 1 - deleted, 2 - blocked
+    EventMembersInvitation:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - members
+            additionalProperties: false
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+                description: The event ID
+              members:
+                type: array
+                minItems: 1
+                maxItems: 50
+                items:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    id:
+                      $ref: '#/components/schemas/EntityId'
+                      description: The user ID
+                    email:
+                      $ref: '#/components/schemas/Email'
+                      description: The user email if ID is unknown
+    UserPassword:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - auth
+            additionalProperties: false
+            properties:
+              auth:
+                type: object
+                required:
+                  - password
+                  - old_password
+                additionalProperties: false
+                properties:
+                  password:
+                    $ref: '#/components/schemas/Password'
+                  old_password:
+                    $ref: '#/components/schemas/Password'
+    UserUpdate:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - first_name
+              - last_name
+            additionalProperties: false
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              first_name:
+                type: string
+                minLength: 3
+                maxLength: 50
+              last_name:
+                type: string
+                minLength: 3
+                maxLength: 50
+              partner_coupon_id:
+                type: string
+                minLength: 3
+                maxLength: 50
+              avatar_blob:
+                type: string
+                format: binary
+                description: MIME Base64 image string
+    UserCreate:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - auth
+              - email
+              - first_name
+              - lang
+              - last_name
+            additionalProperties: false
+            properties:
+              email:
+                $ref: '#/components/schemas/Email'
+              first_name:
+                type: string
+                minLength: 3
+                maxLength: 50
+              lang:
+                type: string
+                minLength: 2
+                maxLength: 7
+              last_name:
+                type: string
+                minLength: 3
+                maxLength: 50
+              auth:
+                type: object
+                required:
+                  - password
+                additionalProperties: false
+                properties:
+                  password:
+                    $ref: '#/components/schemas/Password'
+              avatar_blob:
+                type: string
+                format: binary
+                description: MIME Base64 image string
+    UserEmail:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - auth
+              - email
+            additionalProperties: false
+            properties:
+              auth:
+                type: object
+                required:
+                  - password
+                additionalProperties: false
+                properties:
+                  password:
+                    $ref: '#/components/schemas/Password'
+              email:
+                $ref: '#/components/schemas/Email'
+    UserCreditCard:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - password
+              - creditcard
+            additionalProperties: false
+            properties:
+              password:
+                $ref: '#/components/schemas/Password'
+              creditcard:
+                $ref: '#/components/schemas/CreditCard'
+    UserContactsUpdate:
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - revoked
+            additionalProperties: false
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              revoked:
+                type: integer
+                format: int32
+                minimum: 0
+                maximum: 2
+                description: 0 - not revoked, 1 - deleted, 2 - blocked
+  schemas:
+    Currency:
+      type: string
+      minLength: 3
+      maxLength: 3
+      description: ISO 4217 Currency code.
+    Email:
+      type: string
+      pattern: "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$"
+    EntityId:
+      type: string
+      pattern: "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
+      description: The ID of the entity.
+    EntityName:
+      type: string
+      minLength: 4
+      maxLength: 70
+    Password:
+      type: string
+      pattern: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$"
+    TypeName:
+      type: string
+      minLength: 3
+      maxLength: 20
+    DateTime:
+      type: string
+      pattern: "(\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d\\.\\d+([+-][0-2]\\d:[0-5]\\d|Z))|(\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z))|(\\d{4}-[01]\\d-[0-3]\\dT[0-2]\\d:[0-5]\\d([+-][0-2]\\d:[0-5]\\d|Z))"
+    Skip:
+      type: integer
+      format: int32
+      minimum: 0
+    Limit:
+      type: integer
+      format: int32
+      minimum: 1
+      maximum: 50
+    Contract:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        plan_id:
+          type: string
+        status:
+          type: integer
+          minimum: 0 # pending
+          maximum: 1 # validated
+        name:
+          $ref: '#/components/schemas/EntityName'
+        type:
+          $ref: '#/components/schemas/TypeName'
+        payment_properties:
+          $ref: '#/components/schemas/PaymentProperties'
+        product_type:
+          $ref: '#/components/schemas/ProductType'
+        properties:
+          $ref: '#/components/schemas/ContractProperties'
+        product_properties:
+          type: object
+    #          oneOf:
+    #          - $ref: '#/components/schemas/EventProperties'
+    #          - $ref: '#/components/schemas/EventSubscriptionProperties'
+    EventContract:
+      type: object
+      required:
+        - id
+        - product_properties
+      additionalProperties: false
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        status:
+          type: integer
+          minimum: 0 # pending
+          maximum: 1 # validated
+        name:
+          $ref: '#/components/schemas/EntityName'
+        type:
+          $ref: '#/components/schemas/TypeName'
+        payment_properties:
+          $ref: '#/components/schemas/PaymentProperties'
+        product_type:
+          type: string
+          enum: ['event']
+        properties:
+          $ref: '#/components/schemas/ContractProperties'
+        product_properties:
+          $ref: '#/components/schemas/EventProperties'
+    EventSubscriptionContract:
+      allOf:
+        - $ref: '#/components/schemas/Contract'
+        - type: object
+          required:
+            - id
+            - product_properties
+          additionalProperties: false
+          properties:
+            id:
+              $ref: '#/components/schemas/EntityId'
+            product_properties:
+              $ref: '#/components/schemas/EventSubscriptionProperties'
+    ContractProperties:
+      type: object
+      required:
+        - duration_weeks
+      additionalProperties: false
+      properties:
+        start_at:
+          $ref: '#/components/schemas/DateTime'
+        end_at:
+          $ref: '#/components/schemas/DateTime'
+        duration_weeks:
+          type: integer
+          format: int32
+          minimum: 1
+    EventProperties:
+      type: object
+      required:
+        - media_video_allowed
+        - media_max_count
+        - media_max_download
+        - media_max_total_size
+        - max_members
+      additionalProperties: false
+      properties:
+        media_video_allowed:
+          type: boolean
+        media_max_count:
+          type: integer
+          format: int32
+          minimum: -1
+        media_max_download:
+          type: integer
+          format: int32
+          minimum: 0
+        media_max_total_size:
+          type: integer
+          format: int64
+          minimum: -1
+        max_members:
+          type: integer
+          format: int32
+          minimum: -1
+    EventSubscriptionProperties:
+      type: object
+      required:
+        - events_retain_max
+        - events_available
+        - retain_volume_max
+      additionalProperties: false
+      properties:
+        events_retain_max:
+          type: integer
+          format: int32
+          minimum: -1
+        events_available:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+              - contract
+              - max
+            additionalProperties: false
+            properties:
+              contract:
+                $ref: '#/components/schemas/EventContract'
+              max:
+                type: integer
+                format: int32
+                minimum: 1
+        retain_volume_max:
+          type: integer
+          format: int64
+          minimum: -1
+    ContractType:
+      type: object
+      required:
+        - type
+        - currency
+      additionalProperties: false
+      properties:
+        type:
+          $ref: '#/components/schemas/TypeName'
+        currency:
+          $ref: '#/components/schemas/Currency'
+    PaymentReq:
+      type: object
+      required:
+        - type
+      additionalProperties: false
+      properties:
+        coupon_id:
+          type: string
+          minLength: 8
+          maxLength: 30
+        type:
+          type: string
+          enum: ['creditcard', 'paypal']
+        creditcard:
+          $ref: '#/components/schemas/CreditCard'
+    CreditCard:
+      type: object
+      required:
+        - cvc
+        - expire_month
+        - expire_year
+        - number
+      additionalProperties: false
+      properties:
+        cvc:
+          type: string
+        expire_month:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 12
+        expire_year:
+          type: integer
+          format: int32
+          minimum: 2017
+          maximum: 3000
+        number:
+          type: string
+    Coupon:
+      type: object
+      required:
+        - id
+        - name
+        - start_at
+        - end_at
+        - properties
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          minLength: 8
+          maxLength: 30
+        name:
+          $ref: '#/components/schemas/EntityName'
+        start_at:
+          $ref: '#/components/schemas/DateTime'
+        end_at:
+          $ref: '#/components/schemas/DateTime'
+        partner_coupon:
+          type: boolean
+        properties:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/CouponProperty'
+    CouponProperty:
+      type: object
+      required:
+        - type
+        - discount
+        - discount_type
+        - product_type
+      additionalProperties: false
+      properties:
+        type:
+          $ref: '#/components/schemas/TypeName'
+          description: The type of the product accepted (i.e. contract.type)
+        discount:
+          type: number
+          format: float
+        discount_type:
+          type: string
+          enum: ['percentage', 'amount']
+        product_type:
+          $ref: '#/components/schemas/ProductType'
+    Event:
+      allOf:
+        - $ref: '#/components/schemas/Product'
+        - type: object
+          required:
+            - members
+            - tiny_code
+          additionalProperties: false
+          properties:
+            id:
+              $ref: '#/components/schemas/EntityId'
+            config:
+              $ref: '#/components/schemas/EventConfig'
+            media:
+              type: array
+              items:
+                $ref: '#/components/schemas/Medium'
+            members:
+              type: array
+              items:
+                $ref: '#/components/schemas/EntityId'
+            photo_code:
+              type: string
+              minLength: 72
+              maxLength: 72
+            photo_code_url:
+              type: string
+            subscription_id:
+              $ref: '#/components/schemas/EntityId'
+            tiny_code:
+              type: string
+    EventConfig:
+      type: object
+      additionalProperties: false
+      properties:
+        social_sharing_allowed:
+          type: boolean
+    MediumBase:
+      type: object
+      required:
+        - key
+        - extension
+        - size
+        - date
+      additionalProperties: false
+      properties:
+        key:
+          type: string
+          pattern: "^[A-Fa-f0-9]{32}$"
+        extension:
+          type: string
+          minLength: 3
+        size:
+          type: integer
+          format: int64
+          minimum: 51200
+          maximum: 5368709120
+        date:
+          $ref: '#/components/schemas/DateTime'
+        thumb_key:
+          type: string
+          pattern: "^[A-Fa-f0-9]{32}$"
+        thumb_size:
+          type: integer
+          format: int64
+          maximum: 2097152
+        thumb_extension:
+          type: string
+          minLength: 3
+        type:
+          type: string
+    Medium:
+      allOf:
+        - $ref: '#/components/schemas/MediumBase'
+        - type: object
+          required:
+            - url
+          additionalProperties: false
+          properties:
+            id:
+              $ref: '#/components/schemas/EntityId'
+            owner:
+              $ref: '#/components/schemas/EntityId'
+            url:
+              type: string
+              minLength: 10
+            thumb_url:
+              type: string
+              minLength: 10
+    MediumResponse:
+      allOf:
+        - $ref: '#/components/schemas/Medium'
+        - type: object
+          required:
+            - write_url
+            - thumb_write_url
+          additionalProperties: false
+          properties:
+            write_url:
+              type: string
+              minLength: 10
+            thumb_write_url:
+              type: string
+              minLength: 10
+    EventPhotoCode:
+      type: object
+      required:
+        - photo_code
+      additionalProperties: false
+      properties:
+        photo_code:
+          type: string
+          pattern: "^[0-1]{64}$"
+    EventTinyCode:
+      type: object
+      required:
+        - tiny_code
+      additionalProperties: false
+      properties:
+        tiny_code:
+          type: string
+          pattern: "^[a-zA-Z0-9]{6,8}$"
+    EventSubscription:
+      allOf:
+        - $ref: '#/components/schemas/Product'
+    Notification:
+      type: object
+      additionalProperties: false
+      properties:
+        events:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                $ref: '#/components/schemas/EntityId'
+              members:
+                type: array
+                items:
+                  type: string
+              media:
+                type: array
+                items:
+                  type: string
+              media_comments:
+                type: array
+                items:
+                  type: string
+    Product:
+      type: object
+      required:
+        - id
+        - contract
+        - created_at
+        - name
+        - owner
+        - status
+      additionalProperties: false
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        contract:
+          $ref: '#/components/schemas/Contract'
+        created_at:
+          $ref: '#/components/schemas/DateTime'
+        name:
+          $ref: '#/components/schemas/EntityName'
+        owner:
+          $ref: '#/components/schemas/EntityId'
+        status:
+          $ref: '#/components/schemas/ProductStatus'
+    ProductType:
+      type: string
+      enum: ['event', 'event_subscription']
+    User:
+      type: object
+      required:
+        - id
+        - first_name
+        - lang
+        - last_name
+      additionalProperties: false
+      properties:
+        id:
+          $ref: '#/components/schemas/EntityId'
+        creation_date:
+          $ref: '#/components/schemas/DateTime'
+        avatar_url:
+          type: string
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Payment'
+        email:
+          $ref: '#/components/schemas/Email'
+        first_name:
+          type: string
+          minLength: 3
+          maxLength: 50
+        lang:
+          type: string
+          minLength: 2
+          maxLength: 7
+        last_name:
+          type: string
+          minLength: 3
+          maxLength: 50
+    ProductStatus:
+      type: integer
+      format: int32
+      minimum: 0
+      maximum: 3
+      description: 0 pending, 1 validated, 2 archived, 3 deleted
+    ReapInfo:
+      type: object
+      additionalProperties: false
+      properties:
+        events_removed:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityId'
+        subscriptions_removed:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityId'
+        events_media_modified:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityId'
+        info:
+          type: string
+    Payment:
+      type: object
+      required:
+        - amount
+        - currency
+        - date
+        - id
+        - product_type
+        - type
+        - user_id
+      additionalProperties: false
+      properties:
+        amount:
+          type: number
+          format: double
+        currency:
+          type: string
+        date:
+          $ref: '#/components/schemas/DateTime'
+        id:
+          type: string
+        product_type:
+          type: string
+        type:
+          type: string
+          enum: ['creditcard', 'paypal']
+        user_id:
+          $ref: '#/components/schemas/EntityId'
+    PaymentProperties:
+      type: object
+      required:
+        - amount
+        - currency
+        - label
+      additionalProperties: false
+      properties:
+        amount:
+          type: number
+          format: double
+          minimum: 0
+        currency:
+          $ref: '#/components/schemas/Currency'
+        label:
+          type: string
+        plan_id:
+          type: string
+        recurrent:
+          type: boolean
+    PaymentId:
+      type: object
+      required:
+        - id
+        - type
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: The payment ID
+        type:
+          type: string
+          enum: ['creditcard', 'paypal']
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      additionalProperties: false
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+  securitySchemes:
+    # Standard auth systems (form & OAuth) with session cookie
+    # Used internally to check roles/permissions
+    userAuth:
+      type: apiKey
+      in: cookie
+      name: session
+    adminAuth:
+      type: apiKey
+      in: cookie
+      name: session
+    monitoringAuth:
+      type: http
+      scheme: bearer

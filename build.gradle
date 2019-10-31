@@ -1,0 +1,27 @@
+import java.nio.charset.StandardCharsets
+
+plugins {
+  id "java"
+}
+
+allprojects {
+  apply plugin: "java"
+
+  group = "org.openapi4j"
+  version = "0.1-SNAPSHOT"
+
+  java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+  }
+  compileJava.options.encoding = StandardCharsets.UTF_8.toString()
+
+  tasks.withType(JavaCompile) {
+    options.encoding = StandardCharsets.UTF_8.toString()
+  }
+
+  repositories {
+    mavenCentral()
+    mavenLocal()
+  }
+}

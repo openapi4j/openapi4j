@@ -1,0 +1,14 @@
+plugins {
+  id "java-library"
+  id "maven-publish"
+  id "signing"
+}
+
+description = "openapi4j core utils & JSON reference resolver"
+
+dependencies {
+  api("com.fasterxml.jackson.core:jackson-databind:2.9.10")
+  api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.10")
+}
+
+apply from: "../publish.gradle"

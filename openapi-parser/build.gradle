@@ -1,0 +1,13 @@
+plugins {
+  id "java-library"
+  id "maven-publish"
+  id "signing"
+}
+
+description = "openapi4j schema parser & validator"
+
+dependencies {
+  api(project(":openapi-core"))
+}
+
+apply from: "../publish.gradle"

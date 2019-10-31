@@ -1,0 +1,71 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: My API
+paths:
+  # FORM
+  /formNotExplodedPrimitive/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/formNotExplodedPrimitive'
+      responses:
+        '200':
+          description: The description
+  /formExplodedPrimitive/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/formExplodedPrimitive'
+      responses:
+        '200':
+          description: The description
+  /formNotExplodedArray/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/formNotExplodedArray'
+      responses:
+        '200':
+          description: The description
+  /formNotExplodedObject/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/formNotExplodedObject'
+      responses:
+        '200':
+          description: The description
+components:
+  parameters:
+    # FORM
+    formNotExplodedPrimitive:
+      in: query
+      name: formNotExplodedPrimitive
+      required: true
+      explode: false
+      schema:
+        type: integer
+    formExplodedPrimitive:
+      in: query
+      name: formExplodedPrimitive
+      required: true
+      schema:
+        type: integer
+    formNotExplodedArray:
+      in: query
+      name: formNotExplodedArray
+      required: true
+      explode: false
+      schema:
+        type: array
+        items:
+          type: integer
+    formNotExplodedObject:
+      in: query
+      name: formNotExplodedObject
+      required: true
+      explode: false
+      schema:
+        type: object
+        properties:
+          stringProp:
+            type: string
+          boolProp:
+            type: boolean

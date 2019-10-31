@@ -1,0 +1,45 @@
+openapi: 3.0.0
+info:
+  description: A description
+  version: 1.0.0
+  title: My API
+paths:
+  /:
+    get:
+      responses:
+        '200':
+          description: The description
+components:
+  responses:
+    AResponse:
+      description: The pet
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/Cat'
+              - $ref: '#/components/schemas/Dog'
+            discriminator:
+              propertyName: pet_type
+              mapping:
+                cat: '#/components/schemas/Cat'
+                dog: '#/components/schemas/Dog'
+  schemas:
+    Cat:
+      type: object
+      required:
+        - pet_type
+      properties:
+        pet_type:
+          type: string
+        name:
+          type: string
+    Dog:
+      type: object
+      required:
+        - pet_type
+      properties:
+        pet_type:
+          type: string
+        bark:
+          type: string
