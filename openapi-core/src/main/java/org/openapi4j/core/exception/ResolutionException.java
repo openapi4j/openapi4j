@@ -1,6 +1,6 @@
 package org.openapi4j.core.exception;
 
-public class ResolutionException extends RuntimeException {
+public class ResolutionException extends Exception {
   public ResolutionException() {
     super();
   }

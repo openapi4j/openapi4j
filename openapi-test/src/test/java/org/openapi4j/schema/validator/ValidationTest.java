@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
-import org.openapi4j.core.util.Json;
+import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.schema.validator.util.ExtValidatorInstance;
 import org.openapi4j.schema.validator.v3.MaximumToleranceValidator;
 import org.openapi4j.schema.validator.v3.MyEntityValidator;
@@ -178,12 +178,12 @@ public class ValidationTest {
     new SchemaValidator(
       null,
       "my_schema",
-      Json.jsonMapper.readTree(ValidationTest.class.getResource("/schema/reference.json")));
+      TreeUtil.json.readTree(ValidationTest.class.getResource("/schema/reference.json")));
   }
 
   @Test
   public void doNotChangeContextIfGiven() throws Exception {
-    JsonNode schemaNode = Json.jsonMapper.readTree("{\"not\": {\"type\": \"integer\"} }");
+    JsonNode schemaNode = TreeUtil.json.readTree("{\"not\": {\"type\": \"integer\"} }");
 
     OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
     ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.junit.Assert;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3Context;
-import org.openapi4j.core.util.Json;
+import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.util.ExtValidatorInstance;
@@ -19,7 +19,7 @@ class ValidationUtil {
   static void validate(String testPath,
                        Map<Byte, Boolean> options,
                        Map<String, ExtValidatorInstance<OAI3>> validators) throws Exception {
-    ArrayNode testCases = (ArrayNode) Json.jsonMapper.readTree(ValidationUtil.class.getResource(testPath));
+    ArrayNode testCases = (ArrayNode) TreeUtil.json.readTree(ValidationUtil.class.getResource(testPath));
 
     for (int index = 0; index < testCases.size(); index++) {
       JsonNode testCase = testCases.get(index);
@@ -41,7 +41,7 @@ class ValidationUtil {
   }
 
   static void validate(String testPath) throws Exception {
-    ArrayNode testCases = (ArrayNode) Json.jsonMapper.readTree(ValidationUtil.class.getResource(testPath));
+    ArrayNode testCases = (ArrayNode) TreeUtil.json.readTree(ValidationUtil.class.getResource(testPath));
 
     for (int index = 0; index < testCases.size(); index++) {
       JsonNode testCase = testCases.get(index);

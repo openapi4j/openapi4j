@@ -3,7 +3,7 @@ package org.openapi4j.parser.model;
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.util.Json;
+import org.openapi4j.core.util.TreeUtil;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -12,11 +12,14 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbsOpenApiSchema<O extends OAI, M extends OpenApiSchema<O, M>> implements OpenApiSchema<O, M> {
+  /**
+   * {@inheritDoc}
+   */
   @Override
   @SuppressWarnings("unchecked")
   public <T> T toJson(OAIContext<O> context, EnumSet<SerializationFlag> flags) throws EncodeException {
     if (flags == null) {
-      flags = EnumSet.of(SerializationFlag.OUT_AS_NODE);
+      flags = EnumSet.of(SerializationFlag.OUT_AS_JSON);
     }
 
     OpenApiSchema<O, M> model
@@ -26,22 +29,25 @@ public abstract class AbsOpenApiSchema<O extends OAI, M extends OpenApiSchema<O,
 
     if (flags.contains(SerializationFlag.OUT_AS_STRING)) {
       if (flags.contains(SerializationFlag.OUT_AS_YAML)) {
-        return (T) Json.toYaml(model);
+        return (T) TreeUtil.toYaml(model);
       } else {
-        return (T) Json.toJson(model);
+        return (T) TreeUtil.toJson(model);
       }
     }
 
     if (flags.contains(SerializationFlag.OUT_AS_YAML)) {
-      return (T) Json.toYamlNode(model);
+      return (T) TreeUtil.toYamlNode(model);
     } else {
-      return (T) Json.toJsonNode(model);
+      return (T) TreeUtil.toJsonNode(model);
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String toJson() throws EncodeException {
-    return Json.toJson(this);
+    return TreeUtil.toJson(this);
   }
 
   protected <T> List<T> copyList(List<T> original) {

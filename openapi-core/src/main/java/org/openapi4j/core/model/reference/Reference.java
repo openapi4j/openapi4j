@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.exception.DecodeException;
-import org.openapi4j.core.util.Json;
+import org.openapi4j.core.util.TreeUtil;
 
 import java.net.URI;
 
@@ -61,7 +61,7 @@ public class Reference {
   public <T> T getMappedContent(Class<T> tClass) throws DecodeException {
     if (mappedContent == null) {
       try {
-        mappedContent = Json.jsonMapper.treeToValue(content, tClass);
+        mappedContent = TreeUtil.json.treeToValue(content, tClass);
         return (T) mappedContent;
       } catch (JsonProcessingException e) {
         throw new DecodeException(String.format(ERR_MSG, ref, tClass.getSimpleName()), e);

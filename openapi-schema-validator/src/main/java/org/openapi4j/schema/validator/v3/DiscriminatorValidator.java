@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
-import org.openapi4j.core.util.Json;
+import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -138,7 +138,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
           schemas.add(new SchemaValidator(
             context,
             refNode.textValue(),
-            Json.jsonMapper.createObjectNode().put(OAI3SchemaKeywords.$REF, refNode.textValue()), schemaParentNode, parentSchema));
+            TreeUtil.json.createObjectNode().put(OAI3SchemaKeywords.$REF, refNode.textValue()), schemaParentNode, parentSchema));
           return;
         }
 

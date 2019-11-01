@@ -4,7 +4,7 @@ import org.json.JSONException;
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.OAI;
-import org.openapi4j.core.util.Json;
+import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.v3.OpenApi3Validator;
@@ -26,10 +26,10 @@ class ParsingChecker {
   }
 
   <O extends OAI> void checkFromResource(URL resourcePath, OAI<O> api) throws EncodeException, JSONException, DecodeException {
-    Object obj = Json.load(resourcePath, Object.class);
-    String expected = Json.toJson(obj);
+    Object obj = TreeUtil.load(resourcePath, Object.class);
+    String expected = TreeUtil.toJson(obj);
 
-    String actual = Json.toJson(api);
+    String actual = TreeUtil.toJson(api);
 
     JSONAssert.assertEquals(expected, actual, true);
   }

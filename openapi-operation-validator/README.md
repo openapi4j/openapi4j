@@ -44,8 +44,7 @@ Requests and responses are wrapped with the specific adapter.
 Request request = [Adapter]Request.of([AdapterRequestObject] rq);
 // Vert.x
 Request request = VertxRequest.of(RoutingContext rc);
-// Undertow
-Request request = UndertowRequest.of(HttpServerExchange hse);
+
 // validate...
 ```
 
@@ -53,11 +52,8 @@ Request request = UndertowRequest.of(HttpServerExchange hse);
 
 Adapters' dependencies are not provided, you must add the one you need.
 
-| Library         | Version     | Client | Server                  | Dependency                   | More                         |
-|-----------------|-------------|--------|-------------------------|------------------------------|------------------------------|
-| Vert.x          | `>= 3.?`    | No     | VertxRequest            | io.vertx:vertx-web           | Provides router builder      |
-| undertow        | `> 2.0`     | No     | UndertowRequest         | io.undertow:undertow-core    |                              |
-| Servlet         | `>= 2.0`    | No     | HttpServerRequest       | *                            |                              |
+See [openapi-operation-adapters](https://github.com/openapi4j/openapi4j/tree/master/openapi-operation-adapters) to get
+the list of currently available adapters and further documentation.
 
 Feel free to contribute to add more adapters and additional features.  
 It should be very straightforward to implement a builder. Look at the code of current adapters as a starter.
@@ -79,7 +75,6 @@ Other content types are considered as a single text node to cover direct file up
 * Response validator.
 * Multipart mixed.
 * More tests.
-* Vert.x router builder.
 
 ## Limitations
 

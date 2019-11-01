@@ -9,11 +9,10 @@ description = "openapi4j operation Servlet adapter"
 dependencies {
   api(project(":openapi-operation-validator"))
   // Servlet V4
-  compileOnly("org.jboss.spec.javax.servlet:jboss-servlet-api_4.0_spec:2.0.0.Final")
+  implementation("org.jboss.spec.javax.servlet:jboss-servlet-api_4.0_spec:2.0.0.Final")
 
   testImplementation("junit:junit:4.12")
   testImplementation("org.mockito:mockito-inline:3.1.0")
-  testImplementation("org.jboss.spec.javax.servlet:jboss-servlet-api_4.0_spec:2.0.0.Final")
 }
 
 apply from: "../../publish.gradle"

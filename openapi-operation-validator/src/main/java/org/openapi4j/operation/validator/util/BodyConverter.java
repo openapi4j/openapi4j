@@ -3,7 +3,7 @@ package org.openapi4j.operation.validator.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
-import org.openapi4j.core.util.Json;
+import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.io.BufferedReader;
@@ -36,11 +36,11 @@ public final class BodyConverter {
   }
 
   public static JsonNode jsonToNode(InputStream body) throws IOException {
-    return Json.jsonMapper.readTree(body);
+    return TreeUtil.json.readTree(body);
   }
 
   public static JsonNode jsonToNode(String body) throws IOException {
-    return Json.jsonMapper.readTree(body);
+    return TreeUtil.json.readTree(body);
   }
 
   public static JsonNode xmlToNode(final Schema schema, InputStream body) {

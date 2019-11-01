@@ -6,18 +6,20 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.EncodeException;
+import org.openapi4j.core.model.AuthOption;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-public final class Json {
-  public static final ObjectMapper jsonMapper = new ObjectMapper();
-  public static final ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
+public final class TreeUtil {
+  public static final ObjectMapper json = new ObjectMapper();
+  public static final ObjectMapper yaml = new ObjectMapper(new YAMLFactory());
 
-  private Json() {
+  private TreeUtil() {
   }
 
   /**
@@ -29,7 +31,7 @@ public final class Json {
    */
   public static String toJson(Object obj) throws EncodeException {
     try {
-      return jsonMapper.writeValueAsString(obj);
+      return json.writeValueAsString(obj);
     } catch (Exception e) {
       throw new EncodeException("Failed to encode as JSON: " + e.getMessage());
     }
@@ -44,7 +46,7 @@ public final class Json {
    */
   public static JsonNode toJsonNode(Object obj) throws EncodeException {
     try {
-      return jsonMapper.valueToTree(obj);
+      return json.valueToTree(obj);
     } catch (Exception e) {
       throw new EncodeException("Failed to encode as JSON: " + e.getMessage());
     }
@@ -59,7 +61,7 @@ public final class Json {
    */
   public static String toYaml(Object obj) throws EncodeException {
     try {
-      return yamlMapper.writeValueAsString(obj);
+      return yaml.writeValueAsString(obj);
     } catch (Exception e) {
       throw new EncodeException("Failed to encode as YAML: " + e.getMessage());
     }
@@ -74,40 +76,48 @@ public final class Json {
    */
   public static JsonNode toYamlNode(Object obj) throws EncodeException {
     try {
-      return yamlMapper.valueToTree(obj);
+      return yaml.valueToTree(obj);
     } catch (Exception e) {
       throw new EncodeException("Failed to encode as YAML: " + e.getMessage());
     }
   }
 
-  public static <T> T load(URL url, Class<T> clazz) throws DecodeException {
+  public static <T> T load(final URL url, Class<T> clazz) throws DecodeException {
+    return load(url, null, clazz);
+  }
+
+  public static <T> T load(final URL url, final List<AuthOption> authOptions, Class<T> clazz) throws DecodeException {
     requireNonNull(url, "URL is required");
 
     try {
-      InputStream in = url.openStream();
+      InputStream in = UrlContentRetriever.get(url, authOptions);
       String json = IOUtil.toString(in, StandardCharsets.UTF_8).trim();
 
       if (json.startsWith("{") || json.startsWith("[")) {
-        return jsonMapper.readValue(json, clazz);
+        return TreeUtil.json.readValue(json, clazz);
       } else {
-        return yamlMapper.readValue(json, clazz);
+        return yaml.readValue(json, clazz);
       }
     } catch (Exception e) {
       throw new DecodeException("Failed to decode : " + e.getMessage());
     }
   }
 
-  public static JsonNode load(URL url) throws DecodeException {
+  public static JsonNode load(final URL url) throws DecodeException {
+    return load(url, (List<AuthOption>) null);
+  }
+
+  public static JsonNode load(final URL url, final List<AuthOption> authOptions) throws DecodeException {
     requireNonNull(url, "URL is required");
 
     try {
-      InputStream in = url.openStream();
+      InputStream in = UrlContentRetriever.get(url, authOptions);
       String json = IOUtil.toString(in, StandardCharsets.UTF_8).trim();
 
       if (json.startsWith("{") || json.startsWith("[")) {
-        return jsonMapper.readTree(json);
+        return TreeUtil.json.readTree(json);
       } else {
-        return yamlMapper.readTree(json);
+        return yaml.readTree(json);
       }
     } catch (Exception e) {
       throw new DecodeException("Failed to decode : " + e.getMessage());

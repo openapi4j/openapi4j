@@ -3,13 +3,7 @@ package org.openapi4j.operation.validator.adapters.server.vertx.v3.impl;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.parser.model.v3.SecurityRequirement;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,26 +42,35 @@ class SecurityRequirementHelper {
       .add(handler);
   }
 
-  List<Handler<RoutingContext>> getHandlers(Collection<SecurityRequirement> securityRequirements) {
-    List<OperationSecurityRequirement> keys = translateRequirements(securityRequirements);
+  Collection<Handler<RoutingContext>> getHandlers(Collection<SecurityRequirement> securityRequirements) throws ResolutionException {
+    List<OperationSecurityRequirement> osrs = translateRequirements(securityRequirements);
+    Set<Handler<RoutingContext>> handlers = new HashSet<>();
 
-    return keys
+    for (OperationSecurityRequirement osr : osrs) {
+      handlers.addAll(getHandlers(osr));
+    }
+
+    return handlers;
+
+    /*return osrs
       .stream()
       .map(this::mapWithFail)
       .flatMap(Collection::stream)
-      .collect(Collectors.toList());
+      .collect(Collectors.toList());*/
   }
 
-  private List<Handler<RoutingContext>> mapWithFail(OperationSecurityRequirement osr) throws ResolutionException {
-    return Optional
-      .ofNullable(securityHandlers.get(osr))
-      .orElseThrow(() -> {
-        if (osr.scopeName != null) {
-          return new ResolutionException(String.format(SEC_SCOPED_MISSING_ERR_MSG, osr.securityRequirementName, osr.scopeName));
-        } else {
-          return new ResolutionException(String.format(SEC_MISSING_ERR_MSG, osr.securityRequirementName));
-        }
-      });
+  private List<Handler<RoutingContext>> getHandlers(OperationSecurityRequirement osr) throws ResolutionException {
+    List<Handler<RoutingContext>> handlers = securityHandlers.get(osr);
+
+    if (handlers == null) {
+      if (osr.scopeName != null) {
+        throw new ResolutionException(String.format(SEC_SCOPED_MISSING_ERR_MSG, osr.securityRequirementName, osr.scopeName));
+      } else {
+        throw new ResolutionException(String.format(SEC_MISSING_ERR_MSG, osr.securityRequirementName));
+      }
+    }
+
+    return handlers;
   }
 
   private List<OperationSecurityRequirement> translateRequirements(Collection<SecurityRequirement> keys) {
@@ -85,7 +88,6 @@ class SecurityRequirementHelper {
       return new ArrayList<>();
     }
   }
-
   private static class OperationSecurityRequirement {
     private final String securityRequirementName;
     private final String scopeName;

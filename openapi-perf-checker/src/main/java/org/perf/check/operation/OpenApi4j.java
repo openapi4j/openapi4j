@@ -1,5 +1,6 @@
 package org.perf.check.operation;
 
+import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.operation.validator.model.Headers;
 import org.openapi4j.operation.validator.model.Request;
@@ -19,7 +20,7 @@ class OpenApi4j {
   private final Operation operation;
   private final RequestValidator requestValidator;
 
-  OpenApi4j(String schemaFile) throws ValidationException {
+  OpenApi4j(String schemaFile) throws ValidationException, ResolutionException {
     URL specPath = OperationPerfRunner.class.getResource(schemaFile);
     OpenApi3 api = new OpenApi3Parser().parse(specPath, true);
     operation = api.getOperationById("test");

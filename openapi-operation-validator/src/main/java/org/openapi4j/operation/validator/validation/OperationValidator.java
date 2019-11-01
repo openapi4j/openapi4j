@@ -3,6 +3,7 @@ package org.openapi4j.operation.validator.validation;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.exception.EncodeException;
+import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
@@ -98,10 +99,14 @@ public class OperationValidator {
   public void validateQuery(final Request request, final ValidationResults results) {
     if (specQueryValidators == null) return;
 
-    validateParameters(
-      specQueryValidators,
-      ParameterConverter.queryToNode(request.getQuery(), specQueryValidators.keySet()),
-      results);
+    try {
+      validateParameters(
+        specQueryValidators,
+        ParameterConverter.queryToNode(request.getQuery(), specQueryValidators.keySet()),
+        results);
+    } catch (ResolutionException e) {
+      results.addError(e.getMessage());
+    }
   }
 
   public void validateHeaders(final Request request, final ValidationResults results) {

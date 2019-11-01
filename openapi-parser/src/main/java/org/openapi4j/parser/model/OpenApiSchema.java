@@ -27,7 +27,6 @@ public interface OpenApiSchema<O extends OAI, M extends OpenApiSchema> extends C
    * @return The serialized model
    * @throws EncodeException in case of serialization error
    */
-
   <T> T toJson(OAIContext<O> context, EnumSet<SerializationFlag> flags) throws EncodeException;
 
   /**

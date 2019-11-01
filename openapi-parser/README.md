@@ -29,9 +29,20 @@ OpenApi3 api = new OpenApi3Parser().parse(specPath, false);
 ValidationResults results = OpenApi3Validator.instance().validate(api);
 ```
 
-## TODO
+If your your document has restricted, you're able to load it with authentication values :
+```java
+// You must provide all the values for the expected chain of documents.
+List<AuthOption> authOptions = new ArrayList<>();
+// A value in query for requests
+authOptions.add(new AuthOption(QUERY, "sessionId", "xyz"));
+// A value in header for localhost only
+authOptions.add(new AuthOption(HEADER, "api_key", "xyz", url -> url.getHost().equals("localhost")));
+...
 
-* Enable loading documents with security requirements.
+OpenApi3 api = new OpenApi3Parser().parse(specPath, authOptions, true);
+```
+
+## TODO
 * More tests.
 
 ## Limitations

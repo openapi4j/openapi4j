@@ -3,30 +3,29 @@ package org.openapi4j.core.model.reference;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.exception.ResolutionException;
-import org.openapi4j.core.util.Json;
+import org.openapi4j.core.model.AuthOption;
+import org.openapi4j.core.util.TreeUtil;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class AbstractReferenceResolver {
-  private final String LOAD_DOC_ERR_MSG = "Failed to load document from '%s'";
-  private final String CYCLING_REF_ERR_MSG = "Cycling reference with the following chain :\n%s";
-  private final String MISSING_REF_ERR_MSG = "Reference '%s' is unreachable in '%s.";
-  private final String HASH = "#";
-  private final String SLASH = "/";
+  private static final String LOAD_DOC_ERR_MSG = "Failed to load document from '%s'";
+  private static final String CYCLING_REF_ERR_MSG = "Cycling reference with the following chain :\n%s";
+  private static final String MISSING_REF_ERR_MSG = "Reference '%s' is unreachable in '%s.";
+  private static final String HASH = "#";
+  private static final String SLASH = "/";
 
   private final URI baseUri;
+  private final List<AuthOption> authOptions;
   private final JsonNode baseDocument;
   private final Map<URI, JsonNode> documentRegistry = new HashMap<>();
   private final ReferenceRegistry referenceRegistry;
-  protected final String refKeyword;
+  final String refKeyword;
 
-  protected AbstractReferenceResolver(URI baseUri, JsonNode baseDocument, String refKeyword, ReferenceRegistry referenceRegistry) {
+  protected AbstractReferenceResolver(URI baseUri, List<AuthOption> authOptions, JsonNode baseDocument, String refKeyword, ReferenceRegistry referenceRegistry) {
     this.baseUri = baseUri;
+    this.authOptions = authOptions;
     this.baseDocument = baseDocument;
     this.refKeyword = refKeyword;
     this.referenceRegistry = referenceRegistry;
@@ -75,7 +74,7 @@ public abstract class AbstractReferenceResolver {
     }
 
     try {
-      JsonNode document = Json.load(uri.toURL());
+      JsonNode document = TreeUtil.load(uri.toURL(), authOptions);
       documentRegistry.put(uri, document);
       return document;
     } catch (Exception e) {

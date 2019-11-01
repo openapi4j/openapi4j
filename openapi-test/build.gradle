@@ -1,12 +1,4 @@
-plugins {
-  id "application"
-}
-
-description = "openapi4j performance viewer"
-
-application {
-  mainClassName = 'org.openapi4j.perf.GlobalRunner'
-}
+description = "openapi4j test project"
 
 dependencies {
   // Parser
@@ -26,12 +18,4 @@ dependencies {
   testImplementation("org.json:json:20190722")
   // multipart
   testImplementation("commons-fileupload:commons-fileupload:1.4")
-  // Vert.x
-  testImplementation("io.vertx:vertx-web:3.8.1")
-  testImplementation("io.vertx:vertx-codegen:3.2.1") // for mockito
-  // Undertow
-  testImplementation("io.undertow:undertow-core:2.0.1.Final")
-  // Servlet V4
-  testImplementation("org.jboss.spec.javax.servlet:jboss-servlet-api_4.0_spec:2.0.0.Final")
-  // -------------- END Specific adapters --------------
 }

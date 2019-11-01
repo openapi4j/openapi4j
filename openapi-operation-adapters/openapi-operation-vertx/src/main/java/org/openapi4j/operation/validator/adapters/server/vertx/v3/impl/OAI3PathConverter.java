@@ -168,7 +168,7 @@ class OAI3PathConverter {
     return (schema.getAllOfSchemas() != null && schema.getAllOfSchemas().size() != 0);
   }
 
-  private Map<String, Schema> solveObjectSchema(Schema schema) {
+  private Map<String, Schema> solveObjectSchema(Schema schema) throws ResolutionException {
     if (isAllOfSchema(schema)) {
       return solveAllOfSchemas(schema.getAllOfSchemas());
     } else {
@@ -176,7 +176,7 @@ class OAI3PathConverter {
     }
   }
 
-  private Map<String, Schema> solveAllOfSchemas(List<Schema> allOfSchemas) {
+  private Map<String, Schema> solveAllOfSchemas(List<Schema> allOfSchemas) throws ResolutionException {
     Map<String, Schema> properties = new HashMap<>();
     for (Schema schema : allOfSchemas) {
       if (!isObjectSchema(schema))

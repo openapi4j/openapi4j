@@ -1,5 +1,6 @@
 package org.perf.check.parser;
 
+import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.parser.OpenApi3Parser;
 
@@ -9,7 +10,7 @@ class OpenApi4j implements PerfParser {
     // Check parsing with validation
     try {
       new OpenApi3Parser().parse(getClass().getResource(schemaFile), false);
-    } catch (ValidationException e) {
+    } catch (ValidationException | ResolutionException e) {
       return e.toString();
     }
 

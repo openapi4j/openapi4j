@@ -1,22 +1,5 @@
 package org.openapi4j.operation.validator.adapters.server.vertx.v3.impl;
 
-import org.openapi4j.core.exception.ResolutionException;
-import org.openapi4j.operation.validator.adapters.server.vertx.v3.OpenApi3RouterFactory;
-import org.openapi4j.operation.validator.validation.OperationValidator;
-import org.openapi4j.operation.validator.validation.RequestValidator;
-import org.openapi4j.parser.model.v3.OpenApi3;
-import org.openapi4j.parser.model.v3.Operation;
-import org.openapi4j.parser.model.v3.Path;
-import org.openapi4j.parser.model.v3.RequestBody;
-import org.openapi4j.parser.model.v3.Response;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.regex.Pattern;
-
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
@@ -24,6 +7,14 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import org.openapi4j.core.exception.ResolutionException;
+import org.openapi4j.operation.validator.adapters.server.vertx.v3.OpenApi3RouterFactory;
+import org.openapi4j.operation.validator.validation.OperationValidator;
+import org.openapi4j.operation.validator.validation.RequestValidator;
+import org.openapi4j.parser.model.v3.*;
+
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
   private static final String OP_ID_NOT_FOUND_ERR_MSG = "Operation with id '%s' not found.";
@@ -55,13 +46,13 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
   }
 
   @Override
-  public OpenApi3RouterFactory addOperationHandler(String operationId, Handler<RoutingContext> handler) {
+  public OpenApi3RouterFactory addOperationHandler(String operationId, Handler<RoutingContext> handler) throws ResolutionException {
     addOperationHandler(operationId, null, handler);
     return this;
   }
 
   @Override
-  public OpenApi3RouterFactory addOperationHandler(String operationId, BodyHandler bodyHandler, Handler<RoutingContext> handler) {
+  public OpenApi3RouterFactory addOperationHandler(String operationId, BodyHandler bodyHandler, Handler<RoutingContext> handler) throws ResolutionException {
     OperationSpec op = operationSpecs.get(operationId);
     if (op == null) {
       throw new ResolutionException(String.format(OP_ID_NOT_FOUND_ERR_MSG, operationId));
@@ -88,7 +79,7 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
         route.handler(operationSpec.bodyHandler);
       }
       // Security handlers
-      List<Handler<RoutingContext>> opSecurityHandlers = securityHelper.getHandlers(opValidator.getOperation().getSecurityRequirements());
+      Collection<Handler<RoutingContext>> opSecurityHandlers = securityHelper.getHandlers(opValidator.getOperation().getSecurityRequirements());
       for (Handler<RoutingContext> handler : opSecurityHandlers) {
         route.handler(handler);
       }
@@ -103,7 +94,7 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
     return router;
   }
 
-  private Route createRoute(Router router, OperationSpec operationSpec) {
+  private Route createRoute(Router router, OperationSpec operationSpec) throws ResolutionException {
     Optional<Pattern> optRegEx = OAI3PathConverter
       .instance()
       .solve(operationSpec.path, operationSpec.operation.getParametersIn("path"));

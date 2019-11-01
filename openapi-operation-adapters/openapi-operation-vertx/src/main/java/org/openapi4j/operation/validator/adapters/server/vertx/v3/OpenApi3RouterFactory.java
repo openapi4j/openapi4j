@@ -82,7 +82,7 @@ public interface OpenApi3RouterFactory {
    * @return this
    */
   @Fluent
-  OpenApi3RouterFactory addOperationHandler(String operationId, Handler<RoutingContext> handler);
+  OpenApi3RouterFactory addOperationHandler(String operationId, Handler<RoutingContext> handler) throws ResolutionException;
 
   /**
    * Add operation handler from operationId field in Operation object.
@@ -93,13 +93,14 @@ public interface OpenApi3RouterFactory {
    * @return this
    */
   @Fluent
-  OpenApi3RouterFactory addOperationHandler(String operationId, BodyHandler bodyHandler, Handler<RoutingContext> handler);
+  OpenApi3RouterFactory addOperationHandler(String operationId, BodyHandler bodyHandler, Handler<RoutingContext> handler) throws ResolutionException;
 
   /**
    * Construct a new router based on spec. It will fail if you are trying to mount a spec with security schemes
    * without assigned handlers<br/>
    *
    * @return The built router.
+   * @throws ResolutionException
    */
-  Router getRouter();
+  Router getRouter() throws ResolutionException;
 }
