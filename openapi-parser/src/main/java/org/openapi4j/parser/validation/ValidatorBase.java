@@ -13,6 +13,12 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+/**
+ * Base validation class for common validations.
+ *
+ * @param <O> The Open API version type.
+ * @param <T> The Open API sub-object.
+ */
 public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T> {
   private static final String MALFORMED_SPEC = "Malformed spec around '%s'";
   private static final String DUPLICATED_VALUES = "Duplicated values in '%s'";

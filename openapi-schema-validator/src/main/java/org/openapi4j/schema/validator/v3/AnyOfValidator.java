@@ -8,6 +8,13 @@ import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ANYOF;
 
+/**
+ * anyOf keyword validator.
+ * <p/>
+ * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject" />
+ * <p/>
+ * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
+ */
 class AnyOfValidator extends DiscriminatorValidator {
   AnyOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema, ANYOF);

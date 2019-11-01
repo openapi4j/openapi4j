@@ -1,5 +1,11 @@
 package org.openapi4j.core.exception;
 
+/**
+ * Exception for resolution representation.
+ * <p/>
+ * Resolution means that an expected resource has not been found or
+ * cannot be reached.
+ */
 public class ResolutionException extends Exception {
   public ResolutionException() {
     super();

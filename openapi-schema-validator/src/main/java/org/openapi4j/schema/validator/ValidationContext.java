@@ -7,6 +7,10 @@ import org.openapi4j.schema.validator.util.ExtValidatorInstance;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Validation context and option bag.
+ * @param <O> The Open API version type.
+ */
 public class ValidationContext<O extends OAI> {
   private final OAIContext<O> context;
   private final Map<String, JsonValidator<O>> visitedRefs = new HashMap<>();
@@ -21,10 +25,24 @@ public class ValidationContext<O extends OAI> {
     return context;
   }
 
+  /**
+   * Add a reference to avoid looping.
+   * This is internally used, you should not call this directly.
+   *
+   * @param ref       The reference expression.
+   * @param validator The associated validator.
+   */
   public void addReference(String ref, JsonValidator<O> validator) {
     visitedRefs.put(ref, validator);
   }
 
+  /**
+   * Get a visited reference validator in any.
+   * This is internally used, you should not call this directly.
+   *
+   * @param ref The reference expression.
+   * @return The associated validator.
+   */
   public JsonValidator<O> getReference(String ref) {
     return visitedRefs.get(ref);
   }
@@ -45,10 +63,22 @@ public class ValidationContext<O extends OAI> {
     return value != null && value;
   }
 
+  /**
+   * Get the additional validators associated to the context.
+   *
+   * @return this.
+   */
   public Map<String, ExtValidatorInstance<O>> getValidators() {
     return additionalValidators;
   }
 
+  /**
+   * Add an additional validator as an override or a custom one.
+   *
+   * @param keyword                The keyword to match.
+   * @param validatorInstantiation The instantiation to call when a validation should occur.
+   * @return this.
+   */
   public ValidationContext<O> addValidator(String keyword, ExtValidatorInstance<O> validatorInstantiation) {
     additionalValidators.put(keyword, validatorInstantiation);
     return this;

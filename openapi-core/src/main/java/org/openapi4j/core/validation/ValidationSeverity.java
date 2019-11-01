@@ -1,5 +1,8 @@
 package org.openapi4j.core.validation;
 
+/**
+ * The validation severity enumeration.
+ */
 public enum ValidationSeverity {
   NONE, INFO, WARNING, ERROR;
 

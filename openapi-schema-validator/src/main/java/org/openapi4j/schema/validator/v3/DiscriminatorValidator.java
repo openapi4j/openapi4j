@@ -19,9 +19,9 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAPPING;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PROPERTYNAME;
 
 /**
- * Discriminator validator.
+ * discriminator keyword validator.
  * <p/>
- * {@see https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#discriminatorObject}
+ * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#discriminatorObject" />
  */
 abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   private static final String INVALID_SCHEMA = "Schema selection can't be made for discriminator '%s'.";

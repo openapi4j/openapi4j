@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Representation of results from a validation process.
+ */
 @SuppressWarnings("unused")
 public class ValidationResults {
   // The validation items
@@ -14,46 +17,105 @@ public class ValidationResults {
   // We use treemap for performance to avoid array copies here
   private final Map<Integer, String> crumbs = new TreeMap<>();
 
+  /**
+   * Add a result.
+   *
+   * @param severity The given severity.
+   * @param msg      The associated message.
+   */
   public void add(ValidationSeverity severity, String msg) {
     items.add(new ValidationItem(severity, msg, crumbs));
   }
 
+  /**
+   * Add a result.
+   *
+   * @param severity The given severity.
+   * @param msg      The associated message.
+   * @param crumb    The path item to add the result.
+   */
   public void add(ValidationSeverity severity, String msg, String crumb) {
     items.add(new ValidationItem(severity, msg, crumbs, crumb));
   }
 
+  /**
+   * Add an info.
+   *
+   * @param msg The associated message.
+   */
   public void addInfo(String msg) {
     items.add(new ValidationItem(ValidationSeverity.INFO, msg, crumbs));
   }
 
+  /**
+   * Add an info.
+   *
+   * @param msg   The associated message.
+   * @param crumb The path item to add the result.
+   */
   public void addInfo(String msg, String crumb) {
     items.add(new ValidationItem(ValidationSeverity.INFO, msg, crumbs, crumb));
   }
 
+  /**
+   * Add a warning.
+   *
+   * @param msg The associated message.
+   */
   public void addWarning(String msg) {
     items.add(new ValidationItem(ValidationSeverity.WARNING, msg, crumbs));
   }
 
+  /**
+   * Add a warning.
+   *
+   * @param msg   The associated message.
+   * @param crumb The path item to add the result.
+   */
   public void addWarning(String msg, String crumb) {
     items.add(new ValidationItem(ValidationSeverity.WARNING, msg, crumbs, crumb));
   }
 
+  /**
+   * Add an error.
+   *
+   * @param msg The associated message.
+   */
   public void addError(String msg) {
     items.add(new ValidationItem(ValidationSeverity.ERROR, msg, crumbs));
   }
 
+  /**
+   * Add an error.
+   *
+   * @param msg   The associated message.
+   * @param crumb The path item to add the result.
+   */
   public void addError(String msg, String crumb) {
     items.add(new ValidationItem(ValidationSeverity.ERROR, msg, crumbs, crumb));
   }
 
+  /**
+   * Append other results to the current stack.
+   *
+   * @param results The stack to append.
+   */
   public void add(ValidationResults results) {
     items.addAll(results.getItems());
   }
 
+  /**
+   * Get the individual results.
+   */
   public Collection<ValidationItem> getItems() {
     return items;
   }
 
+  /**
+   * Get the current highest severity of the results.
+   *
+   * @return {@code ValidationSeverity.NONE} to {@code ValidationSeverity.ERROR}
+   */
   public ValidationSeverity getSeverity() {
     ValidationSeverity severity = ValidationSeverity.NONE;
     for (ValidationItem item : items) {
@@ -67,6 +129,12 @@ public class ValidationResults {
     return severity;
   }
 
+  /**
+   * Append a crumb to the current and trigger the runnable code with this new context.
+   *
+   * @param crumb The crumb to append.
+   * @param code  The code to run with the appended crumb.
+   */
   public void withCrumb(String crumb, Runnable code) {
     boolean append = false;
     try {
@@ -88,10 +156,19 @@ public class ValidationResults {
     return false;
   }
 
+  /**
+   * Check if the results are below the {@code ValidationSeverity.ERROR}
+   *
+   * @return {@code true} if the results are below {@code ValidationSeverity.ERROR}.
+   */
   public boolean isValid() {
     return getSeverity() != ValidationSeverity.ERROR;
   }
 
+  /**
+   * Get the number of items in the current stack.
+   * @return The number of items in the current stack.
+   */
   public int size() {
     return items.size();
   }

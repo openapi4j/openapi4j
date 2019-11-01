@@ -42,6 +42,14 @@ public class RequestValidator {
     operationValidators = new ConcurrentHashMap<>();
   }
 
+  /**
+   * The compile the given path/operation and fill the validators to associate with.
+   *
+   * @param path      The OAS path of the operation.
+   * @param operation The operation object from specification.
+   * @return The generated validator for the operation.
+   * @throws ResolutionException
+   */
   public OperationValidator compile(Path path, Operation operation) throws ResolutionException {
     requireNonNull(path, PATH_REQUIRED_ERR_MSG);
     requireNonNull(operation, OPERATION_REQUIRED_ERR_MSG);

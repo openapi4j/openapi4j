@@ -25,29 +25,63 @@ public class OAI3Context implements OAIContext<OAI3> {
   private final URI baseUri;
   private final List<AuthOption> authOptions;
 
+  /**
+   * Creates a context from the given uri.
+   *
+   * @param baseUri The given uri.
+   * @throws ResolutionException
+   */
   public OAI3Context(URI baseUri) throws ResolutionException {
     this(baseUri, null, null);
   }
 
+  /**
+   * Creates a context from the given uri.
+   *
+   * @param baseUri     The given uri.
+   * @param authOptions The authentication values.
+   * @throws ResolutionException
+   */
   public OAI3Context(URI baseUri, List<AuthOption> authOptions) throws ResolutionException {
     this(baseUri, authOptions, null);
   }
 
+  /**
+   * Creates a context from the given uri.
+   *
+   * @param baseUri The given uri.
+   * @param apiNode The tree node representing the Open API schema.
+   * @throws ResolutionException
+   */
   public OAI3Context(URI baseUri, JsonNode apiNode) throws ResolutionException {
     this(baseUri, null, apiNode);
   }
 
+  /**
+   * Creates a context from the given uri.
+   *
+   * @param baseUri     The given uri.
+   * @param authOptions The authentication values.
+   * @param apiNode     The tree node representing the Open API schema.
+   * @throws ResolutionException
+   */
   public OAI3Context(URI baseUri, List<AuthOption> authOptions, JsonNode apiNode) throws ResolutionException {
     this.baseUri = baseUri;
     this.authOptions = authOptions;
     resolveReferences(apiNode);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public ReferenceRegistry getReferenceRegistry() {
     return referenceRegistry;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public URI getBaseUri() {
     return baseUri;

@@ -12,6 +12,13 @@ import java.util.regex.Pattern;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PATTERN;
 
+/**
+ * pattern keyword validator.
+ * <p/>
+ * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject" />
+ * <p/>
+ * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-7" />
+ */
 class PatternValidator extends BaseJsonValidator<OAI3> {
   private static final String PATTERN_DEF_ERR_MSG = "Wrong pattern definition '%s'.";
   private static final String CONTENT_TYPE_ERR_MSG = "'%s' is not a string.";

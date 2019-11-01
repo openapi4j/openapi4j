@@ -1,7 +1,7 @@
 # Open API Schema Object validator
 
-Implementation of the [Schema Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject) specification for OpenAPI 3.0.x.  
-As a reminder, Schema Object is a subset of [JSON schema draft #00](https://www.ietf.org/archive/id/draft-wright-json-schema-validation-00.txt) with additions. 
+Implementation of the [Schema Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject) specification for Open API 3.  
+As a reminder, Schema Object is a subset of [JSON schema draft #00](https://tools.ietf.org/html/draft-wright-json-schema-validation-00) with additions. 
 
 ## Features
 
@@ -201,4 +201,4 @@ Any keyword missing in the following table has to be considered NOT supported.
 
 ## License
 
-The module is released under the Apache 2.0 license. See [LICENSE](#) for details.
+The module is released under the Apache 2.0 license. See [LICENSE](https://github.com/openapi4j/openapi4j/blob/master/LICENSE.md) for details.

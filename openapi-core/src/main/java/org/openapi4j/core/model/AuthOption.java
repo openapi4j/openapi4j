@@ -5,12 +5,19 @@ import java.util.function.Predicate;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * A representation of authentication value to be used for loading access restricted
+ * documents.
+ */
 public class AuthOption {
   private static final String TYPE_ERR_MSG = "Type is required.";
   private static final String KEY_ERR_MSG = "Key is required.";
   private static final String VALUE_ERR_MSG = "Value is required.";
   private static final String URL_MATCHER_ERR_MSG = "URL matcher is required.";
 
+  /**
+   * Where to apply the key/value of authentication.
+   */
   public enum Type {
     HEADER, QUERY
   }

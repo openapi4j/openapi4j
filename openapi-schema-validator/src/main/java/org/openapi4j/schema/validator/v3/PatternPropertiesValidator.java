@@ -13,6 +13,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * patternProperties keyword validator.
+ * <p/>
+ * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject" />
+ * <p/>
+ * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-9" />
+ */
 class PatternPropertiesValidator extends BaseJsonValidator<OAI3> {
   private final Map<Pattern, SchemaValidator> schemas = new IdentityHashMap<>();
 

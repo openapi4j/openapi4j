@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.EncodeException;
+import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.AuthOption;
 
 import java.io.InputStream;
@@ -15,8 +16,17 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * Utility class to manipulate tree structures.
+ */
 public final class TreeUtil {
+  /**
+   * The global JSON mapper.
+   */
   public static final ObjectMapper json = new ObjectMapper();
+  /**
+   * The global YAML mapper.
+   */
   public static final ObjectMapper yaml = new ObjectMapper(new YAMLFactory());
 
   private TreeUtil() {
@@ -82,10 +92,27 @@ public final class TreeUtil {
     }
   }
 
+  /**
+   * Load a document and attempts to convert it to the desired given class.
+   *
+   * @param url   The url of the resource to load.
+   * @param clazz The given class definition.
+   * @return The content mapped.
+   * @throws DecodeException
+   */
   public static <T> T load(final URL url, Class<T> clazz) throws DecodeException {
     return load(url, null, clazz);
   }
 
+  /**
+   * Load a document and attempts to convert it to the desired given class.
+   *
+   * @param url         The url of the resource to load.
+   * @param authOptions The authentication values.
+   * @param clazz       The given class definition.
+   * @return The content mapped.
+   * @throws DecodeException
+   */
   public static <T> T load(final URL url, final List<AuthOption> authOptions, Class<T> clazz) throws DecodeException {
     requireNonNull(url, "URL is required");
 
@@ -103,10 +130,25 @@ public final class TreeUtil {
     }
   }
 
+  /**
+   * Load a document and convert it to a tree node.
+   *
+   * @param url The url of the resource to load.
+   * @return The content mapped.
+   * @throws DecodeException
+   */
   public static JsonNode load(final URL url) throws DecodeException {
     return load(url, (List<AuthOption>) null);
   }
 
+  /**
+   * Load a document and convert it to a tree node.
+   *
+   * @param url         The url of the resource to load.
+   * @param authOptions The authentication values.
+   * @return The content mapped.
+   * @throws DecodeException
+   */
   public static JsonNode load(final URL url, final List<AuthOption> authOptions) throws DecodeException {
     requireNonNull(url, "URL is required");
 

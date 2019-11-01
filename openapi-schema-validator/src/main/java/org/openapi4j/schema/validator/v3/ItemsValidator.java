@@ -9,6 +9,13 @@ import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ITEMS;
 
+/**
+ * items keyword validator.
+ * <p/>
+ * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject" />
+ * <p/>
+ * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-7" />
+ */
 class ItemsValidator extends BaseJsonValidator<OAI3> {
   private final SchemaValidator schema;
 

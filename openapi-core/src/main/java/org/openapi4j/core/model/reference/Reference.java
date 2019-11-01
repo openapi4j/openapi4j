@@ -8,13 +8,20 @@ import org.openapi4j.core.util.TreeUtil;
 
 import java.net.URI;
 
+/**
+ * The reference model.
+ */
 public class Reference {
   private static final String CLASS_MISMATCH_ERR_MSG = "Unable to map reference '%s' from class '%s' with class '%s'.";
   private static final String ERR_MSG = "Unable to map reference '%s' content with class '%s'.";
 
+  // The URI from where the reference expression applies
   private final URI baseUri;
+  // The reference expression
   private final String ref;
+  // The raw content of the targeted reference expression
   private JsonNode content;
+  // The mapped content of the targeted reference expression
   private Object mappedContent;
 
   Reference(URI baseUri, String ref, JsonNode content) {

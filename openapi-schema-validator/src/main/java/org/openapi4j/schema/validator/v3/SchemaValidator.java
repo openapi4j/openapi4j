@@ -20,16 +20,34 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ADDITIONALPROPERTIE
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NULLABLE;
 import static org.openapi4j.schema.validator.v3.ValidationOptions.ADDITIONAL_PROPS_RESTRICT;
 
+/**
+ * Schema validation implementation.
+ * This is the entry point of all validators.
+ */
 public class SchemaValidator extends BaseJsonValidator<OAI3> {
   private static final JsonNode FALSE_NODE = JsonNodeFactory.instance.booleanNode(false);
 
   private final String propertyName;
   private final Map<String, JsonValidator<OAI3>> validators;
 
+  /**
+   * Create a new Schema validator this default values.
+   * A new context will be created.
+   *
+   * @param propertyName The property or root name of the schema.
+   * @param schemaNode   The schema specification.
+   */
   public SchemaValidator(final String propertyName, final JsonNode schemaNode) {
     this(null, propertyName, schemaNode, null, null);
   }
 
+  /**
+   * Create a new Schema validator with the given context.
+   *
+   * @param context      The context to use for validation.
+   * @param propertyName The property or root name of the schema.
+   * @param schemaNode   The schema specification.
+   */
   public SchemaValidator(final ValidationContext<OAI3> context,
                          final String propertyName,
                          final JsonNode schemaNode) {
@@ -37,6 +55,15 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
     this(context, propertyName, schemaNode, null, null);
   }
 
+  /**
+   * Create a new Schema validator with the given context.
+   *
+   * @param context          The context to use for validation.
+   * @param propertyName     The property or root name of the schema.
+   * @param schemaNode       The schema specification.
+   * @param schemaParentNode The tree node of the parent schema.
+   * @param parentSchema     The parent schema model.
+   */
   public SchemaValidator(final ValidationContext<OAI3> context,
                          final String propertyName,
                          final JsonNode schemaNode,
@@ -58,6 +85,9 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
     validators = read(this.context, schemaNode);
   }
 
+  /**
+   * Get the context of validation.
+   */
   public ValidationContext<OAI3> getContext() {
     return context;
   }
@@ -66,6 +96,9 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
     return (getParentSchema() != null) ? getParentSchema().findParent() : this;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
     results.withCrumb(propertyName, () -> {
@@ -75,6 +108,9 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
     });
   }
 
+  /**
+   * Read the schema and create dedicated validators from keywords.
+   */
   private Map<String, JsonValidator<OAI3>> read(final ValidationContext<OAI3> context, final JsonNode schemaNode) {
     Map<String, JsonValidator<OAI3>> validators = new HashMap<>();
 

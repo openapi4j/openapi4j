@@ -8,6 +8,13 @@ import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ONEOF;
 
+/**
+ * oneOf keyword validator.
+ * <p/>
+ * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject" />
+ * <p/>
+ * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
+ */
 class OneOfValidator extends DiscriminatorValidator {
   private static final String NO_VALID_SCHEMA_ERR_MSG = "No valid schema.";
   private static final String MANY_VALID_SCHEMA_ERR_MSG = "More than 1 schema is valid.";

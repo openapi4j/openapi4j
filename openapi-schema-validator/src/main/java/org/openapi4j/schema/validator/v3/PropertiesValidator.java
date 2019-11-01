@@ -11,6 +11,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * properties keyword validator.
+ * <p/>
+ * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject" />
+ * <p/>
+ * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-9" />
+ */
 class PropertiesValidator extends BaseJsonValidator<OAI3> {
   private final Map<String, SchemaValidator> schemas;
 

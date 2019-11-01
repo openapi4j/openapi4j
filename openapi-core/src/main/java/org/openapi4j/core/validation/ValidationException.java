@@ -1,5 +1,8 @@
 package org.openapi4j.core.validation;
 
+/**
+ * Representation of a validation error.
+ */
 public class ValidationException extends Exception {
   private ValidationResults results;
 
@@ -13,10 +16,13 @@ public class ValidationException extends Exception {
 
   public ValidationException(String message, ValidationResults results) {
     super(message);
-
     this.results = results;
   }
 
+  /**
+   * Get associated results from the validation.
+   * @return
+   */
   public ValidationResults getResults() {
     return results;
   }

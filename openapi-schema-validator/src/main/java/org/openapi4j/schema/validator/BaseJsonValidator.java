@@ -7,7 +7,12 @@ import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
 
+/**
+ * The base class of all validators.
+ */
 public abstract class BaseJsonValidator<O extends OAI> implements JsonValidator<O> {
+  private static final String VALIDATION_ERR_MSG = "Schema validation failed";
+
   private final JsonNode schemaNode;
   private final JsonNode schemaParentNode;
   private final SchemaValidator parentSchema;
@@ -28,7 +33,7 @@ public abstract class BaseJsonValidator<O extends OAI> implements JsonValidator<
     validate(valueNode, results);
 
     if (results.size() != 0) {
-      throw new ValidationException("Schema validation failed", results);
+      throw new ValidationException(VALIDATION_ERR_MSG, results);
     }
   }
 

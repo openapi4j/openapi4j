@@ -9,6 +9,13 @@ import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINPROPERTIES;
 
+/**
+ * minProperties keyword validator.
+ * <p/>
+ * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject" />
+ * <p/>
+ * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-9" />
+ */
 class MinPropertiesValidator extends BaseJsonValidator<OAI3> {
   private static final String ERR_MSG = "Minimum is '%s', found '%s'.";
 

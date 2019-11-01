@@ -8,6 +8,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+/**
+ * Utility class to wrap a multivalued key.
+ * The key type is always {@link java.lang.String}.
+ *
+ * @param <V> The type of the values.
+ */
 @SuppressWarnings("unused")
 public class MultiStringMap<V> {
   private final boolean caseSensitive;

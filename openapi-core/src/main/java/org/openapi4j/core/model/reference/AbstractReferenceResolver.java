@@ -9,6 +9,10 @@ import org.openapi4j.core.util.TreeUtil;
 import java.net.URI;
 import java.util.*;
 
+/**
+ * Base class for JSON reference resolution implementation.
+ * See <a href="https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03">JSON reference specification</a>.
+ */
 public abstract class AbstractReferenceResolver {
   private static final String LOAD_DOC_ERR_MSG = "Failed to load document from '%s'";
   private static final String CYCLING_REF_ERR_MSG = "Cycling reference with the following chain :\n%s";

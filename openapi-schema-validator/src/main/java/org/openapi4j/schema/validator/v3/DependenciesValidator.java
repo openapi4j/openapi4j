@@ -15,6 +15,13 @@ import java.util.Map;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEPENDENCIES;
 
+/**
+ * dependencies keyword validator.
+ * <p/>
+ * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject" />
+ * <p/>
+ * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-10" />
+ */
 public class DependenciesValidator extends BaseJsonValidator<OAI3> {
   private final Map<String, Collection<String>> dependentProps = new HashMap<>();
   private Map<String, SchemaValidator> dependentSchemas = new HashMap<>();

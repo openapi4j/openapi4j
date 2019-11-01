@@ -10,17 +10,11 @@ import org.openapi4j.schema.validator.ValidationContext;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINLENGTH;
 
 /**
- * A string instance is valid against this keyword if its length is
- * greater than, or equal to, the value of this keyword.
- * <p>
- * The length of a string instance is defined as the number of its
- * characters as defined by RFC 7159 [RFC7159].
- * <p>
- * The value of this keyword MUST be an integer.  This integer MUST be
- * greater than, or equal to, 0.
- * <p>
- * "minLength", if absent, may be considered as being present with
- * integer value 0.
+ * minLength keyword validator.
+ * <p/>
+ * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject" />
+ * <p/>
+ * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-7" />
  */
 class MinLengthValidator extends BaseJsonValidator<OAI3> {
   private static final String ERR_MSG = "Minimum is '%s', found '%s'.";

@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The reference registry cache
+ */
 public class ReferenceRegistry {
   private final Map<String, Reference> references = new HashMap<>();
 

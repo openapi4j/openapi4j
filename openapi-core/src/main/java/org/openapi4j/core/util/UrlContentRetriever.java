@@ -12,10 +12,26 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.openapi4j.core.model.AuthOption.Type.HEADER;
 import static org.openapi4j.core.model.AuthOption.Type.QUERY;
 
+/**
+ * Utility class to assign authentication values to a request.
+ * This class works for any handlers File, HTTP, ...
+ */
 public final class UrlContentRetriever {
   private static final String ACCEPT_HEADER_VALUE = "application/json, application/yaml, */*";
   private static final int MAX_REDIRECTS = 5;
 
+  /**
+   * Get the content of the targeted URL with the given authentication values if any.
+   * For HTTP requests, HTTP method GET is used
+   * Also, this method allows following up to 5 redirects.
+   *
+   * For other handlers, these options are ignored.
+   *
+   * @param url         The url to request from.
+   * @param authOptions The authentication values.
+   * @return The content of the resource.
+   * @throws Exception
+   */
   public static InputStream get(final URL url, final List<AuthOption> authOptions) throws Exception {
     URLConnection conn;
     URL inUrl = url;
@@ -76,7 +92,7 @@ public final class UrlContentRetriever {
         if ((statusCode == 301 || statusCode == 302) || newLocation != null) {
           loop = MAX_REDIRECTS > ++nbRedirects;
           if (!loop) {
-            throw new ResolutionException("Too many redirections.");
+            throw new ResolutionException("Too many redirects.");
           }
           inUrl = new URL(cleanUrl(newLocation));
         }

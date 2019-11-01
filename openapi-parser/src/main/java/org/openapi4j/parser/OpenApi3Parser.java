@@ -20,6 +20,9 @@ public class OpenApi3Parser extends OpenApiParser<OpenApi3> {
   private static final String NULL_SPEC_URL = "Failed to load spec from 'null' location";
   private static final String INVALID_SPEC = "Failed to load spec at '%s'";
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public OpenApi3 parse(URL url, List<AuthOption> authOptions, boolean validate) throws ResolutionException, ValidationException {
     if (url == null) {

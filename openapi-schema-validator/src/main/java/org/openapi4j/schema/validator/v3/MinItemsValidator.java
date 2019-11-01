@@ -9,6 +9,13 @@ import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINITEMS;
 
+/**
+ * minItems keyword validator.
+ * <p/>
+ * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject" />
+ * <p/>
+ * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-8" />
+ */
 class MinItemsValidator extends BaseJsonValidator<OAI3> {
   private static final String ERR_MSG = "Min items is '%s', found '%s'.";
 
