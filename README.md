@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/openapi4j/openapi4j.svg?branch=master)](https://travis-ci.org/openapi4j/openapi4j)
+
 # OpenAPI for java project home
 
 This is the home page of the openapi4j project for Java (or JVM platform in general).
