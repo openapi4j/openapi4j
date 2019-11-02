@@ -1,7 +1,7 @@
 plugins {
-  id "java-library"
-  id "maven-publish"
-  id "signing"
+  id 'java-library'
+  id 'maven-publish'
+  id 'signing'
 }
 
 description = "openapi4j core utils & JSON reference resolver"

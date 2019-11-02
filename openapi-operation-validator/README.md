@@ -42,8 +42,6 @@ Requests and responses are wrapped with the specific adapter.
 ```java
 // Pseudo
 Request request = [Adapter]Request.of([AdapterRequestObject] rq);
-// Vert.x
-Request request = VertxRequest.of(RoutingContext rc);
 
 // validate...
 ```

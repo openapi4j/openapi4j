@@ -2,9 +2,18 @@ language: java
 
 cache:
   directories:
-    - $HOME/.m2
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
+  - "$HOME/.m2"
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
 
 before_install:
-  - chmod +x gradlew
+- chmod +x gradlew
+
+addons:
+  sonarcloud:
+    organization: "openapi4j"
+    token:
+      secure: "KX7DnHVFb35TufoOm3YjXBRVKEPgqX55ttSQw8qzIE5UQyn6O409BKOzEVPbghjClzLyy7nWt1nV7TMibtRpdHgKYHuFaEEk2gy6YLe69bDqHsISTbIPOJ2yjIOvEhZWPCeNBjkxoUnPzyq1NPxDmnVzXbbSlkuML6zFgWeq3Qzcb0QE8ao79Pky5/zpHtcr2eE5oNxS02sv3dJcXDPvo+As4VxzHsmqWDrojwr4OzPur8VxlrrL/m+QhGsUkL7aHAPR5Fu6SmAZ5uoXuoUuP6O+L0qj1HK3dFUM5qGvbyfFKnZGMmE6hIj6kfkowjyOeYygxjCD6ZrIS+quas5yxYgleZmVXbKfVfjPce9r5rMjWDW/bgmd69MEcFEU9mD9PVxo1YgfrAbUIVgxKzp/rUh35tutyXEQKntTC3R4Tl4M3pAkbyLqPbeVrHA4ncW0U76A/OVyKKjLbLMZq9E3YmPQ9vKPp6xAu65SGSkY0ZNpMOmwcdugUTW73BxujefDUAe+Qbnwt3cLi4bpVo/X5uWHkaRXNogTrUoL0Zh+HvcpOuYbgi428CjKYZjSiDrgOBPH4xNYA+YObYuwvHsbh8q2Ki6eLj5AfSQteUy8rIQxW9MitvOtccd0L13QtErPFYtCmTaeuAYo0vTiGJSE5Ixd5TmpsG1RlJoiNkyiK4A="
+
+script:
+  - ./gradlew sonarqube
