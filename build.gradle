@@ -25,10 +25,4 @@ allprojects {
     mavenCentral()
     mavenLocal()
   }
-
-  sonarqube {
-    properties {
-      sonar.projectKey = openapi4j_openapi4j
-    }
-  }
 }
