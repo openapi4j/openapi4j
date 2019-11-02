@@ -120,7 +120,7 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
       return null;
     }
 
-    if (required != Boolean.TRUE) {
+    if (!Boolean.TRUE.equals(required)) {
       results.addError(String.format(REQUIRED_PATH_PARAM, name, path), REQUIRED);
     }
 

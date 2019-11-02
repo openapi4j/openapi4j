@@ -77,6 +77,7 @@ class FormStyleConverter extends AbstractFlatStyleConverter {
           paramValues.put(propEntry[0], propEntry[1]);
         }
       }
+      scanner.close();
       return paramValues;
     } else {
       Matcher matcher = REGEX.matcher(rawValue);

@@ -23,6 +23,7 @@ abstract class AbstractFlatStyleConverter extends AbstractStyleConverter {
           String[] propEntry = scanner.next().split("=");
           values.put(propEntry[0], propEntry[1]);
         }
+        scanner.close();
       } else {
         String[] splitValues = rawValue.split(splitPattern);
         int i = 0;

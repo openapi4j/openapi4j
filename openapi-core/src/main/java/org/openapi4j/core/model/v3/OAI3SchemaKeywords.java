@@ -4,6 +4,8 @@ package org.openapi4j.core.model.v3;
  * All the keywords for Open API 3 Schema Object.
  */
 public final class OAI3SchemaKeywords {
+  private OAI3SchemaKeywords() {}
+
   public static final String ADDITIONALPROPERTIES = "additionalProperties";
   public static final String ALLOF = "allOf";
   public static final String ANYOF = "anyOf";
