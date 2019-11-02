@@ -1,7 +1,6 @@
 package org.openapi4j.operation.validator;
 
 import org.junit.Test;
-import org.openapi4j.operation.validator.model.Headers;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.model.impl.DefaultRequest;
@@ -19,7 +18,7 @@ public class DefaultRequestTest {
 
     DefaultRequest.Builder rqBuilder = new DefaultRequest.Builder(Request.Method.POST, "/");
     Request rq = rqBuilder
-      .header(Headers.CONTENT_TYPE, "application/x-www-form-urlencoded; charset=utf-8")
+      .header("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
       .body(Body.from("fieldInt=1&fieldString=value%202&fieldBool= true &fieldFloat=1.2&fieldArray=1&fieldArray=2"))
       .build();
 
@@ -67,7 +66,7 @@ public class DefaultRequestTest {
 
     DefaultRequest.Builder rqBuilder = new DefaultRequest.Builder(Request.Method.POST, "/");
     Request rq = rqBuilder
-      .header(Headers.CONTENT_TYPE, "multipart/form-data;boundary=\"1234\"")
+      .header("Content-Type", "multipart/form-data;boundary=\"1234\"")
       .body(Body.from(body))
       .build();
 
@@ -83,7 +82,7 @@ public class DefaultRequestTest {
 
     DefaultRequest.Builder rqBuilder = new DefaultRequest.Builder(Request.Method.POST, "/");
     Request rq = rqBuilder
-      .header(Headers.CONTENT_TYPE, "application/json")
+      .header("Content-Type", "application/json")
       .body(Body.from("{\n" +
         "  \"fieldInt\": 1,\n" +
         "  \"fieldString\": \"pokfpokdf\",\n" +
@@ -105,7 +104,7 @@ public class DefaultRequestTest {
 
     DefaultRequest.Builder rqBuilder = new DefaultRequest.Builder(Request.Method.POST, "/");
     Request rq = rqBuilder
-      .header(Headers.CONTENT_TYPE, "application/xml")
+      .header("Content-Type", "application/xml")
       .body(Body.from("<FooModel id=\"123\">\n" +
         "  <fieldInt>1</fieldInt>\n" +
         "  <sample:fieldString xmlns:sample=\"http://example.com/schema/sample\">a value</sample:fieldString>\n" +

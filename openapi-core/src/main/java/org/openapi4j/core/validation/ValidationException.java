@@ -4,14 +4,18 @@ package org.openapi4j.core.validation;
  * Representation of a validation error.
  */
 public class ValidationException extends Exception {
-  private ValidationResults results;
+  private static final long serialVersionUID = 1905122041950251207L;
+
+  private final ValidationResults results;
 
   public ValidationException(String message) {
     super(message);
+    results = null;
   }
 
   public ValidationException(Throwable cause) {
     super(cause);
+    results = null;
   }
 
   public ValidationException(String message, ValidationResults results) {

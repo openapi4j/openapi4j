@@ -160,7 +160,7 @@ public class ValidationTest {
 
   @Test
   public void overriddenValidation() throws Exception {
-    Map<String, ExtValidatorInstance<OAI3>> validators = new HashMap<>();
+    Map<String, ExtValidatorInstance> validators = new HashMap<>();
     validators.put(OAI3SchemaKeywords.MAXIMUM, MaximumToleranceValidator::create);
     validators.put("x-myentity-val", MyEntityValidator::create);
     ValidationUtil.validate("/schema/override/maximumTolerance.json", null, validators);
@@ -168,7 +168,7 @@ public class ValidationTest {
 
   @Test
   public void additionalValidation() throws Exception {
-    Map<String, ExtValidatorInstance<OAI3>> validators = new HashMap<>();
+    Map<String, ExtValidatorInstance> validators = new HashMap<>();
     validators.put("x-myentity-val", MyEntityValidator::create);
     ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators);
   }

@@ -30,6 +30,8 @@ public class OpenApi3Validator {
   }
 
   static class Config {
+    private Config() {}
+
     static boolean SECURITY_REQ_SCOPES_STRICT = true;
   }
 }

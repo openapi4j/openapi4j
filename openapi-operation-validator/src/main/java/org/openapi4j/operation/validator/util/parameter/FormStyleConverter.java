@@ -27,7 +27,7 @@ class FormStyleConverter extends AbstractFlatStyleConverter {
   }
 
   @Override
-  JsonNode convert(Parameter param, String rawValue) throws ResolutionException {
+  public JsonNode convert(Parameter param, String rawValue) {
     String type = param.getSchema().getType();
     Map<String, Object> paramValues;
 
@@ -42,7 +42,7 @@ class FormStyleConverter extends AbstractFlatStyleConverter {
     return convert(param, paramValues);
   }
 
-  private Map<String, Object> getArrayValues(Parameter param, String rawValue) throws ResolutionException {
+  private Map<String, Object> getArrayValues(Parameter param, String rawValue) {
     Map<String, Object> paramValues = new HashMap<>();
 
     List<String> arrayValues = new ArrayList<>();
@@ -63,7 +63,7 @@ class FormStyleConverter extends AbstractFlatStyleConverter {
     return paramValues;
   }
 
-  private Map<String, Object> getObjectValues(Parameter param, String rawValue) throws ResolutionException {
+  private Map<String, Object> getObjectValues(Parameter param, String rawValue) {
     Schema paramSchema = param.getSchema();
 
     if (param.isExplode()) {
@@ -87,7 +87,7 @@ class FormStyleConverter extends AbstractFlatStyleConverter {
     }
   }
 
-  private Map<String, Object> getPrimitiveValue(Parameter param, String rawValue) throws ResolutionException {
+  private Map<String, Object> getPrimitiveValue(Parameter param, String rawValue) {
     Map<String, Object> paramValues = new HashMap<>();
     String paramName = param.getName();
 

@@ -28,10 +28,10 @@ class Swagger implements PerfParser {
   }
 
   private ParseOptions getParseOptions() {
-    ParseOptions options = new ParseOptions();
-    options.setResolve(true);
-    options.setResolveCombinators(false);
-    options.setResolveFully(true);
-    return options;
+    ParseOptions parseOptions = new ParseOptions();
+    parseOptions.setResolve(true);
+    parseOptions.setResolveCombinators(false);
+    parseOptions.setResolveFully(true);
+    return parseOptions;
   }
 }

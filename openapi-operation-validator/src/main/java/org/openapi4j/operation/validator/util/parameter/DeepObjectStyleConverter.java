@@ -23,7 +23,7 @@ class DeepObjectStyleConverter extends AbstractFlatStyleConverter {
   }
 
   @Override
-  JsonNode convert(Parameter param, String rawValue) {
+  public JsonNode convert(Parameter param, String rawValue) {
     if (rawValue == null) {
       return JsonNodeFactory.instance.nullNode();
     }

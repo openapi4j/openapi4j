@@ -165,7 +165,7 @@ class OAI3PathConverter {
 
   private boolean isAllOfSchema(Schema schema) {
     if (schema == null) return false;
-    return (schema.getAllOfSchemas() != null && schema.getAllOfSchemas().size() != 0);
+    return (schema.getAllOfSchemas() != null && !schema.getAllOfSchemas().isEmpty());
   }
 
   private Map<String, Schema> solveObjectSchema(Schema schema) throws ResolutionException {

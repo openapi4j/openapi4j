@@ -12,8 +12,8 @@ import org.openapi4j.schema.validator.v3.SchemaValidator;
  * Represents a function that creates a new instance of validator extension.
  */
 @FunctionalInterface
-public interface ExtValidatorInstance<O extends OAI> {
-  JsonValidator<O> apply(
+public interface ExtValidatorInstance {
+  JsonValidator apply(
     final ValidationContext<OAI3> context,
     final JsonNode schemaNode,
     final JsonNode schemaParentNode,

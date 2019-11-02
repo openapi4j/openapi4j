@@ -253,7 +253,7 @@ public class ValidationResults {
 
       if (additionalCrumb != null) {
         stringBuilder.append(additionalCrumb);
-      } else if (crumbs.size() != 0) {
+      } else if (!crumbs.isEmpty()) {
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
       }
 

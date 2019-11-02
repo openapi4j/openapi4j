@@ -10,6 +10,8 @@ import org.openapi4j.parser.model.v3.Schema;
 import java.util.Collection;
 import java.util.Map;
 
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
+
 public final class TypeConverter {
   private static final TypeConverter INSTANCE = new TypeConverter();
 
@@ -23,11 +25,11 @@ public final class TypeConverter {
   public JsonNode convertTypes(final Schema schema,
                                final Map<String, Object> content) {
 
-    String type = schema.getType() != null ? schema.getType() : "object";
+    String type = schema.getType() != null ? schema.getType() : TYPE_OBJECT;
     switch (type) {
-      case "array":
+      case TYPE_ARRAY:
         return convertArray(schema.getItemsSchema(), content);
-      case "object":
+      case TYPE_OBJECT:
       default:
         return convertObject(schema, content);
     }
@@ -49,23 +51,23 @@ public final class TypeConverter {
 
       Object value = content.get(entryKey);
       if (value == null) {
-        convertedContent.put(entryKey, JsonNodeFactory.instance.nullNode());
+        convertedContent.set(entryKey, JsonNodeFactory.instance.nullNode());
         continue;
       }
 
       Schema propSchema = entry.getValue();
-      String type = propSchema.getType() != null ? propSchema.getType() : "object";
+      String type = propSchema.getType() != null ? propSchema.getType() : TYPE_OBJECT;
       switch (type) {
-        case "object":
+        case TYPE_OBJECT:
           if (value instanceof Map) {
-            convertedContent.put(entryKey, convertObject(propSchema, (Map<String, Object>) value));
+            convertedContent.set(entryKey, convertObject(propSchema, (Map<String, Object>) value));
           }
           break;
-        case "array":
-          convertedContent.put(entryKey, convertArray(propSchema.getItemsSchema(), value));
+        case TYPE_ARRAY:
+          convertedContent.set(entryKey, convertArray(propSchema.getItemsSchema(), value));
           break;
         default:
-          convertedContent.put(entryKey, convertPrimitiveType(propSchema, value));
+          convertedContent.set(entryKey, convertPrimitiveType(propSchema, value));
           break;
       }
     }
@@ -83,14 +85,14 @@ public final class TypeConverter {
 
     ArrayNode convertedContent = JsonNodeFactory.instance.arrayNode();
 
-    String type = schema.getType() != null ? schema.getType() : "object";
+    String type = schema.getType() != null ? schema.getType() : TYPE_OBJECT;
     switch (type) {
-      case "object":
+      case TYPE_OBJECT:
         if (content instanceof Map) {
           convertedContent.add(convertObject(schema, (Map<String, Object>) content));
         }
         break;
-      case "array":
+      case TYPE_ARRAY:
         convertedContent.add(convertArray(schema.getItemsSchema(), content));
         break;
       default:
@@ -110,23 +112,23 @@ public final class TypeConverter {
       return JsonNodeFactory.instance.nullNode();
     }
 
-    String type = schema.getType() != null ? schema.getType() : "object";
+    String type = schema.getType() != null ? schema.getType() : TYPE_OBJECT;
     switch (type) {
-      case "boolean":
+      case TYPE_BOOLEAN:
         return JsonNodeFactory.instance.booleanNode(Boolean.parseBoolean(value.toString()));
-      case "integer":
-        if ("int32".equals(schema.getFormat())) {
+      case TYPE_INTEGER:
+        if (FORMAT_INT32.equals(schema.getFormat())) {
           return JsonNodeFactory.instance.numberNode(Integer.parseInt(value.toString()));
         } else {
           return JsonNodeFactory.instance.numberNode(Long.parseLong(value.toString()));
         }
-      case "number":
-        if ("float".equals(schema.getFormat())) {
+      case TYPE_NUMBER:
+        if (FORMAT_FLOAT.equals(schema.getFormat())) {
           return JsonNodeFactory.instance.numberNode(Float.parseFloat(value.toString()));
         } else {
           return JsonNodeFactory.instance.numberNode(Double.parseDouble(value.toString()));
         }
-      case "string":
+      case TYPE_STRING:
       default:
         return JsonNodeFactory.instance.textNode(value.toString());
     }

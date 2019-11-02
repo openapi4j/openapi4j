@@ -21,7 +21,7 @@ class ReferenceValidator extends BaseJsonValidator<OAI3> {
   private static final String HASH = "#";
 
   private final String refValue;
-  private JsonValidator<OAI3> schemaValidator;
+  private JsonValidator schemaValidator;
 
   ReferenceValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
@@ -32,7 +32,7 @@ class ReferenceValidator extends BaseJsonValidator<OAI3> {
     } else {
       Reference reference = context.getContext().getReferenceRegistry().getRef(refValue);
       // Check visited references to avoid infinite loops
-      JsonValidator<OAI3> validator = context.getReference(refValue);
+      JsonValidator validator = context.getReference(refValue);
       if (validator == null) {
         ReferenceValidator refValidator = new ReferenceValidator(context, refValue, schemaNode, schemaParentNode, parentSchema);
         context.addReference(refValue, refValidator);
@@ -64,7 +64,7 @@ class ReferenceValidator extends BaseJsonValidator<OAI3> {
     this.refValue = refValue;
   }
 
-  private void setSchemaValidator(JsonValidator<OAI3> schemaValidator) {
+  private void setSchemaValidator(JsonValidator schemaValidator) {
     this.schemaValidator = schemaValidator;
   }
 

@@ -79,7 +79,7 @@ class LinkValidator extends ExpressionValidator<Link> {
       // Check expression against current operation
       checkSourceOperationParameters(api, srcOperation, link, results);
       // Check link parameter names are available in target operation
-      checkTargetOperationParameters(api, targetOperation, link, results);
+      checkTargetOperationParameters(targetOperation, link, results);
     }
   }
 
@@ -120,7 +120,7 @@ class LinkValidator extends ExpressionValidator<Link> {
     }
   }
 
-  private void checkTargetOperationParameters(OpenApi3 api, Operation operation, Link link, ValidationResults results) {
+  private void checkTargetOperationParameters(Operation operation, Link link, ValidationResults results) {
     for (String paramName : link.getParameters().keySet()) {
       boolean hasParameter = false;
       for (Parameter param : operation.getParameters()) {

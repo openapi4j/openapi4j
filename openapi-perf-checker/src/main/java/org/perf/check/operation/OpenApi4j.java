@@ -2,7 +2,6 @@ package org.perf.check.operation;
 
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.validation.ValidationException;
-import org.openapi4j.operation.validator.model.Headers;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.model.impl.DefaultRequest;
@@ -31,7 +30,7 @@ class OpenApi4j {
   void validate() throws ValidationException {
     DefaultRequest.Builder rqBuilder = new DefaultRequest.Builder(Request.Method.POST, "/");
     Request rq = rqBuilder
-      .header(Headers.CONTENT_TYPE, "application/x-www-form-urlencoded; charset=utf-8")
+      .header("Content-Type", "application/x-www-form-urlencoded; charset=utf-8")
       .body(Body.from("fieldInt=1&field%20space=value%202&fieldBool= true &fieldFloat=1.2"))
       .build();
 

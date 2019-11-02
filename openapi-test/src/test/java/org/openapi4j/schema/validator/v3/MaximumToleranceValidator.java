@@ -57,7 +57,7 @@ public class MaximumToleranceValidator extends BaseJsonValidator<OAI3> {
     }
   }
 
-  public static JsonValidator<OAI3> create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
+  public static JsonValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new MaximumToleranceValidator(context, schemaNode, schemaParentNode, parentSchema, 0.1);
   }
 }

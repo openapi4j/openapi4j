@@ -9,10 +9,10 @@ import org.openapi4j.parser.model.v3.Schema;
 
 import java.util.Map;
 
-abstract class AbstractStyleConverter {
-  abstract JsonNode convert(Parameter param, String rawValue) throws ResolutionException;
+interface StyleConverter {
+  JsonNode convert(Parameter param, String rawValue) throws ResolutionException;
 
-  JsonNode convert(Parameter param, Map<String, Object> paramValues) {
+  default JsonNode convert(Parameter param, Map<String, Object> paramValues) {
     String style = param.getSchema().getType();
     Schema schema = param.getSchema();
 

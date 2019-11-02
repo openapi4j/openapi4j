@@ -13,9 +13,9 @@ import java.util.Map;
  */
 public class ValidationContext<O extends OAI> {
   private final OAIContext<O> context;
-  private final Map<String, JsonValidator<O>> visitedRefs = new HashMap<>();
+  private final Map<String, JsonValidator> visitedRefs = new HashMap<>();
   private final Map<Byte, Boolean> defaultOptions = new HashMap<>();
-  private final Map<String, ExtValidatorInstance<O>> additionalValidators = new HashMap<>();
+  private final Map<String, ExtValidatorInstance> additionalValidators = new HashMap<>();
 
   public ValidationContext(OAIContext<O> context) {
     this.context = context;
@@ -32,7 +32,7 @@ public class ValidationContext<O extends OAI> {
    * @param ref       The reference expression.
    * @param validator The associated validator.
    */
-  public void addReference(String ref, JsonValidator<O> validator) {
+  public void addReference(String ref, JsonValidator validator) {
     visitedRefs.put(ref, validator);
   }
 
@@ -43,7 +43,7 @@ public class ValidationContext<O extends OAI> {
    * @param ref The reference expression.
    * @return The associated validator.
    */
-  public JsonValidator<O> getReference(String ref) {
+  public JsonValidator getReference(String ref) {
     return visitedRefs.get(ref);
   }
 
@@ -68,7 +68,7 @@ public class ValidationContext<O extends OAI> {
    *
    * @return this.
    */
-  public Map<String, ExtValidatorInstance<O>> getValidators() {
+  public Map<String, ExtValidatorInstance> getValidators() {
     return additionalValidators;
   }
 
@@ -79,7 +79,7 @@ public class ValidationContext<O extends OAI> {
    * @param validatorInstantiation The instantiation to call when a validation should occur.
    * @return this.
    */
-  public ValidationContext<O> addValidator(String keyword, ExtValidatorInstance<O> validatorInstantiation) {
+  public ValidationContext<O> addValidator(String keyword, ExtValidatorInstance validatorInstantiation) {
     additionalValidators.put(keyword, validatorInstantiation);
     return this;
   }

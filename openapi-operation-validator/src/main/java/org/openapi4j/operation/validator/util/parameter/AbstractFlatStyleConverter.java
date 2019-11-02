@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-abstract class AbstractFlatStyleConverter extends AbstractStyleConverter {
+abstract class AbstractFlatStyleConverter implements StyleConverter {
   Map<String, Object> getParameterValues(Parameter param, String rawValue, String splitPattern) {
     Map<String, Object> values = new HashMap<>();
 

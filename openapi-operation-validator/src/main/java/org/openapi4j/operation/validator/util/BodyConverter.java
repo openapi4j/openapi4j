@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
  * Convert supported media types to abstract tree nodes.
  */
 public final class BodyConverter {
+  private BodyConverter() {}
+
   public static JsonNode formUrlEncodedToNode(final Schema schema, final InputStream body, String encoding) {
     return FormUrlConverter.instance().formUrlEncodedToNode(schema, streamToString(body, Charset.forName(encoding)), encoding);
   }

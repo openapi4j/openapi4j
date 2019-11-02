@@ -41,6 +41,6 @@ public interface Response {
    * @return The content-type header, or empty if it has not been set.
    */
   default Optional<String> getContentType() {
-    return getHeaderValue(Headers.CONTENT_TYPE);
+    return getHeaderValue("Content-Type");
   }
 }

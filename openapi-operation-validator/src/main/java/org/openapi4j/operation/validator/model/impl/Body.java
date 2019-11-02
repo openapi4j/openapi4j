@@ -13,6 +13,8 @@ import java.util.Map;
 import static java.util.Objects.requireNonNull;
 
 public class Body {
+  private static final String BODY_REQUIRED_ERR_MSG = "Body content is required.";
+
   private final Map<String, Object> bodyMap;
   private final JsonNode bodyNode;
   private final String bodyStr;
@@ -62,7 +64,7 @@ public class Body {
    * @return The constructed body.
    */
   public static Body from(JsonNode body) {
-    requireNonNull(body, "Body content is required.");
+    requireNonNull(body, BODY_REQUIRED_ERR_MSG);
     return new Body(body);
   }
 
@@ -74,7 +76,7 @@ public class Body {
    * @return The constructed body.
    */
   public static Body from(Map<String, Object> body) {
-    requireNonNull(body, "Body content is required.");
+    requireNonNull(body, BODY_REQUIRED_ERR_MSG);
     return new Body(body);
   }
 
@@ -88,7 +90,7 @@ public class Body {
    * @return The constructed body.
    */
   public static Body from(String body) {
-    requireNonNull(body, "Body content is required.");
+    requireNonNull(body, BODY_REQUIRED_ERR_MSG);
     return new Body(body);
   }
 
@@ -102,7 +104,7 @@ public class Body {
    * @return The constructed body.
    */
   public static Body from(InputStream body) {
-    requireNonNull(body, "Body content is required.");
+    requireNonNull(body, BODY_REQUIRED_ERR_MSG);
     return new Body(body);
   }
 

@@ -3,10 +3,8 @@ package org.openapi4j.core.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.EncodeException;
-import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.AuthOption;
 
 import java.io.InputStream;
@@ -117,7 +115,7 @@ public final class TreeUtil {
     requireNonNull(url, "URL is required");
 
     try {
-      InputStream in = UrlContentRetriever.get(url, authOptions);
+      InputStream in = UrlContentRetriever.instance().get(url, authOptions);
       String json = IOUtil.toString(in, StandardCharsets.UTF_8).trim();
 
       if (json.startsWith("{") || json.startsWith("[")) {
@@ -153,7 +151,7 @@ public final class TreeUtil {
     requireNonNull(url, "URL is required");
 
     try {
-      InputStream in = UrlContentRetriever.get(url, authOptions);
+      InputStream in = UrlContentRetriever.instance().get(url, authOptions);
       String json = IOUtil.toString(in, StandardCharsets.UTF_8).trim();
 
       if (json.startsWith("{") || json.startsWith("[")) {

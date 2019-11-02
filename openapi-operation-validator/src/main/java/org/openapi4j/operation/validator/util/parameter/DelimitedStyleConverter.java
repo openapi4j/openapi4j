@@ -23,7 +23,7 @@ class DelimitedStyleConverter extends AbstractFlatStyleConverter {
   }
 
   @Override
-  JsonNode convert(Parameter param, String rawValue) throws ResolutionException {
+  public JsonNode convert(Parameter param, String rawValue) throws ResolutionException {
     if (rawValue == null) {
       return JsonNodeFactory.instance.nullNode();
     }

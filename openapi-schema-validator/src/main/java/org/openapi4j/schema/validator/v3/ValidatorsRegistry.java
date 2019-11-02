@@ -18,7 +18,7 @@ import java.util.Map;
  */
 class ValidatorsRegistry {
   private static final ValidatorsRegistry INSTANCE = new ValidatorsRegistry();
-  private final Map<String, Class<? extends JsonValidator<OAI3>>> validators = new HashMap<>();
+  private final Map<String, Class<? extends JsonValidator>> validators = new HashMap<>();
 
   private ValidatorsRegistry() {
     // Keywords are not ported directly by validators
@@ -65,26 +65,26 @@ class ValidatorsRegistry {
    * @param parentSchema     The corresponding schema to validate against.
    * @return The corresponding validator.
    */
-  JsonValidator<OAI3> getValidator(final ValidationContext<OAI3> context,
+  JsonValidator getValidator(final ValidationContext<OAI3> context,
                                    final String keyword,
                                    final JsonNode schemaNode,
                                    final JsonNode schemaParentNode,
                                    final SchemaValidator parentSchema) {
 
-    ExtValidatorInstance<OAI3> evi = context.getValidators().get(keyword);
+    ExtValidatorInstance evi = context.getValidators().get(keyword);
 
     return (evi == null)
       ? getDefaultValidator(context, keyword, schemaNode, schemaParentNode, parentSchema)
       : evi.apply(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  private JsonValidator<OAI3> getDefaultValidator(final ValidationContext<OAI3> context,
+  private JsonValidator getDefaultValidator(final ValidationContext<OAI3> context,
                                                   final String keyword,
                                                   final JsonNode schemaNode,
                                                   final JsonNode schemaParentNode,
                                                   final SchemaValidator parentSchema) {
 
-    final Class<? extends JsonValidator<OAI3>> validatorClass = validators.get(keyword);
+    final Class<? extends JsonValidator> validatorClass = validators.get(keyword);
     if (validatorClass == null) {
       return null;
     }

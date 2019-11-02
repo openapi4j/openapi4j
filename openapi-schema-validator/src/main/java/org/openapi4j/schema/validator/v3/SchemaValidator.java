@@ -28,7 +28,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   private static final JsonNode FALSE_NODE = JsonNodeFactory.instance.booleanNode(false);
 
   private final String propertyName;
-  private final Map<String, JsonValidator<OAI3>> validators;
+  private final Map<String, JsonValidator> validators;
 
   /**
    * Create a new Schema validator this default values.
@@ -102,7 +102,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
     results.withCrumb(propertyName, () -> {
-      for (Map.Entry<String, JsonValidator<OAI3>> validatorEntry : validators.entrySet()) {
+      for (Map.Entry<String, JsonValidator> validatorEntry : validators.entrySet()) {
         validatorEntry.getValue().validate(valueNode, results);
       }
     });
@@ -111,34 +111,32 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   /**
    * Read the schema and create dedicated validators from keywords.
    */
-  private Map<String, JsonValidator<OAI3>> read(final ValidationContext<OAI3> context, final JsonNode schemaNode) {
-    Map<String, JsonValidator<OAI3>> validators = new HashMap<>();
+  private Map<String, JsonValidator> read(final ValidationContext<OAI3> context, final JsonNode schemaNode) {
+    Map<String, JsonValidator> validatorMap = new HashMap<>();
 
     Iterator<String> fieldNames = schemaNode.fieldNames();
     while (fieldNames.hasNext()) {
       final String keyword = fieldNames.next();
       final JsonNode keywordSchemaNode = schemaNode.get(keyword);
 
-      JsonValidator<OAI3> validator = ValidatorsRegistry.instance().getValidator(context, keyword, keywordSchemaNode, schemaNode, this);
+      JsonValidator validator = ValidatorsRegistry.instance().getValidator(context, keyword, keywordSchemaNode, schemaNode, this);
       if (validator != null) {
-        validators.put(keyword, validator);
+        validatorMap.put(keyword, validator);
       }
     }
 
-    if (validators.get(ADDITIONALPROPERTIES) == null && context.getOption(ADDITIONAL_PROPS_RESTRICT)) {
-      validators.put(
+    if (validatorMap.get(ADDITIONALPROPERTIES) == null && context.getOption(ADDITIONAL_PROPS_RESTRICT)) {
+      validatorMap.put(
         ADDITIONALPROPERTIES,
         ValidatorsRegistry.instance().getValidator(context, ADDITIONALPROPERTIES, FALSE_NODE, schemaNode, this));
     }
 
     // Setup default nullable schema to false
     // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaNullable
-    if (validators.get(NULLABLE) == null) {
-      validators.put(
-        NULLABLE,
-        ValidatorsRegistry.instance().getValidator(context, NULLABLE, FALSE_NODE, schemaNode, this));
-    }
+    validatorMap.computeIfAbsent(
+      NULLABLE,
+      s -> ValidatorsRegistry.instance().getValidator(context, s, FALSE_NODE, schemaNode, this));
 
-    return validators;
+    return validatorMap;
   }
 }

@@ -79,6 +79,7 @@ public final class ParameterConverter {
   private static final String DEEPOBJECT = "deepObject";
   //private static final String FORM = "form";
 
+  private ParameterConverter() {}
 
   /**
    * Convert path parameters to nodes.

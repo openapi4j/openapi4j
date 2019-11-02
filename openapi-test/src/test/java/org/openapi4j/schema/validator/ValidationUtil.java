@@ -18,7 +18,7 @@ import java.util.Map;
 class ValidationUtil {
   static void validate(String testPath,
                        Map<Byte, Boolean> options,
-                       Map<String, ExtValidatorInstance<OAI3>> validators) throws Exception {
+                       Map<String, ExtValidatorInstance> validators) throws Exception {
     ArrayNode testCases = (ArrayNode) TreeUtil.json.readTree(ValidationUtil.class.getResource(testPath));
 
     for (int index = 0; index < testCases.size(); index++) {

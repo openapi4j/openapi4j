@@ -189,7 +189,7 @@ public class OperationValidator {
 
         bodyValidators.get(contentType).validate(jsonBody, results);
       } catch (IOException ex) {
-        results.addError(String.format("An error occurred when getting the body content from type '%s'.\n%s", contentType, ex));
+        results.addError(String.format("An error occurred when getting the body content from type '%s'.%n%s", contentType, ex));
       }
     }
   }
@@ -200,7 +200,7 @@ public class OperationValidator {
 
     Collection<Parameter> parameters = operation.getParametersIn(in);
 
-    if (parameters.size() != 0) {
+    if (!parameters.isEmpty()) {
       Map<Parameter, JsonValidator> validators = new HashMap<>();
 
       for (Parameter param : parameters) {

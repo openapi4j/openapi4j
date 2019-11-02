@@ -3,6 +3,8 @@ package org.openapi4j.parser.validation.v3;
 import java.util.regex.Pattern;
 
 class Regexes {
+  private Regexes() {}
+
   static final Pattern PATH_REGEX = Pattern.compile("/.*");
   static final Pattern EXT_REGEX = Pattern.compile("x-.+");
   static final Pattern NOEXT_REGEX = Pattern.compile("(?!x-).*");

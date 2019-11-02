@@ -231,7 +231,6 @@ public class OpenApi3 extends AbsOpenApiSchema<OAI3, OpenApi3> implements OAI<OA
    * @return Get the corresponding operation with the given ID
    */
   public Operation getOperationById(String operationId) {
-    Map<String, Path> paths = getPaths();
     if (paths == null) return null;
 
     for (Path path : paths.values()) {
@@ -254,7 +253,6 @@ public class OpenApi3 extends AbsOpenApiSchema<OAI3, OpenApi3> implements OAI<OA
    * @return Get the corresponding operation with the given ID
    */
   public Path getPathItemByOperationId(String operationId) {
-    Map<String, Path> paths = getPaths();
     if (paths == null) return null;
 
     for (Path path : paths.values()) {

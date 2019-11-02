@@ -38,9 +38,9 @@ public class DependenciesValidator extends BaseJsonValidator<OAI3> {
         dependentSchemas.put(fieldName, new SchemaValidator(context, fieldName, fieldSchemaVal, schemaParentNode, parentSchema));
 
       } else if (fieldSchemaVal.isArray()) {
-        Collection<String> dependentProps = this.dependentProps.computeIfAbsent(fieldName, k -> new ArrayList<>());
+        Collection<String> values = this.dependentProps.computeIfAbsent(fieldName, k -> new ArrayList<>());
         for (int i = 0; i < fieldSchemaVal.size(); i++) {
-          dependentProps.add(fieldSchemaVal.get(i).asText());
+          values.add(fieldSchemaVal.get(i).asText());
         }
       }
     }

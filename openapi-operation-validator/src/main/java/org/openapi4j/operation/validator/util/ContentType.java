@@ -12,6 +12,8 @@ public final class ContentType {
   private static final Pattern JSON_PATTERN = Pattern.compile("(?:application|text)\\/(?:.+\\+)?json");
   private static final Pattern XML_PATTERN = Pattern.compile("(?:application|text)\\/(?:.+\\+)?xml");
 
+  private ContentType() {}
+
   /**
    * @param contentType The given content type to check.
    * @return {@code true} if content type is json (i.e pseudo (application|text)/(json|*+json)).
@@ -70,7 +72,7 @@ public final class ContentType {
 
   public static String getTypeOnly(String contentType) {
     if (contentType == null) return null;
-    final int endIndex = contentType.indexOf(";");
+    final int endIndex = contentType.indexOf(';');
     if (endIndex == -1) {
       return contentType;
     } else {

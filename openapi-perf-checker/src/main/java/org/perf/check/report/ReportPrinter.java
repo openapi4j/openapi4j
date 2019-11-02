@@ -1,6 +1,8 @@
 package org.perf.check.report;
 
 public class ReportPrinter {
+  private ReportPrinter() {}
+
   public static void printReports(Report... reports) {
     System.out.println();
     System.out.println("| Library           | Version       | Time          | Iterations    | % time  |");

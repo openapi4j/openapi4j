@@ -8,10 +8,8 @@ import org.openapi4j.core.validation.ValidationResults;
 
 /**
  * Representation of a validator.
- *
- * @param <O> The Open API version type.
  */
-public interface JsonValidator<O extends OAI> {
+public interface JsonValidator {
   /**
    * Validate the given value from setup validation in constructor.
    *

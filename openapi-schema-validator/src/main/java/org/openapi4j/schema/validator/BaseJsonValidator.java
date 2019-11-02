@@ -10,7 +10,7 @@ import org.openapi4j.schema.validator.v3.SchemaValidator;
 /**
  * The base class of all validators.
  */
-public abstract class BaseJsonValidator<O extends OAI> implements JsonValidator<O> {
+public abstract class BaseJsonValidator<O extends OAI> implements JsonValidator {
   private static final String VALIDATION_ERR_MSG = "Schema validation failed";
 
   private final JsonNode schemaNode;

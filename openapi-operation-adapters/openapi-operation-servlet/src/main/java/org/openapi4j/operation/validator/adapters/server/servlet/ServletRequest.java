@@ -46,7 +46,7 @@ public abstract class ServletRequest implements Request {
       hsr.getRequestURI());
 
     // Query string or body
-    if (HTTP_GET.equals(hsr.getMethod().toUpperCase())) {
+    if (HTTP_GET.equalsIgnoreCase(hsr.getMethod())) {
       builder.query(hsr.getQueryString());
     } else {
       builder.body(Body.from(body));
