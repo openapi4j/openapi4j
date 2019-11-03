@@ -8,9 +8,7 @@ import org.openapi4j.parser.validation.Validator;
 
 import java.util.Map;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
   private static final String MULTIPART = "multipart/";
@@ -30,8 +28,8 @@ class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
   public void validate(OpenApi3 api, RequestBody requestBody, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // description, required
-    if (requestBody.is$ref()) {
-      validateReference(api, requestBody.get$ref(), results, $REF, RequestBodyValidator.instance(), RequestBody.class);
+    if (requestBody.isRef()) {
+      validateReference(api, requestBody.getRef(), results, $REF, RequestBodyValidator.instance(), RequestBody.class);
     } else {
       validateMap(api, requestBody.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
       validateField(api, requestBody.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());

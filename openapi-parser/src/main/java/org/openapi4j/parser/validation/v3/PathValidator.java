@@ -5,9 +5,7 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Path;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.PARAMETERS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SERVERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class PathValidator extends Validator3Base<OpenApi3, Path> {
   private static final Validator<OpenApi3, Path> INSTANCE = new PathValidator();

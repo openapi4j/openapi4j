@@ -1,16 +1,15 @@
 package org.openapi4j.core.validation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Representation of results from a validation process.
  */
 @SuppressWarnings("unused")
-public class ValidationResults {
+public class ValidationResults implements Serializable {
+  private static final long serialVersionUID = 1905122041950251207L;
+
   // The validation items
   private final List<ValidationItem> items = new ArrayList<>();
   // The breadcrumb

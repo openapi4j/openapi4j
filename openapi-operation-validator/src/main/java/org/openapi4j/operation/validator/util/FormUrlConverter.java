@@ -1,7 +1,6 @@
 package org.openapi4j.operation.validator.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.operation.validator.model.impl.Regexes;
 import org.openapi4j.parser.model.v3.Schema;
 

@@ -2,14 +2,12 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Tag extends AbsOpenApiSchema<OAI3, Tag> {
+public class Tag extends AbsOpenApiSchema<Tag> {
   private String name;
   private String description;
   private ExternalDocs externalDocs;
@@ -57,7 +55,7 @@ public class Tag extends AbsOpenApiSchema<OAI3, Tag> {
   }
 
   @Override
-  public Tag copy(OAIContext<OAI3> context, boolean followRefs) {
+  public Tag copy(OAIContext context, boolean followRefs) {
     Tag copy = new Tag();
 
     copy.setName(name);

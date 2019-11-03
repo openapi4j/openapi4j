@@ -1,13 +1,7 @@
 package org.openapi4j.operation.validator.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.FileUpload;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.RequestContext;
-import org.apache.commons.fileupload.UploadContext;
+import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.util.Streams;
 import org.openapi4j.parser.model.v3.Schema;
 

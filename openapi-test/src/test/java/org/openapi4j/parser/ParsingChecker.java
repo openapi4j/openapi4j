@@ -25,7 +25,7 @@ class ParsingChecker {
     checkFromResource(specPath, api);
   }
 
-  <O extends OAI> void checkFromResource(URL resourcePath, OAI<O> api) throws EncodeException, JSONException, DecodeException {
+  void checkFromResource(URL resourcePath, OAI api) throws EncodeException, JSONException, DecodeException {
     Object obj = TreeUtil.load(resourcePath, Object.class);
     String expected = TreeUtil.toJson(obj);
 

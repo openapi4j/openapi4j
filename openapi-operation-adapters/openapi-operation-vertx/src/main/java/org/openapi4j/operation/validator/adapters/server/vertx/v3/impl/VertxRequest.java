@@ -1,15 +1,14 @@
 package org.openapi4j.operation.validator.adapters.server.vertx.v3.impl;
 
+import io.vertx.core.http.Cookie;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.ext.web.RoutingContext;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.model.impl.DefaultRequest;
 
 import java.util.Map;
-
-import io.vertx.core.http.Cookie;
-import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.ext.web.RoutingContext;
 
 import static java.util.Objects.requireNonNull;
 

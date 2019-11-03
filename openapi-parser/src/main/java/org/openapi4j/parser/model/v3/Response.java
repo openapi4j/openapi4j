@@ -3,9 +3,7 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 
 import java.util.HashMap;
@@ -13,7 +11,7 @@ import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Response extends AbsRefOpenApiSchema<OAI3, Response> {
+public class Response extends AbsRefOpenApiSchema<Response> {
   private String description;
   private Map<String, Header> headers;
   @JsonProperty("content")
@@ -136,14 +134,14 @@ public class Response extends AbsRefOpenApiSchema<OAI3, Response> {
   }
 
   @Override
-  protected Response copyReference(OAIContext<OAI3> context) {
+  protected Response copyReference(OAIContext context) {
     Response copy = new Response();
-    copy.set$ref(get$ref());
+    copy.setRef(getRef());
     return copy;
   }
 
   @Override
-  protected Response copyContent(OAIContext<OAI3> context, boolean followRefs) {
+  protected Response copyContent(OAIContext context, boolean followRefs) {
     Response copy = new Response();
 
     copy.setDescription(description);

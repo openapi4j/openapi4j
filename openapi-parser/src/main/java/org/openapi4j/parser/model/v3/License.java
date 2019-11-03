@@ -2,13 +2,11 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class License extends AbsOpenApiSchema<OAI3, License> {
+public class License extends AbsOpenApiSchema<License> {
   @JsonUnwrapped
   private Extensions extensions;
   private String name;
@@ -45,7 +43,7 @@ public class License extends AbsOpenApiSchema<OAI3, License> {
   }
 
   @Override
-  public License copy(OAIContext<OAI3> context, boolean followRefs) {
+  public License copy(OAIContext context, boolean followRefs) {
     License copy = new License();
 
     copy.setName(name);

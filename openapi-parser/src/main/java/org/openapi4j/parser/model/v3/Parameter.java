@@ -3,9 +3,7 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 
 import java.util.HashMap;
@@ -14,7 +12,7 @@ import java.util.Objects;
 
 @SuppressWarnings("unused")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Parameter extends AbsRefOpenApiSchema<OAI3, Parameter> {
+public class Parameter extends AbsRefOpenApiSchema<Parameter> {
   private Boolean allowReserved;
   @JsonProperty("content")
   private Map<String, MediaType> contentMediaTypes;
@@ -220,14 +218,14 @@ public class Parameter extends AbsRefOpenApiSchema<OAI3, Parameter> {
   }
 
   @Override
-  protected Parameter copyReference(OAIContext<OAI3> context) {
+  protected Parameter copyReference(OAIContext context) {
     Parameter copy = new Parameter();
-    copy.set$ref(get$ref());
+    copy.setRef(getRef());
     return copy;
   }
 
   @Override
-  protected Parameter copyContent(OAIContext<OAI3> context, boolean followRefs) {
+  protected Parameter copyContent(OAIContext context, boolean followRefs) {
     Parameter copy = new Parameter();
 
     copy.setName(name);
@@ -254,8 +252,8 @@ public class Parameter extends AbsRefOpenApiSchema<OAI3, Parameter> {
 
     Parameter parameter = (Parameter) o;
 
-    if (is$ref()) {
-      return Objects.equals(get$ref(), parameter.get$ref());
+    if (isRef()) {
+      return Objects.equals(getRef(), parameter.getRef());
     } else {
       if (!Objects.equals(name, parameter.name)) return false;
       return Objects.equals(in, parameter.in);
@@ -264,8 +262,8 @@ public class Parameter extends AbsRefOpenApiSchema<OAI3, Parameter> {
 
   @Override
   public int hashCode() {
-    if (is$ref()) {
-      return get$ref().hashCode();
+    if (isRef()) {
+      return getRef().hashCode();
     } else {
       int result = name != null ? name.hashCode() : 0;
       result = 31 * result + (in != null ? in.hashCode() : 0);

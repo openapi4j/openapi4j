@@ -29,13 +29,13 @@ class DiscriminatorValidator extends Validator3Base<OpenApi3, Discriminator> {
     if (mapping != null) {
       for (Map.Entry<String, String> entry : mapping.entrySet()) {
         // value as it can be schema name or reference
-        String $ref = entry.getValue();
-        if ($ref.contains("/")) {
-          if (api.getContext().getReferenceRegistry().getRef($ref) == null) {
-            results.addError(String.format(UNKNOWN_SCHEMA_REF, $ref), MAPPING);
+        String ref = entry.getValue();
+        if (ref.contains("/")) {
+          if (api.getContext().getReferenceRegistry().getRef(ref) == null) {
+            results.addError(String.format(UNKNOWN_SCHEMA_REF, ref), MAPPING);
           }
-        } else if (api.getComponents() == null || !api.getComponents().hasSchema($ref)) {
-          results.addError(String.format(UNKNOWN_SCHEMA_NAME, $ref), MAPPING);
+        } else if (api.getComponents() == null || !api.getComponents().hasSchema(ref)) {
+          results.addError(String.format(UNKNOWN_SCHEMA_NAME, ref), MAPPING);
         }
       }
     }

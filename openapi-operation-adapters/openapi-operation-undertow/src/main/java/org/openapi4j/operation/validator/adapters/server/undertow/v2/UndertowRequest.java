@@ -1,5 +1,9 @@
 package org.openapi4j.operation.validator.adapters.server.undertow.v2;
 
+import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.Cookie;
+import io.undertow.util.HeaderValues;
+import io.undertow.util.Methods;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.model.impl.DefaultRequest;
@@ -7,11 +11,6 @@ import org.openapi4j.operation.validator.model.impl.DefaultRequest;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
-
-import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.Cookie;
-import io.undertow.util.HeaderValues;
-import io.undertow.util.Methods;
 
 import static java.util.Objects.requireNonNull;
 

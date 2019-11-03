@@ -2,9 +2,7 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
@@ -12,7 +10,7 @@ import java.util.Map;
 
 @SuppressWarnings("unused")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Server extends AbsOpenApiSchema<OAI3, Server> {
+public class Server extends AbsOpenApiSchema<Server> {
   private String url;
   private String description;
   private Map<String, ServerVariable> variables;
@@ -81,7 +79,7 @@ public class Server extends AbsOpenApiSchema<OAI3, Server> {
   }
 
   @Override
-  public Server copy(OAIContext<OAI3> context, boolean followRefs) {
+  public Server copy(OAIContext context, boolean followRefs) {
     Server copy = new Server();
 
     copy.setUrl(url);

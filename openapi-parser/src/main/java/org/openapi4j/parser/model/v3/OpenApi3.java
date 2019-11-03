@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.reference.Reference;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.ArrayList;
@@ -18,7 +16,7 @@ import java.util.Map;
 
 @SuppressWarnings("unused")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OpenApi3 extends AbsOpenApiSchema<OAI3, OpenApi3> implements OAI<OAI3> {
+public class OpenApi3 extends AbsOpenApiSchema<OpenApi3> implements OAI {
   private String openapi;
   private Info info;
   private List<Server> servers;
@@ -32,7 +30,7 @@ public class OpenApi3 extends AbsOpenApiSchema<OAI3, OpenApi3> implements OAI<OA
   @JsonUnwrapped
   private Extensions extensions;
   @JsonIgnore
-  private OAIContext<OAI3> context;
+  private OAIContext context;
 
   // OpenApi
   public String getOpenapi() {
@@ -199,12 +197,12 @@ public class OpenApi3 extends AbsOpenApiSchema<OAI3, OpenApi3> implements OAI<OA
   }
 
   @Override
-  public OAIContext<OAI3> getContext() {
+  public OAIContext getContext() {
     return context;
   }
 
   @Override
-  public void setContext(OAIContext<OAI3> context) {
+  public void setContext(OAIContext context) {
     this.context = context;
   }
 
@@ -271,7 +269,7 @@ public class OpenApi3 extends AbsOpenApiSchema<OAI3, OpenApi3> implements OAI<OA
   }
 
   @Override
-  public OpenApi3 copy(OAIContext<OAI3> context, boolean followRefs) {
+  public OpenApi3 copy(OAIContext context, boolean followRefs) {
     OpenApi3 copy = new OpenApi3();
 
     copy.setOpenapi(openapi);

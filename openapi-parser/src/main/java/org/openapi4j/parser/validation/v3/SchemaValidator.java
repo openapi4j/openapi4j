@@ -11,34 +11,12 @@ import org.openapi4j.parser.validation.Validator;
 import java.util.regex.Pattern;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ADDITIONALPROPERTIES;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ALLOF;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ANYOF;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEFAULT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DISCRIMINATOR;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ENUM;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXITEMS;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXLENGTH;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXPROPERTIES;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINITEMS;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINLENGTH;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINPROPERTIES;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MULTIPLEOF;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ONEOF;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PATTERN;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PROPERTIES;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.REQUIRED;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_BOOLEAN;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTERNALDOCS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.XML;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
   private static final Pattern TYPE_REGEX = Pattern.compile(
@@ -66,8 +44,8 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
     // additionalPropertiesAllowed, description, deprecated,
     // example, title, exclusiveMaximum, exclusiveMinimum, nullable, uniqueItems
 
-    if (schema.is$ref()) {
-      validateReference(api, schema.get$ref(), results, $REF, SchemaValidator.instance(), Schema.class);
+    if (schema.isRef()) {
+      validateReference(api, schema.getRef(), results, $REF, SchemaValidator.instance(), Schema.class);
     } else {
       validateField(api, schema.getAdditionalProperties(), results, false, ADDITIONALPROPERTIES, SchemaValidator.instance());
       validateField(api, schema.getDiscriminator(), results, false, DISCRIMINATOR, DiscriminatorValidator.instance());
@@ -142,13 +120,13 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
   private boolean checkSchemaDiscriminator(OpenApi3 api, Discriminator discriminator, Schema schema, ValidationResults results) {
     boolean hasProperty = true;
 
-    if (schema.is$ref()) {
-      Reference reference = api.getContext().getReferenceRegistry().getRef(schema.get$ref());
+    if (schema.isRef()) {
+      Reference reference = api.getContext().getReferenceRegistry().getRef(schema.getRef());
       if (reference != null) {
         try {
           schema = reference.getMappedContent(Schema.class);
         } catch (DecodeException e) {
-          results.addError(String.format(DISCRIM_REF_MAPPING, schema.get$ref()), DISCRIMINATOR);
+          results.addError(String.format(DISCRIM_REF_MAPPING, schema.getRef()), DISCRIMINATOR);
           return false;
         }
       }

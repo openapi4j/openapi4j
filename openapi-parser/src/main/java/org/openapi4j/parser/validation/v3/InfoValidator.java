@@ -6,12 +6,7 @@ import org.openapi4j.parser.model.v3.Info;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTACT;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.LICENSE;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.TERMSOFSERVICE;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.TITLE;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.VERSION;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class InfoValidator extends Validator3Base<OpenApi3, Info> {
   private static final Validator<OpenApi3, Info> INSTANCE = new InfoValidator();

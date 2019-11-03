@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Path extends AbsOpenApiSchema<OAI3, Path> {
+public class Path extends AbsOpenApiSchema<Path> {
   private String description;
   @JsonUnwrapped
   private Extensions extensions;
@@ -249,7 +247,7 @@ public class Path extends AbsOpenApiSchema<OAI3, Path> {
   }
 
   @Override
-  public Path copy(OAIContext<OAI3> context, boolean followRefs) {
+  public Path copy(OAIContext context, boolean followRefs) {
     Path copy = new Path();
 
     copy.setSummary(summary);

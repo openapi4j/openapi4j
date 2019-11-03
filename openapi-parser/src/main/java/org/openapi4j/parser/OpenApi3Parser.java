@@ -2,10 +2,10 @@ package org.openapi4j.parser;
 
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.ResolutionException;
+import org.openapi4j.core.model.AuthOption;
 import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationException;
-import org.openapi4j.core.model.AuthOption;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.v3.OpenApi3Validator;
 

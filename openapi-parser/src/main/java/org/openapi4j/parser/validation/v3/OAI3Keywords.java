@@ -1,6 +1,8 @@
 package org.openapi4j.parser.validation.v3;
 
 class OAI3Keywords {
+  private OAI3Keywords() {}
+
   static final String $REF = "$ref";
   static final String ALLOWRESERVED = "allowReserved";
   static final String APIKEY = "apiKey";

@@ -2,13 +2,11 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Contact extends AbsOpenApiSchema<OAI3, Contact> {
+public class Contact extends AbsOpenApiSchema<Contact> {
   private String email;
   @JsonUnwrapped
   private Extensions extensions;
@@ -56,7 +54,7 @@ public class Contact extends AbsOpenApiSchema<OAI3, Contact> {
   }
 
   @Override
-  public Contact copy(OAIContext<OAI3> context, boolean followRefs) {
+  public Contact copy(OAIContext context, boolean followRefs) {
     Contact copy = new Contact();
 
     copy.setName(name);

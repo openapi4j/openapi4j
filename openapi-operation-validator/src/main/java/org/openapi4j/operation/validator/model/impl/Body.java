@@ -1,7 +1,6 @@
 package org.openapi4j.operation.validator.model.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.operation.validator.util.BodyConverter;
 import org.openapi4j.operation.validator.util.ContentType;
 import org.openapi4j.parser.model.v3.Schema;

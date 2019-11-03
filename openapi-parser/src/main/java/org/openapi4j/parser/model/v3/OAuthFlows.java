@@ -1,13 +1,11 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OAuthFlows extends AbsOpenApiSchema<OAI3, OAuthFlows> {
+public class OAuthFlows extends AbsOpenApiSchema<OAuthFlows> {
   private OAuthFlow implicit;
   private OAuthFlow password;
   private OAuthFlow clientCredentials;
@@ -66,7 +64,7 @@ public class OAuthFlows extends AbsOpenApiSchema<OAI3, OAuthFlows> {
   }
 
   @Override
-  public OAuthFlows copy(OAIContext<OAI3> context, boolean followRefs) {
+  public OAuthFlows copy(OAIContext context, boolean followRefs) {
     OAuthFlows copy = new OAuthFlows();
 
     copy.setImplicit(copyField(implicit, context, followRefs));

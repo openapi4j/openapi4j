@@ -5,12 +5,7 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Response;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.DESCRIPTION;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADERS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.LINKS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class ResponseValidator extends Validator3Base<OpenApi3, Response> {
   private static final Validator<OpenApi3, Response> INSTANCE = new ResponseValidator();
@@ -24,8 +19,8 @@ class ResponseValidator extends Validator3Base<OpenApi3, Response> {
 
   @Override
   public void validate(OpenApi3 api, Response response, ValidationResults results) {
-    if (response.is$ref()) {
-      validateReference(api, response.get$ref(), results, $REF, ResponseValidator.instance(), Response.class);
+    if (response.isRef()) {
+      validateReference(api, response.getRef(), results, $REF, ResponseValidator.instance(), Response.class);
     } else {
       validateRequired(response.getDescription(), results, true, DESCRIPTION);
       validateMap(api, response.getHeaders(), results, false, HEADERS, null, HeaderValidator.instance());

@@ -2,16 +2,14 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MediaType extends AbsOpenApiSchema<OAI3, MediaType> {
+public class MediaType extends AbsOpenApiSchema<MediaType> {
   private Map<String, EncodingProperty> encoding;
   private Object example;
   private Map<String, Example> examples;
@@ -112,7 +110,7 @@ public class MediaType extends AbsOpenApiSchema<OAI3, MediaType> {
   }
 
   @Override
-  public MediaType copy(OAIContext<OAI3> context, boolean followRefs) {
+  public MediaType copy(OAIContext context, boolean followRefs) {
     MediaType copy = new MediaType();
 
     copy.setSchema(copyField(schema, context, followRefs));

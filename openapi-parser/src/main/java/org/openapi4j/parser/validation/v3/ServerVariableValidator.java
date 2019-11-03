@@ -5,9 +5,7 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.ServerVariable;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.DEFAULT;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.DESCRIPTION;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.ENUM;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class ServerVariableValidator extends Validator3Base<OpenApi3, ServerVariable> {
   private static final Validator<OpenApi3, ServerVariable> INSTANCE = new ServerVariableValidator();

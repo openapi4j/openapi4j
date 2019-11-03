@@ -1,7 +1,6 @@
 package org.openapi4j.core.model.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.AuthOption;
 import org.openapi4j.core.model.OAIContext;
@@ -18,7 +17,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;
  * <p/>
  * This class handles references and base URI.
  */
-public class OAI3Context implements OAIContext<OAI3> {
+public class OAI3Context implements OAIContext {
   private static final String OPERATION_REF = "operationRef";
 
   private final ReferenceRegistry referenceRegistry = new ReferenceRegistry();

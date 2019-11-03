@@ -1,9 +1,9 @@
 package org.openapi4j.parser;
 
 import org.openapi4j.core.exception.ResolutionException;
+import org.openapi4j.core.model.AuthOption;
 import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.validation.ValidationException;
-import org.openapi4j.core.model.AuthOption;
 
 import java.io.File;
 import java.net.MalformedURLException;

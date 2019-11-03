@@ -2,14 +2,12 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SecurityScheme extends AbsOpenApiSchema<OAI3, SecurityScheme> {
+public class SecurityScheme extends AbsOpenApiSchema<SecurityScheme> {
   private String type;
   private String description;
   private String name;
@@ -112,7 +110,7 @@ public class SecurityScheme extends AbsOpenApiSchema<OAI3, SecurityScheme> {
   }
 
   @Override
-  public SecurityScheme copy(OAIContext<OAI3> context, boolean followRefs) {
+  public SecurityScheme copy(OAIContext context, boolean followRefs) {
     SecurityScheme copy = new SecurityScheme();
 
     copy.setType(type);

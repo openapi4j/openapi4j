@@ -2,9 +2,7 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
@@ -12,7 +10,7 @@ import java.util.Map;
 
 @SuppressWarnings("unused")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Components extends AbsOpenApiSchema<OAI3, Components> {
+public class Components extends AbsOpenApiSchema<Components> {
   private Map<String, Callback> callbacks;
   private Map<String, Example> examples;
   @JsonUnwrapped
@@ -315,7 +313,7 @@ public class Components extends AbsOpenApiSchema<OAI3, Components> {
   }
 
   @Override
-  public Components copy(OAIContext<OAI3> context, boolean followRefs) {
+  public Components copy(OAIContext context, boolean followRefs) {
     Components copy = new Components();
 
     copy.setSchemas(copyMap(schemas, context, followRefs));

@@ -2,13 +2,7 @@ package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.validation.ValidationResults;
-import org.openapi4j.parser.model.v3.MediaType;
-import org.openapi4j.parser.model.v3.OpenApi3;
-import org.openapi4j.parser.model.v3.Operation;
-import org.openapi4j.parser.model.v3.Parameter;
-import org.openapi4j.parser.model.v3.RequestBody;
-import org.openapi4j.parser.model.v3.Response;
-import org.openapi4j.parser.model.v3.Schema;
+import org.openapi4j.parser.model.v3.*;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -32,10 +26,8 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
     if (matches) {
       if (matcher.group(2).equals("body")) {
         RequestBody reqBody = operation.getRequestBody();
-        if (reqBody != null) {
-          if (hasBodyProperty(api, matcher.group(3), reqBody.getContentMediaTypes(), validatorCrumb, results)) {
-            return true;
-          }
+        if (reqBody != null && hasBodyProperty(api, matcher.group(3), reqBody.getContentMediaTypes(), validatorCrumb, results)) {
+          return true;
         }
 
         results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, propValue), validatorCrumb);
@@ -95,8 +87,8 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
     }
 
     if (pathFragments.length > index) {
-      if (schema.is$ref()) {
-        schema = api.getContext().getReferenceRegistry().getRef(schema.get$ref()).getMappedContent(Schema.class);
+      if (schema.isRef()) {
+        schema = api.getContext().getReferenceRegistry().getRef(schema.getRef()).getMappedContent(Schema.class);
       }
 
       if (TYPE_ARRAY.equals(schema.getType())) {

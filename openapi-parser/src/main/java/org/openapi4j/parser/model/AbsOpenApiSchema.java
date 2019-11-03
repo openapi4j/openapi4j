@@ -1,28 +1,23 @@
 package org.openapi4j.parser.model;
 
 import org.openapi4j.core.exception.EncodeException;
-import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public abstract class AbsOpenApiSchema<O extends OAI, M extends OpenApiSchema<O, M>> implements OpenApiSchema<O, M> {
+public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements OpenApiSchema<M> {
   /**
    * {@inheritDoc}
    */
   @Override
   @SuppressWarnings("unchecked")
-  public <T> T toJson(OAIContext<O> context, EnumSet<SerializationFlag> flags) throws EncodeException {
+  public <T> T toJson(OAIContext context, EnumSet<SerializationFlag> flags) throws EncodeException {
     if (flags == null) {
       flags = EnumSet.of(SerializationFlag.OUT_AS_JSON);
     }
 
-    OpenApiSchema<O, M> model
+    OpenApiSchema<M> model
       = flags.contains(SerializationFlag.FOLLOW_REFS)
       ? copy(context, true)
       : this;
@@ -66,7 +61,7 @@ public abstract class AbsOpenApiSchema<O extends OAI, M extends OpenApiSchema<O,
     return null;
   }
 
-  protected <T extends OpenApiSchema<O, T>> T copyField(T original, OAIContext<O> context, boolean followRefs) {
+  protected <T extends OpenApiSchema<T>> T copyField(T original, OAIContext context, boolean followRefs) {
     if (original != null) {
       return original.copy(context, followRefs);
     }
@@ -74,7 +69,7 @@ public abstract class AbsOpenApiSchema<O extends OAI, M extends OpenApiSchema<O,
     return null;
   }
 
-  protected <T extends OpenApiSchema<O, T>> List<T> copyList(List<T> original, OAIContext<O> context, boolean followRefs) {
+  protected <T extends OpenApiSchema<T>> List<T> copyList(List<T> original, OAIContext context, boolean followRefs) {
     if (original != null) {
       List<T> copy = new ArrayList<>(original.size());
       for (T element : original) {
@@ -87,11 +82,11 @@ public abstract class AbsOpenApiSchema<O extends OAI, M extends OpenApiSchema<O,
     return null;
   }
 
-  protected <K, T extends OpenApiSchema<O, T>> Map<K, T> copyMap(Map<K, T> original, OAIContext<O> context, boolean followRefs) {
+  protected <K, T extends OpenApiSchema<T>> Map<K, T> copyMap(Map<K, T> original, OAIContext context, boolean followRefs) {
     if (original != null) {
       Map<K, T> copy = new HashMap<>(original.size());
       for (Map.Entry<K, T> element : original.entrySet()) {
-        OpenApiSchema<O, T> schema = element.getValue();
+        OpenApiSchema<T> schema = element.getValue();
         if (schema != null) {
           copy.put(element.getKey(), schema.copy(context, followRefs));
         } else {

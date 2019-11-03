@@ -1,5 +1,10 @@
 package org.openapi4j.operation.validator.adapters.server.vertx.v3;
 
+import io.vertx.codegen.annotations.Fluent;
+import io.vertx.core.*;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.operation.validator.adapters.server.vertx.v3.impl.OpenApi3RouterFactoryImpl;
@@ -7,16 +12,6 @@ import org.openapi4j.parser.OpenApi3Parser;
 import org.openapi4j.parser.model.v3.OpenApi3;
 
 import java.net.URL;
-
-import io.vertx.codegen.annotations.Fluent;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.BodyHandler;
 
 public interface OpenApi3RouterFactory {
   /**

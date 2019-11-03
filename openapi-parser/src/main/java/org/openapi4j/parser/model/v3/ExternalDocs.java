@@ -2,13 +2,11 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ExternalDocs extends AbsOpenApiSchema<OAI3, ExternalDocs> {
+public class ExternalDocs extends AbsOpenApiSchema<ExternalDocs> {
   private String description;
   @JsonUnwrapped
   private Extensions extensions;
@@ -45,7 +43,7 @@ public class ExternalDocs extends AbsOpenApiSchema<OAI3, ExternalDocs> {
   }
 
   @Override
-  public ExternalDocs copy(OAIContext<OAI3> context, boolean followRefs) {
+  public ExternalDocs copy(OAIContext context, boolean followRefs) {
     ExternalDocs copy = new ExternalDocs();
 
     copy.setDescription(description);

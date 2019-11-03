@@ -1,7 +1,6 @@
 package org.openapi4j.operation.validator.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.junit.Test;
 import org.openapi4j.operation.validator.OpenApi3Util;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;

@@ -3,22 +3,11 @@ package org.openapi4j.parser.validation.v3;
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.validation.ValidationResults;
-import org.openapi4j.parser.model.v3.Link;
-import org.openapi4j.parser.model.v3.OpenApi3;
-import org.openapi4j.parser.model.v3.Operation;
-import org.openapi4j.parser.model.v3.Parameter;
-import org.openapi4j.parser.model.v3.Path;
+import org.openapi4j.parser.model.v3.*;
 
 import java.util.Map;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADERS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.LINKS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPERATIONID;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPERATIONREF;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.PATH;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.QUERY;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SERVER;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class LinkValidator extends ExpressionValidator<Link> {
   private static final String OP_FIELD_MISSING_ERR_MSG = "'operationRef', 'operationId' or '$ref' field missing.";
@@ -41,8 +30,8 @@ class LinkValidator extends ExpressionValidator<Link> {
   public void validate(OpenApi3 api, Link link, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // description
-    if (link.is$ref()) {
-      validateReference(api, link.get$ref(), results, LINKS, LinkValidator.instance(), Link.class);
+    if (link.isRef()) {
+      validateReference(api, link.getRef(), results, LINKS, LinkValidator.instance(), Link.class);
     } else {
       validateMap(api, link.getHeaders(), results, false, HEADERS, Regexes.NOEXT_REGEX, HeaderValidator.instance());
       validateField(api, link.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
@@ -52,11 +41,11 @@ class LinkValidator extends ExpressionValidator<Link> {
 
   // This called from operation validator
   void validateWithOperation(OpenApi3 api, Operation srcOperation, Link link, ValidationResults results) {
-    if (link.is$ref()) {
+    if (link.isRef()) {
       try {
-        link = api.getContext().getReferenceRegistry().getRef(link.get$ref()).getMappedContent(Link.class);
+        link = api.getContext().getReferenceRegistry().getRef(link.getRef()).getMappedContent(Link.class);
       } catch (DecodeException e) {
-        results.addError(String.format(REF_CONTENT_UNREADABLE, link.get$ref()), LINKS);
+        results.addError(String.format(REF_CONTENT_UNREADABLE, link.getRef()), LINKS);
         return;
       }
     }
@@ -112,10 +101,9 @@ class LinkValidator extends ExpressionValidator<Link> {
 
   private void checkSourceOperationParameters(OpenApi3 api, Operation operation, Link link, ValidationResults results) {
     for (Map.Entry<String, String> entry : link.getParameters().entrySet()) {
-      if (!checkRequestParameter(api, operation, entry.getValue(), LINKS, results)) {
-        if (!checkResponseParameter(api, operation, entry.getValue(), LINKS, results)) {
-          results.addError(String.format(PARAM_PATH_ERR_MSG, entry.getValue(), entry.getKey()), LINKS);
-        }
+      if (!checkRequestParameter(api, operation, entry.getValue(), LINKS, results) &&
+          !checkResponseParameter(api, operation, entry.getValue(), LINKS, results)) {
+        results.addError(String.format(PARAM_PATH_ERR_MSG, entry.getValue(), entry.getKey()), LINKS);
       }
     }
   }

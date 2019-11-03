@@ -1,12 +1,11 @@
 package org.openapi4j.operation.validator.adapters.server.vertx.v3.impl;
 
+import io.vertx.core.Handler;
+import io.vertx.ext.web.RoutingContext;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.operation.validator.validation.RequestValidator;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
-
-import io.vertx.core.Handler;
-import io.vertx.ext.web.RoutingContext;
 
 class OperationValidationHandler implements Handler<RoutingContext> {
   private final RequestValidator requestValidator;

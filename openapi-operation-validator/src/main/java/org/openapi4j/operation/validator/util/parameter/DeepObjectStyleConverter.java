@@ -2,7 +2,6 @@ package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-
 import org.openapi4j.parser.model.v3.Parameter;
 import org.openapi4j.parser.model.v3.Schema;
 

@@ -3,7 +3,6 @@ package org.openapi4j.parser.model.v3.bind;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.io.IOException;
@@ -24,8 +23,8 @@ public class SchemaSerializer extends StdSerializer<Schema> {
   public void serialize(Schema schema, JsonGenerator gen, SerializerProvider provider) throws IOException {
     gen.writeStartObject();
 
-    if (schema.is$ref()) {
-      addStringField(gen, "$ref", schema.get$ref());
+    if (schema.isRef()) {
+      addStringField(gen, "$ref", schema.getRef());
       addStringField(gen, "description", schema.getDescription());
     } else {
       addStringField(gen, "title", schema.getTitle());

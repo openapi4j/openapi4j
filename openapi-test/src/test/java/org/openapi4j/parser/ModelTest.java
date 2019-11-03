@@ -2,19 +2,7 @@ package org.openapi4j.parser;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openapi4j.parser.model.v3.Callback;
-import org.openapi4j.parser.model.v3.Components;
-import org.openapi4j.parser.model.v3.EncodingProperty;
-import org.openapi4j.parser.model.v3.Example;
-import org.openapi4j.parser.model.v3.Extensions;
-import org.openapi4j.parser.model.v3.Header;
-import org.openapi4j.parser.model.v3.Link;
-import org.openapi4j.parser.model.v3.Parameter;
-import org.openapi4j.parser.model.v3.Path;
-import org.openapi4j.parser.model.v3.RequestBody;
-import org.openapi4j.parser.model.v3.Response;
-import org.openapi4j.parser.model.v3.Schema;
-import org.openapi4j.parser.model.v3.SecurityScheme;
+import org.openapi4j.parser.model.v3.*;
 
 import java.util.HashMap;
 import java.util.Map;

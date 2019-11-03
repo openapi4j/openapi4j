@@ -3,20 +3,14 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unused")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Operation extends AbsOpenApiSchema<OAI3, Operation> {
+public class Operation extends AbsOpenApiSchema<Operation> {
   private List<String> tags;
   private String summary;
   private String description;
@@ -345,7 +339,7 @@ public class Operation extends AbsOpenApiSchema<OAI3, Operation> {
   }
 
   @Override
-  public Operation copy(OAIContext<OAI3> context, boolean followRefs) {
+  public Operation copy(OAIContext context, boolean followRefs) {
     Operation copy = new Operation();
 
     copy.setTags(copyList(tags));

@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 import org.openapi4j.parser.model.v3.bind.SchemaDeserializer;
 import org.openapi4j.parser.model.v3.bind.SchemaSerializer;
@@ -20,7 +18,7 @@ import java.util.Map;
 @JsonDeserialize(using = SchemaDeserializer.class)
 @JsonSerialize(using = SchemaSerializer.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Schema extends AbsRefOpenApiSchema<OAI3, Schema> {
+public class Schema extends AbsRefOpenApiSchema<Schema> {
   private Schema additionalProperties;
   private Boolean additionalPropertiesAllowed;
   private Object defaultValue;
@@ -661,14 +659,14 @@ public class Schema extends AbsRefOpenApiSchema<OAI3, Schema> {
   }
 
   @Override
-  protected Schema copyReference(OAIContext<OAI3> context) {
+  protected Schema copyReference(OAIContext context) {
     Schema copy = new Schema();
-    copy.set$ref(get$ref());
+    copy.setRef(getRef());
     return copy;
   }
 
   @Override
-  protected Schema copyContent(OAIContext<OAI3> context, boolean followRefs) {
+  protected Schema copyContent(OAIContext context, boolean followRefs) {
     Schema copy = new Schema();
 
     copy.setTitle(title);

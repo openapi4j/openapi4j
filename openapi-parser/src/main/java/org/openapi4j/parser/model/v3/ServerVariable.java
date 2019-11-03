@@ -3,9 +3,7 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.ArrayList;
@@ -13,7 +11,7 @@ import java.util.List;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ServerVariable extends AbsOpenApiSchema<OAI3, ServerVariable> {
+public class ServerVariable extends AbsOpenApiSchema<ServerVariable> {
   @JsonProperty("enum")
   private List<String> enumValues;
   @JsonProperty("default")
@@ -97,7 +95,7 @@ public class ServerVariable extends AbsOpenApiSchema<OAI3, ServerVariable> {
   }
 
   @Override
-  public ServerVariable copy(OAIContext<OAI3> context, boolean followRefs) {
+  public ServerVariable copy(OAIContext context, boolean followRefs) {
     ServerVariable copy = new ServerVariable();
 
     copy.setEnumValues(copyList(enumValues));

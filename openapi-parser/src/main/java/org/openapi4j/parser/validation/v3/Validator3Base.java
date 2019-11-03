@@ -10,16 +10,7 @@ import org.openapi4j.parser.validation.ValidatorBase;
 import java.util.Collection;
 import java.util.Map;
 
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DOUBLE;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_FLOAT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT32;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT64;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_BOOLEAN;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
 
 abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T> {
   private static final String FORMAT_TYPE_MISMATCH = "Format '%s' is incompatible with schema type '%s'";
@@ -78,6 +69,7 @@ abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T>
           ok = defaultValue instanceof Map<?, ?>;
           break;
         case TYPE_ARRAY:
+        default:
           ok = defaultValue instanceof Collection<?>;
           break;
       }

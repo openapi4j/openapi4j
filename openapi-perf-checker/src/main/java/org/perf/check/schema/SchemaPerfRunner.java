@@ -2,7 +2,6 @@ package org.perf.check.schema;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-
 import org.openapi4j.core.util.TreeUtil;
 import org.perf.check.report.Report;
 import org.perf.check.report.ReportPrinter;

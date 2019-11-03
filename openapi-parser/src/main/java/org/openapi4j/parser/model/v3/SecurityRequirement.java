@@ -3,9 +3,7 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
@@ -15,7 +13,7 @@ import java.util.Objects;
 
 @SuppressWarnings("unused")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SecurityRequirement extends AbsOpenApiSchema<OAI3, SecurityRequirement> {
+public class SecurityRequirement extends AbsOpenApiSchema<SecurityRequirement> {
   private Map<String, List<String>> requirements;
 
   // Requirement
@@ -57,7 +55,7 @@ public class SecurityRequirement extends AbsOpenApiSchema<OAI3, SecurityRequirem
   }
 
   @Override
-  public SecurityRequirement copy(OAIContext<OAI3> context, boolean followRefs) {
+  public SecurityRequirement copy(OAIContext context, boolean followRefs) {
     SecurityRequirement copy = new SecurityRequirement();
 
     copy.setRequirements(copyMap(requirements));

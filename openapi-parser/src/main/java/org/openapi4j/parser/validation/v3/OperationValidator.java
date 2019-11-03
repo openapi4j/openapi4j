@@ -7,15 +7,7 @@ import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Response;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.CALLBACKS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTERNALDOCS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPERATIONID;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.PARAMETERS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.REQUESTBODY;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.RESPONSES;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SECURITY;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SERVERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class OperationValidator extends Validator3Base<OpenApi3, Operation> {
   private static final Validator<OpenApi3, Operation> INSTANCE = new OperationValidator();

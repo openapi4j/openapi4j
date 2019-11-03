@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
@@ -13,10 +12,7 @@ import org.openapi4j.schema.validator.ValidationContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ALLOF;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DISCRIMINATOR;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAPPING;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PROPERTYNAME;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
 
 /**
  * discriminator keyword validator.

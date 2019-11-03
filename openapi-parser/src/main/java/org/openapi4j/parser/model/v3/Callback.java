@@ -4,16 +4,14 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Callback extends AbsRefOpenApiSchema<OAI3, Callback> {
+public class Callback extends AbsRefOpenApiSchema<Callback> {
   private Map<String, Path> callbackPaths;
   @JsonUnwrapped
   private Extensions extensions;
@@ -63,14 +61,14 @@ public class Callback extends AbsRefOpenApiSchema<OAI3, Callback> {
 
 
   @Override
-  protected Callback copyReference(OAIContext<OAI3> context) {
+  protected Callback copyReference(OAIContext context) {
     Callback copy = new Callback();
-    copy.set$ref(get$ref());
+    copy.setRef(getRef());
     return copy;
   }
 
   @Override
-  protected Callback copyContent(OAIContext<OAI3> context, boolean followRefs) {
+  protected Callback copyContent(OAIContext context, boolean followRefs) {
     Callback copy = new Callback();
     copy.setCallbackPaths(copyMap(callbackPaths, context, followRefs));
     copy.setExtensions(copyField(extensions, context, followRefs));

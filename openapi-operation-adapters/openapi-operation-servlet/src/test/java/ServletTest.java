@@ -1,5 +1,4 @@
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,13 +9,12 @@ import org.mockito.stubbing.Answer;
 import org.openapi4j.operation.validator.adapters.server.servlet.ServletRequest;
 import org.openapi4j.operation.validator.model.Request;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Vector;
-
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Vector;
 
 public class ServletTest {
   private static final String PATH = "http://localhost:8080";

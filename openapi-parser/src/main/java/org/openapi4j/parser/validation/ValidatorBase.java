@@ -181,7 +181,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
     }
   }
 
-  abstract protected void checkEmail(String email, ValidationResults results, String crumb);
+  protected abstract void checkEmail(String email, ValidationResults results, String crumb);
 
   protected <V> void validateMap(final O api,
                                  final Map<String, ? extends V> value,

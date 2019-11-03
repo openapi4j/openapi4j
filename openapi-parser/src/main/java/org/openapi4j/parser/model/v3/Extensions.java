@@ -3,16 +3,14 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Extensions extends AbsOpenApiSchema<OAI3, Extensions> {
+public class Extensions extends AbsOpenApiSchema<Extensions> {
   private Map<String, Object> extensions = new HashMap<>();
 
   @JsonAnyGetter
@@ -48,7 +46,7 @@ public class Extensions extends AbsOpenApiSchema<OAI3, Extensions> {
   }
 
   @Override
-  public Extensions copy(OAIContext<OAI3> context, boolean followRefs) {
+  public Extensions copy(OAIContext context, boolean followRefs) {
     Extensions copy = new Extensions();
 
     copy.setExtensions(copyMap(extensions));

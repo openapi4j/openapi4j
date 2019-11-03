@@ -1,7 +1,6 @@
 package org.openapi4j.core.model.reference;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.AuthOption;
 import org.openapi4j.core.util.TreeUtil;

@@ -2,16 +2,14 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class EncodingProperty extends AbsOpenApiSchema<OAI3, EncodingProperty> {
+public class EncodingProperty extends AbsOpenApiSchema<EncodingProperty> {
   private String contentType;
   private Boolean explode;
   @JsonUnwrapped
@@ -94,7 +92,7 @@ public class EncodingProperty extends AbsOpenApiSchema<OAI3, EncodingProperty> {
   }
 
   @Override
-  public EncodingProperty copy(OAIContext<OAI3> context, boolean followRefs) {
+  public EncodingProperty copy(OAIContext context, boolean followRefs) {
     EncodingProperty copy = new EncodingProperty();
 
     copy.setContentType(contentType);

@@ -6,9 +6,7 @@ import org.openapi4j.parser.model.v3.License;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.NAME;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.URL;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class LicenseValidator extends Validator3Base<OpenApi3, License> {
   private static final Validator<OpenApi3, License> INSTANCE = new LicenseValidator();

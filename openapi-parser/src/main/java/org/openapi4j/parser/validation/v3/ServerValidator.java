@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.URL;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.VARIABLES;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class ServerValidator extends Validator3Base<OpenApi3, Server> {
   private static final String VARIABLE_NOT_DEFINED = "Undefined variable '%s' for url '%s'";
@@ -48,7 +46,7 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
       variables.add(matcher.group(2));
     }
 
-    if (variables.size() == 0) {
+    if (variables.isEmpty()) {
       // Validate directly
       validateUrl(url, results, true, URL, ValidationSeverity.ERROR);
     } else if (server.getVariables() != null && server.getVariables().size() != 0) {

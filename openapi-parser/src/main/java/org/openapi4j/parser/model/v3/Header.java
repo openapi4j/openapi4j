@@ -3,16 +3,14 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Header extends AbsOpenApiSchema<OAI3, Header> {
+public class Header extends AbsOpenApiSchema<Header> {
   private Boolean allowReserved;
   @JsonProperty("content")
   private Map<String, MediaType> contentMediaTypes;
@@ -195,7 +193,7 @@ public class Header extends AbsOpenApiSchema<OAI3, Header> {
   }
 
   @Override
-  public Header copy(OAIContext<OAI3> context, boolean followRefs) {
+  public Header copy(OAIContext context, boolean followRefs) {
     Header copy = new Header();
 
     copy.setDescription(description);

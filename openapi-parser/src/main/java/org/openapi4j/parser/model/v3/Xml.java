@@ -2,14 +2,12 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 @SuppressWarnings("unused")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Xml extends AbsOpenApiSchema<OAI3, Xml> {
+public class Xml extends AbsOpenApiSchema<Xml> {
   private String name;
   private String namespace;
   private String prefix;
@@ -87,7 +85,7 @@ public class Xml extends AbsOpenApiSchema<OAI3, Xml> {
   }
 
   @Override
-  public Xml copy(OAIContext<OAI3> context, boolean followRefs) {
+  public Xml copy(OAIContext context, boolean followRefs) {
     Xml copy = new Xml();
 
     copy.setName(name);

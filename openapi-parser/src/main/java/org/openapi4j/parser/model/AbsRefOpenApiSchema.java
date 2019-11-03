@@ -1,6 +1,6 @@
 package org.openapi4j.parser.model;
 
-import org.openapi4j.core.model.OAI;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.util.TreeUtil;
@@ -8,27 +8,28 @@ import org.openapi4j.core.util.TreeUtil;
 /**
  * Base class for Open API schema which can be represented as reference.
  */
-public abstract class AbsRefOpenApiSchema<O extends OAI, M extends OpenApiSchema<O, M>> extends AbsOpenApiSchema<O, M> {
-  private String $ref;
+public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends AbsOpenApiSchema<M> {
+  @JsonProperty("$ref")
+  private String ref;
 
   // $ref
-  public String get$ref() {
-    return $ref;
+  public String getRef() {
+    return ref;
   }
 
-  public boolean is$ref() {
-    return $ref != null;
+  public boolean isRef() {
+    return ref != null;
   }
 
-  public void set$ref(String $ref) {
-    this.$ref = $ref;
+  public void setRef(String $ref) {
+    this.ref = $ref;
   }
 
   @SuppressWarnings("unchecked")
-  public M copy(OAIContext<O> context, boolean followRefs) {
-    if (is$ref()) {
+  public M copy(OAIContext context, boolean followRefs) {
+    if (isRef()) {
       if (followRefs) {
-        Reference reference = context.getReferenceRegistry().getRef(get$ref());
+        Reference reference = context.getReferenceRegistry().getRef(getRef());
         if (reference != null) {
           M copy = (M) TreeUtil.json.convertValue(reference.getContent(), getClass());
           return copy.copy(context, true);
@@ -47,7 +48,7 @@ public abstract class AbsRefOpenApiSchema<O extends OAI, M extends OpenApiSchema
    * @param context The current context.
    * @return The copied reference object.
    */
-  protected abstract M copyReference(OAIContext<O> context);
+  protected abstract M copyReference(OAIContext context);
 
   /**
    * Copy the flat content of the current schema.
@@ -56,5 +57,5 @@ public abstract class AbsRefOpenApiSchema<O extends OAI, M extends OpenApiSchema
    * @param followRefs {@code true} for following references.
    * @return The copied model.
    */
-  protected abstract M copyContent(OAIContext<O> context, boolean followRefs);
+  protected abstract M copyContent(OAIContext context, boolean followRefs);
 }

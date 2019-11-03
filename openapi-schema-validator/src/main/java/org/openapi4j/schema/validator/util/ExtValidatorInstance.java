@@ -1,8 +1,6 @@
 package org.openapi4j.schema.validator.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;

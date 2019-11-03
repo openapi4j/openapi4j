@@ -1,12 +1,11 @@
 package org.openapi4j.parser.model.v3;
 
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.Map;
 
-public class Discriminator extends AbsOpenApiSchema<OAI3, Discriminator> {
+public class Discriminator extends AbsOpenApiSchema<Discriminator> {
   private Map<String, String> mapping;
   private String propertyName;
 
@@ -29,7 +28,7 @@ public class Discriminator extends AbsOpenApiSchema<OAI3, Discriminator> {
   }
 
   @Override
-  public Discriminator copy(OAIContext<OAI3> context, boolean followRefs) {
+  public Discriminator copy(OAIContext context, boolean followRefs) {
     Discriminator copy = new Discriminator();
 
     copy.setPropertyName(propertyName);

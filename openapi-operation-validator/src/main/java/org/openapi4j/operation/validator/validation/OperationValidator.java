@@ -1,7 +1,6 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.validation.ValidationResults;
@@ -10,24 +9,12 @@ import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.util.ContentType;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
 import org.openapi4j.parser.model.SerializationFlag;
-import org.openapi4j.parser.model.v3.MediaType;
-import org.openapi4j.parser.model.v3.OpenApi3;
-import org.openapi4j.parser.model.v3.Operation;
-import org.openapi4j.parser.model.v3.Parameter;
-import org.openapi4j.parser.model.v3.Path;
-import org.openapi4j.parser.model.v3.Response;
-import org.openapi4j.parser.model.v3.Schema;
+import org.openapi4j.parser.model.v3.*;
 import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -286,7 +273,7 @@ public class OperationValidator {
     // Clone this and get the flatten content
     List<Parameter> parentParameters = new ArrayList<>(path.getParameters().size());
     for (Parameter parentParam : path.getParameters()) {
-      if (parentParam.is$ref()) {
+      if (parentParam.isRef()) {
         parentParameters.add(parentParam.copy(openApi.getContext(), true));
       } else {
         parentParameters.add(parentParam);

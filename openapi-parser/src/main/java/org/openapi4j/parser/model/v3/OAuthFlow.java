@@ -3,16 +3,14 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OAuthFlow extends AbsOpenApiSchema<OAI3, OAuthFlow> {
+public class OAuthFlow extends AbsOpenApiSchema<OAuthFlow> {
   private String authorizationUrl;
   private String tokenUrl;
   private String refreshUrl;
@@ -103,7 +101,7 @@ public class OAuthFlow extends AbsOpenApiSchema<OAI3, OAuthFlow> {
   }
 
   @Override
-  public OAuthFlow copy(OAIContext<OAI3> context, boolean followRefs) {
+  public OAuthFlow copy(OAIContext context, boolean followRefs) {
     OAuthFlow copy = new OAuthFlow();
 
     copy.setAuthorizationUrl(authorizationUrl);

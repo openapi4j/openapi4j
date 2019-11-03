@@ -2,13 +2,11 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Example extends AbsOpenApiSchema<OAI3, Example> {
+public class Example extends AbsOpenApiSchema<Example> {
   private String summary;
   private String description;
   private Object value;
@@ -67,7 +65,7 @@ public class Example extends AbsOpenApiSchema<OAI3, Example> {
   }
 
   @Override
-  public Example copy(OAIContext<OAI3> context, boolean followRefs) {
+  public Example copy(OAIContext context, boolean followRefs) {
     Example copy = new Example();
 
     copy.setSummary(summary);

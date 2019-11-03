@@ -12,16 +12,16 @@ import java.util.Map;
  * @param <O> The Open API version type.
  */
 public class ValidationContext<O extends OAI> {
-  private final OAIContext<O> context;
+  private final OAIContext context;
   private final Map<String, JsonValidator> visitedRefs = new HashMap<>();
   private final Map<Byte, Boolean> defaultOptions = new HashMap<>();
   private final Map<String, ExtValidatorInstance> additionalValidators = new HashMap<>();
 
-  public ValidationContext(OAIContext<O> context) {
+  public ValidationContext(OAIContext context) {
     this.context = context;
   }
 
-  public OAIContext<O> getContext() {
+  public OAIContext getContext() {
     return context;
   }
 
