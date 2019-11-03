@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
+import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.HashMap;
@@ -19,6 +20,10 @@ import java.util.Map;
  */
 class PropertiesValidator extends BaseJsonValidator<OAI3> {
   private final Map<String, SchemaValidator> schemas;
+
+  static PropertiesValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
+    return new PropertiesValidator(context, schemaNode, schemaParentNode, parentSchema);
+  }
 
   PropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);

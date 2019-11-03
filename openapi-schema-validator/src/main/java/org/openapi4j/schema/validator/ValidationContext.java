@@ -2,7 +2,7 @@ package org.openapi4j.schema.validator;
 
 import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.schema.validator.util.ExtValidatorInstance;
+import org.openapi4j.schema.validator.v3.ValidatorInstance;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,7 @@ public class ValidationContext<O extends OAI> {
   private final OAIContext context;
   private final Map<String, JsonValidator> visitedRefs = new HashMap<>();
   private final Map<Byte, Boolean> defaultOptions = new HashMap<>();
-  private final Map<String, ExtValidatorInstance> additionalValidators = new HashMap<>();
+  private final Map<String, ValidatorInstance> additionalValidators = new HashMap<>();
 
   public ValidationContext(OAIContext context) {
     this.context = context;
@@ -68,7 +68,7 @@ public class ValidationContext<O extends OAI> {
    *
    * @return this.
    */
-  public Map<String, ExtValidatorInstance> getValidators() {
+  public Map<String, ValidatorInstance> getValidators() {
     return additionalValidators;
   }
 
@@ -79,7 +79,7 @@ public class ValidationContext<O extends OAI> {
    * @param validatorInstantiation The instantiation to call when a validation should occur.
    * @return this.
    */
-  public ValidationContext<O> addValidator(String keyword, ExtValidatorInstance validatorInstantiation) {
+  public ValidationContext<O> addValidator(String keyword, ValidatorInstance validatorInstantiation) {
     additionalValidators.put(keyword, validatorInstantiation);
     return this;
   }

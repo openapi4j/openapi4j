@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
+import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import java.math.BigDecimal;
@@ -24,6 +25,10 @@ class MinimumValidator extends BaseJsonValidator<OAI3> {
 
   private final BigDecimal minimum;
   private final boolean excludeEqual;
+
+  static MinimumValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
+    return new MinimumValidator(context, schemaNode, schemaParentNode, parentSchema);
+  }
 
   MinimumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);

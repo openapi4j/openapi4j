@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
+import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ENUM;
@@ -19,6 +20,10 @@ class EnumValidator extends BaseJsonValidator<OAI3> {
   private static final String ERR_MSG = "Value '%s' is not defined in the schema.";
 
   private final JsonNode schemaNode;
+
+  static EnumValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
+    return new EnumValidator(context, schemaNode, schemaParentNode, parentSchema);
+  }
 
   EnumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);

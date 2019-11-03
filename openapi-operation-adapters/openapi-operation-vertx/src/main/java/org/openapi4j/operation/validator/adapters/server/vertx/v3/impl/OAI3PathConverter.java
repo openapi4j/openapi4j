@@ -43,7 +43,7 @@ class OAI3PathConverter {
     StringBuilder regex = new StringBuilder();
     Map<String, String> mappedGroups = new HashMap<>();
     int lastMatchEnd = 0;
-    int i = 0;
+    MutableInt groupIndex = new MutableInt(0);
 
     Matcher parametersMatcher = OAS_PATH_PARAMETERS_PATTERN.matcher(oasPath);
     while (parametersMatcher.find()) {
@@ -66,70 +66,15 @@ class OAI3PathConverter {
       boolean isObject = isObjectSchema(parameter.getSchema()) || isAllOfSchema(parameter.getSchema());
       boolean isArray = isArraySchema(parameter.getSchema());
 
-      String groupName = "p" + i;
+      String groupName = "p" + groupIndex.increment();
 
       if (style.equals("simple")) {
-        String not = "[^" + escapeCharacters("!*'();@&+$/?#[]" + (isDotReserved ? "." : null)) + "]*";
-        String reg = "(?<" + groupName + ">" + not + ")*";
-
-        regex.append(reg);
-        mappedGroups.put(groupName, paramName);
+        addSimpleParameter(paramName, regex, mappedGroups, groupName, isDotReserved);
       } else if (style.equals("label")) {
-        if (isObject && explode) {
-          Map<String, Schema> properties = solveObjectSchema(parameter.getSchema());
-          for (Map.Entry<String, Schema> entry : properties.entrySet()) {
-            groupName = "p" + i;
-            String not = "[^" + escapeCharacters("!*'();@&+$/?#[].=") + "]*";
-            String param = "\\.?" + Pattern.quote(entry.getKey()) + "=";
-            String group = "(?<" + groupName + ">" + not + ")";
-            String reg = "(?>" + param + group + ")?";
-
-            regex.append(reg);
-            mappedGroups.put(groupName, entry.getKey());
-            i++;
-          }
-        } else {
-          String not = "[^" + escapeCharacters("!*'();@&=+$,/?#[]") + "]*";
-          String reg = "\\.?(?<" + groupName + ">" + not + ")?";
-
-          regex.append(reg);
-          mappedGroups.put(groupName, paramName);
-        }
+        addLabelParameter(paramName, parameter, regex, mappedGroups, groupName, groupIndex, explode, isObject);
       } else if (style.equals("matrix")) {
-        if (isObject && explode) {
-          Map<String, Schema> properties = solveObjectSchema(parameter.getSchema());
-          for (Map.Entry<String, Schema> entry : properties.entrySet()) {
-            groupName = "p" + i;
-
-            String not = "[^" + escapeCharacters("!*'();@&=+$,/?#[]" + (isDotReserved ? "." : null)) + "]*";
-            String param = "\\;" + Pattern.quote(entry.getKey()) + "=";
-            String group = "(?<" + groupName + ">" + not + ")";
-            String reg = "(?>" + param + group + ")?";
-
-            regex.append(reg);
-            mappedGroups.put(groupName, entry.getKey());
-            i++;
-          }
-        } else if (isArray && explode) {
-          String not = "[^" + escapeCharacters("!*'();@&=+$,/?#[]" + (isDotReserved ? "." : null)) + "]*";
-          String param = ";" + Pattern.quote(paramName) + "=";
-          String group = "(?" + param + not + ")+";
-          String reg = "(?<" + groupName + ">" + group + ")";
-
-          regex.append(reg);
-          mappedGroups.put(groupName, paramName);
-        } else {
-          String not = "[^" + escapeCharacters("!*'();@&=+$/?#[]" + (isDotReserved ? "." : null)) + "]*";
-          String param = ";" + Pattern.quote(paramName) + "=";
-          String group = "(?<" + groupName + ">" + not + ")?";
-          String reg = param + group;
-
-          regex.append(reg);
-          mappedGroups.put(groupName, paramName);
-        }
+        addMatrixParameter(paramName, parameter, regex, mappedGroups, groupName, isDotReserved, groupIndex, explode, isObject, isArray);
       }
-
-      i++;
     }
 
     if (regex.length() == 0) {
@@ -144,6 +89,91 @@ class OAI3PathConverter {
         regex.append("\\/");
 
       return Optional.of(Pattern.compile(regex.toString()));
+    }
+  }
+
+  private void addSimpleParameter(String paramName,
+                                  StringBuilder regex,
+                                  Map<String, String> mappedGroups,
+                                  String groupName,
+                                  boolean isDotReserved) {
+
+    String not = "[^" + escapeCharacters("!*'();@&+$/?#[]" + (isDotReserved ? "." : null)) + "]*";
+    String reg = "(?<" + groupName + ">" + not + ")*";
+
+    regex.append(reg);
+    mappedGroups.put(groupName, paramName);
+  }
+
+  private void addLabelParameter(String paramName,
+                                 Parameter parameter,
+                                 StringBuilder regex,
+                                 Map<String, String> mappedGroups,
+                                 String groupName,
+                                 MutableInt groupIndex,
+                                 boolean explode,
+                                 boolean isObject) throws ResolutionException {
+    if (isObject && explode) {
+      Map<String, Schema> properties = solveObjectSchema(parameter.getSchema());
+      for (Map.Entry<String, Schema> entry : properties.entrySet()) {
+        String not = "[^" + escapeCharacters("!*'();@&+$/?#[].=") + "]*";
+        String param = "\\.?" + Pattern.quote(entry.getKey()) + "=";
+        String group = "(?<" + groupName + ">" + not + ")";
+        String reg = "(?>" + param + group + ")?";
+
+        regex.append(reg);
+        mappedGroups.put(groupName, entry.getKey());
+
+        groupName = "p" + groupIndex.increment();
+      }
+    } else {
+      String not = "[^" + escapeCharacters("!*'();@&=+$,/?#[]") + "]*";
+      String reg = "\\.?(?<" + groupName + ">" + not + ")?";
+
+      regex.append(reg);
+      mappedGroups.put(groupName, paramName);
+    }
+  }
+
+  private void addMatrixParameter(String paramName,
+                                  Parameter parameter,
+                                  StringBuilder regex,
+                                  Map<String, String> mappedGroups,
+                                  String groupName,
+                                  boolean isDotReserved,
+                                  MutableInt groupIndex,
+                                  boolean explode,
+                                  boolean isObject,
+                                  boolean isArray) throws ResolutionException {
+    if (isObject && explode) {
+      Map<String, Schema> properties = solveObjectSchema(parameter.getSchema());
+      for (Map.Entry<String, Schema> entry : properties.entrySet()) {
+        String not = "[^" + escapeCharacters("!*'();@&=+$,/?#[]" + (isDotReserved ? "." : null)) + "]*";
+        String param = "\\;" + Pattern.quote(entry.getKey()) + "=";
+        String group = "(?<" + groupName + ">" + not + ")";
+        String reg = "(?>" + param + group + ")?";
+
+        regex.append(reg);
+        mappedGroups.put(groupName, entry.getKey());
+
+        groupName = "p" + groupIndex.increment();
+      }
+    } else if (isArray && explode) {
+      String not = "[^" + escapeCharacters("!*'();@&=+$,/?#[]" + (isDotReserved ? "." : null)) + "]*";
+      String param = ";" + Pattern.quote(paramName) + "=";
+      String group = "(?" + param + not + ")+";
+      String reg = "(?<" + groupName + ">" + group + ")";
+
+      regex.append(reg);
+      mappedGroups.put(groupName, paramName);
+    } else {
+      String not = "[^" + escapeCharacters("!*'();@&=+$/?#[]" + (isDotReserved ? "." : null)) + "]*";
+      String param = ";" + Pattern.quote(paramName) + "=";
+      String group = "(?<" + groupName + ">" + not + ")?";
+      String reg = param + group;
+
+      regex.append(reg);
+      mappedGroups.put(groupName, paramName);
     }
   }
 
@@ -194,5 +224,18 @@ class OAI3PathConverter {
       escapedChars.append("\\").append(characters.charAt(i));
     }
     return escapedChars.toString();
+  }
+
+  private static class MutableInt {
+    private int value;
+
+    MutableInt(int value) {
+      this.value = value;
+    }
+
+    int increment() {
+      value++;
+      return value;
+    }
   }
 }

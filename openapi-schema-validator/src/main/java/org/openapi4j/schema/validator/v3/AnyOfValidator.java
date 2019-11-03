@@ -3,6 +3,7 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
+import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ANYOF;
@@ -15,6 +16,10 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ANYOF;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
  */
 class AnyOfValidator extends DiscriminatorValidator {
+  static AnyOfValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
+    return new AnyOfValidator(context, schemaNode, schemaParentNode, parentSchema);
+  }
+
   AnyOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema, ANYOF);
   }

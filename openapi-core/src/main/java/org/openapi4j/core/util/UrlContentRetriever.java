@@ -3,6 +3,7 @@ package org.openapi4j.core.util;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.AuthOption;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
@@ -45,12 +46,9 @@ public final class UrlContentRetriever {
     URLConnection conn;
     URL inUrl = url;
     int nbRedirects = 0;
-    boolean loop;
 
     try {
       do {
-        loop = false;
-
         // fill auth options for the current URL
         List<AuthOption> queryParams = new ArrayList<>();
         List<AuthOption> headerParams = new ArrayList<>();
@@ -58,33 +56,21 @@ public final class UrlContentRetriever {
 
         // Setup query string auth option if any and make a new URL
         if (!queryParams.isEmpty()) {
-          inUrl = setupQueryInUrl(inUrl, queryParams);
+          inUrl = handleAuthInQuery(inUrl, queryParams);
         }
 
         // Open connection
         conn = inUrl.openConnection();
 
         // Setup header auth options if any
-        for (AuthOption item : headerParams) {
-          conn.setRequestProperty(item.getKey(), item.getValue());
-        }
+        handleAuthInHeaders(conn, headerParams);
 
         conn.setRequestProperty("Accept", ACCEPT_HEADER_VALUE);
         conn.connect();
 
         // Handle redirection for HTTP connection
-        if (conn instanceof HttpURLConnection) {
-          int statusCode = ((HttpURLConnection) conn).getResponseCode();
-          String newLocation = conn.getHeaderField("Location");
-          if ((statusCode == 301 || statusCode == 302) || newLocation != null) {
-            loop = MAX_REDIRECTS > ++nbRedirects;
-            if (!loop) {
-              throw new ResolutionException("Too many redirects.");
-            }
-            inUrl = new URL(cleanUrl(newLocation));
-          }
-        }
-      } while (loop);
+        inUrl = handleRedirection(conn, nbRedirects);
+      } while (inUrl != null);
 
       return conn.getInputStream();
 
@@ -111,7 +97,7 @@ public final class UrlContentRetriever {
     }
   }
 
-  private URL setupQueryInUrl(URL inUrl, List<AuthOption> queryParams) throws URISyntaxException, UnsupportedEncodingException, MalformedURLException {
+  private URL handleAuthInQuery(URL inUrl, List<AuthOption> queryParams) throws URISyntaxException, UnsupportedEncodingException, MalformedURLException {
     URI inUri = inUrl.toURI();
     StringBuilder newQuery = new StringBuilder(inUri.getQuery() == null ? "" : inUri.getQuery());
     for (AuthOption param : queryParams) {
@@ -128,6 +114,27 @@ public final class UrlContentRetriever {
       newQuery.toString(), inUri.getFragment()).toURL();
   }
 
+  private void handleAuthInHeaders(URLConnection conn, List<AuthOption> headerParams) {
+    for (AuthOption item : headerParams) {
+      conn.setRequestProperty(item.getKey(), item.getValue());
+    }
+  }
+
+  private URL handleRedirection(URLConnection conn, int nbRedirects) throws IOException, ResolutionException {
+    if (conn instanceof HttpURLConnection) {
+      int statusCode = ((HttpURLConnection) conn).getResponseCode();
+      String newLocation = conn.getHeaderField("Location");
+      if ((statusCode == 301 || statusCode == 302) || newLocation != null) {
+        boolean loop = MAX_REDIRECTS > ++nbRedirects;
+        if (!loop) {
+          throw new ResolutionException("Too many redirects.");
+        }
+        return new URL(cleanUrl(newLocation));
+      }
+    }
+
+    return null;
+  }
 
   private String cleanUrl(String url) {
     return url

@@ -120,29 +120,45 @@ public class Body {
     String encoding = ContentType.getCharSet(rawContentType);
 
     if (ContentType.isJson(contentType)) {
-      return (bodyStr != null)
-        ? BodyConverter.jsonToNode(bodyStr)
-        : BodyConverter.jsonToNode(bodyIs);
-
+      return convertJson();
     } else if (ContentType.isXml(contentType)) {
-      return (bodyStr != null)
-        ? BodyConverter.xmlToNode(schema, bodyStr)
-        : BodyConverter.xmlToNode(schema, bodyIs);
-
+      return convertXml(schema);
     } else if (ContentType.isFormUrlEncoded(contentType)) {
-      return (bodyStr != null)
-        ? BodyConverter.formUrlEncodedToNode(schema, bodyStr, encoding)
-        : BodyConverter.formUrlEncodedToNode(schema, bodyIs, encoding);
-
+      return convertFormUrlEncoded(schema, encoding);
     } else if (ContentType.isMultipartFormData(contentType)) {
-      return (bodyStr != null)
-        ? BodyConverter.multipartToNode(schema, bodyStr, rawContentType, encoding)
-        : BodyConverter.multipartToNode(schema, bodyIs, rawContentType, encoding);
-
+      return convertMultipart(schema, rawContentType, encoding);
     } else { // UNKNOWN
-      return (bodyStr != null)
-        ? BodyConverter.textToNode(bodyStr)
-        : BodyConverter.textToNode(bodyIs);
+      return convertText();
     }
+  }
+
+  private JsonNode convertJson() throws IOException {
+    return (bodyStr != null)
+      ? BodyConverter.jsonToNode(bodyStr)
+      : BodyConverter.jsonToNode(bodyIs);
+  }
+
+  private JsonNode convertXml(final Schema schema) {
+    return (bodyStr != null)
+      ? BodyConverter.xmlToNode(schema, bodyStr)
+      : BodyConverter.xmlToNode(schema, bodyIs);
+  }
+
+  private JsonNode convertFormUrlEncoded(final Schema schema, final String encoding) {
+    return (bodyStr != null)
+      ? BodyConverter.formUrlEncodedToNode(schema, bodyStr, encoding)
+      : BodyConverter.formUrlEncodedToNode(schema, bodyIs, encoding);
+  }
+
+  private JsonNode convertMultipart(final Schema schema, final String rawContentType, final String encoding) throws IOException {
+    return (bodyStr != null)
+      ? BodyConverter.multipartToNode(schema, bodyStr, rawContentType, encoding)
+      : BodyConverter.multipartToNode(schema, bodyIs, rawContentType, encoding);
+  }
+
+  private JsonNode convertText() {
+    return (bodyStr != null)
+      ? BodyConverter.textToNode(bodyStr)
+      : BodyConverter.textToNode(bodyIs);
   }
 }

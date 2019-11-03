@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
+import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.HashSet;
@@ -22,6 +23,10 @@ class UniqueItemsValidator extends BaseJsonValidator<OAI3> {
   private static final String INVALID_UNIQUENESS = "Uniqueness is not respected '%s'.";
 
   private final boolean unique;
+
+  static UniqueItemsValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
+    return new UniqueItemsValidator(context, schemaNode, schemaParentNode, parentSchema);
+  }
 
   UniqueItemsValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);

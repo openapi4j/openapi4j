@@ -3,6 +3,7 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
+import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ONEOF;
@@ -17,6 +18,10 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ONEOF;
 class OneOfValidator extends DiscriminatorValidator {
   private static final String NO_VALID_SCHEMA_ERR_MSG = "No valid schema.";
   private static final String MANY_VALID_SCHEMA_ERR_MSG = "More than 1 schema is valid.";
+
+  static OneOfValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
+    return new OneOfValidator(context, schemaNode, schemaParentNode, parentSchema);
+  }
 
   OneOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema, ONEOF);

@@ -7,6 +7,7 @@ import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
+import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.ArrayList;

@@ -5,6 +5,7 @@ import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
+import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.HashSet;
@@ -29,6 +30,10 @@ class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
   private final Set<Pattern> allowedPatternProperties;
   private final Boolean additionalPropertiesAllowed;
   private final SchemaValidator additionalPropertiesSchema;
+
+  static JsonValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
+    return new AdditionalPropertiesValidator(context, schemaNode, schemaParentNode, parentSchema);
+  }
 
   AdditionalPropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);

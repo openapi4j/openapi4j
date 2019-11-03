@@ -8,7 +8,7 @@ import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
-import org.openapi4j.schema.validator.util.ExtValidatorInstance;
+import org.openapi4j.schema.validator.v3.ValidatorInstance;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
 
 import java.net.URI;
@@ -17,7 +17,7 @@ import java.util.Map;
 class ValidationUtil {
   static void validate(String testPath,
                        Map<Byte, Boolean> options,
-                       Map<String, ExtValidatorInstance> validators) throws Exception {
+                       Map<String, ValidatorInstance> validators) throws Exception {
     ArrayNode testCases = (ArrayNode) TreeUtil.json.readTree(ValidationUtil.class.getResource(testPath));
 
     for (int index = 0; index < testCases.size(); index++) {

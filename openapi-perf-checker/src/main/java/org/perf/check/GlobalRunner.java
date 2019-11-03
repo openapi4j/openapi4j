@@ -29,10 +29,10 @@ public class GlobalRunner {
             OperationPerfRunner.main();
             break;
           default:
-            System.exit(0);
+            return;
         }
       } else {
-        System.exit(0);
+        return;
       }
     }
   }

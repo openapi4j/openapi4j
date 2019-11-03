@@ -7,7 +7,7 @@ import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
 import org.openapi4j.core.util.TreeUtil;
-import org.openapi4j.schema.validator.util.ExtValidatorInstance;
+import org.openapi4j.schema.validator.v3.ValidatorInstance;
 import org.openapi4j.schema.validator.v3.MaximumToleranceValidator;
 import org.openapi4j.schema.validator.v3.MyEntityValidator;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
@@ -159,7 +159,7 @@ public class ValidationTest {
 
   @Test
   public void overriddenValidation() throws Exception {
-    Map<String, ExtValidatorInstance> validators = new HashMap<>();
+    Map<String, ValidatorInstance> validators = new HashMap<>();
     validators.put(OAI3SchemaKeywords.MAXIMUM, MaximumToleranceValidator::create);
     validators.put("x-myentity-val", MyEntityValidator::create);
     ValidationUtil.validate("/schema/override/maximumTolerance.json", null, validators);
@@ -167,7 +167,7 @@ public class ValidationTest {
 
   @Test
   public void additionalValidation() throws Exception {
-    Map<String, ExtValidatorInstance> validators = new HashMap<>();
+    Map<String, ValidatorInstance> validators = new HashMap<>();
     validators.put("x-myentity-val", MyEntityValidator::create);
     ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators);
   }

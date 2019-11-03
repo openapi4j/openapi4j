@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
+import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.ArrayList;
@@ -22,6 +23,10 @@ class RequiredValidator extends BaseJsonValidator<OAI3> {
   private static final String ERR_MSG = "Field '%s' is required.";
 
   private final List<String> fieldNames;
+
+  static RequiredValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
+    return new RequiredValidator(context, schemaNode, schemaParentNode, parentSchema);
+  }
 
   RequiredValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);

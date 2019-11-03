@@ -33,98 +33,135 @@ public class SchemaDeserializer extends StdDeserializer<Schema> {
       String name = jp.getCurrentName();
       JsonToken token = jp.nextToken();
 
-      if ("title".equals(name)) {
-        schema.setTitle(jp.getText());
-      } else if (MULTIPLEOF.equals(name)) {
-        schema.setMultipleOf(jp.getIntValue());
-      } else if (MAXIMUM.equals(name)) {
-        schema.setMaximum(jp.getNumberValue());
-      } else if (EXCLUSIVEMAXIMUM.equals(name)) {
-        schema.setExclusiveMaximum(jp.getBooleanValue());
-      } else if (MINIMUM.equals(name)) {
-        schema.setMinimum(jp.getNumberValue());
-      } else if (EXCLUSIVEMINIMUM.equals(name)) {
-        schema.setExclusiveMinimum(jp.getBooleanValue());
-      } else if (MAXLENGTH.equals(name)) {
-        schema.setMaxLength(jp.getIntValue());
-      } else if (MINLENGTH.equals(name)) {
-        schema.setMinLength(jp.getIntValue());
-      } else if (PATTERN.equals(name)) {
-        schema.setPattern(jp.getText());
-      } else if (MAXITEMS.equals(name)) {
-        schema.setMaxItems(jp.getIntValue());
-      } else if (MINITEMS.equals(name)) {
-        schema.setMinItems(jp.getIntValue());
-      } else if (UNIQUEITEMS.equals(name)) {
-        schema.setUniqueItems(jp.getBooleanValue());
-      } else if (MAXPROPERTIES.equals(name)) {
-        schema.setMaxProperties(jp.getIntValue());
-      } else if (MINPROPERTIES.equals(name)) {
-        schema.setMinProperties(jp.getIntValue());
-      } else if (REQUIRED.equals(name)) {
-        schema.setRequiredFields(jp.readValueAs(new TypeReference<List<String>>() {
-        }));
-      } else if (ENUM.equals(name)) {
-        schema.setEnums(jp.readValueAs(new TypeReference<List<String>>() {
-        }));
-      } else if (TYPE.equals(name)) {
-        schema.setType(jp.getText());
-      } else if (ALLOF.equals(name)) {
-        schema.setAllOfSchemas(jp.readValueAs(new TypeReference<List<Schema>>() {
-        }));
-      } else if (ONEOF.equals(name)) {
-        schema.setOneOfSchemas(jp.readValueAs(new TypeReference<List<Schema>>() {
-        }));
-      } else if (ANYOF.equals(name)) {
-        schema.setAnyOfSchemas(jp.readValueAs(new TypeReference<List<Schema>>() {
-        }));
-      } else if (NOT.equals(name)) {
-        schema.setNotSchema(jp.readValueAs(new TypeReference<Schema>() {
-        }));
-      } else if (ITEMS.equals(name)) {
-        schema.setItemsSchema(jp.readValueAs(new TypeReference<Schema>() {
-        }));
-      } else if (PROPERTIES.equals(name)) {
-        schema.setProperties(jp.readValueAs(new TypeReference<Map<String, Schema>>() {
-        }));
-      } else if (ADDITIONALPROPERTIES.equals(name)) {
-        if (token.isBoolean()) {
-          schema.setAdditionalPropertiesAllowed(jp.getBooleanValue());
-        } else if (token.isStructStart()) {
-          schema.setAdditionalProperties(jp.readValueAs(new TypeReference<Schema>() {
+      switch (name) {
+        case "title":
+          schema.setTitle(jp.getText());
+          break;
+        case MULTIPLEOF:
+          schema.setMultipleOf(jp.getIntValue());
+          break;
+        case MAXIMUM:
+          schema.setMaximum(jp.getNumberValue());
+          break;
+        case EXCLUSIVEMAXIMUM:
+          schema.setExclusiveMaximum(jp.getBooleanValue());
+          break;
+        case MINIMUM:
+          schema.setMinimum(jp.getNumberValue());
+          break;
+        case EXCLUSIVEMINIMUM:
+          schema.setExclusiveMinimum(jp.getBooleanValue());
+          break;
+        case MAXLENGTH:
+          schema.setMaxLength(jp.getIntValue());
+          break;
+        case MINLENGTH:
+          schema.setMinLength(jp.getIntValue());
+          break;
+        case PATTERN:
+          schema.setPattern(jp.getText());
+          break;
+        case MAXITEMS:
+          schema.setMaxItems(jp.getIntValue());
+          break;
+        case MINITEMS:
+          schema.setMinItems(jp.getIntValue());
+          break;
+        case UNIQUEITEMS:
+          schema.setUniqueItems(jp.getBooleanValue());
+          break;
+        case MAXPROPERTIES:
+          schema.setMaxProperties(jp.getIntValue());
+          break;
+        case MINPROPERTIES:
+          schema.setMinProperties(jp.getIntValue());
+          break;
+        case REQUIRED:
+          schema.setRequiredFields(jp.readValueAs(new TypeReference<List<String>>() {
           }));
-        } else {
-          throw new IOException("Unexpected value type");
-        }
-      } else if ("description".equals(name)) {
-        schema.setDescription(jp.getText());
-      } else if (FORMAT.equals(name)) {
-        schema.setFormat(jp.getText());
-      } else if (DEFAULT.equals(name)) {
-        schema.setDefault(jp.readValueAs(new TypeReference<Object>() {
-        }));
-      } else if (NULLABLE.equals(name)) {
-        schema.setNullable(jp.getBooleanValue());
-      } else if (DISCRIMINATOR.equals(name)) {
-        schema.setDiscriminator(jp.readValueAs(new TypeReference<Discriminator>() {
-        }));
-      } else if ("readOnly".equals(name)) {
-        schema.setReadOnly(jp.getBooleanValue());
-      } else if ("writeOnly".equals(name)) {
-        schema.setWriteOnly(jp.getBooleanValue());
-      } else if ("xml".equals(name)) {
-        schema.setXml(jp.readValueAs(new TypeReference<Xml>() {
-        }));
-      } else if ("externalDocs".equals(name)) {
-        schema.setExternalDocs(jp.readValueAs(new TypeReference<ExternalDocs>() {
-        }));
-      } else if ("example".equals(name)) {
-        schema.setExample(jp.readValueAs(new TypeReference<Object>() {
-        }));
-      } else if ("deprecated".equals(name)) {
-        schema.setDeprecated(jp.getBooleanValue());
-      } else if ($REF.equals(name)) {
-        schema.setRef(jp.getValueAsString());
+          break;
+        case ENUM:
+          schema.setEnums(jp.readValueAs(new TypeReference<List<String>>() {
+          }));
+          break;
+        case TYPE:
+          schema.setType(jp.getText());
+          break;
+        case ALLOF:
+          schema.setAllOfSchemas(jp.readValueAs(new TypeReference<List<Schema>>() {
+          }));
+          break;
+        case ONEOF:
+          schema.setOneOfSchemas(jp.readValueAs(new TypeReference<List<Schema>>() {
+          }));
+          break;
+        case ANYOF:
+          schema.setAnyOfSchemas(jp.readValueAs(new TypeReference<List<Schema>>() {
+          }));
+          break;
+        case NOT:
+          schema.setNotSchema(jp.readValueAs(new TypeReference<Schema>() {
+          }));
+          break;
+        case ITEMS:
+          schema.setItemsSchema(jp.readValueAs(new TypeReference<Schema>() {
+          }));
+          break;
+        case PROPERTIES:
+          schema.setProperties(jp.readValueAs(new TypeReference<Map<String, Schema>>() {
+          }));
+          break;
+        case ADDITIONALPROPERTIES:
+          if (token.isBoolean()) {
+            schema.setAdditionalPropertiesAllowed(jp.getBooleanValue());
+          } else if (token.isStructStart()) {
+            schema.setAdditionalProperties(jp.readValueAs(new TypeReference<Schema>() {
+            }));
+          } else {
+            throw new IOException("Unexpected value type");
+          }
+          break;
+        case "description":
+          schema.setDescription(jp.getText());
+          break;
+        case FORMAT:
+          schema.setFormat(jp.getText());
+          break;
+        case DEFAULT:
+          schema.setDefault(jp.readValueAs(new TypeReference<Object>() {
+          }));
+          break;
+        case NULLABLE:
+          schema.setNullable(jp.getBooleanValue());
+          break;
+        case DISCRIMINATOR:
+          schema.setDiscriminator(jp.readValueAs(new TypeReference<Discriminator>() {
+          }));
+          break;
+        case "readOnly":
+          schema.setReadOnly(jp.getBooleanValue());
+          break;
+        case "writeOnly":
+          schema.setWriteOnly(jp.getBooleanValue());
+          break;
+        case "xml":
+          schema.setXml(jp.readValueAs(new TypeReference<Xml>() {
+          }));
+          break;
+        case "externalDocs":
+          schema.setExternalDocs(jp.readValueAs(new TypeReference<ExternalDocs>() {
+          }));
+          break;
+        case "example":
+          schema.setExample(jp.readValueAs(new TypeReference<Object>() {
+          }));
+          break;
+        case "deprecated":
+          schema.setDeprecated(jp.getBooleanValue());
+          break;
+        case $REF:
+          schema.setRef(jp.getValueAsString());
+          break;
       }
     }
 

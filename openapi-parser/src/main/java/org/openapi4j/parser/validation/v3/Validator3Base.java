@@ -51,7 +51,7 @@ abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T>
                     final String crumb) {
 
     if (defaultValue != null && type != null) {
-      boolean ok = false;
+      boolean ok;
       switch (type) {
         case TYPE_STRING:
           ok = defaultValue instanceof String;
