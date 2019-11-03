@@ -5,7 +5,7 @@ import org.openapi4j.parser.model.v3.Parameter;
 
 import java.util.Map;
 
-class LabelStyleConverter extends AbstractFlatStyleConverter {
+class LabelStyleConverter implements FlatStyleConverter {
   private static final LabelStyleConverter INSTANCE = new LabelStyleConverter();
 
   private LabelStyleConverter() {}

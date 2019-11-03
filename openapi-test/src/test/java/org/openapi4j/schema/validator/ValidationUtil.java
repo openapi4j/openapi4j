@@ -8,8 +8,8 @@ import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
-import org.openapi4j.schema.validator.v3.ValidatorInstance;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
+import org.openapi4j.schema.validator.v3.ValidatorInstance;
 
 import java.net.URI;
 import java.util.Map;

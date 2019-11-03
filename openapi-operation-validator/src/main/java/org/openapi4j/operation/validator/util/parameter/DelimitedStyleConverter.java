@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class DelimitedStyleConverter extends AbstractFlatStyleConverter {
+class DelimitedStyleConverter implements FlatStyleConverter {
   private static final Pattern REGEX = Pattern.compile("([^&]+)(?:=)([^&]*)");
   private final String delimRegex;
 

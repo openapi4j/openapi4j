@@ -46,36 +46,22 @@ class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
       additionalPropertiesSchema = new SchemaValidator(context, ADDITIONALPROPERTIES, schemaNode, schemaParentNode, parentSchema);
     }
 
-    if (additionalPropertiesAllowed) {
+    if (Boolean.TRUE.equals(additionalPropertiesAllowed)) {
       allowedProperties = null;
       allowedPatternProperties = null;
 
     } else {
       JsonNode propertiesNode = schemaParentNode.get(OAI3SchemaKeywords.PROPERTIES);
-      if (propertiesNode != null) {
-        allowedProperties = new HashSet<>();
-        for (Iterator<String> it = propertiesNode.fieldNames(); it.hasNext(); ) {
-          allowedProperties.add(it.next());
-        }
-      } else {
-        allowedProperties = null;
-      }
+      allowedProperties = setupAllowedProperties(propertiesNode);
 
       JsonNode patternPropertiesNode = schemaParentNode.get(OAI3SchemaKeywords.PATTERNPROPERTIES);
-      if (patternPropertiesNode != null) {
-        allowedPatternProperties = new HashSet<>();
-        for (Iterator<String> it = patternPropertiesNode.fieldNames(); it.hasNext(); ) {
-          allowedPatternProperties.add(Pattern.compile(it.next()));
-        }
-      } else {
-        allowedPatternProperties = null;
-      }
+      allowedPatternProperties = setupAllowedPatternProperties(patternPropertiesNode);
     }
   }
 
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (additionalPropertiesAllowed) return;
+    if (Boolean.TRUE.equals(additionalPropertiesAllowed)) return;
 
     for (Iterator<String> it = valueNode.fieldNames(); it.hasNext(); ) {
       String fieldName = it.next();
@@ -88,6 +74,36 @@ class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
         }
       }
     }
+  }
+
+  private Set<String> setupAllowedProperties(JsonNode propertiesNode) {
+    Set<String> values;
+
+    if (propertiesNode != null) {
+      values = new HashSet<>();
+      for (Iterator<String> it = propertiesNode.fieldNames(); it.hasNext(); ) {
+        values.add(it.next());
+      }
+    } else {
+      values = null;
+    }
+
+    return values;
+  }
+
+  private Set<Pattern> setupAllowedPatternProperties(JsonNode patternPropertiesNode) {
+    Set<Pattern> values;
+
+    if (patternPropertiesNode != null) {
+      values = new HashSet<>();
+      for (Iterator<String> it = patternPropertiesNode.fieldNames(); it.hasNext(); ) {
+        values.add(Pattern.compile(it.next()));
+      }
+    } else {
+      values = null;
+    }
+
+    return values;
   }
 
   private boolean checkAgainstPatternProperties(final String fieldName) {

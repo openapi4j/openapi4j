@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class MatrixStyleConverter extends AbstractFlatStyleConverter {
+class MatrixStyleConverter implements FlatStyleConverter {
   private static final Pattern PREFIXED_SEMICOLON_NAME_REGEX = Pattern.compile("(?:;)([^;]+)(?:=)([^;]*)");
 
   private static final MatrixStyleConverter INSTANCE = new MatrixStyleConverter();
@@ -63,7 +63,7 @@ class MatrixStyleConverter extends AbstractFlatStyleConverter {
 
     Matcher matcher = subPattern.matcher(rawValue);
     return (matcher.find())
-      ? super.getParameterValues(param, matcher.group(2), splitPattern)
+      ? getParameterValues(param, matcher.group(2), splitPattern)
       : new HashMap<>();
   }
 

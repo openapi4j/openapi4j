@@ -50,12 +50,6 @@ class SecurityRequirementHelper {
     }
 
     return handlers;
-
-    /*return osrs
-      .stream()
-      .map(this::mapWithFail)
-      .flatMap(Collection::stream)
-      .collect(Collectors.toList());*/
   }
 
   private List<Handler<RoutingContext>> getHandlers(OperationSecurityRequirement osr) throws ResolutionException {

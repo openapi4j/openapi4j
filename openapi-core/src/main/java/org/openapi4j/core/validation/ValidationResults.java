@@ -205,7 +205,9 @@ public class ValidationResults implements Serializable {
     return errBuilder.append(warnBuilder).append(infoBuilder).toString();
   }
 
-  public static class ValidationItem {
+  public static class ValidationItem implements Serializable {
+    private static final long serialVersionUID = 7905122048950251207L;
+
     private static final String DOT = ".";
 
     private final ValidationSeverity severity;

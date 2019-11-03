@@ -68,7 +68,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
 
     results.withCrumb(crumb, () -> {
       if (validateRequired(value, results, required, crumb)) {
-        Set<? extends V> set = new HashSet<V>(value);
+        Set<? extends V> set = new HashSet<>(value);
         if (set.size() != value.size()) {
           results.addError(String.format(DUPLICATED_VALUES, crumb), crumb);
         }

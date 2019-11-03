@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class FormStyleConverter extends AbstractFlatStyleConverter {
+class FormStyleConverter implements FlatStyleConverter {
   private static final Pattern REGEX = Pattern.compile("([^&]+)(?:=)([^&]*)");
 
   private static final FormStyleConverter INSTANCE = new FormStyleConverter();
@@ -75,7 +75,7 @@ class FormStyleConverter extends AbstractFlatStyleConverter {
     } else {
       Matcher matcher = REGEX.matcher(rawValue);
       return (matcher.find())
-        ? super.getParameterValues(param, matcher.group(2), ",")
+        ? getParameterValues(param, matcher.group(2), ",")
         : new HashMap<>();
     }
   }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
-import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.IdentityHashMap;

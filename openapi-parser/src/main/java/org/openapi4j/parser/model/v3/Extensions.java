@@ -11,37 +11,37 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Extensions extends AbsOpenApiSchema<Extensions> {
-  private Map<String, Object> extensions = new HashMap<>();
+  private Map<String, Object> extMap = new HashMap<>();
 
   @JsonAnyGetter
   public Map<String, Object> getExtensions() {
-    return extensions;
+    return extMap;
   }
 
   @JsonAnySetter
   public Extensions setExtensions(Map<String, Object> extensions) {
-    this.extensions = extensions;
+    this.extMap = extensions;
     return this;
   }
 
   public boolean hasExtension(String name) {
-    return has(extensions, name);
+    return has(extMap, name);
   }
 
   public Object getExtension(String name) {
-    return get(extensions, name);
+    return get(extMap, name);
   }
 
   public Extensions setExtension(String name, Object extension) {
-    if (extensions == null) {
-      extensions = new HashMap<>();
+    if (extMap == null) {
+      extMap = new HashMap<>();
     }
-    extensions.put(name, extension);
+    extMap.put(name, extension);
     return this;
   }
 
   public Extensions removeExtension(String name) {
-    remove(extensions, name);
+    remove(extMap, name);
     return this;
   }
 
@@ -49,7 +49,7 @@ public class Extensions extends AbsOpenApiSchema<Extensions> {
   public Extensions copy(OAIContext context, boolean followRefs) {
     Extensions copy = new Extensions();
 
-    copy.setExtensions(copyMap(extensions));
+    copy.setExtensions(copyMap(extMap));
 
     return copy;
   }

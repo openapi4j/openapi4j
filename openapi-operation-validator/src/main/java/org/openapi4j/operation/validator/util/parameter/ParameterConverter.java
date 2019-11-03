@@ -67,11 +67,9 @@ import java.util.regex.Pattern;
 public final class ParameterConverter {
   private static final String LABEL = "label";
   private static final String MATRIX = "matrix";
-  //private static final String SIMPLE = "simple";
   private static final String SPACEDELIMITED = "spaceDelimited";
   private static final String PIPEDELIMITED = "pipeDelimited";
   private static final String DEEPOBJECT = "deepObject";
-  //private static final String FORM = "form";
 
   private ParameterConverter() {}
 

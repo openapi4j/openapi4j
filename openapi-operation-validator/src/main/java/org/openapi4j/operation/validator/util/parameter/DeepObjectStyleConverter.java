@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class DeepObjectStyleConverter extends AbstractFlatStyleConverter {
+class DeepObjectStyleConverter implements FlatStyleConverter {
   private static final Pattern REGEX = Pattern.compile("(?:([^&]+)\\[([^&]+)\\])(?:=)([^&]*)");
 
   private static final DeepObjectStyleConverter INSTANCE = new DeepObjectStyleConverter();

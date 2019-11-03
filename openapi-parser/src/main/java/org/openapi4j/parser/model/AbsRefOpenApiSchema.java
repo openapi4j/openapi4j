@@ -21,8 +21,8 @@ public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends Ab
     return ref != null;
   }
 
-  public void setRef(String $ref) {
-    this.ref = $ref;
+  public void setRef(String ref) {
+    this.ref = ref;
   }
 
   @SuppressWarnings("unchecked")

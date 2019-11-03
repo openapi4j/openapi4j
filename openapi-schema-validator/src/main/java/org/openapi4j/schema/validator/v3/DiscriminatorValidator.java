@@ -7,7 +7,6 @@ import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
-import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.ArrayList;
@@ -32,12 +31,11 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   private String discriminatorPropertyName;
   private JsonNode discriminatorMapping;
 
-  DiscriminatorValidator(
-    final ValidationContext<OAI3> context,
-    final JsonNode schemaNode,
-    final JsonNode schemaParentNode,
-    final SchemaValidator parentSchema,
-    final String arrayType) {
+  DiscriminatorValidator(final ValidationContext<OAI3> context,
+                         final JsonNode schemaNode,
+                         final JsonNode schemaParentNode,
+                         final SchemaValidator parentSchema,
+                         final String arrayType) {
 
     super(context, schemaNode, schemaParentNode, parentSchema);
 
@@ -95,11 +93,10 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
    */
   abstract void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results);
 
-  private void setupDiscriminator(
-    final ValidationContext<OAI3> context,
-    final JsonNode schemaNode,
-    final JsonNode schemaParentNode,
-    final SchemaValidator parentSchema) {
+  private void setupDiscriminator(final ValidationContext<OAI3> context,
+                                  final JsonNode schemaNode,
+                                  final JsonNode schemaParentNode,
+                                  final SchemaValidator parentSchema) {
 
     if (ALLOF.equals(arrayType)) {
       setupAllOfDiscriminatorSchemas(context, schemaNode, schemaParentNode, parentSchema);
@@ -119,11 +116,10 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
     }
   }
 
-  private void setupAllOfDiscriminatorSchemas(
-    final ValidationContext<OAI3> context,
-    final JsonNode schemaNode,
-    final JsonNode schemaParentNode,
-    final SchemaValidator parentSchema) {
+  private void setupAllOfDiscriminatorSchemas(final ValidationContext<OAI3> context,
+                                              final JsonNode schemaNode,
+                                              final JsonNode schemaParentNode,
+                                              final SchemaValidator parentSchema) {
 
     JsonNode allOfNode = getParentSchemaNode().get(ALLOF);
 
@@ -140,18 +136,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
 
         discriminatorNode = reference.getContent().get(DISCRIMINATOR);
         if (discriminatorNode != null) {
-          int size = schemaNode.size();
-          for (int i = 0; i < size; i++) {
-            JsonNode node = schemaNode.get(i);
-            JsonNode refValueNode = node.get(OAI3SchemaKeywords.$REF);
-            if (refValueNode != null && refValueNode.isTextual() && refValueNode.textValue().equals(refNode.textValue())) {
-              // Add the parent schema
-              schemas.add(new SchemaValidator(context, reference.getRef(), reference.getContent(), schemaParentNode, parentSchema));
-            } else {
-              // Add the other items
-              schemas.add(new SchemaValidator(context, arrayType, node, schemaParentNode, parentSchema));
-            }
-          }
+          setupAllOfDiscriminatorSchemas(schemaNode, refNode, reference, schemaParentNode, parentSchema);
           return;
         }
       }
@@ -164,17 +149,36 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
     }
   }
 
-  private void setupAnyOneOfDiscriminatorSchemas(
-    final ValidationContext<OAI3> context,
-    final JsonNode schemaNode,
-    final JsonNode schemaParentNode,
-    final SchemaValidator parentSchema) {
+  private void setupAnyOneOfDiscriminatorSchemas(final ValidationContext<OAI3> context,
+                                                 final JsonNode schemaNode,
+                                                 final JsonNode schemaParentNode,
+                                                 final SchemaValidator parentSchema) {
 
     discriminatorNode = getParentSchemaNode().get(DISCRIMINATOR);
 
     int size = schemaNode.size();
     for (int i = 0; i < size; i++) {
       schemas.add(new SchemaValidator(context, arrayType, schemaNode.get(i), schemaParentNode, parentSchema));
+    }
+  }
+
+  private void setupAllOfDiscriminatorSchemas(final JsonNode schemaNode,
+                                              final JsonNode refNode,
+                                              final Reference reference,
+                                              final JsonNode schemaParentNode,
+                                              final SchemaValidator parentSchema) {
+
+    int size = schemaNode.size();
+    for (int i = 0; i < size; i++) {
+      JsonNode node = schemaNode.get(i);
+      JsonNode refValueNode = node.get(OAI3SchemaKeywords.$REF);
+      if (refValueNode != null && refValueNode.isTextual() && refValueNode.textValue().equals(refNode.textValue())) {
+        // Add the parent schema
+        schemas.add(new SchemaValidator(context, reference.getRef(), reference.getContent(), schemaParentNode, parentSchema));
+      } else {
+        // Add the other items
+        schemas.add(new SchemaValidator(context, arrayType, node, schemaParentNode, parentSchema));
+      }
     }
   }
 
