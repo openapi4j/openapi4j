@@ -1,4 +1,16 @@
+plugins {
+  id 'jacoco'
+}
+
 description = "openapi4j test project"
+
+jacocoTestReport {
+  reports {
+    xml.enabled true
+    csv.enabled false
+    html.enabled false
+  }
+}
 
 dependencies {
   // Parser

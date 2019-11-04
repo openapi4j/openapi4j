@@ -1,11 +1,11 @@
-task sourcesJar(type: Jar) {
-  from sourceSets.main.allJava
-  archiveClassifier = 'sources'
+task sourcesJar(type: Jar, dependsOn: classes) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar) {
-  from javadoc
-  archiveClassifier = 'javadoc'
+  classifier = 'javadoc'
+  from javadoc.destinationDir
 }
 
 publishing {
@@ -20,6 +20,7 @@ publishing {
 
       from components.java
       artifact sourcesJar
+      artifact javadocJar
       pom {
         name = project.name
         description = project.description
@@ -31,8 +32,8 @@ publishing {
           }
         }
         scm {
-          connection = "scm:git@github.com:openapi4j/openapi4j.git"
-          developerConnection = "scm:git@github.com:openapi4j/openapi4j.git"
+          connection = "scm:git:git://github.com:openapi4j/openapi4j.git"
+          developerConnection = "scm:git:ssh://@github.com:openapi4j/openapi4j.git"
           url = "https://github.com/openapi4j/openapi4j"
         }
       }
@@ -43,28 +44,23 @@ publishing {
     /*maven {
         def releasesUrl = uri("$buildDir/publish/release")
         def snapshotsUrl = uri("$buildDir/publish/snapshot")
-        url = version.endsWith("SNAPSHOT") ? snapshotsUrl : releasesUrl
+        url version.endsWith("SNAPSHOT") ? snapshotsUrl : releasesUrl
     }*/
     maven {
-      def releasesUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-      def snapshotsUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-      url = version.endsWith("SNAPSHOT") ? snapshotsUrl : releasesUrl
-
-      if (!project.hasProperty("publishUsername") || !project.hasProperty("publishPassword")) {
-        // logger.warn("No publish credentials defined in Gradle properties file to deploy to Maven Central.")
-        project.ext.set("publishUsername", "invalid")
-        project.ext.set("publishPassword", "invalid")
-      }
-
+      name "ossrh"
       credentials {
-        username = project.publishUsername
-        password = project.publishPassword
+        username project.hasProperty("publishUsername") ? project.property("publishUsername") : 'invalid'
+        password project.hasProperty("publishPassword") ? project.property("publishPassword") : 'invalid'
       }
+
+      def snapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+      def releasesUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+      url version.endsWith("SNAPSHOT") ? snapshotsUrl : releasesUrl
     }
   }
 }
 
-signing {
+/*signing {
   sign publishing.publications.mavenJava
-}
+}*/
 

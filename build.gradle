@@ -9,7 +9,7 @@ allprojects {
   apply plugin: "java"
 
   group = "org.openapi4j"
-  version = "0.1-SNAPSHOT"
+  version = "0.1" + (Boolean.valueOf(System.getProperty("release")) ? "" : "-SNAPSHOT")
 
   java {
     sourceCompatibility = JavaVersion.VERSION_1_8
