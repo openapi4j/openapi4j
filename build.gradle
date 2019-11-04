@@ -3,10 +3,12 @@ import java.nio.charset.StandardCharsets
 plugins {
   id "java"
   id "org.sonarqube" version "2.7.1"
+  id 'jacoco'
 }
 
 allprojects {
-  apply plugin: "java"
+  apply plugin: 'java'
+  apply plugin: 'jacoco'
 
   group = "org.openapi4j"
   version = "0.1" + (Boolean.valueOf(System.getProperty("release")) ? "" : "-SNAPSHOT")
@@ -28,8 +30,14 @@ allprojects {
 
   sonarqube {
     properties {
-      //property "sonar.jacoco.reportPaths", "${project.buildDir}/jacoco/test.exec"
       property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+    }
+  }
+
+  jacocoTestReport {
+    dependsOn test
+    reports {
+      xml.enabled = true
     }
   }
 }
