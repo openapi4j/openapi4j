@@ -24,6 +24,7 @@ addons:
 stages:
   - name: build
   - name: sonarqube
+    if: type != pull_request
   - name: snapshot
     # only publish snapshots from "master" branch and not in pull requests
     if: branch = master AND type != pull_request
@@ -35,7 +36,7 @@ jobs:
   include:
     # run build
     - stage: build
-      script: ./gradlew build
+      script: ./gradlew build jacocoTestReport
 
     # run sonarqube
     - stage: sonarqube
