@@ -36,11 +36,11 @@ jobs:
   include:
     # run build
     - stage: build
-      script: ./gradlew build jacocoTestReport
+      script: ./gradlew build
 
     # run sonarqube
     - stage: sonarqube
-      script: ./gradlew sonarqube
+      script: ./gradlew jacocoTestReport sonarqube
 
     # publish snapshot
     - stage: snapshot

@@ -5,6 +5,8 @@ plugins {
 description = "openapi4j test project"
 
 jacocoTestReport {
+  dependsOn test
+
   reports {
     xml.enabled true
     csv.enabled false
