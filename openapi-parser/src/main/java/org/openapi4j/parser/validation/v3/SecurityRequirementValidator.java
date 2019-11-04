@@ -34,10 +34,8 @@ class SecurityRequirementValidator extends Validator3Base<OpenApi3, SecurityRequ
         results.addError(String.format(SCHEME_NOT_DEFINED, entry.getKey()));
       } else {
         String type = api.getComponents().getSecurityScheme(entry.getKey()).getType();
-        if (type == null
-          || OAUTH2.equals(type)
-          || OPENIDCONNECT.equals(type)
-          || !OpenApi3Validator.Config.SECURITY_REQ_SCOPES_STRICT) {
+
+        if (type == null || OAUTH2.equals(type) || OPENIDCONNECT.equals(type)) {
           continue;
         }
 

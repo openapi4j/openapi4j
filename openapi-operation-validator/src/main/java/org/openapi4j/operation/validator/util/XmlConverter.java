@@ -41,9 +41,9 @@ class XmlConverter {
 
     // unwrap
     if (schema.getType() == null || "object".equals(schema.getType())) {
-      for (Map.Entry<String, Object> entry : xmlMapped.entrySet()) {
-        return TypeConverter.instance().convertTypes(schema, (Map<String, Object>) entry.getValue());
-      }
+      // Get first child of XML chapter, to match JSON content
+      Map.Entry<String, Object> entry = xmlMapped.entrySet().iterator().next();
+      return TypeConverter.instance().convertTypes(schema, (Map<String, Object>) entry.getValue());
     }
 
     return TypeConverter.instance().convertTypes(schema, xmlMapped);

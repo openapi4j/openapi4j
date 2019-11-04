@@ -174,7 +174,7 @@ public class Operation extends AbsOpenApiSchema<Operation> {
     return this;
   }
 
-  public boolean Response(String name) {
+  public boolean hasResponse(String name) {
     return has(responses, name);
   }
 

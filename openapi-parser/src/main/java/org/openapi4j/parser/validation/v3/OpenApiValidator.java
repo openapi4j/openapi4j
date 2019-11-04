@@ -57,26 +57,32 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
 
     for (Map.Entry<String, Path> pathEntry : paths.entrySet()) {
       String path = pathEntry.getKey();
-
       final List<String> pathParams = getPathParams(path);
 
       for (Operation operation : pathEntry.getValue().getOperations().values()) {
-        Collection<Parameter> parameters = operation.getParameters();
-
-        List<String> discoveredPathParameters = new ArrayList<>();
-        if (parameters != null) {
-          for (Parameter parameter : parameters) {
-            String paramName = checkPathParam(api, path, pathParams, parameter, results);
-            if (paramName != null) {
-              discoveredPathParameters.add(paramName);
-            }
-          }
-        }
-
-        // Check that all path parameters are in the path
-        validatePathParametersMatching(path, pathParams, discoveredPathParameters, results);
+        discoverAndCheckParams(api, path, pathParams, operation.getParameters(), results);
       }
     }
+  }
+
+  private void discoverAndCheckParams(OpenApi3 api,
+                                      String path,
+                                      List<String> pathParams,
+                                      Collection<Parameter> parameters,
+                                      ValidationResults results) {
+
+    List<String> discoveredPathParameters = new ArrayList<>();
+    if (parameters != null) {
+      for (Parameter parameter : parameters) {
+        String paramName = checkPathParam(api, path, pathParams, parameter, results);
+        if (paramName != null) {
+          discoveredPathParameters.add(paramName);
+        }
+      }
+    }
+
+    // Check that all path parameters are in the path
+    validatePathParametersMatching(path, pathParams, discoveredPathParameters, results);
   }
 
   private String checkPathParam(OpenApi3 api, String path, List<String> pathParams, Parameter parameter, ValidationResults results) {

@@ -80,6 +80,8 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
           results.addError(String.format(STYLE_ONLY_IN, style, QUERY), STYLE);
         }
         break;
+      default:
+        break;
     }
   }
 }

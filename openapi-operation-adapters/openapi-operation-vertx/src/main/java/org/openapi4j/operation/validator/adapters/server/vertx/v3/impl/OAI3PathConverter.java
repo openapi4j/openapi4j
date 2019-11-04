@@ -12,8 +12,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class OAI3PathConverter {
-  private static final Pattern OAS_PATH_PARAMETERS_PATTERN = Pattern.compile("\\{{1}[.;?*+]*([^\\{\\}.;?*+]+)[^\\}]*\\}{1}");
-  private static final Pattern ILLEGAL_PATH_MATCHER = Pattern.compile("\\{[^\\/]*\\/[^\\/]*\\}");
+  private static final Pattern OAS_PATH_PARAMETERS_PATTERN = Pattern.compile("\\{[.;?*+]*([^{}.;?*+]+)[^}]*}");
+  private static final Pattern ILLEGAL_PATH_MATCHER = Pattern.compile("\\{[^/]*/[^/]*}");
+
+  private static final String DEFAULT_NOT = "!*'();@&=+$,/?#[]";
 
   private static final OAI3PathConverter INSTANCE = new OAI3PathConverter();
 
@@ -27,7 +29,7 @@ class OAI3PathConverter {
   /**
    * This method returns a pattern only if a pattern is needed, otherwise it returns an empty optional
    *
-   * @return
+   * @return a pattern only if a pattern is needed.
    */
   Optional<Pattern> solve(String oasPath, List<Parameter> pathParameters) throws ResolutionException {
     if (ILLEGAL_PATH_MATCHER.matcher(oasPath).matches())
@@ -68,28 +70,27 @@ class OAI3PathConverter {
 
       String groupName = "p" + groupIndex.increment();
 
-      if (style.equals("simple")) {
-        addSimpleParameter(paramName, regex, mappedGroups, groupName, isDotReserved);
-      } else if (style.equals("label")) {
-        addLabelParameter(paramName, parameter, regex, mappedGroups, groupName, groupIndex, explode, isObject);
-      } else if (style.equals("matrix")) {
-        addMatrixParameter(paramName, parameter, regex, mappedGroups, groupName, isDotReserved, groupIndex, explode, isObject, isArray);
+      switch (style) {
+        case "label":
+          addLabelParameter(paramName, parameter, regex, mappedGroups, groupName, groupIndex, explode, isObject);
+          break;
+        case "matrix":
+          addMatrixParameter(paramName, parameter, regex, mappedGroups, groupName, isDotReserved, groupIndex, explode, isObject, isArray);
+          break;
+        case "simple":
+        default:
+          addSimpleParameter(paramName, regex, mappedGroups, groupName, isDotReserved);
+          break;
       }
     }
 
     if (regex.length() == 0) {
       return Optional.empty();
-    } else {
-      boolean endSlash = oasPath.charAt(oasPath.length() - 1) == '/';
-
-      String toAppendQuoted = oasPath.substring(lastMatchEnd, (endSlash) ? oasPath.length() - 1 : oasPath.length());
-      if (toAppendQuoted.length() != 0)
-        regex.append(Pattern.quote(toAppendQuoted));
-      if (endSlash)
-        regex.append("\\/");
-
-      return Optional.of(Pattern.compile(regex.toString()));
     }
+
+    appendTrailing(oasPath, lastMatchEnd, regex);
+
+    return Optional.of(Pattern.compile(regex.toString()));
   }
 
   private void addSimpleParameter(String paramName,
@@ -127,7 +128,7 @@ class OAI3PathConverter {
         groupName = "p" + groupIndex.increment();
       }
     } else {
-      String not = "[^" + escapeCharacters("!*'();@&=+$,/?#[]") + "]*";
+      String not = "[^" + escapeCharacters(DEFAULT_NOT) + "]*";
       String reg = "\\.?(?<" + groupName + ">" + not + ")?";
 
       regex.append(reg);
@@ -148,7 +149,7 @@ class OAI3PathConverter {
     if (isObject && explode) {
       Map<String, Schema> properties = solveObjectSchema(parameter.getSchema());
       for (Map.Entry<String, Schema> entry : properties.entrySet()) {
-        String not = "[^" + escapeCharacters("!*'();@&=+$,/?#[]" + (isDotReserved ? "." : null)) + "]*";
+        String not = "[^" + escapeCharacters(DEFAULT_NOT + (isDotReserved ? "." : null)) + "]*";
         String param = "\\;" + Pattern.quote(entry.getKey()) + "=";
         String group = "(?<" + groupName + ">" + not + ")";
         String reg = "(?>" + param + group + ")?";
@@ -159,7 +160,7 @@ class OAI3PathConverter {
         groupName = "p" + groupIndex.increment();
       }
     } else if (isArray && explode) {
-      String not = "[^" + escapeCharacters("!*'();@&=+$,/?#[]" + (isDotReserved ? "." : null)) + "]*";
+      String not = "[^" + escapeCharacters(DEFAULT_NOT + (isDotReserved ? "." : null)) + "]*";
       String param = ";" + Pattern.quote(paramName) + "=";
       String group = "(?" + param + not + ")+";
       String reg = "(?<" + groupName + ">" + group + ")";
@@ -174,6 +175,22 @@ class OAI3PathConverter {
 
       regex.append(reg);
       mappedGroups.put(groupName, paramName);
+    }
+  }
+
+  private void appendTrailing(String oasPath,
+                              int lastMatchEnd,
+                              StringBuilder regex) {
+
+    boolean endSlash = oasPath.charAt(oasPath.length() - 1) == '/';
+
+    String toAppendQuoted = oasPath.substring(lastMatchEnd, (endSlash) ? oasPath.length() - 1 : oasPath.length());
+    if (toAppendQuoted.length() != 0) {
+      regex.append(Pattern.quote(toAppendQuoted));
+    }
+
+    if (endSlash) {
+      regex.append("\\/");
     }
   }
 

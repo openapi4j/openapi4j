@@ -162,6 +162,8 @@ public class SchemaDeserializer extends StdDeserializer<Schema> {
         case $REF:
           schema.setRef(jp.getValueAsString());
           break;
+        default:
+          break;
       }
     }
 

@@ -8,6 +8,8 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Schema;
 import org.openapi4j.parser.validation.Validator;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;
@@ -90,58 +92,66 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
 
       if (count > 1) {
         results.addError(String.format(DISCRIM_ONLY_ONE, discriminator.getPropertyName()), DISCRIMINATOR);
-      } else if (count == 0) {
+        return;
+      }
+
+      if (count == 0) {
         // discriminator is located aside properties
-        checkSchemaDiscriminator(api, discriminator, schema, results);
-      } else /*(count == 1)*/ {
-        // discriminator is aside xxxOf
-        // check properties for the schemas
-        if (schema.hasAllOfSchemas()) {
-          boolean hasProperty = false;
-          for (Schema subSchema : schema.getAllOfSchemas()) {
-            hasProperty |= checkSchemaDiscriminator(api, discriminator, subSchema, new ValidationResults());
-          }
-          if (!hasProperty) {
-            results.addError(String.format(DISCRIM_CONSTRAINT_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
-          }
-        } else if (schema.hasAnyOfSchemas()) {
-          for (Schema subSchema : schema.getAnyOfSchemas()) {
-            checkSchemaDiscriminator(api, discriminator, subSchema, results);
-          }
-        } else {
-          for (Schema subSchema : schema.getOneOfSchemas()) {
-            checkSchemaDiscriminator(api, discriminator, subSchema, results);
-          }
+        checkSchemaDiscriminator(api, discriminator, Collections.singletonList(schema), results);
+        return;
+      }
+
+      // discriminator is aside xxxOf
+      // check properties for the schemas
+      if (schema.hasAllOfSchemas()) {
+        if (!checkSchemaDiscriminator(api, discriminator, schema.getAllOfSchemas(), new ValidationResults())) {
+          results.addError(String.format(DISCRIM_CONSTRAINT_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
         }
+      } else if (schema.hasAnyOfSchemas()) {
+        checkSchemaDiscriminator(api, discriminator, schema.getAnyOfSchemas(), results);
+      } else {
+        checkSchemaDiscriminator(api, discriminator, schema.getOneOfSchemas(), results);
       }
     }
   }
 
-  private boolean checkSchemaDiscriminator(OpenApi3 api, Discriminator discriminator, Schema schema, ValidationResults results) {
+  private boolean checkSchemaDiscriminator(OpenApi3 api, Discriminator discriminator, List<Schema> schemas, ValidationResults results) {
     boolean hasProperty = true;
 
-    if (schema.isRef()) {
-      Reference reference = api.getContext().getReferenceRegistry().getRef(schema.getRef());
-      if (reference != null) {
-        try {
-          schema = reference.getMappedContent(Schema.class);
-        } catch (DecodeException e) {
-          results.addError(String.format(DISCRIM_REF_MAPPING, schema.getRef()), DISCRIMINATOR);
-          return false;
+    for (Schema schema : schemas) {
+      if (schema.isRef()) {
+        schema = getReferenceContent(api, schema, results);
+        if (schema == null) {
+          continue;
         }
+      }
+
+      if (!schema.hasProperty(discriminator.getPropertyName())) {
+        results.addError(String.format(DISCRIM_PROP_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
+        hasProperty = false;
+      }
+      if (!schema.hasRequiredFields() || !schema.getRequiredFields().contains(discriminator.getPropertyName())) {
+        results.addError(String.format(DISCRIM_REQUIRED_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
+        hasProperty = false;
       }
     }
 
-    if (!schema.getProperties().containsKey(discriminator.getPropertyName())) {
-      results.addError(String.format(DISCRIM_PROP_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
-      hasProperty = false;
-    }
-    if (!schema.getRequiredFields().contains(discriminator.getPropertyName())) {
-      results.addError(String.format(DISCRIM_REQUIRED_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
-      hasProperty = false;
+    return hasProperty;
+  }
+
+  private Schema getReferenceContent(OpenApi3 api, Schema schema, ValidationResults results) {
+    Reference reference = api.getContext().getReferenceRegistry().getRef(schema.getRef());
+    if (reference == null) {
+      results.addError(String.format(DISCRIM_REF_MAPPING, schema.getRef()), DISCRIMINATOR);
+      return null;
     }
 
-    return hasProperty;
+    try {
+      return reference.getMappedContent(Schema.class);
+    } catch (DecodeException e) {
+      results.addError(String.format(DISCRIM_REF_MAPPING, schema.getRef()), DISCRIMINATOR);
+      return null;
+    }
   }
 
   private void checkReadWrite(Schema schema, ValidationResults results) {
