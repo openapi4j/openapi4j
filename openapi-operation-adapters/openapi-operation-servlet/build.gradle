@@ -2,6 +2,17 @@ plugins {
   id 'java-library'
   id 'maven-publish'
   id 'signing'
+  id 'jacoco'
+}
+
+description = "openapi4j test project"
+
+jacocoTestReport {
+  dependsOn test
+
+  reports {
+    xml.enabled = true
+  }
 }
 
 description = "openapi4j operation Servlet adapter"

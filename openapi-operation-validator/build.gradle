@@ -2,9 +2,18 @@ plugins {
   id 'java-library'
   id 'maven-publish'
   id 'signing'
+  id 'jacoco'
 }
 
 description = "openapi4j operation validator"
+
+jacocoTestReport {
+  dependsOn test
+
+  reports {
+    xml.enabled = true
+  }
+}
 
 dependencies {
   api(project(":openapi-parser"))

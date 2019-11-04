@@ -8,10 +8,8 @@ jacocoTestReport {
   dependsOn test
 
   reports {
-    xml.enabled true
-    csv.enabled false
+    xml.enabled = true
   }
-  executionData.from = files('build/jacoco/test.exec')
 }
 
 dependencies {

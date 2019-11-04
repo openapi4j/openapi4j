@@ -25,4 +25,11 @@ allprojects {
     mavenCentral()
     mavenLocal()
   }
+
+  sonarqube {
+    properties {
+      //property "sonar.jacoco.reportPaths", "${project.buildDir}/jacoco/test.exec"
+      property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+    }
+  }
 }
