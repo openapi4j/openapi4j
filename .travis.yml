@@ -34,12 +34,13 @@ jobs:
   include:
     # run gradle build
     - stage: build
-      script: ./gradlew build jacocoTestReport --no-daemon
+      script: ./gradlew --no-daemon build jacocoTestReport
+    - script: ./gradlew sonarqube
 
     # publish snapshot
     - stage: snapshot
-      script: ./gradlew publish
+      script: ./gradlew --no-daemon publish
 
     # release stable version
     - stage: release
-      script: ./gradlew publish -Drelease=true
+      script: ./gradlew --no-daemon publish -Drelease=true
