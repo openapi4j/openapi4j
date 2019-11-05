@@ -12,11 +12,11 @@ That said, you can, if you want to, do the validation from it. Check at the inte
 
 Add the following to your `pom.xml`:
 
+[See main page for version](https://github.com/openapi4j/openapi4j)
 ```xml
 <dependency>
     <groupId>org.openapi4j</groupId>
     <artifactId>openapi4j-parser</artifactId>
-    <version>VERSION</version>
 </dependency>
 ```
 
@@ -52,9 +52,8 @@ OpenApi3 api = new OpenApi3Parser().parse(specPath, authOptions, true);
 
 ## Supported versions
 
-OpenAPI Specification (OAS) version 3.0.2.  
-See related projects for limitations and issues.
+[See main page](https://github.com/openapi4j/openapi4j#supported-versions)
 
 ## License
 
-openapi4j and all the modules are released under the Apache 2.0 license. See [LICENSE](https://github.com/openapi4j/openapi4j/blob/master/LICENSE.md) for details.
+[See main page](https://github.com/openapi4j/openapi4j#license)

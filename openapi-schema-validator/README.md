@@ -1,4 +1,4 @@
-# Open API Schema Object validator
+# OpenAPI Schema Object validator
 
 Implementation of the [Schema Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject) specification for Open API 3.  
 As a reminder, Schema Object is a subset of [JSON schema draft #00](https://tools.ietf.org/html/draft-wright-json-schema-validation-00) with additions. 
@@ -10,7 +10,7 @@ The aim of this module is accuracy and compliancy with the specifications.
 
 That said, there's options to enrich to current definitions with the `ValidationContext` object :
 * ADDITIONAL_PROPS_RESTRICT : By default, Schema Object can have additional properties. This option let's you invert the behaviour.
-* You can override keywords' validators. More on this with [extensions](#extensions).
+* You can override keywords' validators! More on this with [extensions](#extensions).
 
 ## Dependencies
 
@@ -21,11 +21,11 @@ That said, there's options to enrich to current definitions with the `Validation
 
 Add the following to your `pom.xml`:
 
+[See main page for version](https://github.com/openapi4j/openapi4j)
 ```xml
 <dependency>
     <groupId>org.openapi4j</groupId>
     <artifactId>openapi4j-schema-validator</artifactId>
-    <version>VERSION</version>
 </dependency>
 ```
 
@@ -77,7 +77,7 @@ There's no plan yet for releasing contributions on validation extensions, for no
 
 Some ideas : adding your very specific formats, checking full entity, dateStart > now() && dateStart < dateEnd, ...  
 
-Whatever you need has now the possibility to be (re-)located at this single level and not after traversing all layers of the architecture before checking values.
+Whatever you need has now the possibility to be (re-)located at this SINGLE level and not after traversing all layers of the architecture before checking values.
 
 Example :
 
@@ -201,4 +201,4 @@ Any keyword missing in the following table has to be considered NOT supported.
 
 ## License
 
-The module is released under the Apache 2.0 license. See [LICENSE](https://github.com/openapi4j/openapi4j/blob/master/LICENSE.md) for details.
+[See main page](https://github.com/openapi4j/openapi4j#license)

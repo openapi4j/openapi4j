@@ -2,11 +2,11 @@
 
 Add the following to your `pom.xml` :
 
+[See main page for version](https://github.com/openapi4j/openapi4j)
 ```xml
 <dependency>
     <groupId>org.openapi4j</groupId>
     <artifactId>openapi4j-operation-vertx</artifactId>
-    <version>VERSION</version>
 </dependency>
 ```
 
@@ -71,4 +71,4 @@ server.requestHandler(router).listen();
 
 ## License
 
-openapi4j and all the modules are released under the Apache 2.0 license. See [LICENSE](https://github.com/openapi4j/openapi4j/blob/master/LICENSE.md) for details.
+[See main page](https://github.com/openapi4j/openapi4j#license)

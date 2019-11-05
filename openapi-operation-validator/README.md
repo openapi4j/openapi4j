@@ -15,11 +15,11 @@ The Operation validators are lazily created and cached for re-use.
 
 Add the following to your `pom.xml` :
 
+[See main page for version](https://github.com/openapi4j/openapi4j)
 ```xml
 <dependency>
     <groupId>org.openapi4j</groupId>
     <artifactId>openapi4j-operation-validator</artifactId>
-    <version>VERSION</version>
 </dependency>
 ```
 
@@ -89,9 +89,8 @@ Here's a list of currently non supported keywords :
 
 ## Supported versions
 
-OpenAPI Specification (OAS) version 3.0.2.  
-See related projects for limitations and issues.
+[See main page](https://github.com/openapi4j/openapi4j#supported-versions)
 
 ## License
 
-openapi4j and all the modules are released under the Apache 2.0 license. See [LICENSE](https://github.com/openapi4j/openapi4j/blob/master/LICENSE.md) for details.
+[See main page](https://github.com/openapi4j/openapi4j#license)
