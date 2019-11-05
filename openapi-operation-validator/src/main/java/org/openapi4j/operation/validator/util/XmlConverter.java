@@ -1,12 +1,16 @@
 package org.openapi4j.operation.validator.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.json.JSONObject;
 import org.json.XML;
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 
 class XmlConverter {
   private static final XmlConverter INSTANCE = new XmlConverter();
@@ -31,25 +35,32 @@ class XmlConverter {
   }
 
   JsonNode xmlToNode(final Schema schema, String body) {
-    return convert(schema, XML.toJSONObject(removeNamespaces(body)));
+    return convert(
+      schema,
+      XML.toJSONObject(nsPattern.matcher(body).replaceAll(nsReplace)));
   }
 
-  // TODO handle wrapped and name
-  @SuppressWarnings("unchecked")
-  private JsonNode convert(final Schema schema, JSONObject xml) {
+  // TODO handle name
+  private JsonNode convert(final Schema schema, final JSONObject xml) {
     Map<String, Object> xmlMapped = xml.toMap();
 
-    // unwrap
-    if (schema.getType() == null || "object".equals(schema.getType())) {
-      // Get first child of XML chapter, to match JSON content
-      Map.Entry<String, Object> entry = xmlMapped.entrySet().iterator().next();
-      return TypeConverter.instance().convertTypes(schema, (Map<String, Object>) entry.getValue());
+    // object
+    if (schema.getType() == null || TYPE_OBJECT.equals(schema.getType())) {
+      return getSubContent(schema, xmlMapped);
+    }
+
+    // wrapped array
+    if (TYPE_ARRAY.equals(schema.getType()) && schema.getXml().isWrapped()) {
+      return getSubContent(schema, xmlMapped);
     }
 
     return TypeConverter.instance().convertTypes(schema, xmlMapped);
   }
 
-  public static String removeNamespaces(String xmlData) {
-    return nsPattern.matcher(xmlData).replaceAll(nsReplace);
+  @SuppressWarnings("unchecked")
+  private static JsonNode getSubContent(final Schema schema, final Map<String, Object> xmlMapped) {
+    // Get first child of XML chapter, to match JSON content
+    Map.Entry<String, Object> entry = xmlMapped.entrySet().iterator().next();
+    return TypeConverter.instance().convertTypes(schema, (Map<String, Object>) entry.getValue());
   }
 }
