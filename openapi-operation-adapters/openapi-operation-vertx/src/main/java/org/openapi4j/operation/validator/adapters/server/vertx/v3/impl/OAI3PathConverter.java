@@ -99,7 +99,7 @@ class OAI3PathConverter {
                                   String groupName,
                                   boolean isDotReserved) {
 
-    String not = "[^" + escapeCharacters("!*'();@&+$/?#[]" + (isDotReserved ? "." : null)) + "]*";
+    String not = "[^" + escapeCharacters("!*'();@&+$/?#[]" + (isDotReserved ? "." : "")) + "]*";
     String reg = "(?<" + groupName + ">" + not + ")*";
 
     regex.append(reg);
@@ -149,7 +149,7 @@ class OAI3PathConverter {
     if (isObject && explode) {
       Map<String, Schema> properties = solveObjectSchema(parameter.getSchema());
       for (Map.Entry<String, Schema> entry : properties.entrySet()) {
-        String not = "[^" + escapeCharacters(DEFAULT_NOT + (isDotReserved ? "." : null)) + "]*";
+        String not = "[^" + escapeCharacters(DEFAULT_NOT + (isDotReserved ? "." : "")) + "]*";
         String param = "\\;" + Pattern.quote(entry.getKey()) + "=";
         String group = "(?<" + groupName + ">" + not + ")";
         String reg = "(?>" + param + group + ")?";
@@ -160,7 +160,7 @@ class OAI3PathConverter {
         groupName = "p" + groupIndex.increment();
       }
     } else if (isArray && explode) {
-      String not = "[^" + escapeCharacters(DEFAULT_NOT + (isDotReserved ? "." : null)) + "]*";
+      String not = "[^" + escapeCharacters(DEFAULT_NOT + (isDotReserved ? "." : "")) + "]*";
       String param = ";" + Pattern.quote(paramName) + "=";
       String group = "(?" + param + not + ")+";
       String reg = "(?<" + groupName + ">" + group + ")";
@@ -168,7 +168,7 @@ class OAI3PathConverter {
       regex.append(reg);
       mappedGroups.put(groupName, paramName);
     } else {
-      String not = "[^" + escapeCharacters("!*'();@&=+$/?#[]" + (isDotReserved ? "." : null)) + "]*";
+      String not = "[^" + escapeCharacters("!*'();@&=+$/?#[]" + (isDotReserved ? "." : "")) + "]*";
       String param = ";" + Pattern.quote(paramName) + "=";
       String group = "(?<" + groupName + ">" + not + ")?";
       String reg = param + group;
