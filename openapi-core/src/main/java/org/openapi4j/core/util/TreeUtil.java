@@ -76,21 +76,6 @@ public final class TreeUtil {
   }
 
   /**
-   * Encode a POJO to YAML using the underlying Jackson mapper.
-   *
-   * @param obj a POJO
-   * @return a JsonNode containing the YAML representation of the given POJO.
-   * @throws EncodeException if a property cannot be encoded.
-   */
-  public static JsonNode toYamlNode(Object obj) throws EncodeException {
-    try {
-      return yaml.valueToTree(obj);
-    } catch (Exception e) {
-      throw new EncodeException("Failed to encode as YAML: " + e.getMessage());
-    }
-  }
-
-  /**
    * Load a document and attempts to convert it to the desired given class.
    *
    * @param url   The url of the resource to load.
@@ -121,7 +106,7 @@ public final class TreeUtil {
       if (json.startsWith("{") || json.startsWith("[")) {
         return TreeUtil.json.readValue(json, clazz);
       } else {
-        return yaml.readValue(json, clazz);
+        return TreeUtil.yaml.readValue(json, clazz);
       }
     } catch (Exception e) {
       throw new DecodeException("Failed to decode : " + e.getMessage());
@@ -157,7 +142,7 @@ public final class TreeUtil {
       if (json.startsWith("{") || json.startsWith("[")) {
         return TreeUtil.json.readTree(json);
       } else {
-        return yaml.readTree(json);
+        return TreeUtil.yaml.readTree(json);
       }
     } catch (Exception e) {
       throw new DecodeException("Failed to decode : " + e.getMessage());

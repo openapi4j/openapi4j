@@ -31,7 +31,7 @@ Load the specification :
 ```java
 OpenApi3RouterFactory.create(vertx, "src/main/resources/api.yaml", ar -> {
   if (ar.succeeded()) {
-    OpenAPI3RouterFactory routerFactory = ar.result();
+    OpenApi3RouterFactory routerFactory = ar.result();
   } else {
     // Something went wrong...
   }

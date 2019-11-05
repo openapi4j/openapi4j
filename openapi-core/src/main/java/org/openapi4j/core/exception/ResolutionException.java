@@ -7,10 +7,6 @@ package org.openapi4j.core.exception;
  * cannot be reached.
  */
 public class ResolutionException extends Exception {
-  public ResolutionException() {
-    super();
-  }
-
   public ResolutionException(String message, Throwable cause) {
     super(message, cause);
   }

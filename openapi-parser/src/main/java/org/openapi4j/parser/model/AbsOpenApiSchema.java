@@ -30,11 +30,7 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
       }
     }
 
-    if (flags.contains(SerializationFlag.OUT_AS_YAML)) {
-      return (T) TreeUtil.toYamlNode(model);
-    } else {
-      return (T) TreeUtil.toJsonNode(model);
-    }
+    return (T) TreeUtil.toJsonNode(model);
   }
 
   /**

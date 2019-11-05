@@ -59,11 +59,6 @@ public class ValidParsingTest extends ParsingChecker {
   }
 
   @Test
-  public void reference() throws Exception {
-    checkParsing("/parser/valid/reference.yaml");
-  }
-
-  @Test
   public void security() throws Exception {
     checkParsing("/parser/valid/security.yaml");
   }

@@ -6,7 +6,13 @@ import org.openapi4j.core.model.AuthOption;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +30,8 @@ public final class UrlContentRetriever {
 
   private static final UrlContentRetriever INSTANCE = new UrlContentRetriever();
 
-  private UrlContentRetriever() {}
+  private UrlContentRetriever() {
+  }
 
   public static UrlContentRetriever instance() {
     return INSTANCE;
@@ -34,13 +41,13 @@ public final class UrlContentRetriever {
    * Get the content of the targeted URL with the given authentication values if any.
    * For HTTP requests, HTTP method GET is used
    * Also, this method allows following up to 5 redirects.
-   *
+   * <p>
    * For other handlers, these options are ignored.
    *
    * @param url         The url to request from.
    * @param authOptions The authentication values.
    * @return The content of the resource.
-   * @throws Exception
+   * @throws ResolutionException wrapped exception for any error, depending of the underlying handler.
    */
   public InputStream get(final URL url, final List<AuthOption> authOptions) throws ResolutionException {
     URLConnection conn;
@@ -74,7 +81,7 @@ public final class UrlContentRetriever {
 
       return conn.getInputStream();
 
-    } catch(Exception ex) {
+    } catch (Exception ex) {
       throw new ResolutionException(ex);
     }
   }

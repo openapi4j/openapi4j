@@ -9,6 +9,9 @@ description = "openapi4j core utils & JSON reference resolver"
 dependencies {
   api("com.fasterxml.jackson.core:jackson-databind:2.9.10")
   api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.10")
+
+  testImplementation("junit:junit:4.12")
+  testImplementation("org.skyscreamer:jsonassert:1.5.0")
 }
 
 apply from: "../publish.gradle"

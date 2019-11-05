@@ -45,21 +45,6 @@ public class InvalidParsingTest extends ParsingChecker {
     checkParsing("/parser/invalid/openapi.yaml");
   }
 
-  @Test(expected = ResolutionException.class)
-  public void reference() throws Exception {
-    checkParsing("/parser/invalid/reference.yaml");
-  }
-
-  @Test(expected = ResolutionException.class)
-  public void referenceCyclingExtern() throws Exception {
-    checkParsing("/parser/invalid/reference-cycling-extern1.yaml");
-  }
-
-  @Test(expected = ResolutionException.class)
-  public void referenceCyclingIntern() throws Exception {
-    checkParsing("/parser/invalid/reference-cycling-intern.yaml");
-  }
-
   @Test(expected = ValidationException.class)
   public void security() throws Exception {
     checkParsing("/parser/invalid/security.yaml");
