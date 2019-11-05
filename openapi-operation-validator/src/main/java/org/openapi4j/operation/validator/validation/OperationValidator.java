@@ -64,7 +64,9 @@ public class OperationValidator {
     // Cookies
     specCookieValidators = fillParametersValidators(openApi, this.operation, IN_COOKIE);
     // request body
-    fillBodyValidators(openApi, this.operation.getRequestBody().getContentMediaTypes(), specRequestBodyValidators);
+    if (this.operation.getRequestBody() != null) {
+      fillBodyValidators(openApi, this.operation.getRequestBody().getContentMediaTypes(), specRequestBodyValidators);
+    }
     // response
     fillResponseBodyValidators(openApi, this.operation, specResponseValidators);
   }
@@ -222,6 +224,8 @@ public class OperationValidator {
   private void fillBodyValidators(OpenApi3 openApi,
                                   Map<String, MediaType> mediaTypes,
                                   Map<String, JsonValidator> validators) throws EncodeException {
+
+    if (mediaTypes == null) return;
 
     for (Map.Entry<String, MediaType> entry : mediaTypes.entrySet()) {
       Schema bodySchema = entry.getValue().getSchema();
