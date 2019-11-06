@@ -15,7 +15,7 @@ Add the following to your `pom.xml` :
 Requests and responses are wrapped with the specific adapter.
 ```java
 // Vert.x
-Request request = VertxRequest.of(HttpServerExchange hse);
+Request request = VertxRequest.of(RoutingContext rc);
 // validate...
 ```
 
