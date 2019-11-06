@@ -1,0 +1,30 @@
+openapi: 3.0.1
+info:
+  description: a description
+  version: 1.0.0
+  title: API
+paths:
+  /secured:
+    get:
+      operationId: secured
+      security:
+      - adminAuth: []
+      responses:
+        '200':
+          description: description
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: description
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  securitySchemes:
+    adminAuth:
+      type: apiKey
+      in: cookie
+      name: session
