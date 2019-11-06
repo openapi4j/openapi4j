@@ -1,4 +1,4 @@
-package org.openapi4j.operation.validator.adapters.server.vertx.v3.impl;
+package org.openapi4j.operation.validator.model.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
