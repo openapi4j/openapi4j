@@ -54,7 +54,7 @@ routerFactory.addOperationHandler("operationIdPost", restrictedBodyHandler, foo:
 Getting the request parameters :
 ```java
 routerFactory.addOperationHandler("my_op", commonBodyHandler, routingContext -> {
-  RequestParameters rqParameters = rc.get("rqParameters");
+  RequestParameters rqParameters = rc.get("rqParameters"); // Access the mapped parameters.
   // Mapped as JsonNode to get direct structured value primitive, array or object.
   JsonNode ... = rqParameters.getPathParameter("your_spec_param");
   JsonNode ... = rqParameters.getQueryParameter("your_spec_param");

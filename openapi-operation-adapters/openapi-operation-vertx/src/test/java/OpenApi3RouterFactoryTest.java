@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.operation.validator.adapters.server.vertx.v3.OpenApi3RouterFactory;
-import org.openapi4j.operation.validator.adapters.server.vertx.v3.impl.RequestParameters;
+import org.openapi4j.operation.validator.model.impl.RequestParameters;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -53,7 +53,7 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
 
   @Test
   public void mountSimpleHandlerTest(TestContext context) throws Exception {
-    loadSpec(context);
+    loadDefaultSpec(context);
 
     routerFactory.addOperationHandler("simple", rc -> {
       RequestParameters rqParameters = rc.get("rqParameters");
@@ -73,7 +73,7 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
 
   @Test
   public void mountRegexHandlerTest(TestContext context) throws Exception {
-    loadSpec(context);
+    loadDefaultSpec(context);
 
     routerFactory.addOperationHandler("regex", rc -> {
       RequestParameters rqParameters = rc.get("rqParameters");
@@ -96,7 +96,7 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
 
   @Test
   public void mountLabelMatrixHandlerTest(TestContext context) throws Exception {
-    loadSpec(context);
+    loadDefaultSpec(context);
 
     ObjectNode labelObject = JsonNodeFactory.instance.objectNode();
     labelObject.put("name", "Alex");
@@ -129,7 +129,7 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     testRequest(context, HttpMethod.GET, "/.role,123,name,Alex/;matrix=3,4,5/foo/", 200, "OK");
   }
 
-  private void loadSpec(TestContext context) {
+  private void loadDefaultSpec(TestContext context) {
     URL specPath = OpenApi3RouterFactoryTest.class.getResource("/api.yaml");
 
     Async async = context.async();

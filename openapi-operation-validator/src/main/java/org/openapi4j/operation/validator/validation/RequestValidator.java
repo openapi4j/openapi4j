@@ -7,6 +7,7 @@ import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
+import org.openapi4j.operation.validator.model.impl.RequestParameters;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
@@ -76,7 +77,7 @@ public class RequestValidator {
    * @param operation OpenAPI operation. Must be {@code nonnull}.
    * @throws ValidationException A validation report containing validation errors
    */
-  public void validate(Request request, Path path, Operation operation) throws ValidationException {
+  public RequestParameters validate(Request request, Path path, Operation operation) throws ValidationException {
     requireNonNull(request, REQUEST_REQUIRED_ERR_MSG);
 
     OperationValidator opValidator;
@@ -100,5 +101,12 @@ public class RequestValidator {
     if (!results.isValid()) {
       throw new ValidationException(INVALID_REQUEST_ERR_MSG, results);
     }
+
+    return new RequestParameters(
+      pathParameters,
+      queryParameters,
+      headerParameters,
+      cookieParameters
+    );
   }
 }
