@@ -51,6 +51,18 @@ BodyHandler restrictedBodyHandler = BodyHandler.create().setBodyLimit(150);
 routerFactory.addOperationHandler("operationIdPost", restrictedBodyHandler, foo::processPost);
 ```
 
+Getting the request parameters :
+```java
+routerFactory.addOperationHandler("my_op", commonBodyHandler, routingContext -> {
+  RequestParameters rqParameters = rc.get("rqParameters");
+  // Mapped as JsonNode to get direct structured value primitive, array or object.
+  JsonNode ... = rqParameters.getPathParameter("your_spec_param");
+  JsonNode ... = rqParameters.getQueryParameter("your_spec_param");
+  JsonNode ... = rqParameters.getHeaderParameter("your_spec_param");
+  JsonNode ... = rqParameters.getCookieParameter("your_spec_param");
+});
+```
+
 Mounting the security handlers :  
 
 You must conform to your specification when an operation declares security requirements.  

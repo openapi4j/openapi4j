@@ -1,5 +1,7 @@
 package org.openapi4j.operation.validator.validation;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.validation.ValidationException;
@@ -45,7 +47,7 @@ public class RequestValidator {
   /**
    * The compile the given path/operation and fill the validators to associate with.
    *
-   * @param path      The OAS path of the operation.
+   * @param path      The OAS path model of the operation.
    * @param operation The operation object from specification.
    * @return The generated validator for the operation.
    * @throws ResolutionException
@@ -89,10 +91,10 @@ public class RequestValidator {
 
     ValidationResults results = new ValidationResults();
 
-    opValidator.validatePath(request, results);
-    opValidator.validateQuery(request, results);
-    opValidator.validateHeaders(request, results);
-    opValidator.validateCookies(request, results);
+    Map<String, JsonNode> pathParameters = opValidator.validatePath(request, results);
+    Map<String, JsonNode> queryParameters = opValidator.validateQuery(request, results);
+    Map<String, JsonNode> headerParameters = opValidator.validateHeaders(request, results);
+    Map<String, JsonNode> cookieParameters = opValidator.validateCookies(request, results);
     opValidator.validateBody(request, results);
 
     if (!results.isValid()) {
