@@ -1,80 +1,90 @@
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.operation.validator.adapters.server.vertx.v3.OpenApi3RouterFactory;
+import org.openapi4j.operation.validator.adapters.server.vertx.v3.impl.RequestParameters;
 
 import java.net.URL;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
-import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.ext.unit.Async;
+import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.ext.web.Router;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-public class OpenApi3RouterFactoryTest {
+@RunWith(VertxUnitRunner.class)
+public class OpenApi3RouterFactoryTest extends VertxTestBase {
   private OpenApi3RouterFactory routerFactory;
 
   @Test
-  public void loadSpecFromFile() throws Exception {
+  public void loadSpecFromFile(TestContext context) {
     URL specPath = OpenApi3RouterFactoryTest.class.getResource("/api.yaml");
 
-    CountDownLatch latch = new CountDownLatch(1);
-    OpenApi3RouterFactory.create(Vertx.vertx(), specPath,
+    Async async = context.async();
+    OpenApi3RouterFactory.create(vertx, specPath,
       result -> {
-        assertTrue(result.succeeded());
-        assertNotNull(result.result());
-        latch.countDown();
+        context.assertTrue(result.succeeded());
+        context.assertNotNull(result.result());
+        async.complete();
       });
-    latch.await(10, TimeUnit.SECONDS);
+    async.await();
   }
 
   @Test
-  public void loadWrongSpecFromFile() throws Exception {
+  public void loadWrongSpecFromFile(TestContext context) {
     URL specPath = OpenApi3RouterFactoryTest.class.getResource("/wrong_path.yaml");
 
-    CountDownLatch latch = new CountDownLatch(1);
-    OpenApi3RouterFactory.create(Vertx.vertx(), specPath,
+    Async async = context.async();
+    OpenApi3RouterFactory.create(vertx, specPath,
       result -> {
-        assertTrue(result.failed());
-        assertEquals(ResolutionException.class, result.cause().getClass());
-        latch.countDown();
+        context.assertTrue(result.failed());
+        context.assertEquals(ResolutionException.class, result.cause().getClass());
+        async.complete();
       });
-    latch.await(10, TimeUnit.SECONDS);
+    async.await();
   }
 
   @Test
-  public void mountHandlerTest() throws Exception {
+  public void mountHandlerTest(TestContext context) throws Exception {
     URL specPath = OpenApi3RouterFactoryTest.class.getResource("/api.yaml");
 
-    Vertx vertx = Vertx.vertx();
-
-    CountDownLatch latch = new CountDownLatch(1);
+    Async async = context.async();
     OpenApi3RouterFactory.create(vertx, specPath, result -> {
       routerFactory = result.result();
-      latch.countDown();
+      async.complete();
     });
 
-    latch.await(10, TimeUnit.SECONDS);
+    async.await();
 
-    routerFactory.addOperationHandler("list-searchable-fields", routingContext -> routingContext
-      .response()
-      .setStatusCode(200)
-      .setStatusMessage("OK")
-      .end());
+    routerFactory.addOperationHandler("list-searchable-fields", rc -> {
+      RequestParameters rqParameters = rc.get("rqParameters");
+      context.assertNotNull(rqParameters);
+      context.assertEquals(JsonNodeFactory.instance.textNode("foo"), rqParameters.getPathParameter("dataset"));
+      context.assertEquals(JsonNodeFactory.instance.textNode("bar"), rqParameters.getPathParameter("version"));
+
+      rc
+        .response()
+        .setStatusCode(200)
+        .setStatusMessage("OK")
+        .end();
+    });
+
+    routerFactory.addOperationHandler("records", rc -> {
+      RequestParameters rqParameters = rc.get("rqParameters");
+      context.assertNotNull(rqParameters);
+      rc
+        .response()
+        .setStatusCode(200)
+        .setStatusMessage("OK")
+        .end();
+    });
 
     Router router = routerFactory.getRouter();
 
-    //startServer(vertx, router);
-  }
-
-  private void startServer(Vertx vertx, Router router) throws InterruptedException {
-    HttpServer server = vertx.createHttpServer(new HttpServerOptions().setPort(8080).setHost("localhost"));
-    CountDownLatch latch = new CountDownLatch(1);
-    server.requestHandler(router).listen(res -> latch.countDown());
-    latch.await(10, TimeUnit.SECONDS);
+    startServer(context, vertx, router);
+    testRequest(context, HttpMethod.GET, "/fixed/foo/fixed/bar/fields/", 200, "OK");
+    testRequest(context, HttpMethod.GET, "/records", 200, "OK");
   }
 }

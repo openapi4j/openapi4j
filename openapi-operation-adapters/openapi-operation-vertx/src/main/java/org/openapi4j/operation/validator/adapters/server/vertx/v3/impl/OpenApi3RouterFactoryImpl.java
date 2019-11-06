@@ -16,7 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -105,13 +104,13 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
   }
 
   private Route createRoute(Router router, OperationSpec operationSpec) throws ResolutionException {
-    Optional<Pattern> optRegEx = OAI3PathConverter
+    Optional<String> optRegEx = OAI3PathConverter
       .instance()
       .solve(operationSpec.path, operationSpec.operation.getParametersIn("path"));
 
     // If this optional is empty, this route doesn't need regex
     return optRegEx.isPresent()
-      ? router.routeWithRegex(operationSpec.method, optRegEx.get().toString())
+      ? router.routeWithRegex(operationSpec.method, optRegEx.get())
       : router.route(operationSpec.method, operationSpec.path);
   }
 

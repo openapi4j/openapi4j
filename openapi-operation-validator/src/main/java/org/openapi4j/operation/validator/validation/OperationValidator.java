@@ -41,7 +41,7 @@ public class OperationValidator {
   // Map<status code, Map<content type, validator>>
   private final Map<String, Map<String, JsonValidator>> specResponseValidators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
   private final Operation operation;
-  private final String path;
+  private final String specPath;
 
   public OperationValidator(final OpenApi3 openApi, final Path path, final Operation operation) throws EncodeException {
     requireNonNull(openApi, "OpenAPI is required");
@@ -49,7 +49,7 @@ public class OperationValidator {
     requireNonNull(operation, "Operation is required");
     // Clone this and get the flatten content
     this.operation = operation.copy(openApi.getContext(), true);
-    this.path = null;
+    this.specPath = openApi.getPathFrom(path);
 
     // Merge parameters with default parameters
     // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#operationObject
@@ -76,47 +76,59 @@ public class OperationValidator {
   }
 
   // If any request path parameter is declared, the parameter is required
-  public void validatePath(final Request request, final ValidationResults results) {
-    if (specPathValidators == null) return;
+  public Map<String, JsonNode> validatePath(final Request request, final ValidationResults results) {
+    if (specPathValidators == null) return null;
 
-    validateParameters(
-      specPathValidators,
-      ParameterConverter.pathToNode(path, request.getPath(), specPathValidators.keySet()),
-      results);
+    Map<String, JsonNode> mappedValues =
+      ParameterConverter.pathToNode(specPath, request.getPath(), specPathValidators.keySet());
+
+    validateParameters(specPathValidators, mappedValues, results);
+
+    return mappedValues;
   }
 
-  public void validateQuery(final Request request, final ValidationResults results) {
-    if (specQueryValidators == null) return;
+  public Map<String, JsonNode> validateQuery(final Request request, final ValidationResults results) {
+    if (specQueryValidators == null) return null;
+
+    Map<String, JsonNode> mappedValues;
 
     try {
-      validateParameters(
-        specQueryValidators,
-        ParameterConverter.queryToNode(request.getQuery(), specQueryValidators.keySet()),
-        results);
+      mappedValues = ParameterConverter.queryToNode(request.getQuery(), specQueryValidators.keySet());
+
+      validateParameters(specQueryValidators, mappedValues, results);
     } catch (ResolutionException e) {
       results.addError(e.getMessage());
+      return null;
     }
+
+    return mappedValues;
   }
 
-  public void validateHeaders(final Request request, final ValidationResults results) {
-    if (specHeaderValidators == null) return;
+  public Map<String, JsonNode> validateHeaders(final Request request, final ValidationResults results) {
+    if (specHeaderValidators == null) return null;
 
-    validateParameters(
-      specHeaderValidators,
-      ParameterConverter.headersToNode(request.getHeaders(), specHeaderValidators.keySet()),
-      results);
+    Map<String, JsonNode> mappedValues =
+      ParameterConverter.headersToNode(request.getHeaders(), specHeaderValidators.keySet());
+
+    validateParameters(specHeaderValidators, mappedValues, results);
+
+    return mappedValues;
   }
 
-  public void validateCookies(final Request request, final ValidationResults results) {
-    if (specCookieValidators == null) return;
+  public Map<String, JsonNode> validateCookies(final Request request, final ValidationResults results) {
+    if (specCookieValidators == null) return null;
 
-    validateParameters(
-      specCookieValidators,
-      ParameterConverter.cookiesToNode(request.getCookies(), specCookieValidators.keySet()),
-      results);
+    Map<String, JsonNode> mappedValues =
+      ParameterConverter.cookiesToNode(request.getCookies(), specHeaderValidators.keySet());
+
+    validateParameters(specCookieValidators, mappedValues, results);
+
+    return mappedValues;
   }
 
   public void validateBody(final Request request, final ValidationResults results) {
+    if (operation.getRequestBody() == null) return;
+
     String rawContentType = request.getContentType().orElse(null);
 
     validateBody(

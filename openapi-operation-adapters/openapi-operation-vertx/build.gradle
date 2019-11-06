@@ -9,11 +9,13 @@ description = "openapi4j operation Vert.x adapter"
 dependencies {
   api(project(":openapi-operation-validator"))
   // Vert.x
-  implementation("io.vertx:vertx-web:3.8.1")
-  implementation("io.vertx:vertx-codegen:3.8.1")
+  implementation("io.vertx:vertx-web:3.8.3")
+  implementation("io.vertx:vertx-codegen:3.8.3")
 
   testImplementation("junit:junit:4.12")
   testImplementation("org.mockito:mockito-inline:3.1.0")
+
+  testImplementation("io.vertx:vertx-unit:3.8.3")
 }
 
 apply from: "../../publish.gradle"

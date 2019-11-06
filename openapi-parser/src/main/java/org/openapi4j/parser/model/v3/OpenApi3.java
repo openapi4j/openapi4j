@@ -246,6 +246,18 @@ public class OpenApi3 extends AbsOpenApiSchema<OpenApi3> implements OAI {
     return null;
   }
 
+  public String getPathFrom(Path specPath) {
+    if (paths == null) return null;
+
+    for (Map.Entry<String, Path> path : paths.entrySet()) {
+      if (path.getValue().equals(specPath)) {
+        return path.getKey();
+      }
+    }
+
+    return null;
+  }
+
   /**
    * @param operationId the operationId (case sensitive)
    * @return Get the corresponding operation with the given ID
