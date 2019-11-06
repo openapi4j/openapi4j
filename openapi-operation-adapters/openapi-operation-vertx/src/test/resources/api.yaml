@@ -6,20 +6,17 @@ info:
 paths:
   /fixed/{dataset}/fixed/{version}/fields/:
     get:
-      operationId: list-searchable-fields
+      operationId: regex
       parameters:
         - name: dataset
           in: path
-          description: 'Name of the dataset.'
           required: true
-          example: "oa_citations"
           schema:
             type: string
         - name: version
           in: path
           description: Version of the dataset.
           required: true
-          example: "v1"
           schema:
             type: string
       responses:
@@ -35,9 +32,46 @@ paths:
             application/json:
               schema:
                 type: string
-  /records:
+  /{label}/{matrix}/foo/:
     get:
-      operationId: records
+      operationId: label-matrix
+      parameters:
+        - name: label
+          in: path
+          style: label
+          required: true
+          schema:
+            type: object
+            properties:
+              role:
+                type: integer
+                format: int64
+              name:
+                type: string
+        - name: matrix
+          in: path
+          style: matrix
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: description
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: description
+          content:
+            application/json:
+              schema:
+                type: string
+  /simple:
+    get:
+      operationId: simple
       responses:
         '200':
           description: description
