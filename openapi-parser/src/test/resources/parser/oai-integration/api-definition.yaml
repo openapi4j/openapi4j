@@ -2,6 +2,15 @@ openapi: 3.0.0
 info:
   version: 1.0.0
   title: API
+  description: A sample API that uses a petstore as an example to demonstrate features in the OpenAPI 3.0 specification
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: API Team
+    email: apiteam@api.io
+    url: http://api.io
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
 servers:
   - url: http://localhost:8080
 paths:
@@ -21,6 +30,34 @@ paths:
           $ref: '#/components/responses/ContractResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
+      callbacks:
+        # the name `onData` is a convenience locator
+        onData:
+          # when data is sent, it will be sent to the `callbackUrl` provided
+          # when making the subscription PLUS the suffix `/data`
+          '{$request.query.callbackUrl}/data':
+            post:
+              requestBody:
+                description: subscription payload
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: string
+                          format: date-time
+                        userData:
+                          type: string
+              responses:
+                '202':
+                  description: |
+                    Your server implementation should return this HTTP status code
+                    if the data was received successfully
+                '204':
+                  description: |
+                    Your server should return this HTTP status code if no longer interested
+                    in further updates
     patch:
       summary: Update a contract
       operationId: AdminContractUpdate
@@ -2268,3 +2305,15 @@ components:
     monitoringAuth:
       type: http
       scheme: bearer
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://example.org/api/oauth/dialog
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
