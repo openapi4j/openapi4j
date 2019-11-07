@@ -45,7 +45,7 @@ class LinkValidator extends ExpressionValidator<Link> {
       validateReference(api, link.getRef(), results, LINKS, LinkValidator.instance(), Link.class);
     } else {
       validateMap(api, link.getHeaders(), results, false, HEADERS, Regexes.NOEXT_REGEX, HeaderValidator.instance());
-      validateField(api, link.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+      validateMap(api, link.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
       validateField(api, link.getServer(), results, false, SERVER, ServerValidator.instance());
     }
   }

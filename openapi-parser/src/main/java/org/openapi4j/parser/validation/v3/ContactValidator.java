@@ -24,7 +24,7 @@ class ContactValidator extends Validator3Base<OpenApi3, Contact> {
   @Override
   public void validate(OpenApi3 api, Contact contact, ValidationResults results) {
     validateEmail(contact.getEmail(), results, false, EMAIL);
-    validateField(api, contact.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, contact.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateString(contact.getName(), results, false, NAME);
     validateUrl(contact.getUrl(), results, false, URL, ValidationSeverity.ERROR);
   }

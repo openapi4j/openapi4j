@@ -55,7 +55,7 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
       checkAllowReserved(parameter, results);
       validateField(api, parameter.getSchema(), results, false, SCHEMA, SchemaValidator.instance());
       validateMap(api, parameter.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
-      validateField(api, parameter.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+      validateMap(api, parameter.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     }
   }
 

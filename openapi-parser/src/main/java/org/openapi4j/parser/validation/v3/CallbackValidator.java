@@ -32,7 +32,7 @@ class CallbackValidator extends ExpressionValidator<Callback> {
       validateReference(api, callback.getRef(), results, $REF, CallbackValidator.instance(), Callback.class);
     } else {
       validateMap(api, callback.getCallbackPaths(), results, false, null, Regexes.NOEXT_REGEX, PathValidator.instance());
-      validateField(api, callback.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+      validateMap(api, callback.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     }
   }
 

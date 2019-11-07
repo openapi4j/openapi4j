@@ -1,8 +1,8 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
@@ -11,15 +11,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response extends AbsRefOpenApiSchema<Response> {
   private String description;
   private Map<String, Header> headers;
   @JsonProperty("content")
   private Map<String, MediaType> contentMediaTypes;
   private Map<String, Link> links;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
 
   // Description
   public String getDescription() {
@@ -125,13 +123,21 @@ public class Response extends AbsRefOpenApiSchema<Response> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Response setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
@@ -145,11 +151,11 @@ public class Response extends AbsRefOpenApiSchema<Response> {
   protected Response copyContent(OAIContext context, boolean followRefs) {
     Response copy = new Response();
 
-    copy.setDescription(description);
-    copy.setHeaders(copyMap(headers, context, followRefs));
-    copy.setContentMediaTypes(copyMap(contentMediaTypes, context, followRefs));
-    copy.setLinks(copyMap(links, context, followRefs));
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setDescription(getDescription());
+    copy.setHeaders(copyMap(getHeaders(), context, followRefs));
+    copy.setContentMediaTypes(copyMap(getContentMediaTypes(), context, followRefs));
+    copy.setLinks(copyMap(getLinks(), context, followRefs));
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

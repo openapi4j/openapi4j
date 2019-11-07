@@ -30,8 +30,8 @@ class MediaTypeValidator extends Validator3Base<OpenApi3, MediaType> {
   public void validate(OpenApi3 api, MediaType mediaType, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // example, examples
-    validateMap(api, mediaType.getEncoding(), results, false, ENCODING, Regexes.NOEXT_NAME_REGEX, EncodingPropertyValidator.instance());
-    validateField(api, mediaType.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, mediaType.getEncodings(), results, false, ENCODING, Regexes.NOEXT_NAME_REGEX, EncodingPropertyValidator.instance());
+    validateMap(api, mediaType.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateField(api, mediaType.getSchema(), results, false, SCHEMA, SchemaValidator.instance());
     checkEncodingProperties(mediaType, results);
   }
@@ -43,7 +43,7 @@ class MediaTypeValidator extends Validator3Base<OpenApi3, MediaType> {
     }
 
     Map<String, Schema> schemaProps = schema.getProperties();
-    Map<String, EncodingProperty> mediaEncodings = mediaType.getEncoding();
+    Map<String, EncodingProperty> mediaEncodings = mediaType.getEncodings();
 
     if (schemaProps != null && mediaEncodings != null) {
       Set<String> propNames = schemaProps.keySet();

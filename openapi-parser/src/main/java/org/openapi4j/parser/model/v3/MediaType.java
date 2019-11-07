@@ -1,7 +1,8 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
@@ -9,13 +10,12 @@ import org.openapi4j.parser.model.AbsOpenApiSchema;
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MediaType extends AbsOpenApiSchema<MediaType> {
-  private Map<String, EncodingProperty> encoding;
+  @JsonProperty("encoding")
+  private Map<String, EncodingProperty> encodings;
   private Object example;
   private Map<String, Example> examples;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
   private Schema schema;
 
   // Schema
@@ -70,55 +70,63 @@ public class MediaType extends AbsOpenApiSchema<MediaType> {
   }
 
   // EncodingProperty
-  public Map<String, EncodingProperty> getEncoding() {
-    return encoding;
+  public Map<String, EncodingProperty> getEncodings() {
+    return encodings;
   }
 
-  public MediaType setEncoding(Map<String, EncodingProperty> encoding) {
-    this.encoding = encoding;
+  public MediaType setEncodings(Map<String, EncodingProperty> encodings) {
+    this.encodings = encodings;
     return this;
   }
 
-  public boolean hasEncodingProperty(String name) {
-    return mapHas(encoding, name);
+  public boolean hasEncoding(String name) {
+    return mapHas(encodings, name);
   }
 
-  public EncodingProperty getEncodingProperty(String name) {
-    return mapGet(encoding, name);
+  public EncodingProperty getEncoding(String name) {
+    return mapGet(encodings, name);
   }
 
-  public MediaType setEncodingProperty(String name, EncodingProperty encodingProperty) {
-    if (encoding == null) {
-      encoding = new HashMap<>();
+  public MediaType setEncoding(String name, EncodingProperty encodingProperty) {
+    if (encodings == null) {
+      encodings = new HashMap<>();
     }
-    encoding.put(name, encodingProperty);
+    encodings.put(name, encodingProperty);
     return this;
   }
 
-  public MediaType removeEncodingProperty(String name) {
-    mapRemove(encoding, name);
+  public MediaType removeEncoding(String name) {
+    mapRemove(encodings, name);
     return this;
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public MediaType setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public MediaType copy(OAIContext context, boolean followRefs) {
     MediaType copy = new MediaType();
 
-    copy.setSchema(copyField(schema, context, followRefs));
-    copy.setExample(example);
-    copy.setExamples(copyMap(examples, context, followRefs));
-    copy.setEncoding(copyMap(encoding, context, followRefs));
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setSchema(copyField(getSchema(), context, followRefs));
+    copy.setExample(getExample());
+    copy.setExamples(copyMap(getExamples(), context, followRefs));
+    copy.setEncodings(copyMap(getEncodings(), context, followRefs));
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

@@ -22,7 +22,7 @@ class LicenseValidator extends Validator3Base<OpenApi3, License> {
 
   @Override
   public void validate(OpenApi3 api, License license, ValidationResults results) {
-    validateField(api, license.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, license.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateString(license.getName(), results, true, NAME);
     validateUrl(license.getUrl(), results, false, URL, ValidationSeverity.ERROR);
   }

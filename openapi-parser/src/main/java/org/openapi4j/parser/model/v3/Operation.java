@@ -1,20 +1,18 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Operation extends AbsOpenApiSchema<Operation> {
   private List<String> tags;
   private String summary;
@@ -29,8 +27,7 @@ public class Operation extends AbsOpenApiSchema<Operation> {
   @JsonProperty("security")
   private List<SecurityRequirement> securityRequirements;
   private List<Server> servers;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
 
   // Tag
   public List<String> getTags() {
@@ -51,8 +48,8 @@ public class Operation extends AbsOpenApiSchema<Operation> {
     return this;
   }
 
-  public Operation removeTag(int index) {
-    listRemove(tags, index);
+  public Operation removeTag(String tag) {
+    listRemove(tags, tag);
     return this;
   }
 
@@ -110,10 +107,6 @@ public class Operation extends AbsOpenApiSchema<Operation> {
     return parameters != null;
   }
 
-  public Parameter getParameter(int index) {
-    return listGet(parameters, index);
-  }
-
   public Operation addParameter(Parameter parameter) {
     parameters = listAdd(parameters, parameter);
     return this;
@@ -124,8 +117,8 @@ public class Operation extends AbsOpenApiSchema<Operation> {
     return this;
   }
 
-  public Operation removeParameter(int index) {
-    listRemove(parameters, index);
+  public Operation removeParameter(Parameter parameter) {
+    listRemove(parameters, parameter);
     return this;
   }
 
@@ -230,7 +223,7 @@ public class Operation extends AbsOpenApiSchema<Operation> {
   }
 
   // SecurityRequirement
-  public Collection<SecurityRequirement> getSecurityRequirements() {
+  public List<SecurityRequirement> getSecurityRequirements() {
     return securityRequirements;
   }
 
@@ -243,10 +236,6 @@ public class Operation extends AbsOpenApiSchema<Operation> {
     return securityRequirements != null;
   }
 
-  public SecurityRequirement getSecurityRequirement(int index) {
-    return listGet(securityRequirements, index);
-  }
-
   public Operation addSecurityRequirement(SecurityRequirement securityRequirement) {
     securityRequirements = listAdd(securityRequirements, securityRequirement);
     return this;
@@ -257,13 +246,13 @@ public class Operation extends AbsOpenApiSchema<Operation> {
     return this;
   }
 
-  public Operation removeSecurityRequirement(int index) {
-    listRemove(securityRequirements, index);
+  public Operation removeSecurityRequirement(SecurityRequirement securityRequirement) {
+    listRemove(securityRequirements, securityRequirement);
     return this;
   }
 
   // Server
-  public Collection<Server> getServers() {
+  public List<Server> getServers() {
     return servers;
   }
 
@@ -276,10 +265,6 @@ public class Operation extends AbsOpenApiSchema<Operation> {
     return servers != null;
   }
 
-  public Server getServer(int index) {
-    return listGet(servers, index);
-  }
-
   public Operation addServer(Server server) {
     servers = listAdd(servers, server);
     return this;
@@ -290,37 +275,45 @@ public class Operation extends AbsOpenApiSchema<Operation> {
     return this;
   }
 
-  public Operation removeServer(int index) {
-    listRemove(servers, index);
+  public Operation removeServer(Server server) {
+    listRemove(servers, server);
     return this;
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Operation setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public Operation copy(OAIContext context, boolean followRefs) {
     Operation copy = new Operation();
 
-    copy.setTags(copyList(tags));
-    copy.setDescription(description);
-    copy.setExternalDocs(copyField(externalDocs, context, followRefs));
-    copy.setOperationId(operationId);
-    copy.setParameters(copyList(parameters, context, followRefs));
-    copy.setRequestBody(copyField(requestBody, context, followRefs));
-    copy.setResponses(copyMap(responses, context, followRefs));
-    copy.setCallbacks(copyMap(callbacks, context, followRefs));
-    copy.setDeprecated(deprecated);
-    copy.setSecurityRequirements(copyList(securityRequirements, context, followRefs));
-    copy.setServers(copyList(servers, context, followRefs));
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setTags(copyList(getTags()));
+    copy.setDescription(getDescription());
+    copy.setExternalDocs(copyField(getExternalDocs(), context, followRefs));
+    copy.setOperationId(getOperationId());
+    copy.setParameters(copyList(getParameters(), context, followRefs));
+    copy.setRequestBody(copyField(getRequestBody(), context, followRefs));
+    copy.setResponses(copyMap(getResponses(), context, followRefs));
+    copy.setCallbacks(copyMap(getCallbacks(), context, followRefs));
+    copy.setDeprecated(getDeprecated());
+    copy.setSecurityRequirements(copyList(getSecurityRequirements(), context, followRefs));
+    copy.setServers(copyList(getServers(), context, followRefs));
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

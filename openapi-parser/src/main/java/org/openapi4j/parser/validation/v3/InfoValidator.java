@@ -28,7 +28,7 @@ class InfoValidator extends Validator3Base<OpenApi3, Info> {
     // VALIDATION EXCLUSIONS :
     // description
     validateField(api, info.getContact(), results, false, CONTACT, ContactValidator.instance());
-    validateField(api, info.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, info.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateField(api, info.getLicense(), results, false, LICENSE, LicenseValidator.instance());
     validateUrl(info.getTermsOfService(), results, false, TERMSOFSERVICE, ValidationSeverity.WARNING);
     validateString(info.getTitle(), results, true, TITLE);

@@ -1,24 +1,24 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ServerVariable extends AbsOpenApiSchema<ServerVariable> {
   @JsonProperty("enum")
   private List<String> enumValues;
   @JsonProperty("default")
   private String defaultValue;
   private String description;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
 
   // EnumValue
   public List<String> getEnumValues() {
@@ -34,10 +34,6 @@ public class ServerVariable extends AbsOpenApiSchema<ServerVariable> {
     return enumValues != null;
   }
 
-  public String getEnumValue(int index) {
-    return listGet(enumValues, index);
-  }
-
   public ServerVariable addEnumValue(String enumValue) {
     enumValues = listAdd(enumValues, enumValue);
     return this;
@@ -48,8 +44,8 @@ public class ServerVariable extends AbsOpenApiSchema<ServerVariable> {
     return this;
   }
 
-  public ServerVariable removeEnumValue(int index) {
-    listRemove(enumValues, index);
+  public ServerVariable removeEnumValue(String enumValue) {
+    listRemove(enumValues, enumValue);
     return this;
   }
 
@@ -74,23 +70,31 @@ public class ServerVariable extends AbsOpenApiSchema<ServerVariable> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public ServerVariable setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public ServerVariable copy(OAIContext context, boolean followRefs) {
     ServerVariable copy = new ServerVariable();
 
-    copy.setEnumValues(copyList(enumValues));
-    copy.setDefault(defaultValue);
-    copy.setDescription(description);
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setEnumValues(copyList(getEnumValues()));
+    copy.setDefault(getDefault());
+    copy.setDescription(getDescription());
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

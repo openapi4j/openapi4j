@@ -1,19 +1,20 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+import java.util.HashMap;
+import java.util.Map;
+
 public class Example extends AbsOpenApiSchema<Example> {
   private String summary;
   private String description;
   private Object value;
   private String externalValue;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
 
   // Summary
   public String getSummary() {
@@ -56,24 +57,32 @@ public class Example extends AbsOpenApiSchema<Example> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Example setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public Example copy(OAIContext context, boolean followRefs) {
     Example copy = new Example();
 
-    copy.setSummary(summary);
-    copy.setDescription(description);
-    copy.setValue(value);
-    copy.setExternalValue(externalValue);
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setSummary(getSummary());
+    copy.setDescription(getDescription());
+    copy.setValue(getValue());
+    copy.setExternalValue(getExternalValue());
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

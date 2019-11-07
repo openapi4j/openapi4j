@@ -48,14 +48,4 @@ public class IntegrationTest extends ParsingChecker {
   public void api() throws Exception {
     checkParsing("/parser/oai-integration/api-definition.yaml");
   }
-
-  @Test
-  public void copy() throws Exception {
-    URL specPath = getClass().getResource("/parser/oai-integration/api-definition.yaml");
-
-    // Check parsing with validation
-    OpenApi3 api = new OpenApi3Parser().parse(specPath, true);
-    api.copy(api.getContext(), false);
-    checkFromResource(specPath, api);
-  }
 }

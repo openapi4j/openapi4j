@@ -2,23 +2,23 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.openapi4j.core.model.OAIContext;
+import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@SuppressWarnings("UnusedReturnValue")
 public class Callback extends AbsRefOpenApiSchema<Callback> {
+  @JsonIgnore
   private Map<String, Path> callbackPaths;
-  @JsonUnwrapped
-  private Extensions extensions;
+  @JsonIgnore
+  private Map<String, Object> extensions;
 
   // CallbackPath
-  @JsonAnyGetter
   public Map<String, Path> getCallbackPaths() {
     return callbackPaths;
   }
@@ -36,7 +36,6 @@ public class Callback extends AbsRefOpenApiSchema<Callback> {
     return mapGet(callbackPaths, expression);
   }
 
-  @JsonAnySetter
   public Callback setCallbackPath(String expression, Path callbackPath) {
     if (callbackPaths == null) {
       callbackPaths = new HashMap<>();
@@ -51,15 +50,57 @@ public class Callback extends AbsRefOpenApiSchema<Callback> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Callback setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
   }
 
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
+  }
+
+  /**
+   * Don't use this!  Only for internal serialization usage !
+   *
+   * @return paths and/or extensions
+   */
+  @JsonAnyGetter
+  public Map<String, Object> any() {
+    if (callbackPaths != null && extensions != null) {
+      extensions.putAll(callbackPaths);
+      return extensions;
+    }
+
+    if (callbackPaths != null) {
+      return new HashMap<>(callbackPaths);
+    }
+
+    return extensions;
+  }
+
+  /**
+   * Don't use this!  Only for internal deserialization usage !
+   *
+   * @param name  the key
+   * @param value the value : path or extension
+   */
+  @JsonAnySetter
+  public void add(String name, Object value) {
+    if (value == null) return;
+
+    try {
+      Path path = TreeUtil.json.convertValue(value, Path.class);
+      setCallbackPath(name, path);
+    } catch (IllegalArgumentException ex) {
+      setExtension(name, value);
+    }
+  }
 
   @Override
   protected Callback copyReference(OAIContext context) {
@@ -71,8 +112,8 @@ public class Callback extends AbsRefOpenApiSchema<Callback> {
   @Override
   protected Callback copyContent(OAIContext context, boolean followRefs) {
     Callback copy = new Callback();
-    copy.setCallbackPaths(copyMap(callbackPaths, context, followRefs));
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setCallbackPaths(copyMap(getCallbackPaths(), context, followRefs));
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

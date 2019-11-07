@@ -1,19 +1,20 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Tag extends AbsOpenApiSchema<Tag> {
   private String name;
   private String description;
   private ExternalDocs externalDocs;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
 
   // Name
   public String getName() {
@@ -46,23 +47,31 @@ public class Tag extends AbsOpenApiSchema<Tag> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Tag setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public Tag copy(OAIContext context, boolean followRefs) {
     Tag copy = new Tag();
 
-    copy.setName(name);
-    copy.setDescription(description);
-    copy.setExternalDocs(copyField(externalDocs, context, followRefs));
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setName(getName());
+    copy.setDescription(getDescription());
+    copy.setExternalDocs(copyField(getExternalDocs(), context, followRefs));
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

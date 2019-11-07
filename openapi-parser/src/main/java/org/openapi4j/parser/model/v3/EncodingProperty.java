@@ -1,7 +1,7 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
@@ -9,12 +9,10 @@ import org.openapi4j.parser.model.AbsOpenApiSchema;
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EncodingProperty extends AbsOpenApiSchema<EncodingProperty> {
   private String contentType;
   private Boolean explode;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
   private Map<String, String> headers;
   private String style;
 
@@ -83,24 +81,32 @@ public class EncodingProperty extends AbsOpenApiSchema<EncodingProperty> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public EncodingProperty setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public EncodingProperty copy(OAIContext context, boolean followRefs) {
     EncodingProperty copy = new EncodingProperty();
 
-    copy.setContentType(contentType);
-    copy.setHeaders(copyMap(headers));
-    copy.setStyle(style);
-    copy.setExplode(explode);
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setContentType(getContentType());
+    copy.setHeaders(copyMap(getHeaders()));
+    copy.setStyle(getStyle());
+    copy.setExplode(getExplode());
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

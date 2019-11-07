@@ -31,7 +31,7 @@ class ResponseValidator extends Validator3Base<OpenApi3, Response> {
       validateMap(api, response.getHeaders(), results, false, HEADERS, null, HeaderValidator.instance());
       validateMap(api, response.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
       validateMap(api, response.getLinks(), results, false, LINKS, Regexes.NOEXT_NAME_REGEX, LinkValidator.instance());
-      validateField(api, response.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+      validateMap(api, response.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     }
   }
 }

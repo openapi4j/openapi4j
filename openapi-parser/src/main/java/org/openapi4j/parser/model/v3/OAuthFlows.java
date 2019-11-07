@@ -1,16 +1,20 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+import java.util.HashMap;
+import java.util.Map;
+
 public class OAuthFlows extends AbsOpenApiSchema<OAuthFlows> {
   private OAuthFlow implicit;
   private OAuthFlow password;
   private OAuthFlow clientCredentials;
   private OAuthFlow authorizationCode;
+  private Map<String, Object> extensions;
 
   // ImplicitOAuthFlow
   public OAuthFlow getImplicit() {
@@ -64,14 +68,33 @@ public class OAuthFlows extends AbsOpenApiSchema<OAuthFlows> {
     return this;
   }
 
+  // Extensions
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
+    return extensions;
+  }
+
+  public void setExtensions(Map<String, Object> extensions) {
+    this.extensions = extensions;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
+  }
+
   @Override
   public OAuthFlows copy(OAIContext context, boolean followRefs) {
     OAuthFlows copy = new OAuthFlows();
 
-    copy.setImplicit(copyField(implicit, context, followRefs));
-    copy.setPassword(copyField(password, context, followRefs));
-    copy.setClientCredentials(copyField(clientCredentials, context, followRefs));
-    copy.setAuthorizationCode(copyField(authorizationCode, context, followRefs));
+    copy.setImplicit(copyField(getImplicit(), context, followRefs));
+    copy.setPassword(copyField(getPassword(), context, followRefs));
+    copy.setClientCredentials(copyField(getClientCredentials(), context, followRefs));
+    copy.setAuthorizationCode(copyField(getAuthorizationCode(), context, followRefs));
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

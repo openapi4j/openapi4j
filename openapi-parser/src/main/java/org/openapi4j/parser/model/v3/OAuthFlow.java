@@ -1,8 +1,8 @@
 package org.openapi4j.parser.model.v3;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
@@ -10,7 +10,6 @@ import org.openapi4j.parser.model.AbsOpenApiSchema;
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OAuthFlow extends AbsOpenApiSchema<OAuthFlow> {
   private String authorizationUrl;
   private String tokenUrl;
@@ -18,8 +17,7 @@ public class OAuthFlow extends AbsOpenApiSchema<OAuthFlow> {
   private Map<String, String> scopes;
   @JsonIgnore
   private String configuration;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
 
   // AuthorizationUrl
   public String getAuthorizationUrl() {
@@ -93,24 +91,33 @@ public class OAuthFlow extends AbsOpenApiSchema<OAuthFlow> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public void setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public OAuthFlow copy(OAIContext context, boolean followRefs) {
     OAuthFlow copy = new OAuthFlow();
 
-    copy.setAuthorizationUrl(authorizationUrl);
-    copy.setTokenUrl(tokenUrl);
-    copy.setRefreshUrl(refreshUrl);
-    copy.setScopes(copyMap(scopes));
-    copy.setConfiguration(configuration);
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setAuthorizationUrl(getAuthorizationUrl());
+    copy.setTokenUrl(getTokenUrl());
+    copy.setRefreshUrl(getRefreshUrl());
+    copy.setScopes(copyMap(getScopes()));
+    copy.setConfiguration(getConfiguration());
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

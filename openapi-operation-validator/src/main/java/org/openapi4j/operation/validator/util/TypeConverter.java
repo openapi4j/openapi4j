@@ -20,7 +20,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
 
 public final class TypeConverter {
-  private static final String NaN = "NaN";
+  private static final String NAN = "NaN";
 
   private static final TypeConverter INSTANCE = new TypeConverter();
 
@@ -143,7 +143,7 @@ public final class TypeConverter {
           return JsonNodeFactory.instance.textNode(value.toString());
       }
     } catch (IllegalArgumentException ex) {
-      return JsonNodeFactory.instance.textNode(NaN);
+      return JsonNodeFactory.instance.textNode(NAN);
     }
   }
 
@@ -161,6 +161,6 @@ public final class TypeConverter {
       return false;
     }
 
-    throw new IllegalArgumentException(NaN);
+    throw new IllegalArgumentException(NAN);
   }
 }

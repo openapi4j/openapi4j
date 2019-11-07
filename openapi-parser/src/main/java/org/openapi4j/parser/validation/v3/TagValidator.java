@@ -23,6 +23,6 @@ class TagValidator extends Validator3Base<OpenApi3, Tag> {
   public void validate(OpenApi3 api, Tag tag, ValidationResults results) {
     validateString(tag.getName(), results, true, NAME);
     validateField(api, tag.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
-    validateField(api, tag.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, tag.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
   }
 }

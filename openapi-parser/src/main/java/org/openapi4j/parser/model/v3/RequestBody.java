@@ -1,8 +1,8 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
@@ -11,12 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RequestBody extends AbsRefOpenApiSchema<RequestBody> {
   @JsonProperty("content")
   private Map<String, MediaType> contentMediaTypes;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
   private String description;
   private Boolean required;
 
@@ -76,13 +74,21 @@ public class RequestBody extends AbsRefOpenApiSchema<RequestBody> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public RequestBody setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
@@ -96,10 +102,10 @@ public class RequestBody extends AbsRefOpenApiSchema<RequestBody> {
   protected RequestBody copyContent(OAIContext context, boolean followRefs) {
     RequestBody copy = new RequestBody();
 
-    copy.setDescription(description);
-    copy.setContentMediaTypes(copyMap(contentMediaTypes, context, followRefs));
-    copy.setRequired(required);
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setDescription(getDescription());
+    copy.setContentMediaTypes(copyMap(getContentMediaTypes(), context, followRefs));
+    copy.setRequired(getRequired());
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

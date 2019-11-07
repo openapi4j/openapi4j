@@ -2,7 +2,6 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
@@ -13,7 +12,6 @@ import java.util.Map;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SecurityRequirement extends AbsOpenApiSchema<SecurityRequirement> {
   private Map<String, List<String>> requirements;
 
@@ -59,7 +57,7 @@ public class SecurityRequirement extends AbsOpenApiSchema<SecurityRequirement> {
   public SecurityRequirement copy(OAIContext context, boolean followRefs) {
     SecurityRequirement copy = new SecurityRequirement();
 
-    copy.setRequirements(copyMap(requirements));
+    copy.setRequirements(copyMap(getRequirements()));
 
     return copy;
   }

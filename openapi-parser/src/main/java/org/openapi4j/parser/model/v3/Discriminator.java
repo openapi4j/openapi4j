@@ -31,8 +31,8 @@ public class Discriminator extends AbsOpenApiSchema<Discriminator> {
   public Discriminator copy(OAIContext context, boolean followRefs) {
     Discriminator copy = new Discriminator();
 
-    copy.setPropertyName(propertyName);
-    copy.setMapping(copyMap(mapping));
+    copy.setPropertyName(getPropertyName());
+    copy.setMapping(copyMap(getMapping()));
 
     return copy;
   }

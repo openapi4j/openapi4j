@@ -47,6 +47,6 @@ class OAuthFlowValidator extends Validator3Base<OpenApi3, OAuthFlow> {
 
     validateUrl(oauthFlow.getRefreshUrl(), results, false, REFRESHURL, ValidationSeverity.ERROR);
     validateMap(api, oauthFlow.getScopes(), results, true, SCOPES, Regexes.NOEXT_REGEX, null);
-    validateField(api, oauthFlow.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, oauthFlow.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
   }
 }

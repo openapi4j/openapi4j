@@ -1,8 +1,8 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Parameter extends AbsRefOpenApiSchema<Parameter> {
   private Boolean allowReserved;
   @JsonProperty("content")
@@ -22,8 +21,7 @@ public class Parameter extends AbsRefOpenApiSchema<Parameter> {
   private Object example;
   private Map<String, Example> examples;
   private Boolean explode;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
   private String in;
   private String name;
   private Boolean required;
@@ -209,13 +207,21 @@ public class Parameter extends AbsRefOpenApiSchema<Parameter> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Parameter setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
@@ -229,19 +235,19 @@ public class Parameter extends AbsRefOpenApiSchema<Parameter> {
   protected Parameter copyContent(OAIContext context, boolean followRefs) {
     Parameter copy = new Parameter();
 
-    copy.setName(name);
-    copy.setIn(in);
-    copy.setDescription(description);
-    copy.setRequired(required);
-    copy.setDeprecated(deprecated);
-    copy.setStyle(style);
-    copy.setExplode(explode);
-    copy.setAllowReserved(allowReserved);
-    copy.setSchema(copyField(schema, context, followRefs));
-    copy.setExample(example);
-    copy.setExamples(copyMap(examples, context, followRefs));
-    copy.setContentMediaTypes(contentMediaTypes);
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setName(getName());
+    copy.setIn(getIn());
+    copy.setDescription(getDescription());
+    copy.setRequired(getRequired());
+    copy.setDeprecated(getDeprecated());
+    copy.setStyle(getStyle());
+    copy.setExplode(getExplode());
+    copy.setAllowReserved(getAllowReserved());
+    copy.setSchema(copyField(getSchema(), context, followRefs));
+    copy.setExample(getExample());
+    copy.setExamples(copyMap(getExamples(), context, followRefs));
+    copy.setContentMediaTypes(getContentMediaTypes());
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

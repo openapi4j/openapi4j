@@ -1,7 +1,7 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
@@ -9,7 +9,6 @@ import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Link extends AbsRefOpenApiSchema<Link> {
   private String operationId;
   private String operationRef;
@@ -17,8 +16,7 @@ public class Link extends AbsRefOpenApiSchema<Link> {
   private Map<String, Header> headers;
   private String description;
   private Server server;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
 
   // OperationId
   public String getOperationId() {
@@ -123,13 +121,21 @@ public class Link extends AbsRefOpenApiSchema<Link> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Link setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
@@ -143,13 +149,13 @@ public class Link extends AbsRefOpenApiSchema<Link> {
   protected Link copyContent(OAIContext context, boolean followRefs) {
     Link copy = new Link();
 
-    copy.setOperationId(operationId);
-    copy.setOperationRef(operationRef);
-    copy.setParameters(copyMap(parameters));
-    copy.setHeaders(copyMap(headers, context, followRefs));
-    copy.setDescription(description);
-    copy.setServer(copyField(server, context, followRefs));
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setOperationId(getOperationId());
+    copy.setOperationRef(getOperationRef());
+    copy.setParameters(copyMap(getParameters()));
+    copy.setHeaders(copyMap(getHeaders(), context, followRefs));
+    copy.setDescription(getDescription());
+    copy.setServer(copyField(getServer(), context, followRefs));
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

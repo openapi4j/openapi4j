@@ -1,13 +1,15 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SecurityScheme extends AbsOpenApiSchema<SecurityScheme> {
   private String type;
   private String description;
@@ -17,8 +19,7 @@ public class SecurityScheme extends AbsOpenApiSchema<SecurityScheme> {
   private String bearerFormat;
   private OAuthFlows flows;
   private String openIdConnectUrl;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
 
   // Type
   public String getType() {
@@ -101,28 +102,36 @@ public class SecurityScheme extends AbsOpenApiSchema<SecurityScheme> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public SecurityScheme setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public SecurityScheme copy(OAIContext context, boolean followRefs) {
     SecurityScheme copy = new SecurityScheme();
 
-    copy.setType(type);
-    copy.setDescription(description);
-    copy.setName(name);
-    copy.setIn(in);
-    copy.setScheme(scheme);
-    copy.setBearerFormat(bearerFormat);
-    copy.setFlows(copyField(flows, context, followRefs));
-    copy.setOpenIdConnectUrl(openIdConnectUrl);
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setType(getType());
+    copy.setDescription(getDescription());
+    copy.setName(getName());
+    copy.setIn(getIn());
+    copy.setScheme(getScheme());
+    copy.setBearerFormat(getBearerFormat());
+    copy.setFlows(copyField(getFlows(), context, followRefs));
+    copy.setOpenIdConnectUrl(getOpenIdConnectUrl());
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

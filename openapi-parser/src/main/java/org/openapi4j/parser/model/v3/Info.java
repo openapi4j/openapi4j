@@ -1,17 +1,18 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+import java.util.HashMap;
+import java.util.Map;
+
 public class Info extends AbsOpenApiSchema<Info> {
   private Contact contact;
   private String description;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
   private License license;
   private String termsOfService;
   private String title;
@@ -78,26 +79,34 @@ public class Info extends AbsOpenApiSchema<Info> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Info setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public Info copy(OAIContext context, boolean followRefs) {
     Info copy = new Info();
 
-    copy.setTitle(title);
-    copy.setDescription(description);
-    copy.setTermsOfService(termsOfService);
-    copy.setContact(copyField(contact, context, followRefs));
-    copy.setLicense(copyField(license, context, followRefs));
-    copy.setVersion(version);
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setTitle(getTitle());
+    copy.setDescription(getDescription());
+    copy.setTermsOfService(getTermsOfService());
+    copy.setContact(copyField(getContact(), context, followRefs));
+    copy.setLicense(copyField(getLicense(), context, followRefs));
+    copy.setVersion(getVersion());
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

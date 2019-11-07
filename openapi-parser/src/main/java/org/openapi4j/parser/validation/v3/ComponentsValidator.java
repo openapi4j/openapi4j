@@ -30,7 +30,7 @@ class ComponentsValidator extends Validator3Base<OpenApi3, Components> {
     // VALIDATION EXCLUSIONS :
     // examples
     validateMap(api, components.getCallbacks(), results, false, CALLBACKS, Regexes.NOEXT_NAME_REGEX, CallbackValidator.instance());
-    validateField(api, components.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, components.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateMap(api, components.getHeaders(), results, false, HEADERS, Regexes.NOEXT_NAME_REGEX, HeaderValidator.instance());
     validateMap(api, components.getLinks(), results, false, LINKS, Regexes.NOEXT_NAME_REGEX, LinkValidator.instance());
     validateMap(api, components.getParameters(), results, false, PARAMETERS, Regexes.NOEXT_NAME_REGEX, ParameterValidator.instance());

@@ -39,7 +39,7 @@ class OperationValidator extends Validator3Base<OpenApi3, Operation> {
     validateMap(api, operation.getCallbacks(), results, false, CALLBACKS, Regexes.NOEXT_REGEX, CallbackValidator.instance());
     validateList(api, operation.getSecurityRequirements(), results, false, SECURITY, SecurityRequirementValidator.instance());
     validateList(api, operation.getServers(), results, false, SERVERS, ServerValidator.instance());
-    validateField(api, operation.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, operation.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
 
     validateCallbacks(api, operation, results);
     validateResponseLinks(api, operation, results);

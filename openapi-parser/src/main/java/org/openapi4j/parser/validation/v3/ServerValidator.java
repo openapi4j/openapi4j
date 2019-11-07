@@ -35,7 +35,7 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
   public void validate(OpenApi3 api, Server server, ValidationResults results) {
     checkUrlWithVariables(server, results);
     validateMap(api, server.getVariables(), results, false, VARIABLES, Regexes.NAME_REGEX, ServerVariableValidator.instance());
-    validateField(api, server.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, server.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
   }
 
   private void checkUrlWithVariables(Server server, ValidationResults results) {

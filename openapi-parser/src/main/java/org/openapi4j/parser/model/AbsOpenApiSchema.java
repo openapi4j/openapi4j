@@ -118,13 +118,6 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
     }
   }
 
-  protected <K> K listGet(List<K> list, int index) {
-    if (list == null) {
-      return null;
-    }
-    return list.get(index);
-  }
-
   protected <K> List<K> listAdd(List<K> list, K value) {
     if (list == null) {
       list = new ArrayList<>();
@@ -143,9 +136,9 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
     return list;
   }
 
-  protected <K> K listRemove(List<K> list, int index) {
-    if (list == null) return null;
+  protected <K> boolean listRemove(List<K> list, K value) {
+    if (list == null) return false;
 
-    return list.remove(index);
+    return list.remove(value);
   }
 }

@@ -1,21 +1,22 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @SuppressWarnings("unused")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Xml extends AbsOpenApiSchema<Xml> {
   private String name;
   private String namespace;
   private String prefix;
   private Boolean attribute;
   private Boolean wrapped;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
 
   // Name
   public String getName() {
@@ -76,25 +77,33 @@ public class Xml extends AbsOpenApiSchema<Xml> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Xml setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public Xml copy(OAIContext context, boolean followRefs) {
     Xml copy = new Xml();
 
-    copy.setName(name);
-    copy.setNamespace(namespace);
-    copy.setPrefix(prefix);
-    copy.setAttribute(attribute);
-    copy.setWrapped(wrapped);
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setName(getName());
+    copy.setNamespace(getNamespace());
+    copy.setPrefix(getPrefix());
+    copy.setAttribute(getAttribute());
+    copy.setWrapped(getWrapped());
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

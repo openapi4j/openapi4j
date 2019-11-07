@@ -1,7 +1,7 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
@@ -10,12 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Components extends AbsOpenApiSchema<Components> {
   private Map<String, Callback> callbacks;
   private Map<String, Example> examples;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
   private Map<String, Header> headers;
   private Map<String, Link> links;
   private Map<String, Parameter> parameters;
@@ -304,29 +302,38 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  // Extensions
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Components setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public Components copy(OAIContext context, boolean followRefs) {
     Components copy = new Components();
 
-    copy.setSchemas(copyMap(schemas, context, followRefs));
-    copy.setResponses(copyMap(responses, context, followRefs));
-    copy.setParameters(copyMap(parameters, context, followRefs));
-    copy.setExamples(copyMap(examples, context, followRefs));
-    copy.setRequestBodies(copyMap(requestBodies, context, followRefs));
-    copy.setHeaders(copyMap(headers, context, followRefs));
-    copy.setSecuritySchemes(copyMap(securitySchemes, context, followRefs));
-    copy.setLinks(copyMap(links, context, followRefs));
-    copy.setCallbacks(copyMap(callbacks, context, followRefs));
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setSchemas(copyMap(getSchemas(), context, followRefs));
+    copy.setResponses(copyMap(getResponses(), context, followRefs));
+    copy.setParameters(copyMap(getParameters(), context, followRefs));
+    copy.setExamples(copyMap(getExamples(), context, followRefs));
+    copy.setRequestBodies(copyMap(getRequestBodies(), context, followRefs));
+    copy.setHeaders(copyMap(getHeaders(), context, followRefs));
+    copy.setSecuritySchemes(copyMap(getSecuritySchemes(), context, followRefs));
+    copy.setLinks(copyMap(getLinks(), context, followRefs));
+    copy.setCallbacks(copyMap(getCallbacks(), context, followRefs));
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

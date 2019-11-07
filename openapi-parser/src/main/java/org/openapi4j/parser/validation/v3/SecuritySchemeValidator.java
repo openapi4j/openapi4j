@@ -66,6 +66,7 @@ class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
         validateField(api, flows.getClientCredentials(), results, false, CLIENTCREDENTIALS, flowValidator);
         validateField(api, flows.getImplicit(), results, false, IMPLICIT, flowValidator);
         validateField(api, flows.getPassword(), results, false, PASSWORD, flowValidator);
+        validateMap(api, flows.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
 
         if (flows.getAuthorizationCode() == null &&
           flows.getClientCredentials() == null &&
@@ -78,6 +79,6 @@ class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
 
       }
     }
-    validateField(api, securityScheme.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, securityScheme.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
   }
 }

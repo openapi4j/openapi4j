@@ -1,7 +1,7 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
@@ -10,13 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Server extends AbsOpenApiSchema<Server> {
   private String url;
   private String description;
   private Map<String, ServerVariable> variables;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
 
   // Url
   public String getUrl() {
@@ -48,15 +46,15 @@ public class Server extends AbsOpenApiSchema<Server> {
     return this;
   }
 
-  public boolean hasServerVariable(String name) {
+  public boolean hasVariable(String name) {
     return mapHas(variables, name);
   }
 
-  public ServerVariable getServerVariable(String name) {
+  public ServerVariable getVariable(String name) {
     return mapGet(variables, name);
   }
 
-  public Server setServerVariable(String name, ServerVariable serverVariable) {
+  public Server setVariable(String name, ServerVariable serverVariable) {
     if (variables == null) {
       variables = new HashMap<>();
     }
@@ -64,29 +62,37 @@ public class Server extends AbsOpenApiSchema<Server> {
     return this;
   }
 
-  public Server removeServerVariable(String name) {
+  public Server removeVariable(String name) {
     mapRemove(variables, name);
     return this;
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Server setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public Server copy(OAIContext context, boolean followRefs) {
     Server copy = new Server();
 
-    copy.setUrl(url);
-    copy.setDescription(description);
-    copy.setVariables(copyMap(variables, context, followRefs));
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setUrl(getUrl());
+    copy.setDescription(getDescription());
+    copy.setVariables(copyMap(getVariables(), context, followRefs));
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

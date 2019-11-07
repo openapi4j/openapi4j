@@ -1,8 +1,9 @@
 package org.openapi4j.parser.model.v3;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.OAI;
@@ -10,26 +11,23 @@ import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OpenApi3 extends AbsOpenApiSchema<OpenApi3> implements OAI {
   private String openapi;
   private Info info;
   private List<Server> servers;
   private List<Tag> tags;
-  @JsonInclude
   // paths is required but can be empty (https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md?utf8=%E2%9C%93#security-filtering)
+  @JsonInclude
   private Map<String, Path> paths;
   private Components components;
   private ExternalDocs externalDocs;
   private SecurityRequirement security;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
   @JsonIgnore
   private OAIContext context;
 
@@ -68,17 +66,12 @@ public class OpenApi3 extends AbsOpenApiSchema<OpenApi3> implements OAI {
   }
 
   public OpenApi3 addServer(Server server) {
-    if (servers == null) {
-      servers = new ArrayList<>();
-    }
-    servers.add(server);
+    servers = listAdd(servers, server);
     return this;
   }
 
-  public OpenApi3 removeServer(int index) {
-    if (servers != null) {
-      servers.remove(index);
-    }
+  public OpenApi3 removeServer(Server server) {
+    listRemove(servers, server);
     return this;
   }
 
@@ -147,33 +140,18 @@ public class OpenApi3 extends AbsOpenApiSchema<OpenApi3> implements OAI {
     return tags != null;
   }
 
-  public Tag getTag(int index) {
-    if (tags == null) {
-      return null;
-    }
-    return tags.get(index);
-  }
-
   public OpenApi3 addTag(Tag tag) {
-    if (tags == null) {
-      tags = new ArrayList<>();
-    }
-    tags.add(tag);
+    tags = listAdd(tags, tag);
     return this;
   }
 
   public OpenApi3 insertTag(int index, Tag tag) {
-    if (tags == null) {
-      tags = new ArrayList<>();
-    }
-    tags.add(index, tag);
+    tags = listAdd(tags, index, tag);
     return this;
   }
 
-  public OpenApi3 removeTag(int index) {
-    if (tags != null) {
-      tags.remove(index);
-    }
+  public OpenApi3 removeTag(Tag tag) {
+    listRemove(tags, tag);
     return this;
   }
 
@@ -188,13 +166,21 @@ public class OpenApi3 extends AbsOpenApiSchema<OpenApi3> implements OAI {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public OpenApi3 setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
@@ -285,15 +271,15 @@ public class OpenApi3 extends AbsOpenApiSchema<OpenApi3> implements OAI {
   public OpenApi3 copy(OAIContext context, boolean followRefs) {
     OpenApi3 copy = new OpenApi3();
 
-    copy.setOpenapi(openapi);
-    copy.setInfo(copyField(info, context, followRefs));
-    copy.setServers(copyList(servers, context, followRefs));
-    copy.setTags(copyList(tags, context, followRefs));
-    copy.setPaths(copyMap(paths, context, followRefs));
-    copy.setComponents(copyField(components, context, followRefs));
-    copy.setExternalDocs(copyField(externalDocs, context, followRefs));
-    copy.setSecurity(copyField(security, context, followRefs));
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setOpenapi(getOpenapi());
+    copy.setInfo(copyField(getInfo(), context, followRefs));
+    copy.setServers(copyList(getServers(), context, followRefs));
+    copy.setTags(copyList(getTags(), context, followRefs));
+    copy.setPaths(copyMap(getPaths(), context, followRefs));
+    copy.setComponents(copyField(getComponents(), context, followRefs));
+    copy.setExternalDocs(copyField(getExternalDocs(), context, followRefs));
+    copy.setSecurity(copyField(getSecurity(), context, followRefs));
+    copy.setExtensions(copyMap(getExtensions()));
     copy.setContext(context);
 
     return copy;

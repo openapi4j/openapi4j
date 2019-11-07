@@ -23,7 +23,7 @@ class PathValidator extends Validator3Base<OpenApi3, Path> {
   public void validate(OpenApi3 api, Path path, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // description, summary
-    validateField(api, path.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, path.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateMap(api, path.getOperations(), results, false, null, Regexes.METHOD_REGEX, OperationValidator.instance());
     validateList(api, path.getParameters(), results, false, PARAMETERS, ParameterValidator.instance());
     validateList(api, path.getServers(), results, false, SERVERS, ServerValidator.instance());

@@ -76,7 +76,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
       checkDiscriminator(api, schema, results);
       validateType(schema.getDefault(), schema.getType(), results, DEFAULT);
       validateList(api, schema.getEnums(), results, false, ENUM, null);
-      validateField(api, schema.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+      validateMap(api, schema.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
       validateField(api, schema.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
       validateFormat(schema.getFormat(), schema.getType(), results, FORMAT);
       if (schema.getItemsSchema() != null) {

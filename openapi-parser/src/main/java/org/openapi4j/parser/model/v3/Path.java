@@ -1,24 +1,21 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Path extends AbsOpenApiSchema<Path> {
   private String description;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
   @JsonAlias({"get", "put", "post", "delete", "options", "head", "patch", "trace"})
   @JsonIgnore
   private Map<String, Operation> operations = new HashMap<>();
@@ -150,7 +147,7 @@ public class Path extends AbsOpenApiSchema<Path> {
   }
 
   // Server
-  public Collection<Server> getServers() {
+  public List<Server> getServers() {
     return servers;
   }
 
@@ -163,10 +160,6 @@ public class Path extends AbsOpenApiSchema<Path> {
     return servers != null;
   }
 
-  public Server getServer(int index) {
-    return listGet(servers, index);
-  }
-
   public Path addServer(Server server) {
     servers = listAdd(servers, server);
     return this;
@@ -177,8 +170,8 @@ public class Path extends AbsOpenApiSchema<Path> {
     return this;
   }
 
-  public Path removeServer(int index) {
-    listRemove(servers, index);
+  public Path removeServer(Server value) {
+    listRemove(servers, value);
     return this;
   }
 
@@ -196,10 +189,6 @@ public class Path extends AbsOpenApiSchema<Path> {
     return parameters != null;
   }
 
-  public Parameter getParameter(int index) {
-    return listGet(parameters, index);
-  }
-
   public Path addParameter(Parameter parameter) {
     parameters = listAdd(parameters, parameter);
     return this;
@@ -210,31 +199,39 @@ public class Path extends AbsOpenApiSchema<Path> {
     return this;
   }
 
-  public Path removeParameter(int index) {
-    listRemove(parameters, index);
+  public Path removeParameter(Parameter value) {
+    listRemove(parameters, value);
     return this;
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Path setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public Path copy(OAIContext context, boolean followRefs) {
     Path copy = new Path();
 
-    copy.setSummary(summary);
-    copy.setDescription(description);
-    copy.setOperations(copyMap(operations, context, followRefs));
-    copy.setServers(copyList(servers, context, followRefs));
-    copy.setParameters(copyList(parameters, context, followRefs));
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setSummary(getSummary());
+    copy.setDescription(getDescription());
+    copy.setOperations(copyMap(getOperations(), context, followRefs));
+    copy.setServers(copyList(getServers(), context, followRefs));
+    copy.setParameters(copyList(getParameters(), context, followRefs));
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

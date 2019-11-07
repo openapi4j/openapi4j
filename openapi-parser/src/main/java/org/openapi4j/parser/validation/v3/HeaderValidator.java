@@ -25,7 +25,7 @@ class HeaderValidator extends Validator3Base<OpenApi3, Header> {
     // VALIDATION EXCLUSIONS :
     // allowReserved, deprecated, description, example, examples, explode, required
     validateMap(api, header.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
-    validateField(api, header.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, header.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateField(api, header.getSchema(), results, false, SCHEMA, SchemaValidator.instance());
     validateString(header.getStyle(), results, false, Regexes.STYLE_REGEX, STYLE);
   }

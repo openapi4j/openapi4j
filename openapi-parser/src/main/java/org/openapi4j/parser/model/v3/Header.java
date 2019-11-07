@@ -1,8 +1,8 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
@@ -10,7 +10,6 @@ import org.openapi4j.parser.model.AbsOpenApiSchema;
 import java.util.HashMap;
 import java.util.Map;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Header extends AbsOpenApiSchema<Header> {
   private Boolean allowReserved;
   @JsonProperty("content")
@@ -20,8 +19,7 @@ public class Header extends AbsOpenApiSchema<Header> {
   private Object example;
   private Map<String, Example> examples;
   private Boolean explode;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
   private Boolean required;
   private Schema schema;
   private String style;
@@ -185,29 +183,38 @@ public class Header extends AbsOpenApiSchema<Header> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public void setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
   public Header copy(OAIContext context, boolean followRefs) {
     Header copy = new Header();
 
-    copy.setDescription(description);
-    copy.setRequired(required);
-    copy.setDeprecated(deprecated);
-    copy.setStyle(style);
-    copy.setExplode(explode);
-    copy.setAllowReserved(allowReserved);
-    copy.setSchema(copyField(schema, context, followRefs));
-    copy.setExample(example);
-    copy.setExamples(copyMap(examples, context, followRefs));
-    copy.setContentMediaTypes(copyMap(contentMediaTypes, context, followRefs));
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setDescription(getDescription());
+    copy.setRequired(getRequired());
+    copy.setDeprecated(getDeprecated());
+    copy.setStyle(getStyle());
+    copy.setExplode(getExplode());
+    copy.setAllowReserved(getAllowReserved());
+    copy.setSchema(copyField(getSchema(), context, followRefs));
+    copy.setExample(getExample());
+    copy.setExamples(copyMap(getExamples(), context, followRefs));
+    copy.setContentMediaTypes(copyMap(getContentMediaTypes(), context, followRefs));
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

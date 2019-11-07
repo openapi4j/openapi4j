@@ -34,7 +34,7 @@ class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
       validateReference(api, requestBody.getRef(), results, $REF, RequestBodyValidator.instance(), RequestBody.class);
     } else {
       validateMap(api, requestBody.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
-      validateField(api, requestBody.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+      validateMap(api, requestBody.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
       checkAllowedEncoding(requestBody, results);
     }
   }
@@ -49,7 +49,7 @@ class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
       MediaType mediaType = entry.getValue();
 
       if (
-        mediaType.getEncoding() != null
+        mediaType.getEncodings() != null
           && !entry.getKey().startsWith(MULTIPART)
           && !entry.getKey().equals(FORM_URL_ENCODED)) {
         results.addWarning(ENCODING_MISMATCH, entry.getKey());

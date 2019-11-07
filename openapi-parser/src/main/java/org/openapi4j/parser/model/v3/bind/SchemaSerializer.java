@@ -68,6 +68,12 @@ public class SchemaSerializer extends StdSerializer<Schema> {
       addObjectField(gen, "externalDocs", schema.getExternalDocs());
       addObjectField(gen, "example", schema.getExample());
       addBooleanField(gen, "deprecated", schema.getDeprecated());
+
+      if (schema.getExtensions() != null) {
+        for (Map.Entry<String, Object> entry : schema.getExtensions().entrySet()) {
+          gen.writeObjectField(entry.getKey(), entry.getValue());
+        }
+      }
     }
 
     gen.writeEndObject();

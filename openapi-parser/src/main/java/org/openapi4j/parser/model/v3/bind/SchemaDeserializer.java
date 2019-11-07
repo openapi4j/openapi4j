@@ -66,7 +66,7 @@ public class SchemaDeserializer extends StdDeserializer<Schema> {
           schema.setTitle(jp.getText());
           break;
         case MULTIPLEOF:
-          schema.setMultipleOf(jp.getIntValue());
+          schema.setMultipleOf(jp.getNumberValue());
           break;
         case MAXIMUM:
           schema.setMaximum(jp.getNumberValue());
@@ -191,6 +191,7 @@ public class SchemaDeserializer extends StdDeserializer<Schema> {
           schema.setRef(jp.getValueAsString());
           break;
         default:
+          schema.setExtension(name, jp.readValueAs(new TypeReference<Object>() {}));
           break;
       }
     }

@@ -25,7 +25,7 @@ class EncodingPropertyValidator extends Validator3Base<OpenApi3, EncodingPropert
     // VALIDATION EXCLUSIONS :
     // explode
     validateString(encodingProperty.getContentType(), results, false, CONTENTTYPE);
-    validateField(api, encodingProperty.getExtensions(), results, false, EXTENSIONS, ExtensionsValidator.instance());
+    validateMap(api, encodingProperty.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateMap(api, encodingProperty.getHeaders(), results, false, HEADERS, Regexes.NOEXT_REGEX, null);
     validateString(encodingProperty.getStyle(), results, false, Regexes.STYLE_REGEX, STYLE);
   }

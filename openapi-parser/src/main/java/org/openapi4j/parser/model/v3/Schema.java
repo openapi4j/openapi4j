@@ -1,7 +1,7 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -17,7 +17,6 @@ import java.util.Map;
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @JsonDeserialize(using = SchemaDeserializer.class)
 @JsonSerialize(using = SchemaSerializer.class)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Schema extends AbsRefOpenApiSchema<Schema> {
   private Schema additionalProperties;
   private Boolean additionalPropertiesAllowed;
@@ -29,8 +28,7 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   private Object example;
   private Boolean exclusiveMaximum;
   private Boolean exclusiveMinimum;
-  @JsonUnwrapped
-  private Extensions extensions;
+  private Map<String, Object> extensions;
   private ExternalDocs externalDocs;
   private String format;
   private Schema itemsSchema;
@@ -42,7 +40,7 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   private Integer minLength;
   private Integer maxProperties;
   private Integer minProperties;
-  private Integer multipleOf;
+  private Number multipleOf;
   private Schema notSchema;
   private Boolean nullable;
   private String pattern;
@@ -69,11 +67,11 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   }
 
   // MultipleOf
-  public Integer getMultipleOf() {
+  public Number getMultipleOf() {
     return multipleOf;
   }
 
-  public Schema setMultipleOf(Integer multipleOf) {
+  public Schema setMultipleOf(Number multipleOf) {
     this.multipleOf = multipleOf;
     return this;
   }
@@ -224,22 +222,18 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
     return requiredFields != null;
   }
 
-  public String getRequiredField(int index) {
-    return listGet(requiredFields, index);
-  }
-
   public Schema addRequiredField(String requiredField) {
     requiredFields = listAdd(requiredFields, requiredField);
     return this;
   }
 
-  public Schema insertRequiredField(int index, String requiredField) {
-    requiredFields = listAdd(requiredFields, index, requiredField);
+  public Schema insertRequiredField(int index, String value) {
+    requiredFields = listAdd(requiredFields, index, value);
     return this;
   }
 
-  public Schema removeRequiredField(int index) {
-    listRemove(requiredFields, index);
+  public Schema removeRequiredField(String value) {
+    listRemove(requiredFields, value);
     return this;
   }
 
@@ -257,22 +251,18 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
     return enums != null;
   }
 
-  public String getEnum(int index) {
-    return listGet(enums, index);
-  }
-
-  public Schema addEnum(String enumValue) {
-    enums = listAdd(enums, enumValue);
+  public Schema addEnum(String value) {
+    enums = listAdd(enums, value);
     return this;
   }
 
-  public Schema insertEnum(int index, String enumValue) {
-    enums = listAdd(enums, index, enumValue);
+  public Schema insertEnum(int index, String value) {
+    enums = listAdd(enums, index, value);
     return this;
   }
 
-  public Schema removeEnum(int index) {
-    listRemove(enums, index);
+  public Schema removeEnum(String value) {
+    listRemove(enums, value);
     return this;
   }
 
@@ -291,8 +281,8 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
     return allOfSchemas;
   }
 
-  public Schema setAllOfSchemas(List<Schema> allOfSchemas) {
-    this.allOfSchemas = allOfSchemas;
+  public Schema setAllOfSchemas(List<Schema> value) {
+    this.allOfSchemas = value;
     return this;
   }
 
@@ -300,22 +290,18 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
     return allOfSchemas != null;
   }
 
-  public Schema getAllOfSchema(int index) {
-    return listGet(allOfSchemas, index);
-  }
-
-  public Schema addAllOfSchema(Schema allOfSchema) {
-    allOfSchemas = listAdd(allOfSchemas, allOfSchema);
+  public Schema addAllOfSchema(Schema value) {
+    allOfSchemas = listAdd(allOfSchemas, value);
     return this;
   }
 
-  public Schema insertAllOfSchema(int index, Schema allOfSchema) {
-    allOfSchemas = listAdd(allOfSchemas, index, allOfSchema);
+  public Schema insertAllOfSchema(int index, Schema value) {
+    allOfSchemas = listAdd(allOfSchemas, index, value);
     return this;
   }
 
-  public Schema removeAllOfSchema(int index) {
-    listRemove(allOfSchemas, index);
+  public Schema removeAllOfSchema(Schema value) {
+    listRemove(allOfSchemas, value);
     return this;
   }
 
@@ -333,22 +319,18 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
     return oneOfSchemas != null;
   }
 
-  public Schema getOneOfSchema(int index) {
-    return listGet(oneOfSchemas, index);
-  }
-
-  public Schema addOneOfSchema(Schema oneOfSchema) {
-    oneOfSchemas = listAdd(oneOfSchemas, oneOfSchema);
+  public Schema addOneOfSchema(Schema value) {
+    oneOfSchemas = listAdd(oneOfSchemas, value);
     return this;
   }
 
-  public Schema insertOneOfSchema(int index, Schema oneOfSchema) {
-    oneOfSchemas = listAdd(oneOfSchemas, index, oneOfSchema);
+  public Schema insertOneOfSchema(int index, Schema value) {
+    oneOfSchemas = listAdd(oneOfSchemas, index, value);
     return this;
   }
 
-  public Schema removeOneOfSchema(int index) {
-    listRemove(oneOfSchemas, index);
+  public Schema removeOneOfSchema(Schema value) {
+    listRemove(oneOfSchemas, value);
     return this;
   }
 
@@ -366,12 +348,8 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
     return anyOfSchemas != null;
   }
 
-  public Schema getAnyOfSchema(int index) {
-    return listGet(anyOfSchemas, index);
-  }
-
-  public Schema addAnyOfSchema(Schema anyOfSchema) {
-    anyOfSchemas = listAdd(anyOfSchemas, anyOfSchema);
+  public Schema addAnyOfSchema(Schema value) {
+    anyOfSchemas = listAdd(anyOfSchemas, value);
     return this;
   }
 
@@ -380,8 +358,8 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
     return this;
   }
 
-  public Schema removeAnyOfSchema(int index) {
-    listRemove(anyOfSchemas, index);
+  public Schema removeAnyOfSchema(Schema value) {
+    listRemove(anyOfSchemas, value);
     return this;
   }
 
@@ -594,13 +572,21 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   }
 
   // Extensions
-  public Extensions getExtensions() {
+  @JsonAnyGetter
+  public Map<String, Object> getExtensions() {
     return extensions;
   }
 
-  public Schema setExtensions(Extensions extensions) {
+  public void setExtensions(Map<String, Object> extensions) {
     this.extensions = extensions;
-    return this;
+  }
+
+  @JsonAnySetter
+  public void setExtension(String name, Object value) {
+    if (extensions == null) {
+      extensions = new HashMap<>();
+    }
+    extensions.put(name, value);
   }
 
   @Override
@@ -614,43 +600,43 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   protected Schema copyContent(OAIContext context, boolean followRefs) {
     Schema copy = new Schema();
 
-    copy.setTitle(title);
-    copy.setMultipleOf(multipleOf);
-    copy.setMaximum(maximum);
-    copy.setExclusiveMaximum(exclusiveMaximum);
-    copy.setMinimum(minimum);
-    copy.setExclusiveMinimum(exclusiveMinimum);
-    copy.setMaxLength(maxLength);
-    copy.setMinLength(minLength);
-    copy.setPattern(pattern);
-    copy.setMaxItems(maxItems);
-    copy.setMinItems(minItems);
-    copy.setUniqueItems(uniqueItems);
-    copy.setMaxProperties(maxProperties);
-    copy.setMinProperties(minProperties);
-    copy.setRequiredFields(copyList(requiredFields));
-    copy.setEnums(copyList(enums));
-    copy.setType(type);
-    copy.setAllOfSchemas(copyList(allOfSchemas, context, followRefs));
-    copy.setOneOfSchemas(copyList(oneOfSchemas, context, followRefs));
-    copy.setAnyOfSchemas(copyList(anyOfSchemas, context, followRefs));
-    copy.setNotSchema(copyField(notSchema, context, followRefs));
-    copy.setItemsSchema(copyField(itemsSchema, context, followRefs));
-    copy.setProperties(copyMap(properties, context, followRefs));
-    copy.setAdditionalProperties(copyField(additionalProperties, context, followRefs));
-    copy.setAdditionalPropertiesAllowed(additionalPropertiesAllowed);
-    copy.setDescription(description);
-    copy.setFormat(format);
-    copy.setDefault(defaultValue);
-    copy.setNullable(nullable);
-    copy.setDiscriminator(discriminator);
-    copy.setReadOnly(readOnly);
-    copy.setWriteOnly(writeOnly);
-    copy.setXml(copyField(xml, context, followRefs));
-    copy.setExternalDocs(copyField(externalDocs, context, followRefs));
-    copy.setExample(example);
-    copy.setDeprecated(deprecated);
-    copy.setExtensions(copyField(extensions, context, followRefs));
+    copy.setTitle(getTitle());
+    copy.setMultipleOf(getMultipleOf());
+    copy.setMaximum(getMaximum());
+    copy.setExclusiveMaximum(getExclusiveMaximum());
+    copy.setMinimum(getMinimum());
+    copy.setExclusiveMinimum(getExclusiveMinimum());
+    copy.setMaxLength(getMaxLength());
+    copy.setMinLength(getMinLength());
+    copy.setPattern(getPattern());
+    copy.setMaxItems(getMaxItems());
+    copy.setMinItems(getMinItems());
+    copy.setUniqueItems(getUniqueItems());
+    copy.setMaxProperties(getMaxProperties());
+    copy.setMinProperties(getMinProperties());
+    copy.setRequiredFields(copyList(getRequiredFields()));
+    copy.setEnums(copyList(getEnums()));
+    copy.setType(getType());
+    copy.setAllOfSchemas(copyList(getAllOfSchemas(), context, followRefs));
+    copy.setOneOfSchemas(copyList(getOneOfSchemas(), context, followRefs));
+    copy.setAnyOfSchemas(copyList(getAnyOfSchemas(), context, followRefs));
+    copy.setNotSchema(copyField(getNotSchema(), context, followRefs));
+    copy.setItemsSchema(copyField(getItemsSchema(), context, followRefs));
+    copy.setProperties(copyMap(getProperties(), context, followRefs));
+    copy.setAdditionalProperties(copyField(getAdditionalProperties(), context, followRefs));
+    copy.setAdditionalPropertiesAllowed(getAdditionalPropertiesAllowed());
+    copy.setDescription(getDescription());
+    copy.setFormat(getFormat());
+    copy.setDefault(getDefault());
+    copy.setNullable(getNullable());
+    copy.setDiscriminator(copyField(getDiscriminator(), context, followRefs));
+    copy.setReadOnly(getReadOnly());
+    copy.setWriteOnly(getWriteOnly());
+    copy.setXml(copyField(getXml(), context, followRefs));
+    copy.setExternalDocs(copyField(getExternalDocs(), context, followRefs));
+    copy.setExample(getExample());
+    copy.setDeprecated(getDeprecated());
+    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }
