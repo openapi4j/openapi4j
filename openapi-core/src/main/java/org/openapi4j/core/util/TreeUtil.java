@@ -3,6 +3,7 @@ package org.openapi4j.core.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.AuthOption;
@@ -11,6 +12,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,6 +21,13 @@ import static java.util.Objects.requireNonNull;
  * Utility class to manipulate tree structures.
  */
 public final class TreeUtil {
+  private static final String URL_REQUIRED_ERR_MSG = "URL is required.";
+  private static final String JSON_ENCODE_ERR_MSG = "Failed to encode as JSON : %s";
+  private static final String YAML_ENCODE_ERR_MSG = "Failed to encode as YAML : %s";
+  private static final String DECODE_ERR_MSG = "Failed to decode : %s";
+
+  private static final Pattern FIRST_CHAR_PATTERN = Pattern.compile("(?:\\s*)(.)");
+
   /**
    * The global JSON mapper.
    */
@@ -41,7 +51,7 @@ public final class TreeUtil {
     try {
       return json.writeValueAsString(obj);
     } catch (Exception e) {
-      throw new EncodeException("Failed to encode as JSON: " + e.getMessage());
+      throw new EncodeException(String.format(JSON_ENCODE_ERR_MSG, e.getMessage()));
     }
   }
 
@@ -56,7 +66,7 @@ public final class TreeUtil {
     try {
       return json.valueToTree(obj);
     } catch (Exception e) {
-      throw new EncodeException("Failed to encode as JSON: " + e.getMessage());
+      throw new EncodeException(String.format(JSON_ENCODE_ERR_MSG, e.getMessage()));
     }
   }
 
@@ -71,7 +81,7 @@ public final class TreeUtil {
     try {
       return yaml.writeValueAsString(obj);
     } catch (Exception e) {
-      throw new EncodeException("Failed to encode as YAML: " + e.getMessage());
+      throw new EncodeException(String.format(YAML_ENCODE_ERR_MSG, e.getMessage()));
     }
   }
 
@@ -97,19 +107,20 @@ public final class TreeUtil {
    * @throws DecodeException
    */
   public static <T> T load(final URL url, final List<AuthOption> authOptions, Class<T> clazz) throws DecodeException {
-    requireNonNull(url, "URL is required");
+    requireNonNull(url, URL_REQUIRED_ERR_MSG);
 
     try {
       InputStream in = UrlContentRetriever.instance().get(url, authOptions);
-      String json = IOUtil.toString(in, StandardCharsets.UTF_8).trim();
+      String content = IOUtil.toString(in, StandardCharsets.UTF_8);
+      String firstChar = getFirstVisibleCharacter(content);
 
-      if (json.startsWith("{") || json.startsWith("[")) {
-        return TreeUtil.json.readValue(json, clazz);
+      if ("{".equals(firstChar) || "[".equals(firstChar)) {
+        return TreeUtil.json.readValue(content, clazz);
       } else {
-        return TreeUtil.yaml.readValue(json, clazz);
+        return TreeUtil.yaml.readValue(content, clazz);
       }
     } catch (Exception e) {
-      throw new DecodeException("Failed to decode : " + e.getMessage());
+      throw new DecodeException(String.format(DECODE_ERR_MSG, e.getMessage()));
     }
   }
 
@@ -133,19 +144,28 @@ public final class TreeUtil {
    * @throws DecodeException
    */
   public static JsonNode load(final URL url, final List<AuthOption> authOptions) throws DecodeException {
-    requireNonNull(url, "URL is required");
+    requireNonNull(url, URL_REQUIRED_ERR_MSG);
 
     try {
       InputStream in = UrlContentRetriever.instance().get(url, authOptions);
-      String json = IOUtil.toString(in, StandardCharsets.UTF_8).trim();
+      String content = IOUtil.toString(in, StandardCharsets.UTF_8);
+      String firstChar = getFirstVisibleCharacter(content);
 
-      if (json.startsWith("{") || json.startsWith("[")) {
-        return TreeUtil.json.readTree(json);
+      if ("{".equals(firstChar) || "[".equals(firstChar)) {
+        return TreeUtil.json.readTree(content);
       } else {
-        return TreeUtil.yaml.readTree(json);
+        return TreeUtil.yaml.readTree(content);
       }
     } catch (Exception e) {
-      throw new DecodeException("Failed to decode : " + e.getMessage());
+      throw new DecodeException(String.format(DECODE_ERR_MSG, e.getMessage()));
     }
+  }
+
+  private static String getFirstVisibleCharacter(String content) {
+    Matcher matcher = FIRST_CHAR_PATTERN.matcher(content);
+    if (matcher.find()) {
+      return matcher.group(1);
+    }
+    return null;
   }
 }

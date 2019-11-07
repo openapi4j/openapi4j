@@ -2,6 +2,7 @@ package org.openapi4j.operation.validator.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.parser.model.v3.Schema;
 
@@ -24,7 +25,7 @@ public final class BodyConverter {
     return FormUrlConverter.instance().formUrlEncodedToNode(schema, streamToString(body, Charset.forName(encoding)), encoding);
   }
 
-  public static JsonNode formUrlEncodedToNode(final Schema schema, final String body, final  String encoding) {
+  public static JsonNode formUrlEncodedToNode(final Schema schema, final String body, final String encoding) {
     return FormUrlConverter.instance().formUrlEncodedToNode(schema, body, encoding);
   }
 

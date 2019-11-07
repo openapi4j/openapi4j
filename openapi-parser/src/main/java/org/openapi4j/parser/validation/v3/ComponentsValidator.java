@@ -5,7 +5,15 @@ import org.openapi4j.parser.model.v3.Components;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CALLBACKS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.LINKS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.PARAMETERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.REQUESTBODIES;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.RESPONSES;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCHEMAS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SECURITYSCHEMES;
 
 class ComponentsValidator extends Validator3Base<OpenApi3, Components> {
   private static final Validator<OpenApi3, Components> INSTANCE = new ComponentsValidator();

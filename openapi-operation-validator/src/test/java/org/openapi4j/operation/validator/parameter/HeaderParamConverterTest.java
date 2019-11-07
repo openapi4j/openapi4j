@@ -1,15 +1,24 @@
 package org.openapi4j.operation.validator.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.junit.Test;
 import org.openapi4j.operation.validator.OpenApi3Util;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Parameter;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import static org.openapi4j.operation.validator.parameter.ParamChecker.*;
+import static org.openapi4j.operation.validator.parameter.ParamChecker.checkArray;
+import static org.openapi4j.operation.validator.parameter.ParamChecker.checkObject;
+import static org.openapi4j.operation.validator.parameter.ParamChecker.checkPrimitive;
 
 public class HeaderParamConverterTest {
   @Test

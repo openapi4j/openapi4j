@@ -2,7 +2,13 @@ package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.validation.ValidationResults;
-import org.openapi4j.parser.model.v3.*;
+import org.openapi4j.parser.model.v3.MediaType;
+import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.model.v3.Operation;
+import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.parser.model.v3.RequestBody;
+import org.openapi4j.parser.model.v3.Response;
+import org.openapi4j.parser.model.v3.Schema;
 
 import java.util.Map;
 import java.util.regex.Matcher;

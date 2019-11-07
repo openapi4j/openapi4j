@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 
@@ -28,11 +29,11 @@ public class Callback extends AbsRefOpenApiSchema<Callback> {
   }
 
   public boolean hasCallbackPath(String expression) {
-    return has(callbackPaths, expression);
+    return mapHas(callbackPaths, expression);
   }
 
   public Path getCallbackPath(String expression) {
-    return get(callbackPaths, expression);
+    return mapGet(callbackPaths, expression);
   }
 
   @JsonAnySetter
@@ -45,7 +46,7 @@ public class Callback extends AbsRefOpenApiSchema<Callback> {
   }
 
   public Callback removeCallbackPath(String expression) {
-    remove(callbackPaths, expression);
+    mapRemove(callbackPaths, expression);
     return this;
   }
 

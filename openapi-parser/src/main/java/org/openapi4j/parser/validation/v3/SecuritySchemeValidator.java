@@ -10,7 +10,24 @@ import org.openapi4j.parser.validation.Validator;
 
 import java.util.regex.Pattern;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.APIKEY;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.AUTHORIZATIONCODE;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CLIENTCREDENTIALS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.COOKIE;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.FLOWS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADER;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.HTTP;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.IMPLICIT;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.IN;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.NAME;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.OAUTH2;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPENIDCONNECT;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPENIDCONNECTURL;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.PASSWORD;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.QUERY;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCHEME;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.TYPE;
 
 class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
   private static final Pattern TYPE_REGEX = Pattern.compile(

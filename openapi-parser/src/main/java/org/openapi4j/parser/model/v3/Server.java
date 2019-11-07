@@ -2,6 +2,7 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
@@ -48,11 +49,11 @@ public class Server extends AbsOpenApiSchema<Server> {
   }
 
   public boolean hasServerVariable(String name) {
-    return has(variables, name);
+    return mapHas(variables, name);
   }
 
   public ServerVariable getServerVariable(String name) {
-    return get(variables, name);
+    return mapGet(variables, name);
   }
 
   public Server setServerVariable(String name, ServerVariable serverVariable) {
@@ -64,7 +65,7 @@ public class Server extends AbsOpenApiSchema<Server> {
   }
 
   public Server removeServerVariable(String name) {
-    remove(variables, name);
+    mapRemove(variables, name);
     return this;
   }
 

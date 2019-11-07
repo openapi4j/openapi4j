@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.operation.validator.model.impl.Regexes;
 import org.openapi4j.parser.model.v3.Schema;
 
@@ -29,7 +30,7 @@ class FormUrlConverter {
     return formUrlEncodedToNode(schema, BodyConverter.streamToString(body, Charset.forName(encoding)), encoding);
   }
 
-  JsonNode formUrlEncodedToNode(final Schema schema, final String body, final  String encoding) {
+  JsonNode formUrlEncodedToNode(final Schema schema, final String body, final String encoding) {
     String decodedBody;
     try {
       decodedBody = URLDecoder.decode(body, encoding);

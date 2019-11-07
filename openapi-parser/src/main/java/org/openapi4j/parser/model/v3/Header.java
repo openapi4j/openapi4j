@@ -3,6 +3,7 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
@@ -132,11 +133,11 @@ public class Header extends AbsOpenApiSchema<Header> {
   }
 
   public boolean hasExample(String name) {
-    return has(examples, name);
+    return mapHas(examples, name);
   }
 
   public Example getExample(String name) {
-    return get(examples, name);
+    return mapGet(examples, name);
   }
 
   public Header setExample(String name, Example example) {
@@ -148,7 +149,7 @@ public class Header extends AbsOpenApiSchema<Header> {
   }
 
   public Header removeExample(String name) {
-    remove(examples, name);
+    mapRemove(examples, name);
     return this;
   }
 
@@ -163,11 +164,11 @@ public class Header extends AbsOpenApiSchema<Header> {
   }
 
   public boolean hasContentMediaType(String name) {
-    return has(contentMediaTypes, name);
+    return mapHas(contentMediaTypes, name);
   }
 
   public MediaType getContentMediaType(String name) {
-    return get(contentMediaTypes, name);
+    return mapGet(contentMediaTypes, name);
   }
 
   public Header setContentMediaType(String name, MediaType contentMediaType) {
@@ -179,7 +180,7 @@ public class Header extends AbsOpenApiSchema<Header> {
   }
 
   public Header removeContentMediaType(String name) {
-    remove(contentMediaTypes, name);
+    mapRemove(contentMediaTypes, name);
     return this;
   }
 

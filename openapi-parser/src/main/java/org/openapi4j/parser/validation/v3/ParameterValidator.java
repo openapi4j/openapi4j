@@ -5,7 +5,25 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Parameter;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.ALLOWRESERVED;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.COOKIE;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.DEEPOBJECT;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.FORM;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADER;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.IN;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.LABEL;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.MATRIX;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.NAME;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.PATH;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.PIPEDELIMITED;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.QUERY;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCHEMA;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SIMPLE;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SPACEDELIMITED;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.STYLE;
 
 class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
   private static final String ALLOWED_RESERVED_IGNORED = "AllowReserved is ignored for non-query parameter '%s'";

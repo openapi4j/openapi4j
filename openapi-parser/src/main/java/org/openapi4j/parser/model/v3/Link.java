@@ -2,6 +2,7 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 
@@ -50,11 +51,11 @@ public class Link extends AbsRefOpenApiSchema<Link> {
   }
 
   public boolean hasParameter(String name) {
-    return has(parameters, name);
+    return mapHas(parameters, name);
   }
 
   public String getParameter(String name) {
-    return get(parameters, name);
+    return mapGet(parameters, name);
   }
 
   public Link setParameter(String name, String parameter) {
@@ -66,7 +67,7 @@ public class Link extends AbsRefOpenApiSchema<Link> {
   }
 
   public Link removeParameter(String name) {
-    remove(parameters, name);
+    mapRemove(parameters, name);
     return this;
   }
 
@@ -81,11 +82,11 @@ public class Link extends AbsRefOpenApiSchema<Link> {
   }
 
   public boolean hasHeader(String name) {
-    return has(headers, name);
+    return mapHas(headers, name);
   }
 
   public Header getHeader(String name) {
-    return get(headers, name);
+    return mapGet(headers, name);
   }
 
   public Link setHeader(String name, Header header) {
@@ -97,7 +98,7 @@ public class Link extends AbsRefOpenApiSchema<Link> {
   }
 
   public Link removeHeader(String name) {
-    remove(headers, name);
+    mapRemove(headers, name);
     return this;
   }
 

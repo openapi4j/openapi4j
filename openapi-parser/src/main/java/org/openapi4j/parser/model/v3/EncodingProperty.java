@@ -2,6 +2,7 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
@@ -38,11 +39,11 @@ public class EncodingProperty extends AbsOpenApiSchema<EncodingProperty> {
   }
 
   public boolean hasHeader(String name) {
-    return has(headers, name);
+    return mapHas(headers, name);
   }
 
   public String getHeader(String name) {
-    return get(headers, name);
+    return mapGet(headers, name);
   }
 
   public EncodingProperty setHeader(String name, String header) {
@@ -54,7 +55,7 @@ public class EncodingProperty extends AbsOpenApiSchema<EncodingProperty> {
   }
 
   public EncodingProperty removeHeader(String name) {
-    remove(headers, name);
+    mapRemove(headers, name);
     return this;
   }
 

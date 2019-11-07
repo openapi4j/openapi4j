@@ -1,12 +1,19 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_BOOLEAN;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
 
 /**
  * type keyword validator.

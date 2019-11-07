@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,11 +129,11 @@ public class Path extends AbsOpenApiSchema<Path> {
   }
 
   public boolean hasOperation(String id) {
-    return has(operations, id);
+    return mapHas(operations, id);
   }
 
   public Operation getOperation(String id) {
-    return get(operations, id);
+    return mapGet(operations, id);
   }
 
   public Path setOperation(String id, Operation operation) {
@@ -144,12 +145,12 @@ public class Path extends AbsOpenApiSchema<Path> {
   }
 
   public Path removeOperation(String id) {
-    remove(operations, id);
+    mapRemove(operations, id);
     return this;
   }
 
   // Server
-  public List<Server> getServers() {
+  public Collection<Server> getServers() {
     return servers;
   }
 
@@ -163,32 +164,21 @@ public class Path extends AbsOpenApiSchema<Path> {
   }
 
   public Server getServer(int index) {
-    if (servers == null) {
-      return null;
-    }
-    return servers.get(index);
+    return listGet(servers, index);
   }
 
   public Path addServer(Server server) {
-    if (servers == null) {
-      servers = new ArrayList<>();
-    }
-    servers.add(server);
+    servers = listAdd(servers, server);
     return this;
   }
 
   public Path insertServer(int index, Server server) {
-    if (servers == null) {
-      servers = new ArrayList<>();
-    }
-    servers.add(index, server);
+    servers = listAdd(servers, index, server);
     return this;
   }
 
   public Path removeServer(int index) {
-    if (servers != null) {
-      servers.remove(index);
-    }
+    listRemove(servers, index);
     return this;
   }
 
@@ -207,32 +197,21 @@ public class Path extends AbsOpenApiSchema<Path> {
   }
 
   public Parameter getParameter(int index) {
-    if (parameters == null) {
-      return null;
-    }
-    return parameters.get(index);
+    return listGet(parameters, index);
   }
 
   public Path addParameter(Parameter parameter) {
-    if (parameters == null) {
-      parameters = new ArrayList<>();
-    }
-    parameters.add(parameter);
+    parameters = listAdd(parameters, parameter);
     return this;
   }
 
   public Path insertParameter(int index, Parameter parameter) {
-    if (parameters == null) {
-      parameters = new ArrayList<>();
-    }
-    parameters.add(index, parameter);
+    parameters = listAdd(parameters, index, parameter);
     return this;
   }
 
   public Path removeParameter(int index) {
-    if (parameters != null) {
-      parameters.remove(index);
-    }
+    listRemove(parameters, index);
     return this;
   }
 

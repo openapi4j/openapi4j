@@ -1,6 +1,7 @@
 package org.openapi4j.core.model.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.model.AuthOption;
 import org.openapi4j.core.model.reference.AbstractReferenceResolver;
 import org.openapi4j.core.model.reference.ReferenceRegistry;

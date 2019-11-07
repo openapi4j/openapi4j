@@ -3,6 +3,7 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
@@ -25,11 +26,11 @@ public class Extensions extends AbsOpenApiSchema<Extensions> {
   }
 
   public boolean hasExtension(String name) {
-    return has(extMap, name);
+    return mapHas(extMap, name);
   }
 
   public Object getExtension(String name) {
-    return get(extMap, name);
+    return mapGet(extMap, name);
   }
 
   public Extensions setExtension(String name, Object extension) {
@@ -41,7 +42,7 @@ public class Extensions extends AbsOpenApiSchema<Extensions> {
   }
 
   public Extensions removeExtension(String name) {
-    remove(extMap, name);
+    mapRemove(extMap, name);
     return this;
   }
 

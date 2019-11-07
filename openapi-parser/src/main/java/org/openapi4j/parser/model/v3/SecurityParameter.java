@@ -1,10 +1,10 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -27,32 +27,21 @@ public class SecurityParameter extends AbsOpenApiSchema<SecurityParameter> {
   }
 
   public String getParameter(int index) {
-    if (parameters == null) {
-      return null;
-    }
-    return parameters.get(index);
+    return listGet(parameters, index);
   }
 
   public SecurityParameter addParameter(String parameter) {
-    if (parameters == null) {
-      parameters = new ArrayList<>();
-    }
-    parameters.add(parameter);
+    parameters = listAdd(parameters, parameter);
     return this;
   }
 
   public SecurityParameter insertParameter(int index, String parameter) {
-    if (parameters == null) {
-      parameters = new ArrayList<>();
-    }
-    parameters.add(index, parameter);
+    parameters = listAdd(parameters, index, parameter);
     return this;
   }
 
   public SecurityParameter removeParameter(int index) {
-    if (parameters != null) {
-      parameters.remove(index);
-    }
+    listRemove(parameters, index);
     return this;
   }
 

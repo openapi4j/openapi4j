@@ -15,7 +15,20 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.COMPONENTS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTERNALDOCS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.IN;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.INFO;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.NAME;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPENAPI;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.PATH;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.PATHS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.REQUIRED;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SECURITY;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SERVERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.TAGS;
 
 class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
   private static final String MISSING_REF_IN_PATH = "Missing $ref '%s' for parameter in path '%s'";

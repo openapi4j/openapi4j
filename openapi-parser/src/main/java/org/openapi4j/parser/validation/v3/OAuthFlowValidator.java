@@ -6,7 +6,15 @@ import org.openapi4j.parser.model.v3.OAuthFlow;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.AUTHORIZATIONCODE;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.AUTHORIZATIONURL;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CLIENTCREDENTIALS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.IMPLICIT;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.PASSWORD;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.REFRESHURL;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCOPES;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.TOKENURL;
 
 class OAuthFlowValidator extends Validator3Base<OpenApi3, OAuthFlow> {
   private static final String AUTH_URL_NOT_ALLOWED = "'authorizationUrl' is not allowed when OAuth2 configuration is 'implicit' or 'authorizationCode'";

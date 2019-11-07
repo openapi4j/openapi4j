@@ -5,7 +5,9 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Tag;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTERNALDOCS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.NAME;
 
 class TagValidator extends Validator3Base<OpenApi3, Tag> {
   private static final Validator<OpenApi3, Tag> INSTANCE = new TagValidator();

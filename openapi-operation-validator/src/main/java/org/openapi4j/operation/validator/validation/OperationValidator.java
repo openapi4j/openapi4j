@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.validation.ValidationResults;
@@ -9,12 +10,24 @@ import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.util.ContentType;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
 import org.openapi4j.parser.model.SerializationFlag;
-import org.openapi4j.parser.model.v3.*;
+import org.openapi4j.parser.model.v3.MediaType;
+import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.model.v3.Operation;
+import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.parser.model.v3.Path;
+import org.openapi4j.parser.model.v3.Response;
+import org.openapi4j.parser.model.v3.Schema;
 import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,7 +38,15 @@ import static java.util.Objects.requireNonNull;
  * It validates all aspects of the interaction between the request and a response.
  */
 public class OperationValidator {
-  private static final String REQUIRED_PARAM_ERR_MSG = "Parameter '%s' in '%s' is required.";
+  private static final String OAI_REQUIRED_ERR_MSG = "OpenAPI is required.";
+  private static final String PATH_REQUIRED_ERR_MSG = "Path is required.";
+  private static final String OPERATION_REQUIRED_ERR_MSG = "Operation is required.";
+  private static final String PARAM_REQUIRED_ERR_MSG = "Parameter '%s' in '%s' is required.";
+  private static final String BODY_REQUIRED_ERR_MSG = "Body is required but none provided.";
+  private static final String BODY_CONTENT_TYPE_ERR_MSG = "Body content type cannot be determined. No 'Content-Type' header available.";
+  private static final String BODY_WRONG_CONTENT_TYPE_ERR_MSG = "Content type '%s' is not allowed in body.";
+  private static final String BODY_CONTENT_ERR_MSG = "An error occurred when getting the body content from type '%s'.%n%s";
+  private static final String BODY = "body";
 
   private static final String IN_PATH = "path";
   private static final String IN_QUERY = "query";
@@ -44,9 +65,10 @@ public class OperationValidator {
   private final String specPath;
 
   public OperationValidator(final OpenApi3 openApi, final Path path, final Operation operation) throws EncodeException {
-    requireNonNull(openApi, "OpenAPI is required");
-    requireNonNull(operation, "Path is required");
-    requireNonNull(operation, "Operation is required");
+    requireNonNull(openApi, OAI_REQUIRED_ERR_MSG);
+    requireNonNull(path, PATH_REQUIRED_ERR_MSG);
+    requireNonNull(operation, OPERATION_REQUIRED_ERR_MSG);
+
     // Clone this and get the flatten content
     this.operation = operation.copy(openApi.getContext(), true);
     this.specPath = openApi.getPathFrom(path);
@@ -119,7 +141,7 @@ public class OperationValidator {
     if (specCookieValidators == null) return null;
 
     Map<String, JsonNode> mappedValues =
-      ParameterConverter.cookiesToNode(request.getCookies(), specHeaderValidators.keySet());
+      ParameterConverter.cookiesToNode(request.getCookies(), specCookieValidators.keySet());
 
     validateParameters(specCookieValidators, mappedValues, results);
 
@@ -172,14 +194,14 @@ public class OperationValidator {
 
     String contentType = ContentType.getTypeOnly(rawContentType);
 
-    if ((body == null || body.isNull())) {
-      if (isBodyRequired) results.addError("Body is required but none provided.");
+    if (body == null) {
+      if (isBodyRequired) results.addError(BODY_REQUIRED_ERR_MSG);
 
     } else if (contentType == null) {
-      results.addError("Body content type cannot be determined. No 'Content-Type' header available.");
+      results.addError(BODY_CONTENT_TYPE_ERR_MSG);
 
     } else if (bodyValidators.get(contentType) == null) {
-      results.addError(String.format("Content type '%s' is not allowed in body.", contentType));
+      results.addError(String.format(BODY_WRONG_CONTENT_TYPE_ERR_MSG, contentType));
 
     } else {
       MediaType mediaType = operation.getRequestBody().getContentMediaType(contentType);
@@ -190,7 +212,7 @@ public class OperationValidator {
 
         bodyValidators.get(contentType).validate(jsonBody, results);
       } catch (IOException ex) {
-        results.addError(String.format("An error occurred when getting the body content from type '%s'.%n%s", contentType, ex));
+        results.addError(String.format(BODY_CONTENT_ERR_MSG, contentType, ex));
       }
     }
   }
@@ -244,7 +266,7 @@ public class OperationValidator {
 
       if (bodySchema != null) {
         SchemaValidator validator = new SchemaValidator(
-          "body",
+          BODY,
           bodySchema.toJson(openApi.getContext(), EnumSet.of(SerializationFlag.FOLLOW_REFS)));
 
         validators.put(entry.getKey(), validator);
@@ -271,7 +293,7 @@ public class OperationValidator {
                                 final ValidationResults results) {
 
     if (parameter.isRequired() && !paramValues.containsKey(parameter.getName())) {
-      results.addError(String.format(REQUIRED_PARAM_ERR_MSG, parameter.getName(), parameter.getIn()));
+      results.addError(String.format(PARAM_REQUIRED_ERR_MSG, parameter.getName(), parameter.getIn()));
       return false;
     }
 

@@ -2,6 +2,9 @@ package org.openapi4j.core.validation;
 
 import org.junit.Test;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -52,25 +55,29 @@ public class ValidationResultsTest {
   }
 
   @Test
-  public void withCrumb() {
+  public void withCrumb() throws InterruptedException {
     ValidationResults results = new ValidationResults();
-    results.withCrumb("crumb", () -> {
-      // Do nothing
-    });
+    CountDownLatch latch = new CountDownLatch(1);
+    results.withCrumb("crumb", latch::countDown);
+    latch.await(2, TimeUnit.SECONDS);
     assertEquals(0, results.size());
 
-    results.withCrumb(null, () -> {
-      // Do nothing
-    });
+    latch = new CountDownLatch(1);
+    results.withCrumb(null, latch::countDown);
+    latch.await(2, TimeUnit.SECONDS);
   }
 
   @Test
   public void provideString() {
     ValidationResults results = new ValidationResults();
-    results.add(ValidationSeverity.ERROR, "msg");
     results.add(ValidationSeverity.WARNING, "msg2", "crumb");
+    results.add(ValidationSeverity.ERROR, "msg");
     results.add(ValidationSeverity.INFO, "msg");
     assertNotNull(results.toString());
+
+    assertEquals("msg2", results.getItems().iterator().next().message());
+    assertEquals(ValidationSeverity.WARNING, results.getItems().iterator().next().severity());
+    assertEquals("crumb", results.getItems().iterator().next().crumbs());
   }
 
   @Test

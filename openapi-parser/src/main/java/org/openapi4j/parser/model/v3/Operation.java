@@ -3,10 +3,15 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -42,17 +47,12 @@ public class Operation extends AbsOpenApiSchema<Operation> {
   }
 
   public Operation addTag(String tag) {
-    if (tags == null) {
-      tags = new ArrayList<>();
-    }
-    tags.add(tag);
+    tags = listAdd(tags, tag);
     return this;
   }
 
   public Operation removeTag(int index) {
-    if (tags != null) {
-      tags.remove(index);
-    }
+    listRemove(tags, index);
     return this;
   }
 
@@ -111,32 +111,21 @@ public class Operation extends AbsOpenApiSchema<Operation> {
   }
 
   public Parameter getParameter(int index) {
-    if (parameters == null) {
-      return null;
-    }
-    return parameters.get(index);
+    return listGet(parameters, index);
   }
 
   public Operation addParameter(Parameter parameter) {
-    if (parameters == null) {
-      parameters = new ArrayList<>();
-    }
-    parameters.add(parameter);
+    parameters = listAdd(parameters, parameter);
     return this;
   }
 
   public Operation insertParameter(int index, Parameter parameter) {
-    if (parameters == null) {
-      parameters = new ArrayList<>();
-    }
-    parameters.add(index, parameter);
+    parameters = listAdd(parameters, index, parameter);
     return this;
   }
 
   public Operation removeParameter(int index) {
-    if (parameters != null) {
-      parameters.remove(index);
-    }
+    listRemove(parameters, index);
     return this;
   }
 
@@ -175,11 +164,11 @@ public class Operation extends AbsOpenApiSchema<Operation> {
   }
 
   public boolean hasResponse(String name) {
-    return has(responses, name);
+    return mapHas(responses, name);
   }
 
   public Response getResponse(String name) {
-    return get(responses, name);
+    return mapGet(responses, name);
   }
 
   public Operation setResponse(String name, Response response) {
@@ -191,7 +180,7 @@ public class Operation extends AbsOpenApiSchema<Operation> {
   }
 
   public Operation removeResponse(String name) {
-    remove(responses, name);
+    mapRemove(responses, name);
     return this;
   }
 
@@ -206,11 +195,11 @@ public class Operation extends AbsOpenApiSchema<Operation> {
   }
 
   public boolean hasCallback(String name) {
-    return has(callbacks, name);
+    return mapHas(callbacks, name);
   }
 
   public Callback getCallback(String name) {
-    return get(callbacks, name);
+    return mapGet(callbacks, name);
   }
 
   public Operation setCallback(String name, Callback callback) {
@@ -222,7 +211,7 @@ public class Operation extends AbsOpenApiSchema<Operation> {
   }
 
   public Operation removeCallback(String name) {
-    remove(callbacks, name);
+    mapRemove(callbacks, name);
     return this;
   }
 
@@ -255,32 +244,21 @@ public class Operation extends AbsOpenApiSchema<Operation> {
   }
 
   public SecurityRequirement getSecurityRequirement(int index) {
-    if (securityRequirements == null) {
-      return null;
-    }
-    return securityRequirements.get(index);
+    return listGet(securityRequirements, index);
   }
 
   public Operation addSecurityRequirement(SecurityRequirement securityRequirement) {
-    if (securityRequirements == null) {
-      securityRequirements = new ArrayList<>();
-    }
-    securityRequirements.add(securityRequirement);
+    securityRequirements = listAdd(securityRequirements, securityRequirement);
     return this;
   }
 
   public Operation insertSecurityRequirement(int index, SecurityRequirement securityRequirement) {
-    if (securityRequirements == null) {
-      securityRequirements = new ArrayList<>();
-    }
-    securityRequirements.add(index, securityRequirement);
+    securityRequirements = listAdd(securityRequirements, index, securityRequirement);
     return this;
   }
 
   public Operation removeSecurityRequirement(int index) {
-    if (securityRequirements != null) {
-      securityRequirements.remove(index);
-    }
+    listRemove(securityRequirements, index);
     return this;
   }
 
@@ -299,32 +277,21 @@ public class Operation extends AbsOpenApiSchema<Operation> {
   }
 
   public Server getServer(int index) {
-    if (servers == null) {
-      return null;
-    }
-    return servers.get(index);
+    return listGet(servers, index);
   }
 
   public Operation addServer(Server server) {
-    if (servers == null) {
-      servers = new ArrayList<>();
-    }
-    servers.add(server);
+    servers = listAdd(servers, server);
     return this;
   }
 
   public Operation insertServer(int index, Server server) {
-    if (servers == null) {
-      servers = new ArrayList<>();
-    }
-    servers.add(index, server);
+    servers = listAdd(servers, index, server);
     return this;
   }
 
   public Operation removeServer(int index) {
-    if (servers != null) {
-      servers.remove(index);
-    }
+    listRemove(servers, index);
     return this;
   }
 

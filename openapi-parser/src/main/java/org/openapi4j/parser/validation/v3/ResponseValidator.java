@@ -5,7 +5,12 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Response;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.DESCRIPTION;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.LINKS;
 
 class ResponseValidator extends Validator3Base<OpenApi3, Response> {
   private static final Validator<OpenApi3, Response> INSTANCE = new ResponseValidator();

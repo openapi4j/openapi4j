@@ -1,6 +1,7 @@
 package org.openapi4j.schema.validator;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 

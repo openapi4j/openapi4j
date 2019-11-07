@@ -3,11 +3,22 @@ package org.openapi4j.parser.validation.v3;
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.validation.ValidationResults;
-import org.openapi4j.parser.model.v3.*;
+import org.openapi4j.parser.model.v3.Link;
+import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.model.v3.Operation;
+import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.parser.model.v3.Path;
 
 import java.util.Map;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.LINKS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPERATIONID;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPERATIONREF;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.PATH;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.QUERY;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SERVER;
 
 class LinkValidator extends ExpressionValidator<Link> {
   private static final String OP_FIELD_MISSING_ERR_MSG = "'operationRef', 'operationId' or '$ref' field missing.";

@@ -1,6 +1,7 @@
 package org.perf.check.schema;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
 

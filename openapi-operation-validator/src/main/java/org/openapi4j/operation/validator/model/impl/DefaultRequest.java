@@ -3,7 +3,11 @@ package org.openapi4j.operation.validator.model.impl;
 import org.openapi4j.core.util.MultiStringMap;
 import org.openapi4j.operation.validator.model.Request;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;

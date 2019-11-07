@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.model.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.operation.validator.util.BodyConverter;
 import org.openapi4j.operation.validator.util.ContentType;
 import org.openapi4j.parser.model.v3.Schema;
@@ -48,18 +49,10 @@ public class Body {
   }
 
   /**
-   * Check if there's content in the body
-   * @return {@code true} if the body is {@code null}, {@code false} otherwise.
-   */
-  public boolean isNull() {
-    return bodyMap == null && bodyNode == null && bodyStr == null && bodyIs == null;
-  }
-
-  /**
    * Constructs a body from the given abstract node model.
    * This is the preferred way to build a body wrapper.
    *
-   * @param body the given abstract node model (JSON, XML, protobuf, form data, ...)
+   * @param body the given abstract node model (JSON, XML, form data, ...)
    * @return The constructed body.
    */
   public static Body from(JsonNode body) {
@@ -71,7 +64,7 @@ public class Body {
    * Constructs a body from the given map tree model.
    * This is the preferred way to build a body wrapper.
    *
-   * @param body the given map tree model (JSON, XML, protobuf, ...)
+   * @param body the given map tree model (JSON, XML, ...)
    * @return The constructed body.
    */
   public static Body from(Map<String, Object> body) {

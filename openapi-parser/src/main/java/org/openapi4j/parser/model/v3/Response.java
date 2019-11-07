@@ -3,6 +3,7 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 
@@ -41,11 +42,11 @@ public class Response extends AbsRefOpenApiSchema<Response> {
   }
 
   public boolean hasHeader(String name) {
-    return has(headers, name);
+    return mapHas(headers, name);
   }
 
   public Header getHeader(String name) {
-    return get(headers, name);
+    return mapGet(headers, name);
   }
 
   public Response setHeader(String name, Header header) {
@@ -57,7 +58,7 @@ public class Response extends AbsRefOpenApiSchema<Response> {
   }
 
   public Response removeHeader(String name) {
-    remove(headers, name);
+    mapRemove(headers, name);
     return this;
   }
 
@@ -72,11 +73,11 @@ public class Response extends AbsRefOpenApiSchema<Response> {
   }
 
   public boolean hasContentMediaType(String name) {
-    return has(contentMediaTypes, name);
+    return mapHas(contentMediaTypes, name);
   }
 
   public MediaType getContentMediaType(String name) {
-    return get(contentMediaTypes, name);
+    return mapGet(contentMediaTypes, name);
   }
 
   public Response setContentMediaType(String name, MediaType contentMediaType) {
@@ -88,7 +89,7 @@ public class Response extends AbsRefOpenApiSchema<Response> {
   }
 
   public Response removeContentMediaType(String name) {
-    remove(contentMediaTypes, name);
+    mapRemove(contentMediaTypes, name);
     return this;
   }
 
@@ -103,11 +104,11 @@ public class Response extends AbsRefOpenApiSchema<Response> {
   }
 
   public boolean hasLink(String name) {
-    return has(links, name);
+    return mapHas(links, name);
   }
 
   public Link getLink(String name) {
-    return get(links, name);
+    return mapGet(links, name);
   }
 
   public Response setLink(String name, Link link) {
@@ -119,7 +120,7 @@ public class Response extends AbsRefOpenApiSchema<Response> {
   }
 
   public Response removeLink(String name) {
-    remove(links, name);
+    mapRemove(links, name);
     return this;
   }
 

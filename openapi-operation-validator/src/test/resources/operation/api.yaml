@@ -29,6 +29,7 @@ paths:
               $ref: '#/components/schemas/FooModel'
       responses:
         '200':
+          description: a description
           content:
             'application/json': {}
             'application/xml': {}

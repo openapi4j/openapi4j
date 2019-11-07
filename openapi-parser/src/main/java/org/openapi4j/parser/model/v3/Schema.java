@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 import org.openapi4j.parser.model.v3.bind.SchemaDeserializer;
 import org.openapi4j.parser.model.v3.bind.SchemaSerializer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -225,32 +225,21 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   }
 
   public String getRequiredField(int index) {
-    if (requiredFields == null) {
-      return null;
-    }
-    return requiredFields.get(index);
+    return listGet(requiredFields, index);
   }
 
   public Schema addRequiredField(String requiredField) {
-    if (requiredFields == null) {
-      requiredFields = new ArrayList<>();
-    }
-    requiredFields.add(requiredField);
+    requiredFields = listAdd(requiredFields, requiredField);
     return this;
   }
 
   public Schema insertRequiredField(int index, String requiredField) {
-    if (requiredFields == null) {
-      requiredFields = new ArrayList<>();
-    }
-    requiredFields.add(index, requiredField);
+    requiredFields = listAdd(requiredFields, index, requiredField);
     return this;
   }
 
   public Schema removeRequiredField(int index) {
-    if (requiredFields != null) {
-      requiredFields.remove(index);
-    }
+    listRemove(requiredFields, index);
     return this;
   }
 
@@ -269,32 +258,21 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   }
 
   public String getEnum(int index) {
-    if (enums == null) {
-      return null;
-    }
-    return enums.get(index);
+    return listGet(enums, index);
   }
 
   public Schema addEnum(String enumValue) {
-    if (enums == null) {
-      enums = new ArrayList<>();
-    }
-    enums.add(enumValue);
+    enums = listAdd(enums, enumValue);
     return this;
   }
 
   public Schema insertEnum(int index, String enumValue) {
-    if (enums == null) {
-      enums = new ArrayList<>();
-    }
-    enums.add(index, enumValue);
+    enums = listAdd(enums, index, enumValue);
     return this;
   }
 
   public Schema removeEnum(int index) {
-    if (enums != null) {
-      enums.remove(index);
-    }
+    listRemove(enums, index);
     return this;
   }
 
@@ -323,32 +301,21 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   }
 
   public Schema getAllOfSchema(int index) {
-    if (allOfSchemas == null) {
-      return null;
-    }
-    return allOfSchemas.get(index);
+    return listGet(allOfSchemas, index);
   }
 
   public Schema addAllOfSchema(Schema allOfSchema) {
-    if (allOfSchemas == null) {
-      allOfSchemas = new ArrayList<>();
-    }
-    allOfSchemas.add(allOfSchema);
+    allOfSchemas = listAdd(allOfSchemas, allOfSchema);
     return this;
   }
 
   public Schema insertAllOfSchema(int index, Schema allOfSchema) {
-    if (allOfSchemas == null) {
-      allOfSchemas = new ArrayList<>();
-    }
-    allOfSchemas.add(index, allOfSchema);
+    allOfSchemas = listAdd(allOfSchemas, index, allOfSchema);
     return this;
   }
 
   public Schema removeAllOfSchema(int index) {
-    if (allOfSchemas != null) {
-      allOfSchemas.remove(index);
-    }
+    listRemove(allOfSchemas, index);
     return this;
   }
 
@@ -367,32 +334,21 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   }
 
   public Schema getOneOfSchema(int index) {
-    if (oneOfSchemas == null) {
-      return null;
-    }
-    return oneOfSchemas.get(index);
+    return listGet(oneOfSchemas, index);
   }
 
   public Schema addOneOfSchema(Schema oneOfSchema) {
-    if (oneOfSchemas == null) {
-      oneOfSchemas = new ArrayList<>();
-    }
-    oneOfSchemas.add(oneOfSchema);
+    oneOfSchemas = listAdd(oneOfSchemas, oneOfSchema);
     return this;
   }
 
   public Schema insertOneOfSchema(int index, Schema oneOfSchema) {
-    if (oneOfSchemas == null) {
-      oneOfSchemas = new ArrayList<>();
-    }
-    oneOfSchemas.add(index, oneOfSchema);
+    oneOfSchemas = listAdd(oneOfSchemas, index, oneOfSchema);
     return this;
   }
 
   public Schema removeOneOfSchema(int index) {
-    if (oneOfSchemas != null) {
-      oneOfSchemas.remove(index);
-    }
+    listRemove(oneOfSchemas, index);
     return this;
   }
 
@@ -411,32 +367,21 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   }
 
   public Schema getAnyOfSchema(int index) {
-    if (anyOfSchemas == null) {
-      return null;
-    }
-    return anyOfSchemas.get(index);
+    return listGet(anyOfSchemas, index);
   }
 
   public Schema addAnyOfSchema(Schema anyOfSchema) {
-    if (anyOfSchemas == null) {
-      anyOfSchemas = new ArrayList<>();
-    }
-    anyOfSchemas.add(anyOfSchema);
+    anyOfSchemas = listAdd(anyOfSchemas, anyOfSchema);
     return this;
   }
 
   public Schema insertAnyOfSchema(int index, Schema anyOfSchema) {
-    if (anyOfSchemas == null) {
-      anyOfSchemas = new ArrayList<>();
-    }
-    anyOfSchemas.add(index, anyOfSchema);
+    anyOfSchemas = listAdd(anyOfSchemas, index, anyOfSchema);
     return this;
   }
 
   public Schema removeAnyOfSchema(int index) {
-    if (anyOfSchemas != null) {
-      anyOfSchemas.remove(index);
-    }
+    listRemove(anyOfSchemas, index);
     return this;
   }
 
@@ -471,11 +416,11 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   }
 
   public boolean hasProperty(String name) {
-    return has(properties, name);
+    return mapHas(properties, name);
   }
 
   public Schema getProperty(String name) {
-    return get(properties, name);
+    return mapGet(properties, name);
   }
 
   public Schema setProperty(String name, Schema property) {
@@ -487,7 +432,7 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   }
 
   public Schema removeProperty(String name) {
-    remove(properties, name);
+    mapRemove(properties, name);
     return this;
   }
 

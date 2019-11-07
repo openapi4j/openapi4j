@@ -5,7 +5,10 @@ import org.openapi4j.parser.model.v3.Header;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCHEMA;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.STYLE;
 
 class HeaderValidator extends Validator3Base<OpenApi3, Header> {
   private static final Validator<OpenApi3, Header> INSTANCE = new HeaderValidator();

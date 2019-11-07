@@ -2,6 +2,7 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
@@ -38,11 +39,11 @@ public class MediaType extends AbsOpenApiSchema<MediaType> {
   }
 
   public boolean hasExample(String name) {
-    return has(examples, name);
+    return mapHas(examples, name);
   }
 
   public Example getExample(String name) {
-    return get(examples, name);
+    return mapGet(examples, name);
   }
 
   public MediaType setExample(String name, Example example) {
@@ -54,7 +55,7 @@ public class MediaType extends AbsOpenApiSchema<MediaType> {
   }
 
   public MediaType removeExample(String name) {
-    remove(examples, name);
+    mapRemove(examples, name);
     return this;
   }
 
@@ -79,11 +80,11 @@ public class MediaType extends AbsOpenApiSchema<MediaType> {
   }
 
   public boolean hasEncodingProperty(String name) {
-    return has(encoding, name);
+    return mapHas(encoding, name);
   }
 
   public EncodingProperty getEncodingProperty(String name) {
-    return get(encoding, name);
+    return mapGet(encoding, name);
   }
 
   public MediaType setEncodingProperty(String name, EncodingProperty encodingProperty) {
@@ -95,7 +96,7 @@ public class MediaType extends AbsOpenApiSchema<MediaType> {
   }
 
   public MediaType removeEncodingProperty(String name) {
-    remove(encoding, name);
+    mapRemove(encoding, name);
     return this;
   }
 
