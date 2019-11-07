@@ -3,6 +3,7 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 
@@ -40,11 +41,11 @@ public class RequestBody extends AbsRefOpenApiSchema<RequestBody> {
   }
 
   public boolean hasContentMediaType(String name) {
-    return has(contentMediaTypes, name);
+    return mapHas(contentMediaTypes, name);
   }
 
   public MediaType getContentMediaType(String name) {
-    return get(contentMediaTypes, name);
+    return mapGet(contentMediaTypes, name);
   }
 
   public RequestBody setContentMediaType(String name, MediaType contentMediaType) {
@@ -56,7 +57,7 @@ public class RequestBody extends AbsRefOpenApiSchema<RequestBody> {
   }
 
   public RequestBody removeContentMediaType(String name) {
-    remove(contentMediaTypes, name);
+    mapRemove(contentMediaTypes, name);
     return this;
   }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.reference.Reference;
@@ -92,11 +93,11 @@ public class OpenApi3 extends AbsOpenApiSchema<OpenApi3> implements OAI {
   }
 
   public boolean hasPath(String name) {
-    return has(paths, name);
+    return mapHas(paths, name);
   }
 
   public Path getPath(String name) {
-    return get(paths, name);
+    return mapGet(paths, name);
   }
 
   public OpenApi3 setPath(String name, Path path) {
@@ -108,7 +109,7 @@ public class OpenApi3 extends AbsOpenApiSchema<OpenApi3> implements OAI {
   }
 
   public OpenApi3 removePath(String name) {
-    remove(paths, name);
+    mapRemove(paths, name);
     return this;
   }
 

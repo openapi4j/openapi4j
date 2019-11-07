@@ -4,14 +4,24 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.util.Collection;
 import java.util.Map;
 
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_FLOAT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT32;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_BOOLEAN;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
 
 public final class TypeConverter {
+  private static final String NaN = "NaN";
+
   private static final TypeConverter INSTANCE = new TypeConverter();
 
   private TypeConverter() {
@@ -111,25 +121,46 @@ public final class TypeConverter {
       return JsonNodeFactory.instance.nullNode();
     }
 
-    String type = schema.getType() != null ? schema.getType() : TYPE_OBJECT;
-    switch (type) {
-      case TYPE_BOOLEAN:
-        return JsonNodeFactory.instance.booleanNode(Boolean.parseBoolean(value.toString()));
-      case TYPE_INTEGER:
-        if (FORMAT_INT32.equals(schema.getFormat())) {
-          return JsonNodeFactory.instance.numberNode(Integer.parseInt(value.toString()));
-        } else {
-          return JsonNodeFactory.instance.numberNode(Long.parseLong(value.toString()));
-        }
-      case TYPE_NUMBER:
-        if (FORMAT_FLOAT.equals(schema.getFormat())) {
-          return JsonNodeFactory.instance.numberNode(Float.parseFloat(value.toString()));
-        } else {
-          return JsonNodeFactory.instance.numberNode(Double.parseDouble(value.toString()));
-        }
-      case TYPE_STRING:
-      default:
-        return JsonNodeFactory.instance.textNode(value.toString());
+    try {
+      String type = schema.getType() != null ? schema.getType() : TYPE_OBJECT;
+      switch (type) {
+        case TYPE_BOOLEAN:
+          return JsonNodeFactory.instance.booleanNode(parseBoolean(value.toString()));
+        case TYPE_INTEGER:
+          if (FORMAT_INT32.equals(schema.getFormat())) {
+            return JsonNodeFactory.instance.numberNode(Integer.parseInt(value.toString()));
+          } else {
+            return JsonNodeFactory.instance.numberNode(Long.parseLong(value.toString()));
+          }
+        case TYPE_NUMBER:
+          if (FORMAT_FLOAT.equals(schema.getFormat())) {
+            return JsonNodeFactory.instance.numberNode(Float.parseFloat(value.toString()));
+          } else {
+            return JsonNodeFactory.instance.numberNode(Double.parseDouble(value.toString()));
+          }
+        case TYPE_STRING:
+        default:
+          return JsonNodeFactory.instance.textNode(value.toString());
+      }
+    } catch (IllegalArgumentException ex) {
+      return JsonNodeFactory.instance.textNode(NaN);
     }
+  }
+
+  /**
+   * Parse boolean with exception if the value is not a boolean at all.
+   * @param value The boolean value to parse.
+   * @return If the value is not a boolean representation.
+   */
+  private boolean parseBoolean(String value) {
+    value = value.trim().toLowerCase();
+
+    if ("true".equals(value)) {
+      return true;
+    } else if ("false".equals(value)) {
+      return false;
+    }
+
+    throw new IllegalArgumentException(NaN);
   }
 }

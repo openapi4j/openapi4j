@@ -3,6 +3,7 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
@@ -28,16 +29,16 @@ public class SecurityRequirement extends AbsOpenApiSchema<SecurityRequirement> {
   }
 
   public boolean hasRequirement(String name) {
-    return has(requirements, name);
+    return mapHas(requirements, name);
   }
 
   public boolean hasRequirementScopes(String name) {
-    List<String> scopes = get(requirements, name);
+    List<String> scopes = mapGet(requirements, name);
     return scopes != null && !scopes.isEmpty();
   }
 
   public List<String> getRequirementScopes(String name) {
-    return get(requirements, name);
+    return mapGet(requirements, name);
   }
 
   @JsonAnySetter
@@ -50,7 +51,7 @@ public class SecurityRequirement extends AbsOpenApiSchema<SecurityRequirement> {
   }
 
   public SecurityRequirement removeRequirement(String name) {
-    remove(requirements, name);
+    mapRemove(requirements, name);
     return this;
   }
 

@@ -3,6 +3,7 @@ package org.openapi4j.parser.model.v3.bind;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.io.IOException;

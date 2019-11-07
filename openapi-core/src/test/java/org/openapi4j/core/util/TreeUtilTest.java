@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.json.JSONException;
 import org.junit.Test;
+import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.EncodeException;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class TreeUtilTest {
   @Test(expected = EncodeException.class)
@@ -43,18 +45,14 @@ public class TreeUtilTest {
   }
 
   @Test
-  public void load() {
+  public void simpleLoad() throws DecodeException {
+    assertNotNull(TreeUtil.load(getClass().getResource("/parsing/discriminator.yaml")));
+    assertNotNull(TreeUtil.load(getClass().getResource("/parsing/discriminator.json")));
   }
 
   @Test
-  public void testLoad() {
-  }
-
-  @Test
-  public void testLoad1() {
-  }
-
-  @Test
-  public void testLoad2() {
+  public void classLoad() throws DecodeException {
+    assertNotNull(TreeUtil.load(getClass().getResource("/parsing/discriminator.yaml"), Object.class));
+    assertNotNull(TreeUtil.load(getClass().getResource("/parsing/discriminator.json"), Object.class));
   }
 }

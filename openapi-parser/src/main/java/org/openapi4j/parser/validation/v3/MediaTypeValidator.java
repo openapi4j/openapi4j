@@ -10,7 +10,9 @@ import org.openapi4j.parser.validation.Validator;
 import java.util.Map;
 import java.util.Set;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.ENCODING;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCHEMA;
 
 class MediaTypeValidator extends Validator3Base<OpenApi3, MediaType> {
   private static final String ENCODING_MISMATCH = "Encoding property '%s' is not a corresponding schema property";

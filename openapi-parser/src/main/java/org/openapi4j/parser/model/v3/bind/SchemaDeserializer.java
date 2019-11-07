@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
 import org.openapi4j.parser.model.v3.Discriminator;
 import org.openapi4j.parser.model.v3.ExternalDocs;
 import org.openapi4j.parser.model.v3.Schema;
@@ -14,7 +15,34 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ADDITIONALPROPERTIES;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ALLOF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ANYOF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEFAULT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DISCRIMINATOR;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ENUM;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.EXCLUSIVEMAXIMUM;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.EXCLUSIVEMINIMUM;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ITEMS;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXIMUM;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXITEMS;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXLENGTH;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXPROPERTIES;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINIMUM;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINITEMS;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINLENGTH;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINPROPERTIES;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MULTIPLEOF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NOT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NULLABLE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ONEOF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PATTERN;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PROPERTIES;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.REQUIRED;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.UNIQUEITEMS;
 
 public class SchemaDeserializer extends StdDeserializer<Schema> {
   protected SchemaDeserializer() {

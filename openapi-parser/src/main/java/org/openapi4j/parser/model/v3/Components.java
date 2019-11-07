@@ -2,6 +2,7 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
@@ -34,11 +35,11 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public boolean hasSchema(String name) {
-    return has(schemas, name);
+    return mapHas(schemas, name);
   }
 
   public Schema getSchema(String name) {
-    return get(schemas, name);
+    return mapGet(schemas, name);
   }
 
   public Components setSchema(String name, Schema schema) {
@@ -50,7 +51,7 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public Components removeSchema(String name) {
-    remove(schemas, name);
+    mapRemove(schemas, name);
     return this;
   }
 
@@ -65,11 +66,11 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public boolean hasResponse(String name) {
-    return has(responses, name);
+    return mapHas(responses, name);
   }
 
   public Response getResponse(String name) {
-    return get(responses, name);
+    return mapGet(responses, name);
   }
 
   public Components setResponse(String name, Response response) {
@@ -81,7 +82,7 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public Components removeResponse(String name) {
-    remove(responses, name);
+    mapRemove(responses, name);
     return this;
   }
 
@@ -96,11 +97,11 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public boolean hasParameter(String name) {
-    return has(parameters, name);
+    return mapHas(parameters, name);
   }
 
   public Parameter getParameter(String name) {
-    return get(parameters, name);
+    return mapGet(parameters, name);
   }
 
   public Components setParameter(String name, Parameter parameter) {
@@ -112,7 +113,7 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public Components removeParameter(String name) {
-    remove(parameters, name);
+    mapRemove(parameters, name);
     return this;
   }
 
@@ -127,11 +128,11 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public boolean hasExample(String name) {
-    return has(examples, name);
+    return mapHas(examples, name);
   }
 
   public Example getExample(String name) {
-    return get(examples, name);
+    return mapGet(examples, name);
   }
 
   public Components setExample(String name, Example example) {
@@ -143,7 +144,7 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public Components removeExample(String name) {
-    remove(examples, name);
+    mapRemove(examples, name);
     return this;
   }
 
@@ -158,11 +159,11 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public boolean hasRequestBody(String name) {
-    return has(requestBodies, name);
+    return mapHas(requestBodies, name);
   }
 
   public RequestBody getRequestBody(String name) {
-    return get(requestBodies, name);
+    return mapGet(requestBodies, name);
   }
 
   public Components setRequestBody(String name, RequestBody requestBody) {
@@ -174,7 +175,7 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public Components removeRequestBody(String name) {
-    remove(requestBodies, name);
+    mapRemove(requestBodies, name);
     return this;
   }
 
@@ -189,11 +190,11 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public boolean hasHeader(String name) {
-    return has(headers, name);
+    return mapHas(headers, name);
   }
 
   public Header getHeader(String name) {
-    return get(headers, name);
+    return mapGet(headers, name);
   }
 
   public Components setHeader(String name, Header header) {
@@ -205,7 +206,7 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public Components removeHeader(String name) {
-    remove(headers, name);
+    mapRemove(headers, name);
     return this;
   }
 
@@ -220,11 +221,11 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public boolean hasSecurityScheme(String name) {
-    return has(securitySchemes, name);
+    return mapHas(securitySchemes, name);
   }
 
   public SecurityScheme getSecurityScheme(String name) {
-    return get(securitySchemes, name);
+    return mapGet(securitySchemes, name);
   }
 
   public Components setSecurityScheme(String name, SecurityScheme securityScheme) {
@@ -236,7 +237,7 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public Components removeSecurityScheme(String name) {
-    remove(securitySchemes, name);
+    mapRemove(securitySchemes, name);
     return this;
   }
 
@@ -251,11 +252,11 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public boolean hasLink(String name) {
-    return has(links, name);
+    return mapHas(links, name);
   }
 
   public Link getLink(String name) {
-    return get(links, name);
+    return mapGet(links, name);
   }
 
   public Components setLink(String name, Link link) {
@@ -267,7 +268,7 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public Components removeLink(String name) {
-    remove(links, name);
+    mapRemove(links, name);
     return this;
   }
 
@@ -282,11 +283,11 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public boolean hasCallback(String name) {
-    return has(callbacks, name);
+    return mapHas(callbacks, name);
   }
 
   public Callback getCallback(String name) {
-    return get(callbacks, name);
+    return mapGet(callbacks, name);
   }
 
   public Components setCallback(String name, Callback callback) {
@@ -298,7 +299,7 @@ public class Components extends AbsOpenApiSchema<Components> {
   }
 
   public Components removeCallback(String name) {
-    remove(callbacks, name);
+    mapRemove(callbacks, name);
     return this;
   }
 

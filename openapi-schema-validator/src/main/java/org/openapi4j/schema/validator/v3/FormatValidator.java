@@ -1,6 +1,7 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
@@ -8,7 +9,22 @@ import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.regex.Pattern;
 
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_BINARY;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_BYTE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DATE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DATE_TIME;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DOUBLE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_EMAIL;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_FLOAT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_HOSTNAME;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT32;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT64;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_IPV4;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_IPV6;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_PASSWORD;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URI;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URIREF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URI_REFERENCE;
 
 /**
  * format keyword validator.

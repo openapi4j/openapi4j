@@ -1,13 +1,21 @@
 package org.openapi4j.operation.validator.adapters.server.vertx.v3.impl;
 
-import io.vertx.core.Handler;
-import io.vertx.ext.web.RoutingContext;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.parser.model.v3.SecurityRequirement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import io.vertx.core.Handler;
+import io.vertx.ext.web.RoutingContext;
 
 import static java.util.Objects.requireNonNull;
 

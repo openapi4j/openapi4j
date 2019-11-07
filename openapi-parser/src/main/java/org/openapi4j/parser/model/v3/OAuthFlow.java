@@ -3,6 +3,7 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
@@ -71,11 +72,11 @@ public class OAuthFlow extends AbsOpenApiSchema<OAuthFlow> {
   }
 
   public boolean hasScope(String name) {
-    return has(scopes, name);
+    return mapHas(scopes, name);
   }
 
   public String getScope(String name) {
-    return get(scopes, name);
+    return mapGet(scopes, name);
   }
 
   public OAuthFlow setScope(String name, String scope) {
@@ -87,7 +88,7 @@ public class OAuthFlow extends AbsOpenApiSchema<OAuthFlow> {
   }
 
   public OAuthFlow removeScope(String name) {
-    remove(scopes, name);
+    mapRemove(scopes, name);
     return this;
   }
 

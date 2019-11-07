@@ -1,7 +1,11 @@
 package org.openapi4j.core.validation;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Representation of results from a validation process.
@@ -246,19 +250,15 @@ public class ValidationResults implements Serializable {
     }
 
     private String joinCrumbs(Collection<String> crumbs, String additionalCrumb) {
-      StringBuilder stringBuilder = new StringBuilder();
-
-      for (String crumb : crumbs) {
-        stringBuilder.append(crumb).append(DOT);
-      }
+      String result = String.join(DOT, crumbs);
 
       if (additionalCrumb != null) {
-        stringBuilder.append(additionalCrumb);
-      } else if (!crumbs.isEmpty()) {
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        if (result.length() != 0) {
+          return result + DOT + additionalCrumb;
+        }
+        return additionalCrumb;
       }
-
-      return stringBuilder.toString();
+      return result;
     }
   }
 }

@@ -5,7 +5,10 @@ import org.openapi4j.parser.model.v3.EncodingProperty;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENTTYPE;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.STYLE;
 
 class EncodingPropertyValidator extends Validator3Base<OpenApi3, EncodingProperty> {
   private static final Validator<OpenApi3, EncodingProperty> INSTANCE = new EncodingPropertyValidator();

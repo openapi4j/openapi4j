@@ -1,6 +1,7 @@
 package org.perf.check;
 
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.validation.ValidationException;
 import org.perf.check.operation.OperationPerfRunner;

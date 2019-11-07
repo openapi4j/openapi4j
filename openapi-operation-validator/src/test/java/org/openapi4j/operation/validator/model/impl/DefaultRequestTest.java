@@ -1,9 +1,8 @@
-package org.openapi4j.operation.validator;
+package org.openapi4j.operation.validator.model.impl;
 
 import org.junit.Test;
+import org.openapi4j.operation.validator.OpenApi3Util;
 import org.openapi4j.operation.validator.model.Request;
-import org.openapi4j.operation.validator.model.impl.Body;
-import org.openapi4j.operation.validator.model.impl.DefaultRequest;
 import org.openapi4j.operation.validator.validation.RequestValidator;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;

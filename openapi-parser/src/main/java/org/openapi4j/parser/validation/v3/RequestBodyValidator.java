@@ -8,7 +8,9 @@ import org.openapi4j.parser.validation.Validator;
 
 import java.util.Map;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
 
 class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
   private static final String MULTIPART = "multipart/";

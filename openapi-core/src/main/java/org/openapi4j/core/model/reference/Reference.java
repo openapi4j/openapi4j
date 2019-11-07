@@ -2,6 +2,7 @@ package org.openapi4j.core.model.reference;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.util.TreeUtil;
 

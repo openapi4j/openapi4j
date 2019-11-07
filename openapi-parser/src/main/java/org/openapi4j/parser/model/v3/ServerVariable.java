@@ -3,10 +3,10 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
@@ -35,32 +35,21 @@ public class ServerVariable extends AbsOpenApiSchema<ServerVariable> {
   }
 
   public String getEnumValue(int index) {
-    if (enumValues == null) {
-      return null;
-    }
-    return enumValues.get(index);
+    return listGet(enumValues, index);
   }
 
   public ServerVariable addEnumValue(String enumValue) {
-    if (enumValues == null) {
-      enumValues = new ArrayList<>();
-    }
-    enumValues.add(enumValue);
+    enumValues = listAdd(enumValues, enumValue);
     return this;
   }
 
   public ServerVariable insertEnumValue(int index, String enumValue) {
-    if (enumValues == null) {
-      enumValues = new ArrayList<>();
-    }
-    enumValues.add(index, enumValue);
+    enumValues = listAdd(enumValues, index, enumValue);
     return this;
   }
 
   public ServerVariable removeEnumValue(int index) {
-    if (enumValues != null) {
-      enumValues.remove(index);
-    }
+    listRemove(enumValues, index);
     return this;
   }
 

@@ -1,10 +1,5 @@
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import io.vertx.core.MultiMap;
-import io.vertx.core.http.Cookie;
-import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.impl.CookieImpl;
-import io.vertx.ext.web.RoutingContext;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -15,7 +10,17 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import io.vertx.core.MultiMap;
+import io.vertx.core.http.Cookie;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.http.impl.CookieImpl;
+import io.vertx.ext.web.RoutingContext;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class VertxTest {
   private static final String PATH = "http://localhost:8080";

@@ -1,0 +1,60 @@
+openapi: 3.0.1
+info:
+  description: a description
+  version: 1.0.0
+  title: API
+paths:
+  /fixed/{dataset}/fixed/{version}/fields/:
+    get:
+      operationId: paramCheck
+      parameters:
+        - name: dataset
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: queryParam
+          in: query
+          required: true
+          schema:
+            type: boolean
+        - name: headerParam
+          in: header
+          required: true
+          schema:
+            type: number
+            format: float
+        - name: cookieParam
+          in: cookie
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: a description
+          content:
+            'application/json': {}
+  /post:
+    post:
+      operationId: rqBodyCheck
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              properties:
+                param:
+                  type: string
+      responses:
+        '200':
+          description: a description
+          content:
+            'application/json': {}
+

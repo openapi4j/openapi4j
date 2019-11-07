@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.URL;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.VARIABLES;
 
 class ServerValidator extends Validator3Base<OpenApi3, Server> {
   private static final String VARIABLE_NOT_DEFINED = "Undefined variable '%s' for url '%s'";

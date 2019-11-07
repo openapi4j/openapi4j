@@ -8,7 +8,9 @@ import org.openapi4j.parser.model.v3.Operation;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CALLBACKS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
 
 class CallbackValidator extends ExpressionValidator<Callback> {
   private static final String PARAM_NOT_FOUND_ERR_MSG = "Parameter with path '%s' not found on operation.";

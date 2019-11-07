@@ -1,12 +1,12 @@
 package org.perf.check.parser;
 
+import java.util.Collections;
+import java.util.List;
+
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.AuthorizationValue;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
-
-import java.util.Collections;
-import java.util.List;
 
 class Swagger implements PerfParser {
   private final ParseOptions options = getParseOptions();
