@@ -25,12 +25,12 @@ openapi4j is a suite of tools, including the following :
 
 All modules follow the [Semantic Versioning 2.0.0](https://semver.org) and are aligned on each release even there's no changes.
 
-Current version :
 ```xml
 <dependency>
     <groupId>org.openapi4j</groupId>
     <artifactId>openapi4j-...</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version> <!-- Current release -->
+    <version>0.2-SNAPSHOT</version> <!-- Next -->
 </dependency>
 ```
 
@@ -40,14 +40,31 @@ Check [perf-checker](https://github.com/openapi4j/openapi4j/tree/master/openapi-
 
 ## Supported versions
 
-The modules currently support the OpenAPI Specification (OAS) version 3.0.2.   
+The modules currently support the OpenAPI Specification (OAS) version 3.x.x.  
+
+This project has been developed while reading 3.0.2.  
 See related projects for limitations and issues.
+
+## Project status
+
+| Module                         | Maturity      |
+|--------------------------------|---------------|
+| Core                           | RC stage      |
+| Operation validator            | Alpha stage   |
+| Operation validator adapters   | Beta stage    |
+| Parser                         | Beta stage    |
+| Schema validator               | RC stage      |
 
 ## Roadmap
 
-Until version 1.0 :
-* Squashing bugs.
-* Missing validations.
+0.1 : First beta release.  
+0.2 : Rework on some naive code parts that could lead to NPE mostly.  
+0.3 : Complete the Multipart/mixed implementation.  
+0.4 : Complete response validation implementation.
+Next : Ready for 1.0 candidate ?  
+
+Common until version 1.0 :
+* bug fixing / code coverage.
 * Quality of life accessors/features elected as easy and not risky.
 
 ## Contributing
@@ -59,7 +76,7 @@ We accept Pull Requests via GitHub. There are some guidelines which will make ap
 * Respect the code style and indentation. .editorconfig file is provided to not be worried about this.
 * Create minimal diffs - disable on save actions like reformat source code or organize imports. If you feel the source code should be reformatted create a separate PR for this change.
 * Provide JUnit tests for your changes and make sure your changes don't break anything by running `gradlew clean testClasses`.
-* Provide a self explainatory but brief commit message with issue reference if any, as it will be reported directly for release changelog.
+* Provide a self explanatory but brief commit message with issue reference if any, as it will be reported directly for release changelog.
 
 ## License
 
