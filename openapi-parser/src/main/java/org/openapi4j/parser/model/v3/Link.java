@@ -1,22 +1,17 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Link extends AbsRefOpenApiSchema<Link> {
+public class Link extends AbsExtendedRefOpenApiSchema<Link> {
   private String operationId;
   private String operationRef;
   private Map<String, String> parameters;
   private Map<String, Header> headers;
   private String description;
   private Server server;
-  private Map<String, Object> extensions;
 
   // OperationId
   public String getOperationId() {
@@ -118,24 +113,6 @@ public class Link extends AbsRefOpenApiSchema<Link> {
   public Link setServer(Server server) {
     this.server = server;
     return this;
-  }
-
-  // Extensions
-  @JsonAnyGetter
-  public Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void setExtensions(Map<String, Object> extensions) {
-    this.extensions = extensions;
-  }
-
-  @JsonAnySetter
-  public void setExtension(String name, Object value) {
-    if (extensions == null) {
-      extensions = new HashMap<>();
-    }
-    extensions.put(name, value);
   }
 
   @Override

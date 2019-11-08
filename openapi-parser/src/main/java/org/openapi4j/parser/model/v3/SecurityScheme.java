@@ -1,16 +1,9 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.parser.model.AbsOpenApiSchema;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class SecurityScheme extends AbsOpenApiSchema<SecurityScheme> {
+public class SecurityScheme extends AbsExtendedOpenApiSchema<SecurityScheme> {
   private String type;
   private String description;
   private String name;
@@ -19,7 +12,6 @@ public class SecurityScheme extends AbsOpenApiSchema<SecurityScheme> {
   private String bearerFormat;
   private OAuthFlows flows;
   private String openIdConnectUrl;
-  private Map<String, Object> extensions;
 
   // Type
   public String getType() {
@@ -99,24 +91,6 @@ public class SecurityScheme extends AbsOpenApiSchema<SecurityScheme> {
   public SecurityScheme setOpenIdConnectUrl(String openIdConnectUrl) {
     this.openIdConnectUrl = openIdConnectUrl;
     return this;
-  }
-
-  // Extensions
-  @JsonAnyGetter
-  public Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void setExtensions(Map<String, Object> extensions) {
-    this.extensions = extensions;
-  }
-
-  @JsonAnySetter
-  public void setExtension(String name, Object value) {
-    if (extensions == null) {
-      extensions = new HashMap<>();
-    }
-    extensions.put(name, value);
   }
 
   @Override

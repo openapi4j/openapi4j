@@ -1,19 +1,14 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class Components extends AbsOpenApiSchema<Components> {
+public class Components extends AbsExtendedOpenApiSchema<Components> {
   private Map<String, Callback> callbacks;
   private Map<String, Example> examples;
-  private Map<String, Object> extensions;
   private Map<String, Header> headers;
   private Map<String, Link> links;
   private Map<String, Parameter> parameters;
@@ -299,25 +294,6 @@ public class Components extends AbsOpenApiSchema<Components> {
   public Components removeCallback(String name) {
     mapRemove(callbacks, name);
     return this;
-  }
-
-  // Extensions
-  // Extensions
-  @JsonAnyGetter
-  public Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void setExtensions(Map<String, Object> extensions) {
-    this.extensions = extensions;
-  }
-
-  @JsonAnySetter
-  public void setExtension(String name, Object value) {
-    if (extensions == null) {
-      extensions = new HashMap<>();
-    }
-    extensions.put(name, value);
   }
 
   @Override

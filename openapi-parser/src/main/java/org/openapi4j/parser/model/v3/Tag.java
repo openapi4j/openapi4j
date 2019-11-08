@@ -1,20 +1,12 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.parser.model.AbsOpenApiSchema;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class Tag extends AbsOpenApiSchema<Tag> {
+public class Tag extends AbsExtendedOpenApiSchema<Tag> {
   private String name;
   private String description;
   private ExternalDocs externalDocs;
-  private Map<String, Object> extensions;
 
   // Name
   public String getName() {
@@ -44,24 +36,6 @@ public class Tag extends AbsOpenApiSchema<Tag> {
   public Tag setExternalDocs(ExternalDocs externalDocs) {
     this.externalDocs = externalDocs;
     return this;
-  }
-
-  // Extensions
-  @JsonAnyGetter
-  public Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void setExtensions(Map<String, Object> extensions) {
-    this.extensions = extensions;
-  }
-
-  @JsonAnySetter
-  public void setExtension(String name, Object value) {
-    if (extensions == null) {
-      extensions = new HashMap<>();
-    }
-    extensions.put(name, value);
   }
 
   @Override

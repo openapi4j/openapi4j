@@ -1,11 +1,8 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class Operation extends AbsOpenApiSchema<Operation> {
+public class Operation extends AbsExtendedOpenApiSchema<Operation> {
   private List<String> tags;
   private String summary;
   private String description;
@@ -27,7 +24,6 @@ public class Operation extends AbsOpenApiSchema<Operation> {
   @JsonProperty("security")
   private List<SecurityRequirement> securityRequirements;
   private List<Server> servers;
-  private Map<String, Object> extensions;
 
   // Tag
   public List<String> getTags() {
@@ -278,24 +274,6 @@ public class Operation extends AbsOpenApiSchema<Operation> {
   public Operation removeServer(Server server) {
     listRemove(servers, server);
     return this;
-  }
-
-  // Extensions
-  @JsonAnyGetter
-  public Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void setExtensions(Map<String, Object> extensions) {
-    this.extensions = extensions;
-  }
-
-  @JsonAnySetter
-  public void setExtension(String name, Object value) {
-    if (extensions == null) {
-      extensions = new HashMap<>();
-    }
-    extensions.put(name, value);
   }
 
   @Override

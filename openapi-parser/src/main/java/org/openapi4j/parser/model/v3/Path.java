@@ -1,21 +1,17 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class Path extends AbsOpenApiSchema<Path> {
+public class Path extends AbsExtendedOpenApiSchema<Path> {
   private String description;
-  private Map<String, Object> extensions;
   @JsonAlias({"get", "put", "post", "delete", "options", "head", "patch", "trace"})
   @JsonIgnore
   private Map<String, Operation> operations = new HashMap<>();
@@ -202,24 +198,6 @@ public class Path extends AbsOpenApiSchema<Path> {
   public Path removeParameter(Parameter value) {
     listRemove(parameters, value);
     return this;
-  }
-
-  // Extensions
-  @JsonAnyGetter
-  public Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void setExtensions(Map<String, Object> extensions) {
-    this.extensions = extensions;
-  }
-
-  @JsonAnySetter
-  public void setExtension(String name, Object value) {
-    if (extensions == null) {
-      extensions = new HashMap<>();
-    }
-    extensions.put(name, value);
   }
 
   @Override

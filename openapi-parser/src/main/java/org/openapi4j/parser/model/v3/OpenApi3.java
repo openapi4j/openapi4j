@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,14 +7,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.reference.Reference;
-import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class OpenApi3 extends AbsOpenApiSchema<OpenApi3> implements OAI {
+public class OpenApi3 extends AbsExtendedOpenApiSchema<OpenApi3> implements OAI {
   private String openapi;
   private Info info;
   private List<Server> servers;
@@ -27,7 +24,6 @@ public class OpenApi3 extends AbsOpenApiSchema<OpenApi3> implements OAI {
   private Components components;
   private ExternalDocs externalDocs;
   private SecurityRequirement security;
-  private Map<String, Object> extensions;
   @JsonIgnore
   private OAIContext context;
 
@@ -163,24 +159,6 @@ public class OpenApi3 extends AbsOpenApiSchema<OpenApi3> implements OAI {
   public OpenApi3 setExternalDocs(ExternalDocs externalDocs) {
     this.externalDocs = externalDocs;
     return this;
-  }
-
-  // Extensions
-  @JsonAnyGetter
-  public Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void setExtensions(Map<String, Object> extensions) {
-    this.extensions = extensions;
-  }
-
-  @JsonAnySetter
-  public void setExtension(String name, Object value) {
-    if (extensions == null) {
-      extensions = new HashMap<>();
-    }
-    extensions.put(name, value);
   }
 
   @Override

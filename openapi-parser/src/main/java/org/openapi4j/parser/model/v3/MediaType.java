@@ -1,21 +1,17 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MediaType extends AbsOpenApiSchema<MediaType> {
+public class MediaType extends AbsExtendedOpenApiSchema<MediaType> {
   @JsonProperty("encoding")
   private Map<String, EncodingProperty> encodings;
   private Object example;
   private Map<String, Example> examples;
-  private Map<String, Object> extensions;
   private Schema schema;
 
   // Schema
@@ -98,24 +94,6 @@ public class MediaType extends AbsOpenApiSchema<MediaType> {
   public MediaType removeEncoding(String name) {
     mapRemove(encodings, name);
     return this;
-  }
-
-  // Extensions
-  @JsonAnyGetter
-  public Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void setExtensions(Map<String, Object> extensions) {
-    this.extensions = extensions;
-  }
-
-  @JsonAnySetter
-  public void setExtension(String name, Object value) {
-    if (extensions == null) {
-      extensions = new HashMap<>();
-    }
-    extensions.put(name, value);
   }
 
   @Override

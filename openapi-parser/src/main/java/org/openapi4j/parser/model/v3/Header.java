@@ -1,16 +1,13 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Header extends AbsOpenApiSchema<Header> {
+public class Header extends AbsExtendedOpenApiSchema<Header> {
   private Boolean allowReserved;
   @JsonProperty("content")
   private Map<String, MediaType> contentMediaTypes;
@@ -19,7 +16,6 @@ public class Header extends AbsOpenApiSchema<Header> {
   private Object example;
   private Map<String, Example> examples;
   private Boolean explode;
-  private Map<String, Object> extensions;
   private Boolean required;
   private Schema schema;
   private String style;
@@ -180,24 +176,6 @@ public class Header extends AbsOpenApiSchema<Header> {
   public Header removeContentMediaType(String name) {
     mapRemove(contentMediaTypes, name);
     return this;
-  }
-
-  // Extensions
-  @JsonAnyGetter
-  public Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void setExtensions(Map<String, Object> extensions) {
-    this.extensions = extensions;
-  }
-
-  @JsonAnySetter
-  public void setExtension(String name, Object value) {
-    if (extensions == null) {
-      extensions = new HashMap<>();
-    }
-    extensions.put(name, value);
   }
 
   @Override
