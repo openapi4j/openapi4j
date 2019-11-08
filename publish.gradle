@@ -31,6 +31,12 @@ publishing {
             url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
           }
         }
+        developers {
+          developer {
+            id = 'llfbandit'
+            name = 'Rémy NOËL'
+          }
+        }
         scm {
           connection = "scm:git:git://github.com:openapi4j/openapi4j.git"
           developerConnection = "scm:git:ssh://@github.com:openapi4j/openapi4j.git"
