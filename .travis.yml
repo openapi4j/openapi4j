@@ -40,16 +40,16 @@ jobs:
   include:
     # run build
     - stage: build
-      script: ./gradlew --no-daemon check jacocoTestReport
+      script: ./gradlew check
 
     # run sonarqube
     - stage: sonarqube
-      script: ./gradlew --no-daemon sonarqube
+      script: ./gradlew jacocoTestReport sonarqube
 
     # publish snapshot version
     - stage: snapshot
-      script: ./gradlew --no-daemon publish
+      script: ./gradlew publish
 
     # publish stable version
     - stage: release
-      script: ./gradlew --no-daemon publish -Drelease=true
+      script: ./gradlew publish -Drelease=true
