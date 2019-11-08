@@ -14,7 +14,6 @@ public class OAuthFlow extends AbsExtendedOpenApiSchema<OAuthFlow> {
   private Map<String, String> scopes;
   @JsonIgnore
   private String configuration;
-  private Map<String, Object> extensions;
 
   // AuthorizationUrl
   public String getAuthorizationUrl() {

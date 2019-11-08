@@ -1,12 +1,9 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 import org.openapi4j.parser.model.v3.bind.SchemaDeserializer;
 import org.openapi4j.parser.model.v3.bind.SchemaSerializer;
 
@@ -17,7 +14,7 @@ import java.util.Map;
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @JsonDeserialize(using = SchemaDeserializer.class)
 @JsonSerialize(using = SchemaSerializer.class)
-public class Schema extends AbsRefOpenApiSchema<Schema> {
+public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   private Schema additionalProperties;
   private Boolean additionalPropertiesAllowed;
   private Object defaultValue;
@@ -28,7 +25,6 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   private Object example;
   private Boolean exclusiveMaximum;
   private Boolean exclusiveMinimum;
-  private Map<String, Object> extensions;
   private ExternalDocs externalDocs;
   private String format;
   private Schema itemsSchema;
@@ -569,24 +565,6 @@ public class Schema extends AbsRefOpenApiSchema<Schema> {
   public Schema setDeprecated(Boolean deprecated) {
     this.deprecated = deprecated;
     return this;
-  }
-
-  // Extensions
-  @JsonAnyGetter
-  public Map<String, Object> getExtensions() {
-    return extensions;
-  }
-
-  public void setExtensions(Map<String, Object> extensions) {
-    this.extensions = extensions;
-  }
-
-  @JsonAnySetter
-  public void setExtension(String name, Object value) {
-    if (extensions == null) {
-      extensions = new HashMap<>();
-    }
-    extensions.put(name, value);
   }
 
   @Override
