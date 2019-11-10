@@ -55,8 +55,8 @@ publishing {
     maven {
       name "ossrh"
       credentials {
-        username System.getenv("publishUsername")
-        password System.getenv("publishPassword")
+        username findProperty("publishUsername")
+        password findProperty("publishPassword")
       }
 
       def snapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots"
@@ -66,6 +66,10 @@ publishing {
   }
 }
 
-/*signing {
+tasks.withType(Sign) {
+  onlyIf { version.endsWith("SNAPSHOT") && gradle.taskGraph.hasTask("publish") }
+}
+
+signing {
   sign publishing.publications.mavenJava
-}*/
+}
