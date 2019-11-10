@@ -55,8 +55,8 @@ publishing {
     maven {
       name "ossrh"
       credentials {
-        username hasProperty("publishUsername") ? findProperty("publishUsername") : System.getenv("publishUsername")
-        password hasProperty("publishPassword") ? findProperty("publishPassword") : System.getenv("publishPassword")
+        username findProperty("publishUsername") != null ? findProperty("publishUsername") : System.getenv("publishUsername")
+        password findProperty("publishPassword") != null ? findProperty("publishPassword") : System.getenv("publishPassword")
       }
 
       def snapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots"
