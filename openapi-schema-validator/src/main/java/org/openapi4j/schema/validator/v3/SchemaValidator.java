@@ -36,9 +36,16 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
    *
    * @param propertyName The property or root name of the schema.
    * @param schemaNode   The schema specification.
+   * @throws ResolutionException for wrong references.
    */
-  public SchemaValidator(final String propertyName, final JsonNode schemaNode) {
-    this(null, propertyName, schemaNode, null, null);
+  public SchemaValidator(final String propertyName, final JsonNode schemaNode) throws ResolutionException {
+    super(null, schemaNode, null, null);
+
+    OAI3Context apiContext = new OAI3Context(URI.create("/"), schemaNode);
+    this.context = new ValidationContext<>(apiContext);
+
+    this.propertyName = propertyName;
+    validators = read(this.context, schemaNode);
   }
 
   /**
@@ -71,15 +78,6 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
                          final SchemaValidator parentSchema) {
 
     super(context, schemaNode, schemaParentNode, parentSchema);
-
-    if (context == null) {
-      try {
-        OAI3Context apiContext = new OAI3Context(URI.create("/"), schemaNode);
-        this.context = new ValidationContext<>(apiContext);
-      } catch (ResolutionException e) {
-        throw new RuntimeException(e);
-      }
-    }
 
     this.propertyName = propertyName;
     validators = read(this.context, schemaNode);

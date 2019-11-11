@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.exception.ResolutionException;
+import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
@@ -18,6 +19,7 @@ import org.openapi4j.parser.model.v3.Path;
 import org.openapi4j.parser.model.v3.Response;
 import org.openapi4j.parser.model.v3.Schema;
 import org.openapi4j.schema.validator.JsonValidator;
+import org.openapi4j.schema.validator.ValidationContext;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
 
 import java.io.IOException;
@@ -38,6 +40,7 @@ import static java.util.Objects.requireNonNull;
  * It validates all aspects of the interaction between the request and a response.
  */
 public class OperationValidator {
+  private static final String VALIDATION_CTX_REQUIRED_ERR_MSG = "Validation context is required.";
   private static final String OAI_REQUIRED_ERR_MSG = "OpenAPI is required.";
   private static final String PATH_REQUIRED_ERR_MSG = "Path is required.";
   private static final String OPERATION_REQUIRED_ERR_MSG = "Operation is required.";
@@ -63,8 +66,14 @@ public class OperationValidator {
   private final Map<String, Map<String, JsonValidator>> specResponseValidators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
   private final Operation operation;
   private final String specPath;
+  private final ValidationContext<OAI3> context;
 
-  public OperationValidator(final OpenApi3 openApi, final Path path, final Operation operation) throws EncodeException {
+  public OperationValidator(final OpenApi3 openApi, final Path path, final Operation operation) {
+    this(new ValidationContext<>(openApi.getContext()), openApi, path, operation);
+  }
+
+  public OperationValidator(final ValidationContext<OAI3> context, final OpenApi3 openApi, final Path path, final Operation operation) {
+    this.context = requireNonNull(context, VALIDATION_CTX_REQUIRED_ERR_MSG);
     requireNonNull(openApi, OAI_REQUIRED_ERR_MSG);
     requireNonNull(path, PATH_REQUIRED_ERR_MSG);
     requireNonNull(operation, OPERATION_REQUIRED_ERR_MSG);
@@ -219,7 +228,7 @@ public class OperationValidator {
 
   private Map<Parameter, JsonValidator> fillParametersValidators(OpenApi3 openApi,
                                         Operation operation,
-                                        String in) throws EncodeException {
+                                        String in) {
 
     Collection<Parameter> parameters = operation.getParametersIn(in);
 
@@ -228,9 +237,13 @@ public class OperationValidator {
 
       for (Parameter param : parameters) {
         if (param.getSchema() != null) { // Schema in not mandatory
-          SchemaValidator validator = new SchemaValidator(
-            param.getName(),
-            param.getSchema().toJson(openApi.getContext(), EnumSet.of(SerializationFlag.FOLLOW_REFS)));
+          SchemaValidator validator = null;
+          try {
+            validator = new SchemaValidator(
+              context,
+              param.getName(),
+              param.getSchema().toJson(openApi.getContext(), EnumSet.of(SerializationFlag.FOLLOW_REFS)));
+          } catch (EncodeException ignored) {}
 
           validators.put(param, validator);
         }
@@ -244,7 +257,7 @@ public class OperationValidator {
 
   private void fillResponseBodyValidators(OpenApi3 openApi,
                                           Operation operation,
-                                          Map<String, Map<String, JsonValidator>> validators) throws EncodeException {
+                                          Map<String, Map<String, JsonValidator>> validators) {
 
     Map<String, Response> responses = operation.getResponses();
 
@@ -257,7 +270,7 @@ public class OperationValidator {
 
   private void fillBodyValidators(OpenApi3 openApi,
                                   Map<String, MediaType> mediaTypes,
-                                  Map<String, JsonValidator> validators) throws EncodeException {
+                                  Map<String, JsonValidator> validators) {
 
     if (mediaTypes == null) return;
 
@@ -265,9 +278,14 @@ public class OperationValidator {
       Schema bodySchema = entry.getValue().getSchema();
 
       if (bodySchema != null) {
-        SchemaValidator validator = new SchemaValidator(
-          BODY,
-          bodySchema.toJson(openApi.getContext(), EnumSet.of(SerializationFlag.FOLLOW_REFS)));
+        SchemaValidator validator = null;
+        try {
+          validator = new SchemaValidator(
+            context,
+            BODY,
+            bodySchema.toJson(openApi.getContext(), EnumSet.of(SerializationFlag.FOLLOW_REFS)));
+        } catch (EncodeException ignored) {
+        }
 
         validators.put(entry.getKey(), validator);
       }

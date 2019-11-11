@@ -3,6 +3,7 @@ package org.perf.check.schema;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 
+import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.util.TreeUtil;
 import org.perf.check.report.Report;
 import org.perf.check.report.ReportPrinter;
@@ -15,7 +16,7 @@ public class SchemaPerfRunner {
   private static final String DATA_FILE = "/schema/data.json";
   private static final String DATA_SCHEMAS = "schemas";
 
-  public static void main(final String... args) throws IOException, ProcessingException {
+  public static void main(final String... args) throws IOException, ProcessingException, ResolutionException {
     final JsonNode schema = TreeUtil.json.readTree(SchemaPerfRunner.class.getResource(SCHEMA_FILE));
     final JsonNode data = TreeUtil.json.readTree(SchemaPerfRunner.class.getResource(DATA_FILE)).get(DATA_SCHEMAS);
 
