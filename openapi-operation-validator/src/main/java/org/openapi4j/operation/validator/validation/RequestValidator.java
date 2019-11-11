@@ -1,9 +1,7 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import org.openapi4j.core.exception.EncodeException;
-import org.openapi4j.core.exception.ResolutionException;
+import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
@@ -11,6 +9,7 @@ import org.openapi4j.operation.validator.model.impl.RequestParameters;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
+import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,13 +23,14 @@ import static java.util.Objects.requireNonNull;
  */
 public class RequestValidator {
   private static final String OPENAPI_REQUIRED_ERR_MSG = "OpenAPI is required.";
+  private static final String VALIDATION_CTX_REQUIRED_ERR_MSG = "Validation context is required.";
   private static final String PATH_REQUIRED_ERR_MSG = "Path is required.";
   private static final String OPERATION_REQUIRED_ERR_MSG = "Operation is required.";
   private static final String REQUEST_REQUIRED_ERR_MSG = "Request is required.";
-  private static final String SETUP_ERR_MSG = "Unable to setup operation validators.";
   private static final String INVALID_REQUEST_ERR_MSG = "Invalid request";
 
   private final OpenApi3 openApi;
+  private final ValidationContext<OAI3> context;
   private final Map<Operation, OperationValidator> operationValidators;
 
   /**
@@ -39,9 +39,22 @@ public class RequestValidator {
    * @param openApi The loaded open API model
    */
   public RequestValidator(final OpenApi3 openApi) {
+    this(new ValidationContext<>(openApi.getContext()), openApi);
+  }
+
+  /**
+   * Construct a new request validator with the given open API.
+   *
+   * @param context The validation context to attach options and keyword overrides.
+   * @param openApi The loaded open API model
+   */
+  @SuppressWarnings("WeakerAccess")
+  public RequestValidator(final ValidationContext<OAI3> context, final OpenApi3 openApi) {
     requireNonNull(openApi, OPENAPI_REQUIRED_ERR_MSG);
+    requireNonNull(context, VALIDATION_CTX_REQUIRED_ERR_MSG);
 
     this.openApi = openApi;
+    this.context = context;
     operationValidators = new ConcurrentHashMap<>();
   }
 
@@ -51,19 +64,14 @@ public class RequestValidator {
    * @param path      The OAS path model of the operation.
    * @param operation The operation object from specification.
    * @return The generated validator for the operation.
-   * @throws ResolutionException
    */
-  public OperationValidator compile(Path path, Operation operation) throws ResolutionException {
+  public OperationValidator compile(Path path, Operation operation) {
     requireNonNull(path, PATH_REQUIRED_ERR_MSG);
     requireNonNull(operation, OPERATION_REQUIRED_ERR_MSG);
 
     OperationValidator opValidator = operationValidators.get(operation);
     if (opValidator == null) {
-      try {
-        opValidator = new OperationValidator(openApi, path, operation);
-      } catch (EncodeException e) { // Should never happen
-        throw new ResolutionException(SETUP_ERR_MSG, e);
-      }
+      opValidator = new OperationValidator(context, openApi, path, operation);
       operationValidators.put(operation, opValidator);
     }
 
@@ -80,18 +88,9 @@ public class RequestValidator {
   public RequestParameters validate(Request request, Path path, Operation operation) throws ValidationException {
     requireNonNull(request, REQUEST_REQUIRED_ERR_MSG);
 
-    OperationValidator opValidator;
-    try {
-      opValidator = compile(path, operation);
-    } catch (ResolutionException e) {
-      // Should never happen
-      ValidationException ex = new ValidationException(SETUP_ERR_MSG);
-      ex.initCause(e);
-      throw ex;
-    }
+    OperationValidator opValidator = compile(path, operation);
 
     ValidationResults results = new ValidationResults();
-
     Map<String, JsonNode> pathParameters = opValidator.validatePath(request, results);
     Map<String, JsonNode> queryParameters = opValidator.validateQuery(request, results);
     Map<String, JsonNode> headerParameters = opValidator.validateHeaders(request, results);
