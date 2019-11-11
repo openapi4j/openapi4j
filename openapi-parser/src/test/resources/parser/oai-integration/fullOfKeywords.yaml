@@ -116,7 +116,7 @@ paths:
                 title: title
           links:
             name:
-              operationRef: operationRef
+              operationRef: '#/paths/~1foo/get'
               operationId: operationId
               parameters:
                 param1: xxxx
@@ -206,9 +206,9 @@ components:
       default: xyzzy
       nullable: true
       discriminator:
-        propertyName: foo
+        propertyName: a
         mapping:
-          Foo: foo
+          s2: '#/components/schemas/schema2'
       readOnly: true
       writeOnly: false
       xml:
@@ -308,9 +308,9 @@ components:
       x-foo: foo
   links:
     link1:
-      operationRef: operationRef
+      operationRef: '#/paths/~1foo/get'
     link2:
-      operationRef: operationRef
+      operationRef: '#/paths/~1foo/get'
   callbacks:
     cb1:
       expr1:

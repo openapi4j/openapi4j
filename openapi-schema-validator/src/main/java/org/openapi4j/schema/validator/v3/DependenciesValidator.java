@@ -24,7 +24,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEPENDENCIES;
  */
 public class DependenciesValidator extends BaseJsonValidator<OAI3> {
   private final Map<String, Collection<String>> dependentProps = new HashMap<>();
-  private Map<String, SchemaValidator> dependentSchemas = new HashMap<>();
+  private final Map<String, SchemaValidator> dependentSchemas = new HashMap<>();
 
   static DependenciesValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new DependenciesValidator(context, schemaNode, schemaParentNode, parentSchema);
