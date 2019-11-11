@@ -237,15 +237,16 @@ public class OperationValidator {
 
       for (Parameter param : parameters) {
         if (param.getSchema() != null) { // Schema in not mandatory
-          SchemaValidator validator = null;
           try {
-            validator = new SchemaValidator(
+            SchemaValidator validator = new SchemaValidator(
               context,
               param.getName(),
               param.getSchema().toJson(openApi.getContext(), EnumSet.of(SerializationFlag.FOLLOW_REFS)));
-          } catch (EncodeException ignored) {}
 
-          validators.put(param, validator);
+            validators.put(param, validator);
+          } catch (EncodeException ex) {
+            // Will never happen
+          }
         }
       }
 
@@ -278,16 +279,16 @@ public class OperationValidator {
       Schema bodySchema = entry.getValue().getSchema();
 
       if (bodySchema != null) {
-        SchemaValidator validator = null;
         try {
-          validator = new SchemaValidator(
+          SchemaValidator validator = new SchemaValidator(
             context,
             BODY,
             bodySchema.toJson(openApi.getContext(), EnumSet.of(SerializationFlag.FOLLOW_REFS)));
-        } catch (EncodeException ignored) {
-        }
 
-        validators.put(entry.getKey(), validator);
+          validators.put(entry.getKey(), validator);
+        } catch (EncodeException ex) {
+          // Will never happen
+        }
       }
     }
   }

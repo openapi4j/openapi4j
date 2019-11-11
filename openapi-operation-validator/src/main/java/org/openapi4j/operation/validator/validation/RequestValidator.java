@@ -69,13 +69,9 @@ public class RequestValidator {
     requireNonNull(path, PATH_REQUIRED_ERR_MSG);
     requireNonNull(operation, OPERATION_REQUIRED_ERR_MSG);
 
-    OperationValidator opValidator = operationValidators.get(operation);
-    if (opValidator == null) {
-      opValidator = new OperationValidator(context, openApi, path, operation);
-      operationValidators.put(operation, opValidator);
-    }
-
-    return opValidator;
+    return operationValidators.computeIfAbsent(
+      operation,
+      op -> new OperationValidator(context, openApi, path, op));
   }
 
   /**

@@ -44,9 +44,7 @@ class MultipleOfValidator extends BaseJsonValidator<OAI3> {
 
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (multiple == null) {
-      return;
-    } else if (!valueNode.isNumber()) {
+    if (multiple == null || !valueNode.isNumber()) {
       return;
     }
 

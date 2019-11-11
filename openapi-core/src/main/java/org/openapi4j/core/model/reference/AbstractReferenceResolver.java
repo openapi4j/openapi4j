@@ -23,7 +23,6 @@ public abstract class AbstractReferenceResolver {
   private static final String CYCLING_REF_ERR_MSG = "Cycling reference with the following chain :\n%s";
   private static final String MISSING_REF_ERR_MSG = "Reference '%s' is unreachable in '%s.";
   private static final String HASH = "#";
-  private static final String SLASH = "/";
 
   private final URI baseUri;
   private final List<AuthOption> authOptions;
