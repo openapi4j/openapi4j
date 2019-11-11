@@ -182,40 +182,158 @@
     ]
   },
   {
-    "description": "validation of date-time strings",
+    "description": "validation of e-mail addresses",
     "schema": {
-      "format": "date-time"
+      "format": "email",
+      "nullable": true
     },
     "tests": [
       {
-        "description": "a valid date-time string",
-        "data": "1963-06-19T08:30:06.283185Z",
+        "description": "ignores integers",
+        "data": 12,
         "valid": true
       },
       {
-        "description": "an invalid date-time string",
-        "data": "06/19/1963 08:30:06 PST",
-        "valid": false
-      },
-      {
-        "description": "an invalid date-time string",
-        "data": "1963-13-25T08:30:06.283185Z",
-        "valid": false
-      },
-      {
-        "description": "an invalid date-time string",
-        "data": "1963-12-35T08:30:06.283185Z",
-        "valid": false
-      },
-      {
-        "description": "an invalid date-time string",
-        "data": "1963-12-31T08:30:06.283185Z",
+        "description": "ignores floats",
+        "data": 13.7,
         "valid": true
       },
       {
-        "description": "only RFC3339 not all of ISO 8601 are valid",
-        "data": "2013-350T01:01:01",
-        "valid": false
+        "description": "ignores objects",
+        "data": {},
+        "valid": true
+      },
+      {
+        "description": "ignores arrays",
+        "data": [],
+        "valid": true
+      },
+      {
+        "description": "ignores booleans",
+        "data": false,
+        "valid": true
+      },
+      {
+        "description": "ignores null",
+        "data": null,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "validation of IP addresses",
+    "schema": {
+      "format": "ipv4",
+      "nullable": true
+    },
+    "tests": [
+      {
+        "description": "ignores integers",
+        "data": 12,
+        "valid": true
+      },
+      {
+        "description": "ignores floats",
+        "data": 13.7,
+        "valid": true
+      },
+      {
+        "description": "ignores objects",
+        "data": {},
+        "valid": true
+      },
+      {
+        "description": "ignores arrays",
+        "data": [],
+        "valid": true
+      },
+      {
+        "description": "ignores booleans",
+        "data": false,
+        "valid": true
+      },
+      {
+        "description": "ignores null",
+        "data": null,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "validation of IPv6 addresses",
+    "schema": {
+      "format": "ipv6",
+      "nullable": true
+    },
+    "tests": [
+      {
+        "description": "ignores integers",
+        "data": 12,
+        "valid": true
+      },
+      {
+        "description": "ignores floats",
+        "data": 13.7,
+        "valid": true
+      },
+      {
+        "description": "ignores objects",
+        "data": {},
+        "valid": true
+      },
+      {
+        "description": "ignores arrays",
+        "data": [],
+        "valid": true
+      },
+      {
+        "description": "ignores booleans",
+        "data": false,
+        "valid": true
+      },
+      {
+        "description": "ignores null",
+        "data": null,
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "validation of hostnames",
+    "schema": {
+      "format": "hostname",
+      "nullable": true
+    },
+    "tests": [
+      {
+        "description": "ignores integers",
+        "data": 12,
+        "valid": true
+      },
+      {
+        "description": "ignores floats",
+        "data": 13.7,
+        "valid": true
+      },
+      {
+        "description": "ignores objects",
+        "data": {},
+        "valid": true
+      },
+      {
+        "description": "ignores arrays",
+        "data": [],
+        "valid": true
+      },
+      {
+        "description": "ignores booleans",
+        "data": false,
+        "valid": true
+      },
+      {
+        "description": "ignores null",
+        "data": null,
+        "valid": true
       }
     ]
   },
@@ -236,7 +354,7 @@
         "valid": false
       },
       {
-        "description": "an invalid datee string",
+        "description": "an invalid date string",
         "data": "1963-12-31",
         "valid": true
       },
@@ -248,142 +366,80 @@
     ]
   },
   {
+    "description": "validation of date-time strings",
+    "schema": {
+      "format": "date-time",
+      "nullable": true
+    },
+    "tests": [
+      {
+        "description": "ignores integers",
+        "data": 12,
+        "valid": true
+      },
+      {
+        "description": "ignores floats",
+        "data": 13.7,
+        "valid": true
+      },
+      {
+        "description": "ignores objects",
+        "data": {},
+        "valid": true
+      },
+      {
+        "description": "ignores arrays",
+        "data": [],
+        "valid": true
+      },
+      {
+        "description": "ignores booleans",
+        "data": false,
+        "valid": true
+      },
+      {
+        "description": "ignores null",
+        "data": null,
+        "valid": true
+      }
+    ]
+  },
+  {
     "description": "validation of URIs",
     "schema": {
-      "format": "uri"
+      "format": "uri",
+      "nullable": true
     },
     "tests": [
       {
-        "description": "a valid URI",
-        "data": "http://foo.bar/?baz=qux#quux",
+        "description": "ignores integers",
+        "data": 12,
         "valid": true
       },
       {
-        "description": "a valid protocol-relative URI",
-        "data": "//foo.bar/?baz=qux#quux",
+        "description": "ignores floats",
+        "data": 13.7,
         "valid": true
       },
       {
-        "description": "an invalid URI",
-        "data": "\\\\WINDOWS\\fileshare",
-        "valid": false
-      },
-      {
-        "description": "an invalid URI though valid URI reference",
-        "data": "abc",
-        "valid": false
-      }
-    ]
-  },
-  {
-    "description": "validation of e-mail addresses",
-    "schema": {
-      "format": "email"
-    },
-    "tests": [
-      {
-        "description": "a valid e-mail address",
-        "data": "joe.bloggs@example.com",
+        "description": "ignores objects",
+        "data": {},
         "valid": true
       },
       {
-        "description": "a valid e-mail address",
-        "data": "bloggs@example.com",
+        "description": "ignores arrays",
+        "data": [],
         "valid": true
       },
       {
-        "description": "an invalid e-mail address",
-        "data": "2962",
-        "valid": false
-      }
-    ]
-  },
-  {
-    "description": "validation of IP addresses",
-    "schema": {
-      "format": "ipv4"
-    },
-    "tests": [
-      {
-        "description": "a valid IP address",
-        "data": "192.168.0.1",
+        "description": "ignores booleans",
+        "data": false,
         "valid": true
       },
       {
-        "description": "an IP address with too many components",
-        "data": "127.0.0.0.1",
-        "valid": false
-      },
-      {
-        "description": "an IP address with out-of-range values",
-        "data": "256.256.256.256",
-        "valid": false
-      },
-      {
-        "description": "an IP address without 4 components",
-        "data": "127.0",
-        "valid": false
-      },
-      {
-        "description": "an IP address as an integer",
-        "data": "0x7f000001",
-        "valid": false
-      }
-    ]
-  },
-  {
-    "description": "validation of IPv6 addresses",
-    "schema": {
-      "format": "ipv6"
-    },
-    "tests": [
-      {
-        "description": "a valid IPv6 address",
-        "data": "::1",
+        "description": "ignores null",
+        "data": null,
         "valid": true
-      },
-      {
-        "description": "an IPv6 address with out-of-range values",
-        "data": "12345::",
-        "valid": false
-      },
-      {
-        "description": "an IPv6 address with too many components",
-        "data": "1:1:1:1:1:1:1:1:1:1:1:1:1:1:1:1",
-        "valid": false
-      },
-      {
-        "description": "an IPv6 address containing illegal characters",
-        "data": "::laptop",
-        "valid": false
-      }
-    ]
-  },
-  {
-    "description": "validation of host names",
-    "schema": {
-      "format": "hostname"
-    },
-    "tests": [
-      {
-        "description": "a valid host name",
-        "data": "www.example.com",
-        "valid": true
-      },
-      {
-        "description": "a host name starting with an illegal character",
-        "data": "-a-host-name-that-starts-with--",
-        "valid": false
-      },
-      {
-        "description": "a host name containing illegal characters",
-        "data": "not_a_valid_host_name",
-        "valid": false
-      },
-      {
-        "description": "a host name with a component too long",
-        "data": "a-vvvvvvvvvvvvvvvveeeeeeeeeeeeeeeerrrrrrrrrrrrrrrryyyyyyyyyyyyyyyy-long-host-name-component",
-        "valid": false
       }
     ]
   }

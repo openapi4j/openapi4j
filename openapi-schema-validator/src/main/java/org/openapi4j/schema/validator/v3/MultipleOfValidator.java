@@ -24,7 +24,6 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MULTIPLEOF;
  * results in an integer.
  */
 class MultipleOfValidator extends BaseJsonValidator<OAI3> {
-  private static final String DEFINITION_ERR_MSG = "MultipleOf definition must be strictly greater than 0.";
   private static final String ERR_MSG = "Value '%s' is not a multiple of '%s'.";
 
   private static final BigDecimal DIVISIBLE = BigDecimal.valueOf(0.0);
@@ -37,19 +36,17 @@ class MultipleOfValidator extends BaseJsonValidator<OAI3> {
   MultipleOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    multiple = schemaNode.isNumber()
+    multiple
+      = (schemaNode.isNumber() && schemaNode.decimalValue().compareTo(DIVISIBLE) > 0)
       ? schemaNode.decimalValue()
-      : BigDecimal.valueOf(0.0);
+      : null;
   }
 
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (multiple.compareTo(DIVISIBLE) <= 0) {
-      results.addError(DEFINITION_ERR_MSG);
+    if (multiple == null) {
       return;
-    }
-
-    if (!valueNode.isNumber()) {
+    } else if (!valueNode.isNumber()) {
       return;
     }
 

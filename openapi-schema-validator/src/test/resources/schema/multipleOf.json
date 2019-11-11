@@ -72,7 +72,7 @@
       {
         "description": "must be different than 0",
         "data": 0.0075,
-        "valid": false
+        "valid": true
       }
     ]
   },
@@ -85,7 +85,7 @@
       {
         "description": "must be positive",
         "data": 0.0075,
-        "valid": false
+        "valid": true
       }
     ]
   },
@@ -98,7 +98,7 @@
       {
         "description": "wrong multiple",
         "data": 0.0075,
-        "valid": false
+        "valid": true
       }
     ]
   }

@@ -1,5 +1,18 @@
 [
   {
+    "description": "null pattern",
+    "schema": {
+      "pattern": null
+    },
+    "tests": [
+      {
+        "description": "matching string from wrong pattern is invalid",
+        "data": "xxaayy",
+        "valid": false
+      }
+    ]
+  },
+  {
     "description": "pattern validation",
     "schema": {
       "pattern": "^a*$"
@@ -16,9 +29,9 @@
         "valid": false
       },
       {
-        "description": "non-string is invalid",
+        "description": "ignores non-strings",
         "data": true,
-        "valid": false
+        "valid": true
       }
     ]
   },
@@ -32,19 +45,6 @@
         "description": "matches a substring",
         "data": "xxaayy",
         "valid": true
-      }
-    ]
-  },
-  {
-    "description": "null pattern",
-    "schema": {
-      "pattern": null
-    },
-    "tests": [
-      {
-        "description": "matching string from wrong pattern is invalid",
-        "data": "xxaayy",
-        "valid": false
       }
     ]
   }

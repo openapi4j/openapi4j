@@ -7,17 +7,17 @@
     "tests": [
       {
         "description": "shorter is valid",
-        "data": "1",
+        "data": "f",
         "valid": true
       },
       {
         "description": "exact length is valid",
-        "data": "22",
+        "data": "fo",
         "valid": true
       },
       {
         "description": "too long is invalid",
-        "data": "333",
+        "data": "foo",
         "valid": false
       },
       {
@@ -28,6 +28,19 @@
       {
         "description": "two supplementary Unicode code points is long enough",
         "data": "\uD83D\uDCA9\uD83D\uDCA9",
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "wrong",
+    "schema": {
+      "maxLength": "wrong"
+    },
+    "tests": [
+      {
+        "description": "wrong",
+        "data": 0.0075,
         "valid": true
       }
     ]

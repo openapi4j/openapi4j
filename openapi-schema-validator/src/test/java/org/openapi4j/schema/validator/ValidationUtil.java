@@ -36,7 +36,7 @@ class ValidationUtil {
       }
 
       SchemaValidator schemaValidator = new SchemaValidator(validationContext, "schema", schemaNode);
-      doTests(schemaValidator, testCase);
+      doTests(schemaValidator, testCase, testCase.get("description").textValue());
     }
   }
 
@@ -48,11 +48,11 @@ class ValidationUtil {
       JsonNode schemaNode = testCase.get("schema");
 
       SchemaValidator schemaValidator = new SchemaValidator("schema", schemaNode);
-      doTests(schemaValidator, testCase);
+      doTests(schemaValidator, testCase, testCase.get("description").textValue());
     }
   }
 
-  private static void doTests(SchemaValidator schemaValidator, JsonNode testCase) {
+  private static void doTests(SchemaValidator schemaValidator, JsonNode testCase, String testDescription) {
     ArrayNode testNodes = (ArrayNode) testCase.get("tests");
     for (int i = 0; i < testNodes.size(); i++) {
       JsonNode test = testNodes.get(i);
@@ -73,7 +73,8 @@ class ValidationUtil {
 
       if (isValidExpected != results.isValid()) {
         String message = String.format(
-          "TEST FAILURE : %s\nData : %s\n%s",
+          "TEST FAILURE : %s - %s\nData : %s\n%s",
+          testDescription,
           test.get("description"),
           contentNode,
           results.toString());

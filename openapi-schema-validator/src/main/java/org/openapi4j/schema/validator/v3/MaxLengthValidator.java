@@ -19,7 +19,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXLENGTH;
 class MaxLengthValidator extends BaseJsonValidator<OAI3> {
   private static final String ERR_MSG = "Max length is '%s', found '%s'.";
 
-  private final int maxLength;
+  private final Integer maxLength;
 
   static MaxLengthValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new MaxLengthValidator(context, schemaNode, schemaParentNode, parentSchema);
@@ -30,12 +30,12 @@ class MaxLengthValidator extends BaseJsonValidator<OAI3> {
 
     maxLength = (schemaNode != null && schemaNode.isIntegralNumber())
       ? schemaNode.intValue()
-      : Integer.MAX_VALUE;
+      : null;
   }
 
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (!valueNode.isTextual()) {
+    if (maxLength == null || !valueNode.isTextual()) {
       return;
     }
 

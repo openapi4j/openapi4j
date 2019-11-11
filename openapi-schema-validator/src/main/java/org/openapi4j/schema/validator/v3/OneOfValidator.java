@@ -29,18 +29,19 @@ class OneOfValidator extends DiscriminatorValidator {
 
   @Override
   void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
-    ValidationResults errorResults = new ValidationResults();
     final int schemasSize = schemas.size();
-    final int nbSchemasOnError;
+    int nbSchemasOnError = 0;
 
     for (SchemaValidator schema : schemas) {
+      ValidationResults errorResults = new ValidationResults();
       schema.validate(valueNode, errorResults);
+
+      if (!errorResults.isValid()) {
+        nbSchemasOnError++;
+      }
     }
 
-    nbSchemasOnError = errorResults.size();
-
     if (nbSchemasOnError == schemasSize) {
-      results.add(errorResults);
       results.addError(NO_VALID_SCHEMA_ERR_MSG, ONEOF);
     } else if ((schemasSize - nbSchemasOnError) > 1) {
       results.addError(MANY_VALID_SCHEMA_ERR_MSG, ONEOF);

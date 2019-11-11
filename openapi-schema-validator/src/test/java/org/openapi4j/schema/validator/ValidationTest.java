@@ -42,6 +42,11 @@ public class ValidationTest {
   }
 
   @Test
+  public void discriminatorValidator() throws Exception {
+    ValidationUtil.validate("/schema/discriminator.json");
+  }
+
+  @Test
   public void enumValidator() throws Exception {
     ValidationUtil.validate("/schema/enum.json");
   }
@@ -149,6 +154,21 @@ public class ValidationTest {
   @Test
   public void uniqueItemsValidator() throws Exception {
     ValidationUtil.validate("/schema/uniqueItems.json");
+  }
+
+  @Test
+  public void optionalBignum() throws Exception {
+    ValidationUtil.validate("/schema/optional/bignum.json");
+  }
+
+  @Test
+  public void optionalFormat() throws Exception {
+    ValidationUtil.validate("/schema/optional/format.json");
+  }
+
+  @Test
+  public void optionalZeroTerminatedFloats() throws Exception {
+    ValidationUtil.validate("/schema/optional/zeroTerminatedFloats.json");
   }
 
   @Test

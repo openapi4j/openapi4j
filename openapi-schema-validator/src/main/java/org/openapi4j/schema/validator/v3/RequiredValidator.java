@@ -47,9 +47,7 @@ class RequiredValidator extends BaseJsonValidator<OAI3> {
     if (fieldNames == null) return;
 
     for (String fieldName : fieldNames) {
-      JsonNode propertyNode = valueNode.get(fieldName);
-
-      if (propertyNode == null) {
+      if (null == valueNode.get(fieldName)) {
         results.addError(String.format(ERR_MSG, fieldName), REQUIRED);
       }
     }

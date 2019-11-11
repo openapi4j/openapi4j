@@ -21,7 +21,6 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PATTERN;
  */
 class PatternValidator extends BaseJsonValidator<OAI3> {
   private static final String PATTERN_DEF_ERR_MSG = "Wrong pattern definition '%s'.";
-  private static final String CONTENT_TYPE_ERR_MSG = "'%s' is not a string.";
   private static final String ERR_MSG = "'%s' does not respect pattern '%s'.";
 
   private final String patternStr;
@@ -44,7 +43,6 @@ class PatternValidator extends BaseJsonValidator<OAI3> {
       results.addError(String.format(PATTERN_DEF_ERR_MSG, patternStr), PATTERN);
       return;
     } else if (!valueNode.isTextual()) {
-      results.addError(String.format(CONTENT_TYPE_ERR_MSG, valueNode), PATTERN);
       return;
     }
 

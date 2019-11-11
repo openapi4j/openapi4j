@@ -1,279 +1,162 @@
 [
-  {
-    "description": "oneOf shortcut discriminator",
-    "schema": {
-      "components": {
-        "schemas": {
-          "A": {
-            "type": "object",
-            "required": [
-              "prop1"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "prop1": {
-                "type": "string"
-              },
-              "prop2": {
-                "type": "string"
-              }
-            }
-          },
-          "B": {
-            "type": "object",
-            "required": [
-              "prop1"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "prop1": {
-                "type": "string"
-              },
-              "prop3": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "oneOf": [
-        {
-          "$ref": "#/components/schemas/A"
+    {
+        "description": "oneOf",
+        "schema": {
+            "oneOf": [
+                {
+                    "type": "integer"
+                },
+                {
+                    "minimum": 2
+                }
+            ]
         },
-        {
-          "$ref": "#/components/schemas/B"
-        }
-      ],
-      "discriminator": {
-        "propertyName": "prop1"
-      }
-    },
-    "tests": [
-      {
-        "description": "A only is valid",
-        "data": {
-          "prop1": "A"
-        },
-        "valid": true
-      },
-      {
-        "description": "B only valid",
-        "data": {
-          "prop1": "B"
-        },
-        "valid": true
-      },
-      {
-        "description": "A & B is not valid",
-        "data": {
-          "prop1": "B",
-          "prop2": "wrong"
-        },
-        "valid": false
-      }
-    ]
-  },
-  {
-    "description": "oneOf mapping discriminator",
-    "schema": {
-      "components": {
-        "schemas": {
-          "A": {
-            "type": "object",
-            "required": [
-              "prop1"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "prop1": {
-                "type": "string"
-              },
-              "prop2": {
-                "type": "string"
-              }
-            }
-          },
-          "B": {
-            "type": "object",
-            "required": [
-              "prop1"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "prop1": {
-                "type": "string"
-              },
-              "prop3": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      },
-      "oneOf": [
-        {
-          "$ref": "#/components/schemas/A"
-        },
-        {
-          "$ref": "#/components/schemas/B"
-        }
-      ],
-      "discriminator": {
-        "propertyName": "prop1",
-        "mapping": {
-          "a": "#/components/schemas/A",
-          "b": "#/components/schemas/B"
-        }
-      }
-    },
-    "tests": [
-      {
-        "description": "a only is valid",
-        "data": {
-          "prop1": "a"
-        },
-        "valid": true
-      },
-      {
-        "description": "b only valid",
-        "data": {
-          "prop1": "b"
-        },
-        "valid": true
-      },
-      {
-        "description": "a & b is not valid",
-        "data": {
-          "prop1": "b",
-          "prop2": "wrong"
-        },
-        "valid": false
-      }
-    ]
-  },
-  {
-    "description": "oneOf",
-    "schema": {
-      "oneOf": [
-        {
-          "type": "integer"
-        },
-        {
-          "minimum": 2
-        }
-      ]
-    },
-    "tests": [
-      {
-        "description": "first oneOf valid",
-        "data": 1,
-        "valid": true
-      },
-      {
-        "description": "second oneOf valid",
-        "data": 2.5,
-        "valid": true
-      },
-      {
-        "description": "both oneOf valid",
-        "data": 3,
-        "valid": false
-      },
-      {
-        "description": "neither oneOf valid",
-        "data": 1.5,
-        "valid": false
-      }
-    ]
-  },
-  {
-    "description": "oneOf with base schema",
-    "schema": {
-      "type": "string",
-      "oneOf": [
-        {
-          "minLength": 2
-        },
-        {
-          "maxLength": 4
-        }
-      ]
-    },
-    "tests": [
-      {
-        "description": "mismatch base schema",
-        "data": 3,
-        "valid": false
-      },
-      {
-        "description": "one oneOf valid",
-        "data": "foobar",
-        "valid": true
-      },
-      {
-        "description": "both oneOf valid",
-        "data": "foo",
-        "valid": false
-      }
-    ]
-  },
-  {
-    "description": "oneOf with objects and type pattern",
-    "schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "required": [
-            "type"
-          ],
-          "properties": {
-            "type": {
-              "enum": [
-                "TYPE_1"
-              ]
+        "tests": [
+            {
+                "description": "first oneOf valid",
+                "data": 1,
+                "valid": true
             },
-            "option": {
-              "type": "string"
+            {
+                "description": "second oneOf valid",
+                "data": 2.5,
+                "valid": true
+            },
+            {
+                "description": "both oneOf valid",
+                "data": 3,
+                "valid": false
+            },
+            {
+                "description": "neither oneOf valid",
+                "data": 1.5,
+                "valid": false
             }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "type"
-          ],
-          "properties": {
-            "type": {
-              "enum": [
-                "TYPE_2"
-              ]
-            }
-          }
-        }
-      ]
+        ]
     },
-    "tests": [
-      {
-        "description": "first oneOf valid",
-        "data": {
-          "type": "TYPE_1"
+    {
+        "description": "oneOf with base schema",
+        "schema": {
+            "type": "string",
+            "oneOf" : [
+                {
+                    "minLength": 2
+                },
+                {
+                    "maxLength": 4
+                }
+            ]
         },
-        "valid": true
-      },
-      {
-        "description": "second oneOf valid",
-        "data": {
-          "type": "TYPE_2"
+        "tests": [
+            {
+                "description": "mismatch base schema",
+                "data": 3,
+                "valid": false
+            },
+            {
+                "description": "one oneOf valid",
+                "data": "foobar",
+                "valid": true
+            },
+            {
+                "description": "both oneOf valid",
+                "data": "foo",
+                "valid": false
+            }
+        ]
+    },
+    {
+        "description": "oneOf complex types",
+        "schema": {
+            "oneOf": [
+                {
+                    "properties": {
+                        "bar": {"type": "integer"}
+                    },
+                    "required": ["bar"]
+                },
+                {
+                    "properties": {
+                        "foo": {"type": "string"}
+                    },
+                    "required": ["foo"]
+                }
+            ]
         },
-        "valid": true
-      },
-      {
-        "description": "neither oneOf valid",
-        "data": {
-          "type": "INVALID_TYPE"
+        "tests": [
+            {
+                "description": "first oneOf valid (complex)",
+                "data": {"bar": 2},
+                "valid": true
+            },
+            {
+                "description": "second oneOf valid (complex)",
+                "data": {"foo": "baz"},
+                "valid": true
+            },
+            {
+                "description": "both oneOf valid (complex)",
+                "data": {"foo": "baz", "bar": 2},
+                "valid": false
+            },
+            {
+                "description": "neither oneOf valid (complex)",
+                "data": {"foo": 2, "bar": "quux"},
+                "valid": false
+            }
+        ]
+    },
+    {
+        "description": "oneOf with empty schema",
+        "schema": {
+            "oneOf": [
+                { "type": "number" },
+                {}
+            ]
         },
-        "valid": false
-      }
-    ]
-  }
+        "tests": [
+            {
+                "description": "one valid - valid",
+                "data": "foo",
+                "valid": true
+            },
+            {
+                "description": "both valid - invalid",
+                "data": 123,
+                "valid": false
+            }
+        ]
+    },
+    {
+        "description": "oneOf with required",
+        "schema": {
+            "type": "object",
+            "oneOf": [
+                { "required": ["foo", "bar"] },
+                { "required": ["foo", "baz"] }
+            ]
+        },
+        "tests": [
+            {
+                "description": "both invalid - invalid",
+                "data": {"bar": 2},
+                "valid": false
+            },
+            {
+                "description": "first valid - valid",
+                "data": {"foo": 1, "bar": 2},
+                "valid": true
+            },
+            {
+                "description": "second valid - valid",
+                "data": {"foo": 1, "baz": 3},
+                "valid": true
+            },
+            {
+                "description": "both valid - invalid",
+                "data": {"foo": 1, "bar": 2, "baz" : 3},
+                "valid": false
+            }
+        ]
+    }
 ]

@@ -12,10 +12,7 @@ That said, there's options to enrich to current definitions with the `Validation
 * ADDITIONAL_PROPS_RESTRICT : By default, Schema Object can have additional properties. This option let's you invert the behaviour.
 * You can override keywords' validators! More on this with [extensions](#extensions).
 
-## Dependencies
-
-* jackson-databind
-* jackson-dataformat-yaml
+Credits to [JSON-Schema-Test-Suite](https://github.com/json-schema-org/JSON-Schema-Test-Suite) where the majority of tests are coming from. 
 
 ## Installation
 

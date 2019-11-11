@@ -31,5 +31,18 @@
         "valid": false
       }
     ]
+  },
+  {
+    "description": "wrong",
+    "schema": {
+      "minLength": "wrong"
+    },
+    "tests": [
+      {
+        "description": "wrong",
+        "data": 0.0075,
+        "valid": true
+      }
+    ]
   }
 ]

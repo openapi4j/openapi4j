@@ -4,24 +4,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.openapi4j.parser.model.v3.Schema;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
 
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_FLOAT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT32;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_BOOLEAN;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
 
 public final class TypeConverter {
-  private static final String NAN = "NaN";
-
   private static final TypeConverter INSTANCE = new TypeConverter();
 
   private TypeConverter() {
@@ -129,21 +121,25 @@ public final class TypeConverter {
         case TYPE_INTEGER:
           if (FORMAT_INT32.equals(schema.getFormat())) {
             return JsonNodeFactory.instance.numberNode(Integer.parseInt(value.toString()));
-          } else {
+          } else if (FORMAT_INT64.equals(schema.getFormat())) {
             return JsonNodeFactory.instance.numberNode(Long.parseLong(value.toString()));
+          } else {
+            return JsonNodeFactory.instance.numberNode(new BigInteger(value.toString()));
           }
         case TYPE_NUMBER:
           if (FORMAT_FLOAT.equals(schema.getFormat())) {
             return JsonNodeFactory.instance.numberNode(Float.parseFloat(value.toString()));
-          } else {
+          } else if (FORMAT_DOUBLE.equals(schema.getFormat())) {
             return JsonNodeFactory.instance.numberNode(Double.parseDouble(value.toString()));
+          } else {
+            return JsonNodeFactory.instance.numberNode(new BigDecimal(value.toString()));
           }
         case TYPE_STRING:
         default:
           return JsonNodeFactory.instance.textNode(value.toString());
       }
     } catch (IllegalArgumentException ex) {
-      return JsonNodeFactory.instance.textNode(NAN);
+      return JsonNodeFactory.instance.textNode(value.toString());
     }
   }
 
@@ -161,6 +157,6 @@ public final class TypeConverter {
       return false;
     }
 
-    throw new IllegalArgumentException(NAN);
+    throw new IllegalArgumentException(value);
   }
 }

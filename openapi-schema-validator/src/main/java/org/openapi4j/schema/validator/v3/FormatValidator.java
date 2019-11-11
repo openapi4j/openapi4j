@@ -80,34 +80,34 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
         validated = (valueNode.isInt() || valueNode.isLong() || valueNode.isDouble());
         break;
       case FORMAT_BYTE:
-        validated = (valueNode.isTextual() && BASE64_PATTERN.matcher(valueNode.textValue()).matches());
+        validated = !valueNode.isTextual() || BASE64_PATTERN.matcher(valueNode.textValue()).matches();
         break;
       case FORMAT_BINARY:
       case FORMAT_PASSWORD:
         validated = valueNode.isTextual();
         break;
       case FORMAT_DATE:
-        validated = (valueNode.isTextual() && DATE_PATTERN.matcher(valueNode.textValue()).matches());
+        validated = !valueNode.isTextual() || DATE_PATTERN.matcher(valueNode.textValue()).matches();
         break;
       case FORMAT_DATE_TIME:
-        validated = (valueNode.isTextual() && DATETIME_PATTERN.matcher(valueNode.textValue()).matches());
+        validated = !valueNode.isTextual() || DATETIME_PATTERN.matcher(valueNode.textValue()).matches();
         break;
       case FORMAT_EMAIL:
-        validated = (valueNode.isTextual() && EMAIL_PATTERN.matcher(valueNode.textValue()).matches());
+        validated = !valueNode.isTextual() || EMAIL_PATTERN.matcher(valueNode.textValue()).matches();
         break;
       case FORMAT_HOSTNAME:
-        validated = (valueNode.isTextual() && HOSTNAME_PATTERN.matcher(valueNode.textValue()).matches());
+        validated = !valueNode.isTextual() || HOSTNAME_PATTERN.matcher(valueNode.textValue()).matches();
         break;
       case FORMAT_IPV4:
-        validated = (valueNode.isTextual() && IPV4_PATTERN.matcher(valueNode.textValue()).matches());
+        validated = !valueNode.isTextual() || IPV4_PATTERN.matcher(valueNode.textValue()).matches();
         break;
       case FORMAT_IPV6:
-        validated = (valueNode.isTextual() && IPV6_PATTERN.matcher(valueNode.textValue()).matches());
+        validated = !valueNode.isTextual() || IPV6_PATTERN.matcher(valueNode.textValue()).matches();
         break;
       case FORMAT_URI:
       case FORMAT_URIREF:
       case FORMAT_URI_REFERENCE:
-        validated = (valueNode.isTextual() && URI_PATTERN.matcher(valueNode.textValue()).matches());
+        validated = !valueNode.isTextual() || URI_PATTERN.matcher(valueNode.textValue()).matches();
         break;
       default:
         results.addWarning(String.format(UNKNOWN_WARN_MSG, format));

@@ -9,11 +9,6 @@ public class IntegrationTest {
   }
 
   @Test
-  public void oaiValidator() throws Exception {
-    ValidationUtil.validate("/schema/integration/OAI-v3.json");
-  }
-
-  @Test
   public void userDiskValidator() throws Exception {
     ValidationUtil.validate("/schema/integration/userdisk.json");
   }
