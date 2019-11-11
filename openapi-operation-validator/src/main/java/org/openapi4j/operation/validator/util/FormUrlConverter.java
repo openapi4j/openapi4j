@@ -2,7 +2,6 @@ package org.openapi4j.operation.validator.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import org.openapi4j.operation.validator.model.impl.Regexes;
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.io.InputStream;
@@ -15,8 +14,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class FormUrlConverter {
+  // allows p1= a b &p2=1 &p3=
+  private static final Pattern QUERY_STRING_PATTERN = Pattern.compile("([^&=]+?)\\s*=([^&=]*)");
+
   private static final FormUrlConverter INSTANCE = new FormUrlConverter();
 
   private FormUrlConverter() {
@@ -44,7 +47,7 @@ class FormUrlConverter {
 
     Map<String, Object> params = new HashMap<>();
     // Encoded form data is exactly the same as query string composition
-    Matcher matcher = Regexes.QUERY_STRING.matcher(decodedBody);
+    Matcher matcher = QUERY_STRING_PATTERN.matcher(decodedBody);
     while (matcher.find()) {
       Object value = params.get(matcher.group(1));
       if (value == null) {

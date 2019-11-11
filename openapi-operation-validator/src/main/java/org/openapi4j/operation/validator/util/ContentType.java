@@ -1,7 +1,5 @@
 package org.openapi4j.operation.validator.util;
 
-import org.openapi4j.operation.validator.model.impl.Regexes;
-
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +9,7 @@ public final class ContentType {
   // WITHOUT any additional properties (;charset=... obviously)
   private static final Pattern JSON_PATTERN = Pattern.compile("(?:application|text)\\/(?:.+\\+)?json");
   private static final Pattern XML_PATTERN = Pattern.compile("(?:application|text)\\/(?:.+\\+)?xml");
+  private static final Pattern CHARSET_PATTERN = Pattern.compile("(?:charset=)(.*)");
 
   private ContentType() {}
 
@@ -62,7 +61,7 @@ public final class ContentType {
   public static String getCharSet(String contentType) {
     if (contentType == null) return StandardCharsets.UTF_8.name();
 
-    Matcher matcher = Regexes.CHARSET.matcher(contentType);
+    Matcher matcher = CHARSET_PATTERN.matcher(contentType);
     if (matcher.find()) {
       return matcher.group(1).trim();
     } else {
