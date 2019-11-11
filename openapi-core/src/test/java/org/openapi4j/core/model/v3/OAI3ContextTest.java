@@ -2,10 +2,13 @@ package org.openapi4j.core.model.v3;
 
 import org.junit.Test;
 import org.openapi4j.core.exception.ResolutionException;
+import org.openapi4j.core.model.AuthOption;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -16,6 +19,21 @@ public class OAI3ContextTest {
     URL specPath = getClass().getResource("/parsing/discriminator.yaml");
 
     OAI3Context apiContext = new OAI3Context(specPath.toURI());
+    assertEquals(specPath.toURI(), apiContext.getBaseUri());
+    assertNotNull(apiContext.getReferenceRegistry().getRef("#/components/schemas/Cat"));
+  }
+
+  @Test
+  public void simpleAuth() throws URISyntaxException, ResolutionException {
+    URL specPath = getClass().getResource("/parsing/discriminator.yaml");
+
+    OAI3Context apiContext = new OAI3Context(
+      specPath.toURI(),
+      Arrays.asList(
+        new AuthOption(AuthOption.Type.HEADER, "myHeader", "myValue"),
+        new AuthOption(AuthOption.Type.QUERY, "myQueryParam", "myValue", url -> false)
+      ));
+
     assertEquals(specPath.toURI(), apiContext.getBaseUri());
     assertNotNull(apiContext.getReferenceRegistry().getRef("#/components/schemas/Cat"));
   }

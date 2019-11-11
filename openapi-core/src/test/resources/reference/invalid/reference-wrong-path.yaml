@@ -7,9 +7,7 @@ paths:
   /apath/{id}:
     get:
       parameters:
-        - $ref: '#/components/parameters/EntityId'
-        - $ref: 'reference2.yaml#/components/parameters/ARef'
-        - $ref: 'reference2.yaml#/components/parameters/BRef'
+        - $ref: '/components/parameters/EntityId'
       responses:
         '200':
           description: The description
