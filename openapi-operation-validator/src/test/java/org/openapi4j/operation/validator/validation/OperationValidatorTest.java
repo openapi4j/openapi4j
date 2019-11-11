@@ -52,6 +52,11 @@ public class OperationValidatorTest {
       new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").query("queryParam=yes").build(),
       val::validateQuery,
       false);
+
+    check(
+      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").build(),
+      val::validateQuery,
+      false);
   }
 
   @Test
@@ -72,6 +77,11 @@ public class OperationValidatorTest {
       new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").header("headerParam", "0,1").build(),
       val::validateHeaders,
       false);
+
+    check(
+      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").build(),
+      val::validateQuery,
+      false);
   }
 
   @Test
@@ -87,6 +97,11 @@ public class OperationValidatorTest {
       new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").cookie("cookieParam", "1996-12-19").build(),
       val::validateCookies,
       false);
+
+    check(
+      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").build(),
+      val::validateQuery,
+      false);
   }
 
   @Test
@@ -101,6 +116,11 @@ public class OperationValidatorTest {
       new DefaultRequest.Builder(GET, "/post").header("Content-Type", "application/json").body(Body.from(body)).build(),
       val::validateBody,
       true);
+
+    check(
+      new DefaultRequest.Builder(GET, "/post").header("Content-Type", "application/json").build(),
+      val::validateBody,
+      false);
 
     check(
       new DefaultRequest.Builder(GET, "/post").body(Body.from(body)).build(),

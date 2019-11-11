@@ -2,6 +2,7 @@ package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.openapi4j.parser.model.v3.Parameter;
 import org.openapi4j.parser.model.v3.Schema;
 
@@ -27,6 +28,10 @@ class FormStyleConverter implements FlatStyleConverter {
 
   @Override
   public JsonNode convert(Parameter param, String rawValue) {
+    if (rawValue == null) {
+      return JsonNodeFactory.instance.nullNode();
+    }
+
     String type = param.getSchema().getType();
     Map<String, Object> paramValues;
 

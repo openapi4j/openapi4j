@@ -64,6 +64,11 @@ public abstract class AbstractReferenceResolver {
       if (refValue != null) {
         if (!refValue.startsWith(HASH)) {
           URI subUri = getReferenceUri(uri, refValue);
+
+          if (subUri == null) {
+            throw new ResolutionException(String.format(MISSING_REF_ERR_MSG, refValue, uri));
+          }
+
           referenceRegistry.addRef(subUri, refValue);
 
           if (!documentRegistry.containsKey(subUri)) {
@@ -78,10 +83,6 @@ public abstract class AbstractReferenceResolver {
   }
 
   private JsonNode registerDocument(URI uri) throws ResolutionException {
-    if (documentRegistry.containsKey(uri)) {
-      return documentRegistry.get(uri);
-    }
-
     try {
       JsonNode document = TreeUtil.load(uri.toURL(), authOptions);
       documentRegistry.put(uri, document);
@@ -92,10 +93,6 @@ public abstract class AbstractReferenceResolver {
   }
 
   private JsonNode registerDocument(URI uri, JsonNode node) {
-    if (documentRegistry.containsKey(uri)) {
-      return documentRegistry.get(uri);
-    }
-
     documentRegistry.put(uri, node);
     return node;
   }
@@ -116,14 +113,8 @@ public abstract class AbstractReferenceResolver {
       throw new ResolutionException(String.format(CYCLING_REF_ERR_MSG, stringBuilder.toString()));
     }
 
-    String jsonPointer = getJsonPointer(ref.getRef());
-    if (!jsonPointer.startsWith(SLASH)) {
-      // Silence this since subclasses can setup other values
-      // or referencing self
-      return;
-    }
-
     JsonNode document = documentRegistry.get(ref.getBaseUri());
+    String jsonPointer = getJsonPointer(ref.getRef());
 
     JsonNode valueNode = document.at(jsonPointer);
     if (valueNode.isMissingNode()) {
@@ -143,14 +134,10 @@ public abstract class AbstractReferenceResolver {
       return uri.resolve(ref.substring(0, ref.indexOf(HASH)));
     }
 
-    return uri;
+    return null;
   }
 
   private String getJsonPointer(String ref) {
-    if (ref.contains(HASH)) {
-      return ref.substring(ref.indexOf(HASH) + 1);
-    }
-
-    return ref;
+    return ref.substring(ref.indexOf(HASH) + 1);
   }
 }

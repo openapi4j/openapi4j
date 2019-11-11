@@ -88,14 +88,17 @@ public class OAI3Context implements OAIContext {
   }
 
   private void resolveReferences(JsonNode apiNode) throws ResolutionException {
+    // Standard JSON references
     ReferenceResolver resolver = new ReferenceResolver(baseUri, authOptions, apiNode, $REF, referenceRegistry);
     resolver.resolve();
 
+    // Mapping JSON references
     ReferenceRegistry mappingRefsRegistry = new ReferenceRegistry();
     MappingReferenceResolver mappingResolver = new MappingReferenceResolver(baseUri, authOptions, apiNode, $REF, mappingRefsRegistry);
     mappingResolver.resolve();
     referenceRegistry.mergeRefs(mappingRefsRegistry);
 
+    // Links JSON references
     ReferenceRegistry operationRefsRegistry = new ReferenceRegistry();
     ReferenceResolver operationResolver = new ReferenceResolver(baseUri, authOptions, apiNode, OPERATION_REF, operationRefsRegistry);
     operationResolver.resolve();
