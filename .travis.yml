@@ -33,9 +33,6 @@ stages:
   - name: snapshot
     # only publish snapshots from "master" branch AND not on tag
     if: branch = master AND type != pull_request AND tag IS NOT present
-  - name: release
-    # only publish releases from "master" branch and not in pull requests AND on tag
-    if: branch = master AND type != pull_request AND tag IS present
 
 jobs:
   include:
@@ -50,7 +47,3 @@ jobs:
     # publish snapshot version
     - stage: snapshot
       script: ./gradlew publish
-
-    # publish stable version
-    - stage: release
-      script: ./gradlew publish -Drelease=true
