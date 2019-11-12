@@ -45,12 +45,12 @@ class XmlConverter {
     Map<String, Object> xmlMapped = xml.toMap();
 
     // object
-    if (schema.getType() == null || TYPE_OBJECT.equals(schema.getType())) {
+    if (schema.getType() == null || TYPE_OBJECT.equals(schema.getSupposedType())) {
       return getSubContent(schema, xmlMapped);
     }
 
     // wrapped array
-    if (TYPE_ARRAY.equals(schema.getType()) && schema.getXml().isWrapped()) {
+    if (TYPE_ARRAY.equals(schema.getSupposedType()) && schema.getXml().isWrapped()) {
       return getSubContent(schema, xmlMapped);
     }
 

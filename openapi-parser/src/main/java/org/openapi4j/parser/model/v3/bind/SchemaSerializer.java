@@ -11,6 +11,35 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Map;
 
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ADDITIONALPROPERTIES;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ALLOF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ANYOF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEFAULT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DISCRIMINATOR;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ENUM;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.EXCLUSIVEMAXIMUM;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.EXCLUSIVEMINIMUM;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ITEMS;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXIMUM;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXITEMS;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXLENGTH;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXPROPERTIES;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINIMUM;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINITEMS;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINLENGTH;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINPROPERTIES;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MULTIPLEOF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NOT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NULLABLE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ONEOF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PATTERN;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PROPERTIES;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.REQUIRED;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.UNIQUEITEMS;
+
 public class SchemaSerializer extends StdSerializer<Schema> {
   protected SchemaSerializer() {
     this(Schema.class);
@@ -25,43 +54,43 @@ public class SchemaSerializer extends StdSerializer<Schema> {
     gen.writeStartObject();
 
     if (schema.isRef()) {
-      addStringField(gen, "$ref", schema.getRef());
+      addStringField(gen, $REF, schema.getRef());
       addStringField(gen, "description", schema.getDescription());
     } else {
       addStringField(gen, "title", schema.getTitle());
-      addNumberField(gen, "multipleOf", schema.getMultipleOf());
-      addNumberField(gen, "maximum", schema.getMaximum());
-      addBooleanField(gen, "exclusiveMaximum", schema.getExclusiveMaximum());
-      addNumberField(gen, "minimum", schema.getMinimum());
-      addBooleanField(gen, "exclusiveMinimum", schema.getExclusiveMinimum());
-      addNumberField(gen, "maxLength", schema.getMaxLength());
-      addNumberField(gen, "minLength", schema.getMinLength());
-      addStringField(gen, "pattern", schema.getPattern());
-      addNumberField(gen, "maxItems", schema.getMaxItems());
-      addNumberField(gen, "minItems", schema.getMinItems());
-      addBooleanField(gen, "uniqueItems", schema.getUniqueItems());
-      addNumberField(gen, "maxProperties", schema.getMaxProperties());
-      addNumberField(gen, "minProperties", schema.getMinProperties());
-      addStringCollection(gen, "required", schema.getRequiredFields());
-      addStringCollection(gen, "enum", schema.getEnums());
-      addStringField(gen, "type", schema.getType());
-      addSchemaCollection(gen, "allOf", schema.getAllOfSchemas());
-      addSchemaCollection(gen, "oneOf", schema.getOneOfSchemas());
-      addSchemaCollection(gen, "anyOf", schema.getAnyOfSchemas());
-      addObjectField(gen, "not", schema.getNotSchema());
-      addObjectField(gen, "items", schema.getItemsSchema());
-      addMapField(gen, "properties", schema.getProperties());
+      addNumberField(gen, MULTIPLEOF, schema.getMultipleOf());
+      addNumberField(gen, MAXIMUM, schema.getMaximum());
+      addBooleanField(gen, EXCLUSIVEMAXIMUM, schema.getExclusiveMaximum());
+      addNumberField(gen, MINIMUM, schema.getMinimum());
+      addBooleanField(gen, EXCLUSIVEMINIMUM, schema.getExclusiveMinimum());
+      addNumberField(gen, MAXLENGTH, schema.getMaxLength());
+      addNumberField(gen, MINLENGTH, schema.getMinLength());
+      addStringField(gen, PATTERN, schema.getPattern());
+      addNumberField(gen, MAXITEMS, schema.getMaxItems());
+      addNumberField(gen, MINITEMS, schema.getMinItems());
+      addBooleanField(gen, UNIQUEITEMS, schema.getUniqueItems());
+      addNumberField(gen, MAXPROPERTIES, schema.getMaxProperties());
+      addNumberField(gen, MINPROPERTIES, schema.getMinProperties());
+      addStringCollection(gen, REQUIRED, schema.getRequiredFields());
+      addStringCollection(gen, ENUM, schema.getEnums());
+      addStringField(gen, TYPE, schema.getType());
+      addSchemaCollection(gen, ALLOF, schema.getAllOfSchemas());
+      addSchemaCollection(gen, ONEOF, schema.getOneOfSchemas());
+      addSchemaCollection(gen, ANYOF, schema.getAnyOfSchemas());
+      addObjectField(gen, NOT, schema.getNotSchema());
+      addObjectField(gen, ITEMS, schema.getItemsSchema());
+      addMapField(gen, PROPERTIES, schema.getProperties());
 
       if (schema.getAdditionalProperties() != null) {
-        gen.writeObjectField("additionalProperties", schema.getAdditionalProperties());
+        gen.writeObjectField(ADDITIONALPROPERTIES, schema.getAdditionalProperties());
       } else if (schema.getAdditionalPropertiesAllowed() != null) {
-        gen.writeBooleanField("additionalProperties", schema.getAdditionalPropertiesAllowed());
+        gen.writeBooleanField(ADDITIONALPROPERTIES, schema.getAdditionalPropertiesAllowed());
       }
       addStringField(gen, "description", schema.getDescription());
-      addStringField(gen, "format", schema.getFormat());
-      addObjectField(gen, "default", schema.getDefault());
-      addBooleanField(gen, "nullable", schema.getNullable());
-      addObjectField(gen, "discriminator", schema.getDiscriminator());
+      addStringField(gen, FORMAT, schema.getFormat());
+      addObjectField(gen, DEFAULT, schema.getDefault());
+      addBooleanField(gen, NULLABLE, schema.getNullable());
+      addObjectField(gen, DISCRIMINATOR, schema.getDiscriminator());
       addBooleanField(gen, "readOnly", schema.getReadOnly());
       addBooleanField(gen, "writeOnly", schema.getWriteOnly());
       addObjectField(gen, "xml", schema.getXml());

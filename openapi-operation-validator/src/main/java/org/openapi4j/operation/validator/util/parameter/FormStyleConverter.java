@@ -15,6 +15,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
+
 class FormStyleConverter implements FlatStyleConverter {
   private static final Pattern REGEX = Pattern.compile("([^&]+)(?:=)([^&]*)");
 
@@ -32,12 +35,12 @@ class FormStyleConverter implements FlatStyleConverter {
       return JsonNodeFactory.instance.nullNode();
     }
 
-    String type = param.getSchema().getType();
+    String type = param.getSchema().getSupposedType();
     Map<String, Object> paramValues;
 
-    if ("array".equals(type)) {
+    if (TYPE_ARRAY.equals(type)) {
       paramValues = getArrayValues(param, rawValue);
-    } else if ("object".equals(type)) {
+    } else if (TYPE_OBJECT.equals(type)) {
       paramValues = getObjectValues(param, rawValue);
     } else {
       paramValues = getPrimitiveValue(param, rawValue);

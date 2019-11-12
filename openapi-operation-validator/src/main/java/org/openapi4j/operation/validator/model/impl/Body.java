@@ -131,13 +131,13 @@ public class Body {
       : BodyConverter.jsonToNode(bodyIs);
   }
 
-  private JsonNode convertXml(final Schema schema) {
+  private JsonNode convertXml(final Schema schema) throws IOException {
     return (bodyStr != null)
       ? BodyConverter.xmlToNode(schema, bodyStr)
       : BodyConverter.xmlToNode(schema, bodyIs);
   }
 
-  private JsonNode convertFormUrlEncoded(final Schema schema, final String encoding) {
+  private JsonNode convertFormUrlEncoded(final Schema schema, final String encoding) throws IOException {
     return (bodyStr != null)
       ? BodyConverter.formUrlEncodedToNode(schema, bodyStr, encoding)
       : BodyConverter.formUrlEncodedToNode(schema, bodyIs, encoding);
@@ -149,7 +149,7 @@ public class Body {
       : BodyConverter.multipartToNode(schema, bodyIs, rawContentType, encoding);
   }
 
-  private JsonNode convertText() {
+  private JsonNode convertText() throws IOException {
     return (bodyStr != null)
       ? BodyConverter.textToNode(bodyStr)
       : BodyConverter.textToNode(bodyIs);

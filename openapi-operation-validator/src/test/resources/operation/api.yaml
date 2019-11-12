@@ -18,13 +18,10 @@ paths:
           'application/xml':
             schema:
               $ref: '#/components/schemas/FooModel'
-          'application/protobuf':
-            schema:
-              $ref: '#/components/schemas/FooModel'
-          'application/ion+json':
-            schema:
-              $ref: '#/components/schemas/FooModel'
           'multipart/form-data':
+            schema:
+              $ref: '#/components/schemas/FooModel'
+          'multipart/mixed':
             schema:
               $ref: '#/components/schemas/FooModel'
       responses:
@@ -60,3 +57,8 @@ components:
           items:
             type: integer
             format: int32
+        fieldObject:
+          type: object
+          properties:
+            id:
+              type: string

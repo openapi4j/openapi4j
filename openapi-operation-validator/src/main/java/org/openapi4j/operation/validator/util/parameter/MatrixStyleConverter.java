@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
+
 class MatrixStyleConverter implements FlatStyleConverter {
   private static final Pattern PREFIXED_SEMICOLON_NAME_REGEX = Pattern.compile("(?:;)([^;]+)(?:=)([^;]*)");
 
@@ -37,15 +40,15 @@ class MatrixStyleConverter implements FlatStyleConverter {
   }
 
   private Map<String, Object> getParameterValues(Parameter param, String rawValue, Pattern subPattern, String splitPattern) {
-    String type = param.getSchema().getType();
+    String type = param.getSchema().getSupposedType();
 
-    if ("object".equals(type)) {
+    if (TYPE_OBJECT.equals(type)) {
       return getObjectValues(param, rawValue, subPattern, splitPattern);
     }
 
     Map<String, Object> values = new HashMap<>();
 
-    if ("array".equals(type)) {
+    if (TYPE_ARRAY.equals(type)) {
       values.put(
         param.getName(),
         getArrayValues(param, rawValue, subPattern, splitPattern));

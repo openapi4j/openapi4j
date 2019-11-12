@@ -40,7 +40,10 @@ public final class ContentType {
    */
   public static boolean isMultipartFormData(final String contentType) {
     if (contentType == null) return false;
-    return contentType.toLowerCase().startsWith("multipart/form-data");
+
+    return
+      contentType.toLowerCase().startsWith("multipart/form-data") ||
+        contentType.toLowerCase().startsWith("multipart/mixed");
   }
 
   /**

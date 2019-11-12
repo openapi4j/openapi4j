@@ -2,12 +2,13 @@ package org.openapi4j.operation.validator.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import org.openapi4j.core.util.IOUtil;
 import org.openapi4j.parser.model.v3.Schema;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,8 +30,8 @@ class FormUrlConverter {
     return INSTANCE;
   }
 
-  JsonNode formUrlEncodedToNode(final Schema schema, final InputStream body, String encoding) {
-    return formUrlEncodedToNode(schema, BodyConverter.streamToString(body, Charset.forName(encoding)), encoding);
+  JsonNode formUrlEncodedToNode(final Schema schema, final InputStream body, String encoding) throws IOException {
+    return formUrlEncodedToNode(schema, IOUtil.toString(body, encoding), encoding);
   }
 
   JsonNode formUrlEncodedToNode(final Schema schema, final String body, final String encoding) {
