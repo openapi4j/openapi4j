@@ -67,7 +67,7 @@ publishing {
 }
 
 tasks.withType(Sign) {
-  onlyIf { version.endsWith("SNAPSHOT") && gradle.taskGraph.hasTask("publish") }
+  onlyIf { !version.endsWith("SNAPSHOT") }
 }
 
 signing {
