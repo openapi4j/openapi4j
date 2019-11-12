@@ -21,7 +21,7 @@ class ServerVariableValidator extends Validator3Base<OpenApi3, ServerVariable> {
 
   @Override
   public void validate(OpenApi3 api, final ServerVariable variable, final ValidationResults results) {
-    validateList(api, variable.getEnumValues(), results, false, ENUM, null);
+    validateList(api, variable.getEnums(), results, false, ENUM, null);
     validateString(variable.getDefault(), results, true, DEFAULT);
     validateString(variable.getDescription(), results, false, DESCRIPTION);
   }

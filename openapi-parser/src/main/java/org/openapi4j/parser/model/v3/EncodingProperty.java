@@ -8,7 +8,7 @@ import java.util.Map;
 public class EncodingProperty extends AbsExtendedOpenApiSchema<EncodingProperty> {
   private String contentType;
   private Boolean explode;
-  private Map<String, String> headers;
+  private Map<String, Header> headers;
   private String style;
 
   // ContentType
@@ -22,11 +22,11 @@ public class EncodingProperty extends AbsExtendedOpenApiSchema<EncodingProperty>
   }
 
   // Header
-  public Map<String, String> getHeaders() {
+  public Map<String, Header> getHeaders() {
     return headers;
   }
 
-  public EncodingProperty setHeaders(Map<String, String> headers) {
+  public EncodingProperty setHeaders(Map<String, Header> headers) {
     this.headers = headers;
     return this;
   }
@@ -35,11 +35,11 @@ public class EncodingProperty extends AbsExtendedOpenApiSchema<EncodingProperty>
     return mapHas(headers, name);
   }
 
-  public String getHeader(String name) {
+  public Header getHeader(String name) {
     return mapGet(headers, name);
   }
 
-  public EncodingProperty setHeader(String name, String header) {
+  public EncodingProperty setHeader(String name, Header header) {
     if (headers == null) {
       headers = new HashMap<>();
     }

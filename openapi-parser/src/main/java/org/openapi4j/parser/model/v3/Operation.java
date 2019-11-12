@@ -44,6 +44,11 @@ public class Operation extends AbsExtendedOpenApiSchema<Operation> {
     return this;
   }
 
+  public Operation insertTag(int index, String tag) {
+    tags = listAdd(tags, index, tag);
+    return this;
+  }
+
   public Operation removeTag(String tag) {
     listRemove(tags, tag);
     return this;

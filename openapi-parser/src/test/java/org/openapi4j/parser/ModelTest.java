@@ -10,19 +10,26 @@ import org.openapi4j.parser.model.v3.Header;
 import org.openapi4j.parser.model.v3.Link;
 import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Parameter;
 import org.openapi4j.parser.model.v3.Path;
 import org.openapi4j.parser.model.v3.RequestBody;
 import org.openapi4j.parser.model.v3.Response;
 import org.openapi4j.parser.model.v3.Schema;
+import org.openapi4j.parser.model.v3.SecurityParameter;
+import org.openapi4j.parser.model.v3.SecurityRequirement;
 import org.openapi4j.parser.model.v3.SecurityScheme;
+import org.openapi4j.parser.model.v3.Server;
+import org.openapi4j.parser.model.v3.ServerVariable;
 
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ModelTest extends ParsingChecker {
   @Test
@@ -149,26 +156,17 @@ public class ModelTest extends ParsingChecker {
   }
 
   @Test
-  public void linkTest() {
-    Link link = new Link();
-
-    mapCheck(
-      "fooschema",
-      "foovalue",
-      link::hasParameter,
-      link::getParameter,
-      link::setParameter,
-      link::setParameters,
-      link::removeParameter);
+  public void encodingPropertyTest() {
+    EncodingProperty obj = new EncodingProperty();
 
     mapCheck(
       "fooheader",
       new Header(),
-      link::hasHeader,
-      link::getHeader,
-      link::setHeader,
-      link::setHeaders,
-      link::removeHeader);
+      obj::hasHeader,
+      obj::getHeader,
+      obj::setHeader,
+      obj::setHeaders,
+      obj::removeHeader);
   }
 
   @Test
@@ -195,6 +193,29 @@ public class ModelTest extends ParsingChecker {
   }
 
   @Test
+  public void linkTest() {
+    Link link = new Link();
+
+    mapCheck(
+      "fooschema",
+      "foovalue",
+      link::hasParameter,
+      link::getParameter,
+      link::setParameter,
+      link::setParameters,
+      link::removeParameter);
+
+    mapCheck(
+      "fooheader",
+      new Header(),
+      link::hasHeader,
+      link::getHeader,
+      link::setHeader,
+      link::setHeaders,
+      link::removeHeader);
+  }
+
+  @Test
   public void mediaType() {
     MediaType obj = new MediaType();
 
@@ -218,17 +239,171 @@ public class ModelTest extends ParsingChecker {
   }
 
   @Test
-  public void encodingPropertyTest() {
-    EncodingProperty obj = new EncodingProperty();
+  public void operationTest() {
+    Operation obj = new Operation();
 
-    mapCheck(
-      "fooheader",
-      "fooheadervalue",
-      obj::hasHeader,
-      obj::getHeader,
-      obj::setHeader,
-      obj::setHeaders,
-      obj::removeHeader);
+    listCheck(
+      new Parameter(),
+      obj::hasParameters,
+      obj::getParameters,
+      obj::setParameters,
+      obj::addParameter,
+      obj::insertParameter,
+      obj::removeParameter);
+
+    listCheck(
+      new SecurityRequirement(),
+      obj::hasSecurityRequirements,
+      obj::getSecurityRequirements,
+      obj::setSecurityRequirements,
+      obj::addSecurityRequirement,
+      obj::insertSecurityRequirement,
+      obj::removeSecurityRequirement);
+
+    listCheck(
+      new Server(),
+      obj::hasServers,
+      obj::getServers,
+      obj::setServers,
+      obj::addServer,
+      obj::insertServer,
+      obj::removeServer);
+
+    listCheck(
+      "footag",
+      obj::hasTags,
+      obj::getTags,
+      obj::setTags,
+      obj::addTag,
+      obj::insertTag,
+      obj::removeTag);
+  }
+
+  @Test
+  public void pathTest() {
+    Path obj = new Path();
+
+    listCheck(
+      new Parameter(),
+      obj::hasParameters,
+      obj::getParameters,
+      obj::setParameters,
+      obj::addParameter,
+      obj::insertParameter,
+      obj::removeParameter);
+
+    listCheck(
+      new Server(),
+      obj::hasServers,
+      obj::getServers,
+      obj::setServers,
+      obj::addServer,
+      obj::insertServer,
+      obj::removeServer);
+  }
+
+  @Test
+  public void schemaTest() {
+    Schema obj = new Schema();
+
+    listCheck(
+      "fooenum",
+      obj::hasEnums,
+      obj::getEnums,
+      obj::setEnums,
+      obj::addEnum,
+      obj::insertEnum,
+      obj::removeEnum);
+
+    listCheck(
+      "foorequired",
+      obj::hasRequiredFields,
+      obj::getRequiredFields,
+      obj::setRequiredFields,
+      obj::addRequiredField,
+      obj::insertRequiredField,
+      obj::removeRequiredField);
+
+    listCheck(
+      new Schema(),
+      obj::hasAllOfSchemas,
+      obj::getAllOfSchemas,
+      obj::setAllOfSchemas,
+      obj::addAllOfSchema,
+      obj::insertAllOfSchema,
+      obj::removeAllOfSchema);
+
+    listCheck(
+      new Schema(),
+      obj::hasAnyOfSchemas,
+      obj::getAnyOfSchemas,
+      obj::setAnyOfSchemas,
+      obj::addAnyOfSchema,
+      obj::insertAnyOfSchema,
+      obj::removeAnyOfSchema);
+
+    listCheck(
+      new Schema(),
+      obj::hasOneOfSchemas,
+      obj::getOneOfSchemas,
+      obj::setOneOfSchemas,
+      obj::addOneOfSchema,
+      obj::insertOneOfSchema,
+      obj::removeOneOfSchema);
+  }
+
+  @Test
+  public void securityParameterTest() {
+    SecurityParameter obj = new SecurityParameter();
+
+    listCheck(
+      "fooparam",
+      obj::hasParameters,
+      obj::getParameters,
+      obj::setParameters,
+      obj::addParameter,
+      obj::insertParameter,
+      obj::removeParameter);
+  }
+
+  @Test
+  public void serverVariableTest() {
+    ServerVariable obj = new ServerVariable();
+
+    listCheck(
+      "fooenum",
+      obj::hasEnums,
+      obj::getEnums,
+      obj::setEnums,
+      obj::addEnum,
+      obj::insertEnum,
+      obj::removeEnum);
+  }
+
+  private <R> void listCheck(R value,
+                             Supplier<Boolean> has,
+                             Supplier<List<R>> get,
+                             Consumer<List<R>> set,
+                             Consumer<R> add,
+                             BiConsumer<Integer, R> insert,
+                             Consumer<R> rem) {
+
+    Assert.assertFalse(has.get());
+    Assert.assertNull(get.get());
+    // add
+    add.accept(value);
+    Assert.assertNotNull(has.get());
+    Assert.assertEquals(value, get.get().get(0));
+    // insert
+    insert.accept(0, value);
+    Assert.assertEquals(2, get.get().size());
+    // rem
+    rem.accept(value);
+    Assert.assertNotNull(has.get());
+    Assert.assertEquals(1, get.get().size());
+    // set
+    set.accept(null);
+    Assert.assertNull(get.get());
   }
 
   private <T, R> void mapCheck(T key,

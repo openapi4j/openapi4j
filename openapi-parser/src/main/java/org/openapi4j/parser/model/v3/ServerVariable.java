@@ -9,37 +9,37 @@ import java.util.List;
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class ServerVariable extends AbsExtendedOpenApiSchema<ServerVariable> {
   @JsonProperty("enum")
-  private List<String> enumValues;
+  private List<String> enums;
   @JsonProperty("default")
   private String defaultValue;
   private String description;
 
   // EnumValue
-  public List<String> getEnumValues() {
-    return enumValues;
+  public List<String> getEnums() {
+    return enums;
   }
 
-  public ServerVariable setEnumValues(List<String> enumValues) {
-    this.enumValues = enumValues;
+  public ServerVariable setEnums(List<String> enums) {
+    this.enums = enums;
     return this;
   }
 
-  public boolean hasEnumValues() {
-    return enumValues != null;
+  public boolean hasEnums() {
+    return enums != null;
   }
 
-  public ServerVariable addEnumValue(String enumValue) {
-    enumValues = listAdd(enumValues, enumValue);
+  public ServerVariable addEnum(String enumValue) {
+    enums = listAdd(enums, enumValue);
     return this;
   }
 
-  public ServerVariable insertEnumValue(int index, String enumValue) {
-    enumValues = listAdd(enumValues, index, enumValue);
+  public ServerVariable insertEnum(int index, String enumValue) {
+    enums = listAdd(enums, index, enumValue);
     return this;
   }
 
-  public ServerVariable removeEnumValue(String enumValue) {
-    listRemove(enumValues, enumValue);
+  public ServerVariable removeEnum(String enumValue) {
+    listRemove(enums, enumValue);
     return this;
   }
 
@@ -67,7 +67,7 @@ public class ServerVariable extends AbsExtendedOpenApiSchema<ServerVariable> {
   public ServerVariable copy(OAIContext context, boolean followRefs) {
     ServerVariable copy = new ServerVariable();
 
-    copy.setEnumValues(copyList(getEnumValues()));
+    copy.setEnums(copyList(getEnums()));
     copy.setDefault(getDefault());
     copy.setDescription(getDescription());
     copy.setExtensions(copyMap(getExtensions()));
