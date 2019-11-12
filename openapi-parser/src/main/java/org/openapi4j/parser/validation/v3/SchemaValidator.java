@@ -106,34 +106,37 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
 
   private void checkDiscriminator(OpenApi3 api, Schema schema, ValidationResults results) {
     Discriminator discriminator = schema.getDiscriminator();
-    if (discriminator != null) {
-      int count = 0;
-      count += schema.hasAllOfSchemas() ? 1 : 0;
-      count += schema.hasAnyOfSchemas() ? 1 : 0;
-      count += schema.hasOneOfSchemas() ? 1 : 0;
 
-      if (count > 1) {
-        results.addError(String.format(DISCRIM_ONLY_ONE, discriminator.getPropertyName()), DISCRIMINATOR);
-        return;
-      }
+    if (discriminator == null) {
+      return;
+    }
 
-      if (count == 0) {
-        // discriminator is located aside properties
-        checkSchemaDiscriminator(api, discriminator, Collections.singletonList(schema), results);
-        return;
-      }
+    int count = 0;
+    count += schema.hasAllOfSchemas() ? 1 : 0;
+    count += schema.hasAnyOfSchemas() ? 1 : 0;
+    count += schema.hasOneOfSchemas() ? 1 : 0;
 
+    if (count > 1) {
+      results.addError(String.format(DISCRIM_ONLY_ONE, discriminator.getPropertyName()), DISCRIMINATOR);
+    } else if (count == 0) {
+      // discriminator is located aside properties
+      checkSchemaDiscriminator(api, discriminator, Collections.singletonList(schema), results);
+    } else {
       // discriminator is aside xxxOf
       // check properties for the schemas
-      if (schema.hasAllOfSchemas()) {
-        if (!checkSchemaDiscriminator(api, discriminator, schema.getAllOfSchemas(), new ValidationResults())) {
-          results.addError(String.format(DISCRIM_CONSTRAINT_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
-        }
-      } else if (schema.hasAnyOfSchemas()) {
-        checkSchemaDiscriminator(api, discriminator, schema.getAnyOfSchemas(), results);
-      } else {
-        checkSchemaDiscriminator(api, discriminator, schema.getOneOfSchemas(), results);
+      checkSchemaCollections(api, schema, discriminator, results);
+    }
+  }
+
+  private void checkSchemaCollections(OpenApi3 api, Schema schema, Discriminator discriminator, ValidationResults results) {
+    if (schema.hasAllOfSchemas()) {
+      if (!checkSchemaDiscriminator(api, discriminator, schema.getAllOfSchemas(), new ValidationResults())) {
+        results.addError(String.format(DISCRIM_CONSTRAINT_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
       }
+    } else if (schema.hasAnyOfSchemas()) {
+      checkSchemaDiscriminator(api, discriminator, schema.getAnyOfSchemas(), results);
+    } else {
+      checkSchemaDiscriminator(api, discriminator, schema.getOneOfSchemas(), results);
     }
   }
 

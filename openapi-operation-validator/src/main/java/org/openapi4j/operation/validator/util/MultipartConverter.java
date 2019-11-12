@@ -25,7 +25,16 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 
 class MultipartConverter {
-  static JsonNode multipartToNode(final Schema schema, final InputStream body, final String rawContentType, final String encoding) throws IOException {
+  private static final MultipartConverter INSTANCE = new MultipartConverter();
+
+  private MultipartConverter() {
+  }
+
+  public static MultipartConverter instance() {
+    return INSTANCE;
+  }
+
+  JsonNode multipartToNode(final Schema schema, final InputStream body, final String rawContentType, final String encoding) throws IOException {
     RequestContext requestContext = rcInstance.apply(body, rawContentType, encoding);
 
     ObjectNode mappedBody = JsonNodeFactory.instance.objectNode();
@@ -36,24 +45,8 @@ class MultipartConverter {
         FileItemStream item = iterator.next();
         String name = item.getFieldName();
         if (item.isFormField()) {
-          // Add value as direct value or collection if multi is detected.
           JsonNode value = mappedBody.get(name);
-          if (value == null) {
-            if (item.getContentType() != null) {
-              mappedBody.put(name, Body.from(item.openStream()).getContentAsJson(schema.getProperty(name), item.getContentType()));
-            } else {
-              mappedBody.put(name, convertType(schema.getProperty(name), item, encoding));
-            }
-          } else {
-            if (value instanceof ArrayNode) {
-              ((ArrayNode) value).add(convertType(schema.getProperty(name), item, encoding));
-            } else {
-              ArrayNode values = JsonNodeFactory.instance.arrayNode();
-              values.add(value);
-              values.add(convertType(schema.getProperty(name), item, encoding));
-              mappedBody.put(name, values);
-            }
-          }
+          setValue(schema, mappedBody, item, name, value, encoding);
         } else {
           mappedBody.put(name, item.getName());
         }
@@ -65,12 +58,32 @@ class MultipartConverter {
     return mappedBody;
   }
 
-  static JsonNode multipartToNode(final Schema schema, final String body, final String rawContentType, final String encoding) throws IOException {
+  JsonNode multipartToNode(final Schema schema, final String body, final String rawContentType, final String encoding) throws IOException {
     InputStream is = new ByteArrayInputStream(body.getBytes(encoding));
     return multipartToNode(schema, is, rawContentType, encoding);
   }
 
-  private static JsonNode convertType(final Schema schema, final FileItemStream item, final String encoding) throws IOException {
+  // Add value as direct value or collection if multi is detected.
+  private void setValue(Schema schema, ObjectNode mappedBody, FileItemStream item, String name, JsonNode value, String encoding) throws IOException {
+    if (value == null) {
+      if (item.getContentType() != null) {
+        mappedBody.set(name, Body.from(item.openStream()).getContentAsJson(schema.getProperty(name), item.getContentType()));
+      } else {
+        mappedBody.set(name, convertType(schema.getProperty(name), item, encoding));
+      }
+    } else {
+      if (value instanceof ArrayNode) {
+        ((ArrayNode) value).add(convertType(schema.getProperty(name), item, encoding));
+      } else {
+        ArrayNode values = JsonNodeFactory.instance.arrayNode();
+        values.add(value);
+        values.add(convertType(schema.getProperty(name), item, encoding));
+        mappedBody.set(name, values);
+      }
+    }
+  }
+
+  private JsonNode convertType(final Schema schema, final FileItemStream item, final String encoding) throws IOException {
     switch (schema.getSupposedType()) {
       case TYPE_OBJECT:
         String content = IOUtil.toString(item.openStream(), encoding);

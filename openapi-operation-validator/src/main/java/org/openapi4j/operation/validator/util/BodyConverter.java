@@ -27,11 +27,11 @@ public final class BodyConverter {
   }
 
   public static JsonNode multipartToNode(final Schema schema, InputStream body, final String rawContentType, final String encoding) throws IOException {
-    return MultipartConverter.multipartToNode(schema, body, rawContentType, encoding);
+    return MultipartConverter.instance().multipartToNode(schema, body, rawContentType, encoding);
   }
 
   public static JsonNode multipartToNode(final Schema schema, final String body, final String rawContentType, final String encoding) throws IOException {
-    return MultipartConverter.multipartToNode(schema, body, rawContentType, encoding);
+    return MultipartConverter.instance().multipartToNode(schema, body, rawContentType, encoding);
   }
 
   public static JsonNode jsonToNode(InputStream body) throws IOException {
