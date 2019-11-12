@@ -57,11 +57,15 @@ See related projects for limitations and issues.
 
 ## Roadmap
 
-0.1 : First beta release.  
-0.2 : Rework on some naive code parts that could lead to NPE mostly.  
-0.3 : Complete the Multipart/mixed implementation.  
-0.4 : Complete response validation implementation.
-Next : Ready for 1.0 candidate ?  
+- 0.1 :
+    - First beta release.  
+- 0.2 : 
+    - Rework on some naive code parts that could lead to NPE mostly.  
+    -  Complete the multipart/mixed implementation.  
+- 0.3 :
+    - Complete response validation implementation.  
+- Next :
+    - Ready for 1.0 candidate ?  
 
 Common until version 1.0 :
 * bug fixing / code coverage.
