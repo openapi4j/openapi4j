@@ -16,10 +16,6 @@ cache:
     - $HOME/.gradle/wrapper/
     - $HOME/.sonar
 
-env:
-  global:
-    - GRADLE_OPTS="-Xmx512m -XX:MaxPermSize=512m"
-
 addons:
   sonarcloud:
     organization: "openapi4j"
@@ -46,7 +42,9 @@ jobs:
 
     # run sonarqube
     - stage: sonarqube
-      script: ./gradlew jacocoTestReport sonarqube
+      script:
+      - git fetch --unshallow --quiet
+      - ./gradlew jacocoTestReport sonarqube
 
     # publish snapshot version
     - stage: snapshot
