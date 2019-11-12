@@ -16,6 +16,10 @@ cache:
     - $HOME/.gradle/wrapper/
     - $HOME/.sonar
 
+env:
+  global:
+    - GRADLE_OPTS="-Xmx512m -XX:MaxPermSize=512m"
+
 addons:
   sonarcloud:
     organization: "openapi4j"
