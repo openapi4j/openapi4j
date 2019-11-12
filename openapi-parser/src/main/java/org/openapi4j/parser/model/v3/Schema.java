@@ -11,6 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DOUBLE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_FLOAT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT32;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT64;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
+
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @JsonDeserialize(using = SchemaDeserializer.class)
 @JsonSerialize(using = SchemaSerializer.class)
@@ -265,6 +275,33 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   // Type
   public String getType() {
     return type;
+  }
+
+  public String getSupposedType() {
+    if (type != null) {
+      return type;
+    }
+
+    // Deduce type from other properties
+    if (getProperties() != null) {
+      return TYPE_OBJECT;
+    } else if (getItemsSchema() != null) {
+      return TYPE_ARRAY;
+    } else if (getFormat() != null) {
+      // Deduce type from format
+      switch (getFormat()) {
+        case FORMAT_INT32:
+        case FORMAT_INT64:
+          return TYPE_INTEGER;
+        case FORMAT_FLOAT:
+        case FORMAT_DOUBLE:
+          return TYPE_NUMBER;
+        default:
+          return TYPE_STRING;
+      }
+    }
+
+    return null;
   }
 
   public Schema setType(String type) {

@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
+
 interface FlatStyleConverter extends StyleConverter {
   default Map<String, Object> getParameterValues(Parameter param, String rawValue, String splitPattern) {
     Map<String, Object> values = new HashMap<>();
@@ -15,7 +18,7 @@ interface FlatStyleConverter extends StyleConverter {
       return values;
     }
 
-    if ("object".equals(param.getSchema().getType())) {
+    if (TYPE_OBJECT.equals(param.getSchema().getSupposedType())) {
       if (param.isExplode()) {
         Scanner scanner = new Scanner(rawValue);
         scanner.useDelimiter(splitPattern);
@@ -31,7 +34,7 @@ interface FlatStyleConverter extends StyleConverter {
           values.put(splitValues[i++], splitValues[i++]);
         }
       }
-    } else if ("array".equals(param.getSchema().getType())) {
+    } else if (TYPE_ARRAY.equals(param.getSchema().getSupposedType())) {
       values.put(param.getName(), Arrays.asList(rawValue.split(splitPattern)));
     } else {
       values.put(param.getName(), rawValue);

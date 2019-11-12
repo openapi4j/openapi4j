@@ -26,8 +26,7 @@ public final class TypeConverter {
   public JsonNode convertTypes(final Schema schema,
                                final Map<String, Object> content) {
 
-    String type = schema.getType() != null ? schema.getType() : TYPE_OBJECT;
-    switch (type) {
+    switch (schema.getSupposedType()) {
       case TYPE_ARRAY:
         return convertArray(schema.getItemsSchema(), content);
       case TYPE_OBJECT:
@@ -52,13 +51,11 @@ public final class TypeConverter {
 
       Object value = content.get(entryKey);
       if (value == null) {
-        convertedContent.set(entryKey, JsonNodeFactory.instance.nullNode());
         continue;
       }
 
       Schema propSchema = entry.getValue();
-      String type = propSchema.getType() != null ? propSchema.getType() : TYPE_OBJECT;
-      switch (type) {
+      switch (propSchema.getSupposedType()) {
         case TYPE_OBJECT:
           if (value instanceof Map) {
             convertedContent.set(entryKey, convertObject(propSchema, (Map<String, Object>) value));
@@ -86,8 +83,7 @@ public final class TypeConverter {
 
     ArrayNode convertedContent = JsonNodeFactory.instance.arrayNode();
 
-    String type = schema.getType() != null ? schema.getType() : TYPE_OBJECT;
-    switch (type) {
+    switch (schema.getSupposedType()) {
       case TYPE_OBJECT:
         if (content instanceof Map) {
           convertedContent.add(convertObject(schema, (Map<String, Object>) content));
@@ -114,8 +110,7 @@ public final class TypeConverter {
     }
 
     try {
-      String type = schema.getType() != null ? schema.getType() : TYPE_OBJECT;
-      switch (type) {
+      switch (schema.getSupposedType()) {
         case TYPE_BOOLEAN:
           return JsonNodeFactory.instance.booleanNode(parseBoolean(value.toString()));
         case TYPE_INTEGER:

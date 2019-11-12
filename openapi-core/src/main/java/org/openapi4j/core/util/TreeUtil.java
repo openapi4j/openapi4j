@@ -111,7 +111,7 @@ public final class TreeUtil {
 
     try {
       InputStream in = UrlContentRetriever.instance().get(url, authOptions);
-      String content = IOUtil.toString(in, StandardCharsets.UTF_8);
+      String content = IOUtil.toString(in, StandardCharsets.UTF_8.name());
       String firstChar = getFirstVisibleCharacter(content);
 
       if ("{".equals(firstChar) || "[".equals(firstChar)) {
@@ -148,7 +148,7 @@ public final class TreeUtil {
 
     try {
       InputStream in = UrlContentRetriever.instance().get(url, authOptions);
-      String content = IOUtil.toString(in, StandardCharsets.UTF_8);
+      String content = IOUtil.toString(in, StandardCharsets.UTF_8.name());
       String firstChar = getFirstVisibleCharacter(content);
 
       if ("{".equals(firstChar) || "[".equals(firstChar)) {

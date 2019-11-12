@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
+
 class DelimitedStyleConverter implements FlatStyleConverter {
   private static final Pattern REGEX = Pattern.compile("([^&]+)(?:=)([^&]*)");
   private final String delimRegex;
@@ -28,7 +30,7 @@ class DelimitedStyleConverter implements FlatStyleConverter {
       return JsonNodeFactory.instance.nullNode();
     }
 
-    if ("array".equals(param.getSchema().getType())) {
+    if (TYPE_ARRAY.equals(param.getSchema().getSupposedType())) {
       Map<String, Object> paramValues = new HashMap<>();
 
       List<String> arrayValues = new ArrayList<>();

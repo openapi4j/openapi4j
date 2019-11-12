@@ -73,9 +73,9 @@ import java.util.regex.Pattern;
 public final class ParameterConverter {
   private static final String LABEL = "label";
   private static final String MATRIX = "matrix";
-  private static final String SPACEDELIMITED = "spaceDelimited";
-  private static final String PIPEDELIMITED = "pipeDelimited";
-  private static final String DEEPOBJECT = "deepObject";
+  private static final String SPACE_DELIMITED = "spaceDelimited";
+  private static final String PIPE_DELIMITED = "pipeDelimited";
+  private static final String DEEP_OBJECT = "deepObject";
 
   private ParameterConverter() {}
 
@@ -135,11 +135,11 @@ public final class ParameterConverter {
     for (Parameter param : queryParameters) {
       final String style = param.getStyle();
 
-      if (SPACEDELIMITED.equals(style)) {
+      if (SPACE_DELIMITED.equals(style)) {
         values.put(param.getName(), SpaceDelimitedStyleConverter.instance().convert(param, rawValue));
-      } else if (PIPEDELIMITED.equals(style)) {
+      } else if (PIPE_DELIMITED.equals(style)) {
         values.put(param.getName(), PipeDelimitedStyleConverter.instance().convert(param, rawValue));
-      } else if (DEEPOBJECT.equals(style)) {
+      } else if (DEEP_OBJECT.equals(style)) {
         values.put(param.getName(), DeepObjectStyleConverter.instance().convert(param, rawValue));
       } else { // form is the default
         if (param.getExplode() == null) { // explode true is default
