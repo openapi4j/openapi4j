@@ -1,48 +1,41 @@
 package org.openapi4j.parser.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements OpenApiSchema<M> {
   /**
    * {@inheritDoc}
    */
   @Override
-  @SuppressWarnings("unchecked")
-  public <T> T toJson(OAIContext context, EnumSet<SerializationFlag> flags) throws EncodeException {
-    if (flags == null) {
-      flags = EnumSet.of(SerializationFlag.OUT_AS_JSON);
-    }
-
+  public JsonNode toNode(OAIContext context, boolean followRefs) throws EncodeException {
     OpenApiSchema<M> model
-      = flags.contains(SerializationFlag.FOLLOW_REFS)
+      = followRefs
       ? copy(context, true)
       : this;
 
-    if (flags.contains(SerializationFlag.OUT_AS_STRING)) {
-      if (flags.contains(SerializationFlag.OUT_AS_YAML)) {
-        return (T) TreeUtil.toYaml(model);
-      } else {
-        return (T) TreeUtil.toJson(model);
-      }
-    }
-
-    return (T) TreeUtil.toJsonNode(model);
+    return TreeUtil.toJsonNode(model);
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public String toJson() throws EncodeException {
-    return TreeUtil.toJson(this);
+  public String toString(OAIContext context, EnumSet<SerializationFlag> flags) throws EncodeException {
+    OpenApiSchema<M> model
+      = flags.contains(SerializationFlag.FOLLOW_REFS)
+      ? copy(context, true)
+      : this;
+
+    if (flags.contains(SerializationFlag.OUT_AS_YAML)) {
+      return TreeUtil.toYaml(model);
+    } else {
+      return TreeUtil.toJson(model);
+    }
   }
 
   protected <T> List<T> copyList(List<T> original) {

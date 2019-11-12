@@ -48,4 +48,9 @@ public class IntegrationTest extends ParsingChecker {
   public void api() throws Exception {
     checkParsing("/parser/oai-integration/api-definition.yaml");
   }
+
+  @Test
+  public void fullOfKeywords() throws Exception {
+    checkParsing("/parser/oai-integration/fullOfKeywords.yaml");
+  }
 }

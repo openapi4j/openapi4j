@@ -112,9 +112,9 @@ class LinkValidator extends ExpressionValidator<Link> {
 
   private void checkSourceOperationParameters(OpenApi3 api, Operation operation, Link link, ValidationResults results) {
     for (Map.Entry<String, String> entry : link.getParameters().entrySet()) {
-      if (!checkRequestParameter(api, operation, entry.getValue(), LINKS, results) &&
-          !checkResponseParameter(api, operation, entry.getValue(), LINKS, results)) {
-        results.addError(String.format(PARAM_PATH_ERR_MSG, entry.getValue(), entry.getKey()), LINKS);
+      if (!checkRequestParameter(api, operation, entry.getValue(), results) &&
+          !checkResponseParameter(api, operation, entry.getValue(), results)) {
+        results.addError(String.format(PARAM_PATH_ERR_MSG, entry.getValue(), entry.getKey()));
       }
     }
   }
@@ -130,7 +130,7 @@ class LinkValidator extends ExpressionValidator<Link> {
       }
 
       if (!hasParameter) {
-        results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, paramName), LINKS);
+        results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, paramName));
       }
     }
   }

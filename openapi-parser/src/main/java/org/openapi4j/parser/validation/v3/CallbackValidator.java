@@ -9,7 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.CALLBACKS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
 
 class CallbackValidator extends ExpressionValidator<Callback> {
@@ -41,10 +40,10 @@ class CallbackValidator extends ExpressionValidator<Callback> {
     Matcher matcher = PATTERN_PARAM.matcher(expression);
     while (matcher.find()) {
       if (
-        !checkRequestParameter(api, operation, matcher.group(1), CALLBACKS, results) &&
-        !checkResponseParameter(api, operation, matcher.group(1), CALLBACKS, results)
+        !checkRequestParameter(api, operation, matcher.group(1), results) &&
+        !checkResponseParameter(api, operation, matcher.group(1), results)
       ) {
-        results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, matcher.group(1)), CALLBACKS);
+        results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, matcher.group(1)));
       }
     }
   }

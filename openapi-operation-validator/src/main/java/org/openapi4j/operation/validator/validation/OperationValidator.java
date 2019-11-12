@@ -1,7 +1,6 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.v3.OAI3;
@@ -10,26 +9,13 @@ import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.util.ContentType;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
-import org.openapi4j.parser.model.SerializationFlag;
-import org.openapi4j.parser.model.v3.MediaType;
-import org.openapi4j.parser.model.v3.OpenApi3;
-import org.openapi4j.parser.model.v3.Operation;
-import org.openapi4j.parser.model.v3.Parameter;
-import org.openapi4j.parser.model.v3.Path;
-import org.openapi4j.parser.model.v3.Response;
-import org.openapi4j.parser.model.v3.Schema;
+import org.openapi4j.parser.model.v3.*;
 import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -241,7 +227,7 @@ public class OperationValidator {
             SchemaValidator validator = new SchemaValidator(
               context,
               param.getName(),
-              param.getSchema().toJson(openApi.getContext(), EnumSet.of(SerializationFlag.FOLLOW_REFS)));
+              param.getSchema().toNode(openApi.getContext(), true));
 
             validators.put(param, validator);
           } catch (EncodeException ex) {
@@ -283,7 +269,7 @@ public class OperationValidator {
           SchemaValidator validator = new SchemaValidator(
             context,
             BODY,
-            bodySchema.toJson(openApi.getContext(), EnumSet.of(SerializationFlag.FOLLOW_REFS)));
+            bodySchema.toNode(openApi.getContext(), true));
 
           validators.put(entry.getKey(), validator);
         } catch (EncodeException ex) {

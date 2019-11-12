@@ -10,10 +10,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +31,7 @@ class FormUrlConverter {
     return formUrlEncodedToNode(schema, IOUtil.toString(body, encoding), encoding);
   }
 
+  @SuppressWarnings("unchecked")
   JsonNode formUrlEncodedToNode(final Schema schema, final String body, final String encoding) {
     String decodedBody;
     try {
@@ -54,11 +52,10 @@ class FormUrlConverter {
       if (value == null) {
         params.put(matcher.group(1), matcher.group(2));
       } else {
-        if (value instanceof Collection) {
-          //noinspection unchecked
-          ((Collection) value).add(matcher.group(2));
+        if (value instanceof List) {
+          ((List<Object>) value).add(matcher.group(2));
         } else {
-          Collection<Object> values = new ArrayList<>();
+          List<Object> values = new ArrayList<>();
           values.add(value);
           values.add(matcher.group(2));
           params.put(matcher.group(1), values);

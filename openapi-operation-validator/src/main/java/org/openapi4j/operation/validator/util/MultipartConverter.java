@@ -6,11 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.FileUpload;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.RequestContext;
+import org.apache.commons.fileupload.*;
 import org.openapi4j.core.util.IOUtil;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.operation.validator.model.impl.Body;
@@ -35,7 +31,7 @@ class MultipartConverter {
   }
 
   JsonNode multipartToNode(final Schema schema, final InputStream body, final String rawContentType, final String encoding) throws IOException {
-    RequestContext requestContext = rcInstance.apply(body, rawContentType, encoding);
+    UploadContext requestContext = rcInstance.apply(body, rawContentType, encoding);
 
     ObjectNode mappedBody = JsonNodeFactory.instance.objectNode();
 
@@ -101,13 +97,13 @@ class MultipartConverter {
    */
   @FunctionalInterface
   private interface UploadContextInstance {
-    RequestContext apply(
+    UploadContext apply(
       final InputStream body,
       final String contentType,
       final String encoding);
   }
 
-  private static final UploadContextInstance rcInstance = (body, contentType, encoding) -> new RequestContext() {
+  private static final UploadContextInstance rcInstance = (body, contentType, encoding) -> new UploadContext() {
     @Override
     public String getCharacterEncoding() {
       return encoding;
@@ -120,6 +116,11 @@ class MultipartConverter {
 
     @Override
     public int getContentLength() {
+      return 0;
+    }
+
+    @Override
+    public long contentLength() {
       return 0;
     }
 

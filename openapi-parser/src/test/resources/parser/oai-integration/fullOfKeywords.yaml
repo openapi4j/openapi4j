@@ -2,20 +2,20 @@ openapi: 3.0.0
 info:
   title: My silly API
   description: description
-  termsOfService: termsOfService
+  termsOfService: http://my.url.com
   contact:
     name: name
-    url: url
-    email: email
+    url: http://my.url.com
+    email: email@my.url.com
     x-foo: foo
   license:
     name: name
-    url: url
+    url: http://my.url.com
     x-foo: foo
   version: version
   x-foo: foo
 servers:
-  - url: url
+  - url: http://my.url.com
     description: description
     variables:
       var1:
@@ -33,7 +33,7 @@ servers:
         description: description
         x-foo: foo
     x-foo: foo
-  - url: url2
+  - url: http://my.url.com
     description: description2
     x-foo: foo
 paths:
@@ -48,17 +48,16 @@ paths:
       description: description
       externalDocs:
         description: description
-        url: url
+        url: http://my.url.com
         x-foo: foo
       operationId: operationId
       parameters:
         - name: name
-          in: in
+          in: query
           description: description
           required: true
           deprecated: false
-          allowEmptyValue: true
-          style: style
+          style: form
           explode: true
           allowReserved: true
           examples:
@@ -93,7 +92,7 @@ paths:
                       description: description
                       schema:
                         type: integer
-                  style: style
+                  style: simple
                   explode: true
                   x-foo: foo
               x-foo: foo
@@ -156,10 +155,8 @@ paths:
           links:
             name:
               operationRef: '#/paths/~1foo/get'
-              operationId: operationId
               parameters:
-                param1: xxxx
-                param2: yyyy
+                name: $request.query.name
               description: description
               x-foo: foo
         200:
@@ -172,11 +169,17 @@ paths:
             get:
               summary: summary
               operationId: operationId
+              responses:
+                '200':
+                  description: description
           expr2:
             summary: summary
             description: description
             get:
               operationId: operationid
+              responses:
+                '200':
+                  description: description
         yyy:
           expr1:
             summary: summary
@@ -184,16 +187,22 @@ paths:
             get:
               summary: summary
               operationId: operationId
+              responses:
+                '200':
+                  description: description
           expr2:
             summary: summary
             description: description
             get:
               operationId: operationid
+              responses:
+                '200':
+                  description: description
       deprecated: false
       security:
-        - sec1: [a, b, c]
-          sec2: []
-        - sec3: []
+        - scheme2: [a, b, c]
+          scheme1: []
+        - scheme1: []
       x-foo: foo
     x-foo: foo
 components:
@@ -241,24 +250,19 @@ components:
           type: string
       additionalProperties: true
       description: description
-      format: format
-      default: xyzzy
+      default: {}
       nullable: true
-      discriminator:
-        propertyName: a
-        mapping:
-          s2: '#/components/schemas/schema2'
       readOnly: true
       writeOnly: false
       xml:
         name: name
-        namespace: namespace
+        namespace: http://my.url.com
         prefix: prefix
         attribute: true
         wrapped: false
       externalDocs:
         description: description
-        url: url
+        url: http://my.url.com
       example: xxx
       deprecated: true
       x-foo: foo
@@ -266,6 +270,24 @@ components:
       title: title
       additionalProperties:
         type: integer
+    schema3:
+      type: integer
+      format: int32
+    schema4:
+      oneOf:
+      - $ref: '#/components/schemas/schema5'
+      - $ref: '#/components/schemas/schema5'
+      discriminator:
+        propertyName: pet_type
+        mapping:
+          cat: '#/components/schemas/schema5'
+    schema5:
+      type: object
+      required:
+      - pet_type
+      properties:
+        pet_type:
+          type: string
   responses:
     resp1:
       description: description
@@ -274,10 +296,10 @@ components:
   parameters:
     param1:
       name: name
-      in: in
+      in: path
     param2:
       name: name
-      in: in
+      in: cookie
   examples:
     example2:
       value: xyzzy
@@ -299,7 +321,7 @@ components:
       in: query
       scheme: http
       bearerFormat: bearerFormat
-      openIdConnectUrl: openIdConnect
+      openIdConnectUrl: http://my.url.com
       x-foo: foo
     scheme2:
       type: oauth2
@@ -310,40 +332,36 @@ components:
       bearerFormat: bearerFormat
       flows:
         implicit:
-          authorizationUrl: authorizationUrl
-          tokenUrl: tokenUrl
-          refreshUrl: refreshUrl
+          authorizationUrl: http://my.url.com
+          refreshUrl: http://my.url.com
           scopes:
             xxx: xxx
             yyy: yyy
           x-foo: foo
         password:
-          authorizationUrl: authorizationUrl
-          tokenUrl: tokenUrl
-          refreshUrl: refreshUrl
+          tokenUrl: http://my.url.com
           scopes:
             xxx: xxx
             yyy: yyy
           x-foo: foo
         clientCredentials:
-          authorizationUrl: authorizationUrl
-          tokenUrl: tokenUrl
-          refreshUrl: refreshUrl
+          tokenUrl: http://my.url.com
+          refreshUrl: http://my.url.com
           scopes:
             xxx: xxx
             yyy: yyy
           x-foo: foo
           x-bar: bar
         authorizationCode:
-          authorizationUrl: authorizationUrl
-          tokenUrl: tokenUrl
-          refreshUrl: refreshUrl
+          authorizationUrl: http://my.url.com
+          tokenUrl: http://my.url.com
+          refreshUrl: http://my.url.com
           scopes:
             xxx: xxx
             yyy: yyy
           x-foo: foo
         x-foo: foo
-      openIdConnectUrl: openIdConnect
+      openIdConnectUrl: http://my.url.com
       x-foo: foo
   links:
     link1:
@@ -361,6 +379,6 @@ components:
 tags: []
 externalDocs:
   description: description
-  url: url
+  url: http://my.url.com
   x-foo: foo
 x-foo: foo

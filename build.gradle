@@ -28,6 +28,11 @@ allprojects {
     mavenLocal()
   }
 
+  /*tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.deprecation = true
+  }*/
+
   sonarqube {
     properties {
       property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"

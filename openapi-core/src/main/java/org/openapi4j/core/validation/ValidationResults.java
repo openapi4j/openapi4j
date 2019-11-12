@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Representation of results from a validation process.
@@ -17,8 +15,7 @@ public class ValidationResults implements Serializable {
   // The validation items
   private final List<ValidationItem> items = new ArrayList<>();
   // The breadcrumb
-  // We use treemap for performance to avoid array copies here
-  private final Map<Integer, String> crumbs = new TreeMap<>();
+  private final List<String> crumbs = new ArrayList<>();
 
   /**
    * Add a result.
@@ -152,7 +149,7 @@ public class ValidationResults implements Serializable {
 
   private boolean appendCrumb(String crumb) {
     if (crumb != null) {
-      crumbs.put(crumbs.size() + 1, crumb);
+      crumbs.add(crumb);
       return true;
     }
 
@@ -218,19 +215,18 @@ public class ValidationResults implements Serializable {
     private final String msg;
     private final String crumbs;
 
-    ValidationItem(ValidationSeverity severity, String msg, Map<Integer, String> crumbs) {
+    ValidationItem(ValidationSeverity severity, String msg, List<String> crumbs) {
       this.severity = severity;
       this.msg = msg;
-      this.crumbs = joinCrumbs(crumbs.values(), null);
+      this.crumbs = joinCrumbs(crumbs, null);
     }
 
-    ValidationItem(ValidationSeverity severity, String msg, Map<Integer, String> crumbs, String crumb) {
+    ValidationItem(ValidationSeverity severity, String msg, List<String> crumbs, String crumb) {
       this.severity = severity;
       this.msg = msg;
-      this.crumbs = joinCrumbs(crumbs.values(), crumb);
+      this.crumbs = joinCrumbs(crumbs, crumb);
     }
 
-    @SuppressWarnings("WeakerAccess")
     public ValidationSeverity severity() {
       return severity;
     }

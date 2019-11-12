@@ -17,8 +17,8 @@ import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCOPES;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.TOKENURL;
 
 class OAuthFlowValidator extends Validator3Base<OpenApi3, OAuthFlow> {
-  private static final String AUTH_URL_NOT_ALLOWED = "'authorizationUrl' is not allowed when OAuth2 configuration is 'implicit' or 'authorizationCode'";
-  private static final String TOKEN_URL_NOT_ALLOWED = "'tokenUrl' is not allowed when OAuth2 configuration is 'implicit' or 'authorizationCode'";
+  private static final String AUTH_URL_NOT_ALLOWED = "'authorizationUrl' is not allowed when OAuth2 configuration is 'implicit' or 'authorizationCode'.";
+  private static final String TOKEN_URL_NOT_ALLOWED = "'tokenUrl' is not allowed when OAuth2 configuration is 'implicit'.";
 
   private static final Validator<OpenApi3, OAuthFlow> INSTANCE = new OAuthFlowValidator();
 

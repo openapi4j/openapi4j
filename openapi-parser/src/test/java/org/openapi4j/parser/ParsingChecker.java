@@ -10,6 +10,7 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.v3.OpenApi3Validator;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+import java.io.File;
 import java.net.URL;
 
 class ParsingChecker {
@@ -17,7 +18,13 @@ class ParsingChecker {
     URL specPath = getClass().getResource(path);
 
     // Check parsing with validation
-    OpenApi3 api = new OpenApi3Parser().parse(specPath, false);
+    OpenApi3 api;
+
+    if (specPath != null) {
+      api = new OpenApi3Parser().parse(new File(specPath.toURI()), false);
+    } else {
+      api = new OpenApi3Parser().parse((File) null, false);
+    }
     ValidationResults results = OpenApi3Validator.instance().validate(api);
     System.out.print(results.toString());
 
