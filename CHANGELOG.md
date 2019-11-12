@@ -11,10 +11,7 @@
 
 - Improve tests [\#8](https://github.com/openapi4j/openapi4j/pull/8) ([llfbandit](https://github.com/llfbandit))
 
-# Changelog
-
 ## [0.1](https://github.com/openapi4j/openapi4j/tree/0.1) (2019-11-08)
-
 
 **Implemented enhancements:**
 
