@@ -31,14 +31,15 @@ script:
   - ./gradlew check
   # run sonarqube with coverage report when not on PR
   - |
-    if [ "$TRAVIS_PULL_REQUEST" == "false" ]
-    then
+    # if [ "$TRAVIS_PULL_REQUEST" == "false" ]
+    # then
       git fetch --unshallow --quiet
       ./gradlew jacocoTestReport sonarqube
-    fi
+    # fi
   # publish snapshot version when not on PR & TAG
   - |
-    if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -z "$TRAVIS_TAG" ]
+    # if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -z "$TRAVIS_TAG" ]
+    if [ -z "$TRAVIS_TAG" ]
     then
       ./gradlew publish
     fi
