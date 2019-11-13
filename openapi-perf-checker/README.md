@@ -31,7 +31,7 @@ Notes :
 
 Notes :  
 * JsonTools has only 100 iterations.
-* Networknt values are not so consistent. Ratio is between 40-65%
+* Networknt values are not so consistent. Performance gain is somewhere between 40-65%
 
 
 | Library           | Version       | Time          | Iterations    | % time  |
@@ -48,13 +48,16 @@ Notes :
 | JsonTools         | 2.2.11        | 879,43 ms     | 100           | excl.   |
 
 ## Operation reports
-* First iteration to explicitly see operation validators warm up.
-* Iteration includes request wrapping but not operation lookup.
+* Replaying multiple times this process shows much shorter time values, but it's not the point here.  
+We stick with the first showed values for version comparison.
 
-| Library           | Version       | Time          | Iterations    | % time  |
+| Content type      | Version       | Time          | Iterations    | % time  |
 |-------------------|---------------|---------------|---------------|---------|
-| OpenApi4j         | 0.1           | 10,47 ms      | 1             | 100,0   |
-| OpenApi4j         | 0.1           | 159,80 ms     | 10000         | excl.   |
+| application/json  | 0.2           | 283,81 ms     | 10000         | excl.   |
+| form-urlencoded   | 0.2           | 200,88 ms     | 10000         | excl.   |
+| form-data         | 0.2           | 1076,23 ms    | 10000         | excl.   |
+| multipart/mixed   | 0.2           | 705,87 ms     | 10000         | excl.   |
+| application/xml   | 0.2           | 421,05 ms     | 10000         | excl.   |
 
 ## Usage
 
