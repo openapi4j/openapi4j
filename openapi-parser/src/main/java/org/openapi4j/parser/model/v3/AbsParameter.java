@@ -26,7 +26,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return description;
   }
 
-  public AbsParameter setDescription(String description) {
+  public AbsParameter<M> setDescription(String description) {
     this.description = description;
     return this;
   }
@@ -40,7 +40,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return required != null ? required : false;
   }
 
-  public AbsParameter setRequired(Boolean required) {
+  public AbsParameter<M> setRequired(Boolean required) {
     this.required = required;
     return this;
   }
@@ -54,7 +54,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return deprecated != null ? deprecated : false;
   }
 
-  public AbsParameter setDeprecated(Boolean deprecated) {
+  public AbsParameter<M> setDeprecated(Boolean deprecated) {
     this.deprecated = deprecated;
     return this;
   }
@@ -64,7 +64,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return style;
   }
 
-  public AbsParameter setStyle(String style) {
+  public AbsParameter<M> setStyle(String style) {
     this.style = style;
     return this;
   }
@@ -78,7 +78,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return explode != null ? explode : false;
   }
 
-  public AbsParameter setExplode(Boolean explode) {
+  public AbsParameter<M> setExplode(Boolean explode) {
     this.explode = explode;
     return this;
   }
@@ -92,7 +92,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return allowReserved != null ? allowReserved : false;
   }
 
-  public AbsParameter setAllowReserved(Boolean allowReserved) {
+  public AbsParameter<M> setAllowReserved(Boolean allowReserved) {
     this.allowReserved = allowReserved;
     return this;
   }
@@ -102,7 +102,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return schema;
   }
 
-  public AbsParameter setSchema(Schema schema) {
+  public AbsParameter<M> setSchema(Schema schema) {
     this.schema = schema;
     return this;
   }
@@ -112,7 +112,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return example;
   }
 
-  public AbsParameter setExample(Object example) {
+  public AbsParameter<M> setExample(Object example) {
     this.example = example;
     return this;
   }
@@ -122,7 +122,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return examples;
   }
 
-  public AbsParameter setExamples(Map<String, Example> examples) {
+  public AbsParameter<M> setExamples(Map<String, Example> examples) {
     this.examples = examples;
     return this;
   }
@@ -135,7 +135,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return mapGet(examples, name);
   }
 
-  public AbsParameter setExample(String name, Example example) {
+  public AbsParameter<M> setExample(String name, Example example) {
     if (examples == null) {
       examples = new HashMap<>();
     }
@@ -143,7 +143,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return this;
   }
 
-  public AbsParameter removeExample(String name) {
+  public AbsParameter<M> removeExample(String name) {
     mapRemove(examples, name);
     return this;
   }
@@ -153,7 +153,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return contentMediaTypes;
   }
 
-  public AbsParameter setContentMediaTypes(Map<String, MediaType> contentMediaTypes) {
+  public AbsParameter<M> setContentMediaTypes(Map<String, MediaType> contentMediaTypes) {
     this.contentMediaTypes = contentMediaTypes;
     return this;
   }
@@ -166,7 +166,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return mapGet(contentMediaTypes, name);
   }
 
-  public AbsParameter setContentMediaType(String name, MediaType contentMediaType) {
+  public AbsParameter<M> setContentMediaType(String name, MediaType contentMediaType) {
     if (contentMediaTypes == null) {
       contentMediaTypes = new HashMap<>();
     }
@@ -174,16 +174,16 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return this;
   }
 
-  public AbsParameter removeContentMediaType(String name) {
+  public AbsParameter<M> removeContentMediaType(String name) {
     mapRemove(contentMediaTypes, name);
     return this;
   }
 
-  void copyReference(AbsParameter copy) {
+  void copyReference(AbsParameter<M> copy) {
     copy.setRef(getRef());
   }
 
-  void copyContent(OAIContext context, AbsParameter copy, boolean followRefs) {
+  void copyContent(OAIContext context, AbsParameter<M> copy, boolean followRefs) {
     copy.setDescription(getDescription());
     copy.setRequired(getRequired());
     copy.setDeprecated(getDeprecated());
