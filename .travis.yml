@@ -13,6 +13,7 @@ branches:
 
 before_install:
   - chmod +x gradlew
+  - chmod +x travisbuild.sh
 
 install: true
 
@@ -28,3 +29,6 @@ cache:
 
 script:
   - ./travisbuild.sh
+
+after_success:
+  - ./gradlew clean
