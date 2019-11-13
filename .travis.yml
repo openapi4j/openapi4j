@@ -43,4 +43,7 @@ script:
       fi
     fi
 
+    echo "Will run build with the following commands :"
+    echo $gradle_args
+    echo
     ./gradlew $gradle_args
