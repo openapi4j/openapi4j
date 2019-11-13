@@ -7,6 +7,8 @@ import com.networknt.schema.ValidationMessage;
 
 import java.util.Set;
 
+import static org.perf.check.BuildConfig.NETWORKNT_VERSION;
+
 class Networknt implements JsonValidator {
   private final JsonSchema jsonSchema;
 
@@ -27,6 +29,6 @@ class Networknt implements JsonValidator {
 
   @Override
   public String getVersion() {
-    return JsonSchemaFactory.class.getPackage().getImplementationVersion();
+    return NETWORKNT_VERSION;
   }
 }

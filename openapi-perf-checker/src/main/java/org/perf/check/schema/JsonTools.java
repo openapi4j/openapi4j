@@ -5,6 +5,8 @@ import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 
+import static org.perf.check.BuildConfig.JSONTOOLS_VERSION;
+
 public class JsonTools implements JsonValidator {
   private final JsonSchema jsonSchema;
 
@@ -26,6 +28,6 @@ public class JsonTools implements JsonValidator {
 
   @Override
   public String getVersion() {
-    return JsonSchemaFactory.class.getPackage().getImplementationVersion();
+    return JSONTOOLS_VERSION;
   }
 }
