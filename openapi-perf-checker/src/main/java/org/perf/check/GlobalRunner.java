@@ -1,18 +1,13 @@
 package org.perf.check;
 
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-
-import org.openapi4j.core.exception.ResolutionException;
-import org.openapi4j.core.validation.ValidationException;
 import org.perf.check.operation.OperationPerfRunner;
 import org.perf.check.parser.ParserPerfRunner;
 import org.perf.check.schema.SchemaPerfRunner;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 public class GlobalRunner {
-  public static void main(String[] args) throws IOException, ProcessingException, ValidationException, ResolutionException {
+  public static void main(String[] args) throws Exception {
     Scanner sc = new Scanner(System.in);
 
     while (true) {

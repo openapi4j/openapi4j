@@ -1,5 +1,6 @@
 plugins {
   id "application"
+  id 'com.github.gmazzo.buildconfig' version '1.5.2'
 }
 
 description = "openapi4j performance viewer"
@@ -8,16 +9,32 @@ application {
   mainClassName = 'org.openapi4j.perf.GlobalRunner'
 }
 
+ext.JUSTIFY_VERSION = '1.1.0'
+ext.JSONTOOLS_VERSION = '2.2.11'
+ext.NETWORKNT_VERSION = '1.0.26'
+
+buildConfig {
+  packageName("org.perf.check")
+  language("java")
+  buildConfigField('String', 'JUSTIFY_VERSION', "\"$JUSTIFY_VERSION\"")
+  buildConfigField('String', 'JSONTOOLS_VERSION', "\"$JSONTOOLS_VERSION\"")
+  buildConfigField('String', 'NETWORKNT_VERSION', "\"$NETWORKNT_VERSION\"")
+}
+
 dependencies {
   // Parsers
   implementation(project(":openapi-parser"))
   implementation("io.swagger.parser.v3:swagger-parser:2.+")
   // Schema validators
   implementation(project(":openapi-schema-validator"))
-  implementation("com.networknt:json-schema-validator:1.+")
-  implementation("com.github.java-json-tools:json-schema-validator:2.+")
+  implementation("com.networknt:json-schema-validator:$NETWORKNT_VERSION")
+  implementation("com.github.java-json-tools:json-schema-validator:$JSONTOOLS_VERSION")
+  implementation("org.leadpony.justify:justify:$JUSTIFY_VERSION")
+  runtimeOnly group: 'org.glassfish', name: 'jakarta.json', classifier: 'module', version: '1.1.5'
   // operation validators
   implementation(project(":openapi-operation-validator"))
+  implementation("commons-fileupload:commons-fileupload:1.4")
+  implementation("org.json:json:20190722")
 }
 
 jar {

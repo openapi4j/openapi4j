@@ -1,14 +1,11 @@
 package org.perf.check.schema;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 
-import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.util.TreeUtil;
 import org.perf.check.report.Report;
 import org.perf.check.report.ReportPrinter;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 public class SchemaPerfRunner {
@@ -16,17 +13,19 @@ public class SchemaPerfRunner {
   private static final String DATA_FILE = "/schema/data.json";
   private static final String DATA_SCHEMAS = "schemas";
 
-  public static void main(final String... args) throws IOException, ProcessingException, ResolutionException {
+  public static void main(final String... args) throws Exception {
     final JsonNode schema = TreeUtil.json.readTree(SchemaPerfRunner.class.getResource(SCHEMA_FILE));
     final JsonNode data = TreeUtil.json.readTree(SchemaPerfRunner.class.getResource(DATA_FILE)).get(DATA_SCHEMAS);
 
     final Networknt networknt = new Networknt(schema);
     final OpenApi4j openApi4j = new OpenApi4j(schema);
     final JsonTools jsonTools = new JsonTools(schema);
+    final Justify justify = new Justify(schema);
 
     ReportPrinter.printReports(
       validate(networknt, data, networknt.getVersion(), 1_000, false),
       validate(openApi4j, data, openApi4j.getVersion(), 1_000, false),
+      validate(justify, data, justify.getVersion(), 1_000, true),
       validate(jsonTools, data, jsonTools.getVersion(), 100, true));
   }
 

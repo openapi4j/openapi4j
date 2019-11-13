@@ -16,32 +16,48 @@ Notes :
 | Library           | Version       | Time          | Iterations    | % time  |
 |-------------------|---------------|---------------|---------------|---------|
 | Swagger           | 2.0.15        | 460,31 ms     | 1             | 100,0   |
-| OpenApi4j         | null          | 227,84 ms     | 1             | 49,5    |
+| OpenApi4j         | 0.1           | 227,84 ms     | 1             | 49,5    |
 | Swagger           | 2.0.15        | 198,42 ms     | 10            | excl.   |
-| OpenApi4j         | null          | 215,42 ms     | 10            | excl.   |
+| OpenApi4j         | 0.1           | 215,42 ms     | 10            | excl.   |
+
+| Library           | Version       | Time          | Iterations    | % time  |
+|-------------------|---------------|---------------|---------------|---------|
+| Swagger           | 2.0.15        | 413,37 ms     | 1             | 100,0   |
+| OpenApi4j         | 0.2           | 209,23 ms     | 1             | 50,6    |
+| Swagger           | 2.0.15        | 240,47 ms     | 10            | excl.   |
+| OpenApi4j         | 0.2           | 256,44 ms     | 10            | excl.   |
 
 ## Schema reports
 
 Notes :  
 * JsonTools has only 100 iterations.
-* All Schema validators are based on Jackson.
-* Networknt values are not so consistent.
+* Networknt values are not so consistent. Performance gain is somewhere between 40-65%
 
 
 | Library           | Version       | Time          | Iterations    | % time  |
 |-------------------|---------------|---------------|---------------|---------|
-| Networknt         | null          | 361,14 ms     | 1000          | 100,0   |
-| OpenApi4j         | null          | 198,46 ms     | 1000          | 55,0    |
-| JsonTools         | null          | 755,55 ms     | 100           | excl.   |
+| Networknt         | 1.0.26        | 361,14 ms     | 1000          | 100,0   |
+| OpenApi4j         | 0.1           | 198,46 ms     | 1000          | 55,0    |
+| JsonTools         | 2.2.11        | 755,55 ms     | 100           | excl.   |
+
+| Library           | Version       | Time          | Iterations    | % time  |
+|-------------------|---------------|---------------|---------------|---------|
+| Networknt         | 1.0.26        | 431,79 ms     | 1000          | 100,0   |
+| OpenApi4j         | 0.2           | 204,24 ms     | 1000          | 47,3    |
+| Justify           | 1.1.0         | 1124,20 ms    | 1000          | excl.   |
+| JsonTools         | 2.2.11        | 879,43 ms     | 100           | excl.   |
 
 ## Operation reports
-* First iteration to explicitly see operation validators warm up.
-* Iteration includes request wrapping but not operation lookup.
+* Replaying multiple times this process shows much shorter time values, but it's not the point here.  
+We stick with the first showed values for version comparison.
 
-| Library           | Version       | Time          | Iterations    | % time  |
+| Content type      | Version       | Time          | Iterations    | % time  |
 |-------------------|---------------|---------------|---------------|---------|
-| OpenApi4j         | null          | 10,47 ms      | 1             | 100,0   |
-| OpenApi4j         | null          | 159,80 ms     | 10000         | excl.   |
+| application/json  | 0.2           | 283,81 ms     | 10000         | excl.   |
+| form-urlencoded   | 0.2           | 200,88 ms     | 10000         | excl.   |
+| form-data         | 0.2           | 1076,23 ms    | 10000         | excl.   |
+| multipart/mixed   | 0.2           | 705,87 ms     | 10000         | excl.   |
+| application/xml   | 0.2           | 421,05 ms     | 10000         | excl.   |
 
 ## Usage
 
