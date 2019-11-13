@@ -1,198 +1,22 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.openapi4j.core.model.OAIContext;
 
-import java.util.HashMap;
-import java.util.Map;
+public class Header extends AbsParameter<Header> {
+  @Override
+  protected Header copyReference(OAIContext context) {
+    Header copy = new Header();
 
-public class Header extends AbsExtendedOpenApiSchema<Header> {
-  private Boolean allowReserved;
-  @JsonProperty("content")
-  private Map<String, MediaType> contentMediaTypes;
-  private Boolean deprecated;
-  private String description;
-  private Object example;
-  private Map<String, Example> examples;
-  private Boolean explode;
-  private Boolean required;
-  private Schema schema;
-  private String style;
+    super.copyReference(copy);
 
-  // Description
-  public String getDescription() {
-    return description;
-  }
-
-  public Header setDescription(String description) {
-    this.description = description;
-    return this;
-  }
-
-  // Required
-  public Boolean getRequired() {
-    return required;
-  }
-
-  public boolean isRequired() {
-    return required != null ? required : false;
-  }
-
-  public Header setRequired(Boolean required) {
-    this.required = required;
-    return this;
-  }
-
-  // Deprecated
-  public Boolean getDeprecated() {
-    return deprecated;
-  }
-
-  public boolean isDeprecated() {
-    return deprecated != null ? deprecated : false;
-  }
-
-  public Header setDeprecated(Boolean deprecated) {
-    this.deprecated = deprecated;
-    return this;
-  }
-
-  // Style
-  public String getStyle() {
-    return style;
-  }
-
-  public Header setStyle(String style) {
-    this.style = style;
-    return this;
-  }
-
-  // Explode
-  public Boolean getExplode() {
-    return explode;
-  }
-
-  public boolean isExplode() {
-    return explode != null ? explode : false;
-  }
-
-  public Header setExplode(Boolean explode) {
-    this.explode = explode;
-    return this;
-  }
-
-  // AllowReserved
-  public Boolean getAllowReserved() {
-    return allowReserved;
-  }
-
-  public boolean isAllowReserved() {
-    return allowReserved != null ? allowReserved : false;
-  }
-
-  public Header setAllowReserved(Boolean allowReserved) {
-    this.allowReserved = allowReserved;
-    return this;
-  }
-
-  // Schema
-  public Schema getSchema() {
-    return schema;
-  }
-
-  public Header setSchema(Schema schema) {
-    this.schema = schema;
-    return this;
-  }
-
-  // Example
-  public Object getExample() {
-    return example;
-  }
-
-  public Header setExample(Object example) {
-    this.example = example;
-    return this;
-  }
-
-  // Example
-  public Map<String, Example> getExamples() {
-    return examples;
-  }
-
-  public Header setExamples(Map<String, Example> examples) {
-    this.examples = examples;
-    return this;
-  }
-
-  public boolean hasExample(String name) {
-    return mapHas(examples, name);
-  }
-
-  public Example getExample(String name) {
-    return mapGet(examples, name);
-  }
-
-  public Header setExample(String name, Example example) {
-    if (examples == null) {
-      examples = new HashMap<>();
-    }
-    examples.put(name, example);
-    return this;
-  }
-
-  public Header removeExample(String name) {
-    mapRemove(examples, name);
-    return this;
-  }
-
-  // ContentMediaType
-  public Map<String, MediaType> getContentMediaTypes() {
-    return contentMediaTypes;
-  }
-
-  public Header setContentMediaTypes(Map<String, MediaType> contentMediaTypes) {
-    this.contentMediaTypes = contentMediaTypes;
-    return this;
-  }
-
-  public boolean hasContentMediaType(String name) {
-    return mapHas(contentMediaTypes, name);
-  }
-
-  public MediaType getContentMediaType(String name) {
-    return mapGet(contentMediaTypes, name);
-  }
-
-  public Header setContentMediaType(String name, MediaType contentMediaType) {
-    if (contentMediaTypes == null) {
-      contentMediaTypes = new HashMap<>();
-    }
-    contentMediaTypes.put(name, contentMediaType);
-    return this;
-  }
-
-  public Header removeContentMediaType(String name) {
-    mapRemove(contentMediaTypes, name);
-    return this;
+    return copy;
   }
 
   @Override
-  public Header copy(OAIContext context, boolean followRefs) {
+  protected Header copyContent(OAIContext context, boolean followRefs) {
     Header copy = new Header();
 
-    copy.setDescription(getDescription());
-    copy.setRequired(getRequired());
-    copy.setDeprecated(getDeprecated());
-    copy.setStyle(getStyle());
-    copy.setExplode(getExplode());
-    copy.setAllowReserved(getAllowReserved());
-    copy.setSchema(copyField(getSchema(), context, followRefs));
-    copy.setExample(getExample());
-    copy.setExamples(copyMap(getExamples(), context, followRefs));
-    copy.setContentMediaTypes(copyMap(getContentMediaTypes(), context, followRefs));
-    copy.setExtensions(copyMap(getExtensions()));
+    super.copyContent(context, copy, followRefs);
 
     return copy;
   }

@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.v3.OAI3;
@@ -9,13 +10,24 @@ import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.util.ContentType;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
-import org.openapi4j.parser.model.v3.*;
+import org.openapi4j.parser.model.v3.MediaType;
+import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.model.v3.Operation;
+import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.parser.model.v3.Path;
+import org.openapi4j.parser.model.v3.Response;
+import org.openapi4j.parser.model.v3.Schema;
 import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,6 +70,7 @@ public class OperationValidator {
     this(new ValidationContext<>(openApi.getContext()), openApi, path, operation);
   }
 
+  @SuppressWarnings("WeakerAccess")
   public OperationValidator(final ValidationContext<OAI3> context, final OpenApi3 openApi, final Path path, final Operation operation) {
     this.context = requireNonNull(context, VALIDATION_CTX_REQUIRED_ERR_MSG);
     requireNonNull(openApi, OAI_REQUIRED_ERR_MSG);
@@ -85,7 +98,7 @@ public class OperationValidator {
       fillBodyValidators(openApi, this.operation.getRequestBody().getContentMediaTypes(), specRequestBodyValidators);
     }
     // response
-    fillResponseBodyValidators(openApi, this.operation, specResponseValidators);
+    fillResponseBodyValidators(openApi, this.operation);
   }
 
   public Operation getOperation() {
@@ -135,7 +148,7 @@ public class OperationValidator {
   public Map<String, JsonNode> validateCookies(final Request request, final ValidationResults results) {
     if (specCookieValidators == null) return null;
 
-    Map<String, JsonNode> mappedValues =
+    final Map<String, JsonNode> mappedValues =
       ParameterConverter.cookiesToNode(request.getCookies(), specCookieValidators.keySet());
 
     validateParameters(specCookieValidators, mappedValues, results);
@@ -159,15 +172,19 @@ public class OperationValidator {
   public void validateBody(final org.openapi4j.operation.validator.model.Response response,
                            final ValidationResults results) {
 
-    Map<String, JsonValidator> validatorsForStatus = specResponseValidators.get(String.valueOf(response.getStatus()));
-    if (validatorsForStatus == null) { // Check default response if any
+    Map<String, JsonValidator> validatorsForStatus =
+      specResponseValidators.get(String.valueOf(response.getStatus()));
+
+    // Check default response if any
+    if (validatorsForStatus == null) {
       validatorsForStatus = specResponseValidators.get(DEFAULT_RESPONSE_CODE);
     }
+    // Well, time to exit...
     if (validatorsForStatus == null) {
       return;
     }
 
-    String rawContentType = response.getContentType().orElse(null);
+    final String rawContentType = response.getContentType().orElse(null);
 
     validateBody(
       response.getBody(),
@@ -187,7 +204,7 @@ public class OperationValidator {
       return; // No schema specified for body
     }
 
-    String contentType = ContentType.getTypeOnly(rawContentType);
+    final String contentType = ContentType.getTypeOnly(rawContentType);
 
     if (body == null) {
       if (isBodyRequired) results.addError(BODY_REQUIRED_ERR_MSG);
@@ -213,51 +230,50 @@ public class OperationValidator {
   }
 
   private Map<Parameter, JsonValidator> fillParametersValidators(OpenApi3 openApi,
-                                        Operation operation,
-                                        String in) {
+                                                                 Operation operation,
+                                                                 String in) {
 
-    Collection<Parameter> parameters = operation.getParametersIn(in);
+    final Collection<Parameter> parameters = operation.getParametersIn(in);
 
-    if (!parameters.isEmpty()) {
-      Map<Parameter, JsonValidator> validators = new HashMap<>();
-
-      for (Parameter param : parameters) {
-        if (param.getSchema() != null) { // Schema in not mandatory
-          try {
-            SchemaValidator validator = new SchemaValidator(
-              context,
-              param.getName(),
-              param.getSchema().toNode(openApi.getContext(), true));
-
-            validators.put(param, validator);
-          } catch (EncodeException ex) {
-            // Will never happen
-          }
-        }
-      }
-
-      return validators;
+    if (parameters.isEmpty()) {
+      return null;
     }
 
-    return null;
+    Map<Parameter, JsonValidator> validators = new HashMap<>();
+
+    for (Parameter param : parameters) {
+      if (param.getSchema() != null) { // Schema in not mandatory
+        try {
+          SchemaValidator validator = new SchemaValidator(
+            context,
+            param.getName(),
+            param.getSchema().toNode(openApi.getContext(), true));
+
+          validators.put(param, validator);
+        } catch (EncodeException ex) {
+          // Will never happen
+        }
+      }
+    }
+
+    return validators;
   }
 
-  private void fillResponseBodyValidators(OpenApi3 openApi,
-                                          Operation operation,
-                                          Map<String, Map<String, JsonValidator>> validators) {
+  private void fillResponseBodyValidators(final OpenApi3 openApi,
+                                          final Operation operation) {
 
-    Map<String, Response> responses = operation.getResponses();
+    final Map<String, Response> responses = operation.getResponses();
 
     for (Map.Entry<String, Response> entryStatusCode : responses.entrySet()) {
       Map<String, JsonValidator> responseValidators = new HashMap<>();
       fillBodyValidators(openApi, entryStatusCode.getValue().getContentMediaTypes(), responseValidators);
-      validators.put(entryStatusCode.getKey(), responseValidators);
+      specResponseValidators.put(entryStatusCode.getKey(), responseValidators);
     }
   }
 
-  private void fillBodyValidators(OpenApi3 openApi,
-                                  Map<String, MediaType> mediaTypes,
-                                  Map<String, JsonValidator> validators) {
+  private void fillBodyValidators(final OpenApi3 openApi,
+                                  final Map<String, MediaType> mediaTypes,
+                                  final Map<String, JsonValidator> validators) {
 
     if (mediaTypes == null) return;
 

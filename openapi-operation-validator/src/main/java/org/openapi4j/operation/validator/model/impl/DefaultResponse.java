@@ -33,7 +33,16 @@ public class DefaultResponse implements Response {
   }
 
   @Override
+  public Map<String, Collection<String>> getHeaders() {
+    return headers;
+  }
+
+  @Override
   public Collection<String> getHeaderValues(final String name) {
+    if (headers == null) {
+      return null;
+    }
+
     return headers.get(name);
   }
 

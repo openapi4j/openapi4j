@@ -29,6 +29,7 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
   private static final String ALLOWED_RESERVED_IGNORED = "AllowReserved is ignored for non-query parameter '%s'";
   private static final String STYLE_ONLY_IN = "Style '%s' is only allowed in %s";
   private static final String STYLE_ONLY_IN_AND = "Style '%s' is only allowed in %s and %s";
+  private static final String CONTENT_ONY_ONE_ERR_MSG = "content can only contain one media type.";
 
   private static final Validator<OpenApi3, Parameter> INSTANCE = new ParameterValidator();
 
@@ -51,11 +52,15 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
       validateString(parameter.getName(), results, true, NAME);
       validateString(parameter.getIn(), results, true, Regexes.PARAM_IN_REGEX, IN);
       validateString(parameter.getStyle(), results, false, Regexes.STYLE_REGEX, STYLE);
-      checkStyleValues(parameter, results); // must be checked after 'in' keyword
+      checkStyleValues(parameter, results);
       checkAllowReserved(parameter, results);
       validateField(api, parameter.getSchema(), results, false, SCHEMA, SchemaValidator.instance());
       validateMap(api, parameter.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
       validateMap(api, parameter.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+
+      if (parameter.getContentMediaTypes() != null && parameter.getContentMediaTypes().size() > 1) {
+        results.addError(CONTENT_ONY_ONE_ERR_MSG);
+      }
     }
   }
 

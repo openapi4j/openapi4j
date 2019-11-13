@@ -1,10 +1,12 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
+import org.openapi4j.operation.validator.model.Response;
 import org.openapi4j.operation.validator.model.impl.RequestParameters;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
@@ -27,7 +29,9 @@ public class RequestValidator {
   private static final String PATH_REQUIRED_ERR_MSG = "Path is required.";
   private static final String OPERATION_REQUIRED_ERR_MSG = "Operation is required.";
   private static final String REQUEST_REQUIRED_ERR_MSG = "Request is required.";
+  private static final String RESPONSE_REQUIRED_ERR_MSG = "Response is required.";
   private static final String INVALID_REQUEST_ERR_MSG = "Invalid request";
+  private static final String INVALID_RESPONSE_ERR_MSG = "Invalid response";
 
   private final OpenApi3 openApi;
   private final ValidationContext<OAI3> context;
@@ -65,7 +69,7 @@ public class RequestValidator {
    * @param operation The operation object from specification.
    * @return The generated validator for the operation.
    */
-  public OperationValidator compile(Path path, Operation operation) {
+  public OperationValidator compile(final Path path, final Operation operation) {
     requireNonNull(path, PATH_REQUIRED_ERR_MSG);
     requireNonNull(operation, OPERATION_REQUIRED_ERR_MSG);
 
@@ -78,19 +82,23 @@ public class RequestValidator {
    * Validate the request against the given API operation
    *
    * @param request   The request to validate. Must be {@code nonnull}.
+   * @param path      The OAS path. Must be {@code nonnull}.
    * @param operation OpenAPI operation. Must be {@code nonnull}.
    * @throws ValidationException A validation report containing validation errors
    */
-  public RequestParameters validate(Request request, Path path, Operation operation) throws ValidationException {
+  public RequestParameters validate(final Request request,
+                                    final Path path,
+                                    final Operation operation) throws ValidationException {
+
     requireNonNull(request, REQUEST_REQUIRED_ERR_MSG);
 
-    OperationValidator opValidator = compile(path, operation);
+    final OperationValidator opValidator = compile(path, operation);
 
-    ValidationResults results = new ValidationResults();
-    Map<String, JsonNode> pathParameters = opValidator.validatePath(request, results);
-    Map<String, JsonNode> queryParameters = opValidator.validateQuery(request, results);
-    Map<String, JsonNode> headerParameters = opValidator.validateHeaders(request, results);
-    Map<String, JsonNode> cookieParameters = opValidator.validateCookies(request, results);
+    final ValidationResults results = new ValidationResults();
+    final Map<String, JsonNode> pathParameters = opValidator.validatePath(request, results);
+    final Map<String, JsonNode> queryParameters = opValidator.validateQuery(request, results);
+    final Map<String, JsonNode> headerParameters = opValidator.validateHeaders(request, results);
+    final Map<String, JsonNode> cookieParameters = opValidator.validateCookies(request, results);
     opValidator.validateBody(request, results);
 
     if (!results.isValid()) {
@@ -103,5 +111,29 @@ public class RequestValidator {
       headerParameters,
       cookieParameters
     );
+  }
+
+  /**
+   * Validate the response against the given API operation
+   *
+   * @param response  The response to validate. Must be {@code nonnull}.
+   * @param path      The OAS path. Must be {@code nonnull}.
+   * @param operation OpenAPI operation. Must be {@code nonnull}.
+   * @throws ValidationException A validation report containing validation errors
+   */
+  public void validate(final Response response,
+                       final Path path,
+                       final Operation operation) throws ValidationException {
+
+    requireNonNull(response, RESPONSE_REQUIRED_ERR_MSG);
+
+    final OperationValidator opValidator = compile(path, operation);
+
+    final ValidationResults results = new ValidationResults();
+    opValidator.validateBody(response, results);
+
+    if (!results.isValid()) {
+      throw new ValidationException(INVALID_RESPONSE_ERR_MSG, results);
+    }
   }
 }

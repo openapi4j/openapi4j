@@ -28,9 +28,21 @@ paths:
         '200':
           description: a description
           content:
-            'application/json': {}
-            'application/xml': {}
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/FooModel'
+            'application/xml':
+              schema:
+                $ref: '#/components/schemas/FooModel'
+          headers:
+            X-Rate-Limit:
+              $ref: '#/components/headers/X-Rate-Limit'
 components:
+  headers:
+    X-Rate-Limit:
+      description: a description
+      schema:
+        type: integer
   schemas:
     FooModel:
       type: object
