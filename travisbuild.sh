@@ -13,6 +13,7 @@ then
   fi
 fi
 
+echo
 echo "Will run build with the following commands :"
 echo $gradle_args
 echo
