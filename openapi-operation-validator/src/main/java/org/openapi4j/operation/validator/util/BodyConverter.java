@@ -19,7 +19,7 @@ public final class BodyConverter {
   private BodyConverter() {}
 
   public static JsonNode formUrlEncodedToNode(final Schema schema, final InputStream body, String encoding) throws IOException {
-    return FormUrlConverter.instance().formUrlEncodedToNode(schema, IOUtil.toString(body, encoding), encoding);
+    return FormUrlConverter.instance().formUrlEncodedToNode(schema, body, encoding);
   }
 
   public static JsonNode formUrlEncodedToNode(final Schema schema, final String body, final String encoding) {

@@ -1,9 +1,8 @@
 package org.openapi4j.core.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 
 /**
  * Utility class related to IO.
@@ -16,15 +15,14 @@ public final class IOUtil {
   }
 
   public static String toString(final InputStream input, final String charset) throws IOException {
-    final StringWriter output = new StringWriter();
-    final InputStreamReader in = new InputStreamReader(input, charset);
+    ByteArrayOutputStream result = new ByteArrayOutputStream();
+    byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+    int length;
 
-    int n;
-    char[] buffer = new char[DEFAULT_BUFFER_SIZE];
-    while (EOF != (n = in.read(buffer))) {
-      output.write(buffer, 0, n);
+    while ((length = input.read(buffer)) != EOF) {
+      result.write(buffer, 0, length);
     }
 
-    return output.toString();
+    return result.toString(charset);
   }
 }
