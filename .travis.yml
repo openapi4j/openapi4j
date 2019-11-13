@@ -1,10 +1,20 @@
 language: java
 jdk: openjdk8
 
-install: true
+addons:
+  sonarcloud:
+    organization: "openapi4j"
+    token:
+      secure: "KX7DnHVFb35TufoOm3YjXBRVKEPgqX55ttSQw8qzIE5UQyn6O409BKOzEVPbghjClzLyy7nWt1nV7TMibtRpdHgKYHuFaEEk2gy6YLe69bDqHsISTbIPOJ2yjIOvEhZWPCeNBjkxoUnPzyq1NPxDmnVzXbbSlkuML6zFgWeq3Qzcb0QE8ao79Pky5/zpHtcr2eE5oNxS02sv3dJcXDPvo+As4VxzHsmqWDrojwr4OzPur8VxlrrL/m+QhGsUkL7aHAPR5Fu6SmAZ5uoXuoUuP6O+L0qj1HK3dFUM5qGvbyfFKnZGMmE6hIj6kfkowjyOeYygxjCD6ZrIS+quas5yxYgleZmVXbKfVfjPce9r5rMjWDW/bgmd69MEcFEU9mD9PVxo1YgfrAbUIVgxKzp/rUh35tutyXEQKntTC3R4Tl4M3pAkbyLqPbeVrHA4ncW0U76A/OVyKKjLbLMZq9E3YmPQ9vKPp6xAu65SGSkY0ZNpMOmwcdugUTW73BxujefDUAe+Qbnwt3cLi4bpVo/X5uWHkaRXNogTrUoL0Zh+HvcpOuYbgi428CjKYZjSiDrgOBPH4xNYA+YObYuwvHsbh8q2Ki6eLj5AfSQteUy8rIQxW9MitvOtccd0L13QtErPFYtCmTaeuAYo0vTiGJSE5Ixd5TmpsG1RlJoiNkyiK4A="
+
+branches:
+  only:
+    - master
 
 before_install:
   - chmod +x gradlew
+
+install: true
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -16,36 +26,19 @@ cache:
     - $HOME/.gradle/wrapper/
     - $HOME/.sonar
 
-addons:
-  sonarcloud:
-    organization: "openapi4j"
-    token:
-      secure: "KX7DnHVFb35TufoOm3YjXBRVKEPgqX55ttSQw8qzIE5UQyn6O409BKOzEVPbghjClzLyy7nWt1nV7TMibtRpdHgKYHuFaEEk2gy6YLe69bDqHsISTbIPOJ2yjIOvEhZWPCeNBjkxoUnPzyq1NPxDmnVzXbbSlkuML6zFgWeq3Qzcb0QE8ao79Pky5/zpHtcr2eE5oNxS02sv3dJcXDPvo+As4VxzHsmqWDrojwr4OzPur8VxlrrL/m+QhGsUkL7aHAPR5Fu6SmAZ5uoXuoUuP6O+L0qj1HK3dFUM5qGvbyfFKnZGMmE6hIj6kfkowjyOeYygxjCD6ZrIS+quas5yxYgleZmVXbKfVfjPce9r5rMjWDW/bgmd69MEcFEU9mD9PVxo1YgfrAbUIVgxKzp/rUh35tutyXEQKntTC3R4Tl4M3pAkbyLqPbeVrHA4ncW0U76A/OVyKKjLbLMZq9E3YmPQ9vKPp6xAu65SGSkY0ZNpMOmwcdugUTW73BxujefDUAe+Qbnwt3cLi4bpVo/X5uWHkaRXNogTrUoL0Zh+HvcpOuYbgi428CjKYZjSiDrgOBPH4xNYA+YObYuwvHsbh8q2Ki6eLj5AfSQteUy8rIQxW9MitvOtccd0L13QtErPFYtCmTaeuAYo0vTiGJSE5Ixd5TmpsG1RlJoiNkyiK4A="
-
-branches:
-  only:
-    - master
-
-stages:
-  - name: build
-  - name: sonarqube
-    if: type != pull_request
-  - name: snapshot
-    # only publish snapshots from "master" branch AND not on tag
-    if: branch = master AND type != pull_request AND tag IS NOT present
-
-jobs:
-  include:
-    # run build
-    - stage: build
-      script: ./gradlew check
-
-    # run sonarqube
-    - stage: sonarqube
-      script:
-      - git fetch --unshallow --quiet
-      - ./gradlew jacocoTestReport sonarqube
-
-    # publish snapshot version
-    - stage: snapshot
-      script: ./gradlew publish
+script:
+  # Build with tests
+  - ./gradlew check
+  # run sonarqube with coverage report when not on PR
+  - |
+    if [ "$TRAVIS_PULL_REQUEST" == "false" ]
+    then
+      git fetch --unshallow --quiet
+      ./gradlew jacocoTestReport sonarqube
+    fi
+  # publish snapshot version when not on PR & TAG
+  - |
+    if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -z "$TRAVIS_TAG" ]
+    then
+      ./gradlew publish
+    fi
