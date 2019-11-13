@@ -13,9 +13,12 @@ then
   fi
 fi
 
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
 echo
-echo "Will run build with the following commands :"
-echo $gradle_args
+echo -e " ${YELLOW}Will run build with the following commands :${NC}"
+echo -e ${YELLOW}$gradle_args${NC}
 echo
 
 ./gradlew $gradle_args
