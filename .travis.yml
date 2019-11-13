@@ -1,21 +1,6 @@
 language: java
 jdk: openjdk8
 
-install: true
-
-before_install:
-  - chmod +x gradlew
-
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-
-cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-    - $HOME/.sonar
-
 addons:
   sonarcloud:
     organization: "openapi4j"
@@ -26,26 +11,22 @@ branches:
   only:
     - master
 
-stages:
-  - name: build
-  - name: sonarqube
-    if: type != pull_request
-  - name: snapshot
-    # only publish snapshots from "master" branch AND not on tag
-    if: branch = master AND type != pull_request AND tag IS NOT present
+before_install:
+  - chmod +x gradlew
+  - chmod +x travisbuild.sh
 
-jobs:
-  include:
-    # run build
-    - stage: build
-      script: ./gradlew check
+install: true
 
-    # run sonarqube
-    - stage: sonarqube
-      script:
-      - git fetch --unshallow --quiet
-      - ./gradlew jacocoTestReport sonarqube
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - ./gradlew clean
 
-    # publish snapshot version
-    - stage: snapshot
-      script: ./gradlew publish
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.sonar
+
+script:
+  - ./travisbuild.sh
