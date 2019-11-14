@@ -33,7 +33,16 @@ public class DefaultResponse implements Response {
   }
 
   @Override
+  public Map<String, Collection<String>> getHeaders() {
+    return headers;
+  }
+
+  @Override
   public Collection<String> getHeaderValues(final String name) {
+    if (headers == null) {
+      return null;
+    }
+
     return headers.get(name);
   }
 
@@ -75,6 +84,18 @@ public class DefaultResponse implements Response {
      */
     public Builder header(final String name, final Collection<String> values) {
       headers.putAll(name, values);
+      return this;
+    }
+
+    /**
+     * Adds a header to this builder or value if already exists.
+     *
+     * @param name  The header name
+     * @param value A single value for this header
+     * @return This builder
+     */
+    public Builder header(final String name, final String value) {
+      headers.put(name, value);
       return this;
     }
 

@@ -2,8 +2,7 @@ package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.parser.model.v3.AbsParameter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,29 +27,29 @@ class MatrixStyleConverter implements FlatStyleConverter {
   }
 
   @Override
-  public JsonNode convert(Parameter param, String rawValue) {
+  public JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) {
     if (rawValue == null) {
-      return JsonNodeFactory.instance.nullNode();
+      return null;
     }
 
     final Map<String, Object> paramValues;
-    paramValues = getParameterValues(param, rawValue, PREFIXED_SEMICOLON_NAME_REGEX, param.isExplode() ? ";" : ",");
+    paramValues = getParameterValues(param, paramName, rawValue, PREFIXED_SEMICOLON_NAME_REGEX, param.isExplode() ? ";" : ",");
 
-    return convert(param, paramValues);
+    return paramValues.size() != 0 ? convert(param, paramName, paramValues) : null;
   }
 
-  private Map<String, Object> getParameterValues(Parameter param, String rawValue, Pattern subPattern, String splitPattern) {
+  private Map<String, Object> getParameterValues(AbsParameter<?> param, String paramName, String rawValue, Pattern subPattern, String splitPattern) {
     String type = param.getSchema().getSupposedType();
 
     if (TYPE_OBJECT.equals(type)) {
-      return getObjectValues(param, rawValue, subPattern, splitPattern);
+      return getObjectValues(param, paramName, rawValue, subPattern, splitPattern);
     }
 
     Map<String, Object> values = new HashMap<>();
 
     if (TYPE_ARRAY.equals(type)) {
       values.put(
-        param.getName(),
+        paramName,
         getArrayValues(param, rawValue, subPattern, splitPattern));
     } else {
       Matcher matcher = subPattern.matcher(rawValue);
@@ -62,7 +61,7 @@ class MatrixStyleConverter implements FlatStyleConverter {
     return values;
   }
 
-  private Map<String, Object> getObjectValues(Parameter param, String rawValue, Pattern subPattern, String splitPattern) {
+  private Map<String, Object> getObjectValues(AbsParameter<?> param, String paramName, String rawValue, Pattern subPattern, String splitPattern) {
     if (param.isExplode()) {
       Map<String, Object> values = new HashMap<>();
 
@@ -76,11 +75,11 @@ class MatrixStyleConverter implements FlatStyleConverter {
 
     Matcher matcher = subPattern.matcher(rawValue);
     return (matcher.find())
-      ? getParameterValues(param, matcher.group(2), splitPattern)
-      : new HashMap<>();
+      ? getParameterValues(param, paramName, matcher.group(2), splitPattern)
+      : null;
   }
 
-  private List<String> getArrayValues(Parameter param, String rawValue, Pattern subPattern, String splitPattern) {
+  private List<String> getArrayValues(AbsParameter<?> param, String rawValue, Pattern subPattern, String splitPattern) {
     if (param.isExplode()) {
       List<String> arrayValues = new ArrayList<>();
 
@@ -96,6 +95,6 @@ class MatrixStyleConverter implements FlatStyleConverter {
 
     return matcher.matches()
       ? Arrays.asList(matcher.group(2).split(splitPattern))
-      : new ArrayList<>();
+      : null;
   }
 }

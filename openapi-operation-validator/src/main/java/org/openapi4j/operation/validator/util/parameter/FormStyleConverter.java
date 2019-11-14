@@ -2,8 +2,7 @@ package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.util.ArrayList;
@@ -30,30 +29,29 @@ class FormStyleConverter implements FlatStyleConverter {
   }
 
   @Override
-  public JsonNode convert(Parameter param, String rawValue) {
+  public JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) {
     if (rawValue == null) {
-      return JsonNodeFactory.instance.nullNode();
+      return null;
     }
 
     String type = param.getSchema().getSupposedType();
     Map<String, Object> paramValues;
 
     if (TYPE_ARRAY.equals(type)) {
-      paramValues = getArrayValues(param, rawValue);
+      paramValues = getArrayValues(param, paramName, rawValue);
     } else if (TYPE_OBJECT.equals(type)) {
-      paramValues = getObjectValues(param, rawValue);
+      paramValues = getObjectValues(param, paramName, rawValue);
     } else {
-      paramValues = getPrimitiveValue(param, rawValue);
+      paramValues = getPrimitiveValue(paramName, rawValue);
     }
 
-    return convert(param, paramValues);
+    return paramValues.size() != 0 ? convert(param, paramName, paramValues) : null;
   }
 
-  private Map<String, Object> getArrayValues(Parameter param, String rawValue) {
+  private Map<String, Object> getArrayValues(AbsParameter<?> param, String paramName, String rawValue) {
     Map<String, Object> paramValues = new HashMap<>();
 
     List<String> arrayValues = new ArrayList<>();
-    String paramName = param.getName();
 
     Matcher matcher = REGEX.matcher(rawValue);
     while(matcher.find()) {
@@ -70,7 +68,7 @@ class FormStyleConverter implements FlatStyleConverter {
     return paramValues;
   }
 
-  private Map<String, Object> getObjectValues(Parameter param, String rawValue) {
+  private Map<String, Object> getObjectValues(AbsParameter<?> param, String paramName, String rawValue) {
     Schema paramSchema = param.getSchema();
 
     if (param.isExplode()) {
@@ -89,14 +87,13 @@ class FormStyleConverter implements FlatStyleConverter {
     } else {
       Matcher matcher = REGEX.matcher(rawValue);
       return (matcher.find())
-        ? getParameterValues(param, matcher.group(2), ",")
+        ? getParameterValues(param, paramName, matcher.group(2), ",")
         : new HashMap<>();
     }
   }
 
-  private Map<String, Object> getPrimitiveValue(Parameter param, String rawValue) {
+  private Map<String, Object> getPrimitiveValue(String paramName, String rawValue) {
     Map<String, Object> paramValues = new HashMap<>();
-    String paramName = param.getName();
 
     Matcher matcher = REGEX.matcher(rawValue);
     while(matcher.find()) {

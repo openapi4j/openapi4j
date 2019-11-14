@@ -1,10 +1,9 @@
 package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.openapi4j.core.exception.ResolutionException;
-import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.parser.model.v3.AbsParameter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,16 +24,15 @@ class DelimitedStyleConverter implements FlatStyleConverter {
   }
 
   @Override
-  public JsonNode convert(Parameter param, String rawValue) throws ResolutionException {
+  public JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) throws ResolutionException {
     if (rawValue == null) {
-      return JsonNodeFactory.instance.nullNode();
+      return null;
     }
 
     if (TYPE_ARRAY.equals(param.getSchema().getSupposedType())) {
       Map<String, Object> paramValues = new HashMap<>();
 
       List<String> arrayValues = new ArrayList<>();
-      String paramName = param.getName();
 
       Matcher matcher = REGEX.matcher(rawValue);
       while(matcher.find()) {
@@ -46,9 +44,14 @@ class DelimitedStyleConverter implements FlatStyleConverter {
           }
         }
       }
+
+      if (arrayValues.size() == 0) {
+        return null;
+      }
+
       paramValues.put(paramName, arrayValues);
 
-      return convert(param, paramValues);
+      return convert(param, paramName, paramValues);
     } else {
       throw new ResolutionException("Delimited parameter cannot be an object or primitive.");
     }

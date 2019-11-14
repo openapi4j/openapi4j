@@ -1,21 +1,37 @@
 package org.openapi4j.operation.validator.model.impl;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openapi4j.operation.validator.OpenApi3Util;
 import org.openapi4j.operation.validator.model.Request;
+import org.openapi4j.operation.validator.model.Response;
 import org.openapi4j.operation.validator.validation.RequestValidator;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collections;
 
 public class DefaultRequestTest {
+  private static Path path;
+  private static Operation operation;
+  private static RequestValidator requestValidator;
+
+  @BeforeClass
+  public static void setup() throws Exception {
+    OpenApi3 api = OpenApi3Util.loadApi("/operation/api.yaml");
+    operation = api.getOperationById("test");
+    path = api.getPathItemByOperationId("test");
+
+    requestValidator = new RequestValidator(api);
+  }
+
   @Test
   public void testFormUrlEncoded() throws Exception {
     final String body = "fieldInt=1&fieldString=value%202&fieldBool= true &fieldFloat=1.2&fieldArray=1&fieldArray=2";
 
-    check("application/x-www-form-urlencoded; charset=utf-8", body);
+    check("application/x-www-form-urlencoded; charset=utf-8", body, false);
   }
 
   @Test
@@ -60,7 +76,7 @@ public class DefaultRequestTest {
       "3\r\n" +
       "--1234--\r\n";
 
-    check("multipart/form-data;boundary=\"1234\"", body);
+    check("multipart/form-data;boundary=\"1234\"", body, false);
   }
 
   @Test
@@ -99,71 +115,74 @@ public class DefaultRequestTest {
       "[1, 2, 3]\r\n" +
       "--1234--\r\n";
 
-    check("multipart/mixed;boundary=\"1234\"", body);
+    check("multipart/mixed;boundary=\"1234\"", body, false);
   }
 
   @Test
   public void testJson() throws Exception {
     final String body =
       "{\n" +
-      "  \"fieldInt\": 1,\n" +
-      "  \"fieldString\": \"pokfpokdf\",\n" +
-      "  \"fieldBool\": false,\n" +
-      "  \"fieldFloat\": 1.2,\n" +
-      "  \"fieldArray\": [1, 2, 3],\n" +
-      "  \"fieldObject\": {\"id\":\"myId\"}\n" +
-      "}";
+        "  \"fieldInt\": 1,\n" +
+        "  \"fieldString\": \"pokfpokdf\",\n" +
+        "  \"fieldBool\": false,\n" +
+        "  \"fieldFloat\": 1.2,\n" +
+        "  \"fieldArray\": [1, 2, 3],\n" +
+        "  \"fieldObject\": {\"id\":\"myId\"}\n" +
+        "}";
 
-    check("application/json", body);
+    check("application/json", body, true);
   }
 
   @Test
   public void testXml() throws Exception {
     final String body =
       "<FooModel id=\"123\">\n" +
-      "  <fieldInt>1</fieldInt>\n" +
-      "  <sample:fieldString xmlns:sample=\"http://example.com/schema/sample\">a value</sample:fieldString>\n" +
-      "  <fieldBool>true</fieldBool>\n" +
-      "  <books><book>1</book><book>2</book></books>\n" +
-      "  <fieldFloat>1</fieldFloat>\n" +
-      "  <fieldArray>1</fieldArray>\n" +
-      "  <fieldArray>2</fieldArray>\n" +
-      "  <fieldArray>3</fieldArray>\n" +
-      "  <fieldObject><id>myId</id></fieldObject>\n" +
-      "</FooModel>";
+        "  <fieldInt>1</fieldInt>\n" +
+        "  <sample:fieldString xmlns:sample=\"http://example.com/schema/sample\">a value</sample:fieldString>\n" +
+        "  <fieldBool>true</fieldBool>\n" +
+        "  <books><book>1</book><book>2</book></books>\n" +
+        "  <fieldFloat>1</fieldFloat>\n" +
+        "  <fieldArray>1</fieldArray>\n" +
+        "  <fieldArray>2</fieldArray>\n" +
+        "  <fieldArray>3</fieldArray>\n" +
+        "  <fieldObject><id>myId</id></fieldObject>\n" +
+        "</FooModel>";
 
-    check("application/xml", body);
+    check("application/xml", body, true);
   }
 
-  private void check(String contentType, String body) throws Exception {
-    OpenApi3 api = OpenApi3Util.loadApi("/operation/api.yaml");
-    Operation operation = api.getOperationById("test");
-    Path path = api.getPathItemByOperationId("test");
-
+  private void check(String contentType, String body, boolean checkResponse) throws Exception {
     // With input stream
-    checkWithInputStream(api, path, operation, contentType, body);
-    checkWithString(api, path, operation, contentType, body);
+    checkRequest(contentType, Body.from(new ByteArrayInputStream(body.getBytes())));
+    checkRequest(contentType, Body.from(body));
+
+    if (checkResponse) {
+      checkResponse(contentType, body);
+    }
   }
 
-  private void checkWithInputStream(OpenApi3 api, Path path, Operation operation, String contentType, String body) throws Exception {
-    DefaultRequest.Builder rqBuilder = new DefaultRequest.Builder(Request.Method.POST, "/");
-    Request rq = rqBuilder
-      .header("Content-Type", contentType)
-      .body(Body.from(new ByteArrayInputStream(body.getBytes())))
+  private void checkRequest(String contentType,
+                            Body body) throws Exception {
+
+    DefaultRequest.Builder builder = new DefaultRequest.Builder(Request.Method.POST, "/");
+    Request rq = builder
+      .header("Content-Type", Collections.singleton(contentType))
+      .body(body)
       .build();
 
-    RequestValidator requestValidator = new RequestValidator(api);
     requestValidator.validate(rq, path, operation);
   }
 
-  private void checkWithString(OpenApi3 api, Path path, Operation operation, String contentType, String body) throws Exception {
-    DefaultRequest.Builder rqBuilder = new DefaultRequest.Builder(Request.Method.POST, "/");
-    Request rq = rqBuilder
+  private void checkResponse(String contentType,
+                             String body) throws Exception {
+
+    DefaultResponse.Builder builder = new DefaultResponse.Builder(200);
+    Response resp = builder
       .header("Content-Type", contentType)
+      .header("X-Rate-Limit", Collections.singleton(String.valueOf(1)))
       .body(Body.from(body))
       .build();
 
-    RequestValidator requestValidator = new RequestValidator(api);
-    requestValidator.validate(rq, path, operation);
+    requestValidator.validate(resp, path, operation);
   }
 }
