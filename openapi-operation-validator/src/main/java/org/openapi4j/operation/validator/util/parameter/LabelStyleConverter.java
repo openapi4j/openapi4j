@@ -2,8 +2,7 @@ package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.parser.model.v3.AbsParameter;
 
 import java.util.Map;
 
@@ -17,14 +16,14 @@ class LabelStyleConverter implements FlatStyleConverter {
   }
 
   @Override
-  public JsonNode convert(Parameter param, String rawValue) {
+  public JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) {
     if (rawValue == null) {
-      return JsonNodeFactory.instance.nullNode();
+      return null;
     }
 
     final Map<String, Object> paramValues;
-    paramValues = getParameterValues(param, rawValue.substring(1), param.isExplode() ? "\\." : ",");
+    paramValues = getParameterValues(param, paramName, rawValue.substring(1), param.isExplode() ? "\\." : ",");
 
-    return convert(param, paramValues);
+    return paramValues.size() != 0 ? convert(param, paramName, paramValues) : null;
   }
 }

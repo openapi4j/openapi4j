@@ -10,6 +10,7 @@ import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.util.ContentType;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
+import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.Header;
 import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.OpenApi3;
@@ -44,6 +45,7 @@ public class OperationValidator {
   private static final String PATH_REQUIRED_ERR_MSG = "Path is required.";
   private static final String OPERATION_REQUIRED_ERR_MSG = "Operation is required.";
   private static final String PARAM_REQUIRED_ERR_MSG = "Parameter '%s' in '%s' is required.";
+  private static final String HEADER_REQUIRED_ERR_MSG = "Response header '%s' is required.";
   private static final String BODY_REQUIRED_ERR_MSG = "Body is required but none provided.";
   private static final String BODY_CONTENT_TYPE_ERR_MSG = "Body content type cannot be determined. No 'Content-Type' header available.";
   private static final String BODY_WRONG_CONTENT_TYPE_ERR_MSG = "Content type '%s' is not allowed in body.";
@@ -59,11 +61,15 @@ public class OperationValidator {
   private final Map<Parameter, JsonValidator> specQueryValidators;
   private final Map<Parameter, JsonValidator> specHeaderValidators;
   private final Map<Parameter, JsonValidator> specCookieValidators;
+  private final Map<String, AbsParameter<?>> requestHeaderParameters;
   // Map<content type, validator>
   private final Map<String, JsonValidator> specRequestBodyValidators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
   // Map<status code, Map<content type, validator>>
   private final Map<String, Map<String, JsonValidator>> specResponseBodyValidators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+  // Map<status code, Map<header name, validator>>
   private final Map<String, Map<String, JsonValidator>> specResponseHeaderValidators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+  // Map<status code, Map<header name, header>>
+  private Map<String, Map<String, AbsParameter<?>>> responseHeaderParameters;
   private final Operation operation;
   private final String specPath;
   private final ValidationContext<OAI3> context;
@@ -93,6 +99,15 @@ public class OperationValidator {
     specQueryValidators = fillParametersValidators(openApi, this.operation, IN_QUERY);
     // headers
     specHeaderValidators = fillParametersValidators(openApi, this.operation, IN_HEADER);
+    if (specHeaderValidators != null) {
+      requestHeaderParameters = specHeaderValidators
+        .keySet()
+        .stream()
+        .collect(Collectors.toMap(Parameter::getName, parameter -> parameter));
+    } else {
+      requestHeaderParameters = null;
+    }
+
     // Cookies
     specCookieValidators = fillParametersValidators(openApi, this.operation, IN_COOKIE);
     // request body
@@ -160,7 +175,7 @@ public class OperationValidator {
     if (specHeaderValidators == null) return null;
 
     Map<String, JsonNode> mappedValues =
-      ParameterConverter.headersToNode(request.getHeaders(), specHeaderValidators.keySet());
+      ParameterConverter.headersToNode(request.getHeaders(), requestHeaderParameters);
 
     validateParameters(specHeaderValidators, mappedValues, results);
 
@@ -208,19 +223,14 @@ public class OperationValidator {
    * Validate body content from the given response.
    *
    * @param response The response to validate.
-   * @param results The results.
+   * @param results  The results.
    * @return The mapped parameters with their values.
    */
   public void validateBody(final org.openapi4j.operation.validator.model.Response response,
                            final ValidationResults results) {
 
-    Map<String, JsonValidator> validatorsForStatus =
-      specResponseBodyValidators.get(String.valueOf(response.getStatus()));
+    Map<String, JsonValidator> validatorsForStatus = getMapFromStatusCode(specResponseBodyValidators, response.getStatus());
 
-    // Check default response if any
-    if (validatorsForStatus == null) {
-      validatorsForStatus = specResponseBodyValidators.get(DEFAULT_RESPONSE_CODE);
-    }
     // Well, time to exit...
     if (validatorsForStatus == null) {
       return;
@@ -240,15 +250,33 @@ public class OperationValidator {
    * Validate header parameters from the given response.
    *
    * @param response The response to validate.
-   * @param results The results.
+   * @param results  The results.
    */
   public void validateHeaders(final org.openapi4j.operation.validator.model.Response response,
                               final ValidationResults results) {
 
-    /*Map<String, JsonNode> mappedValues =
-      ParameterConverter.headersToNode(response.getHeaders(), specResponseHeaderValidators.keySet());
+    Map<String, JsonValidator> validatorsForStatus = getMapFromStatusCode(specResponseHeaderValidators, response.getStatus());
+    // Well, time to exit...
+    if (validatorsForStatus == null) {
+      return;
+    }
+    Map<String, AbsParameter<?>> headerParameters = getMapFromStatusCode(responseHeaderParameters, response.getStatus());
 
-    validateParameters(specResponseHeaderValidators, mappedValues, results);*/
+    Map<String, JsonNode> mappedValues =
+      ParameterConverter.headersToNode(response.getHeaders(), headerParameters);
+
+    validateResponseHeaders(headerParameters, validatorsForStatus, mappedValues, results);
+  }
+
+  private <T> Map<String, T> getMapFromStatusCode(Map<String, Map<String, T>> rootMap, int status) {
+    Map<String, T> map = rootMap.get(String.valueOf(status));
+
+    // Check default response if any
+    if (map == null) {
+      map = rootMap.get(DEFAULT_RESPONSE_CODE);
+    }
+
+    return map;
   }
 
   private void validateBody(final Body body,
@@ -320,15 +348,23 @@ public class OperationValidator {
                                       final Operation operation) {
 
     final Map<String, Response> responses = operation.getResponses();
+    responseHeaderParameters = new HashMap<>();
 
     for (Map.Entry<String, Response> entryStatusCode : responses.entrySet()) {
-      Map<String, JsonValidator> responseBodyValidators = new HashMap<>();
-      fillBodyValidators(openApi, entryStatusCode.getValue().getContentMediaTypes(), responseBodyValidators);
-      specResponseBodyValidators.put(entryStatusCode.getKey(), responseBodyValidators);
+      final String statusCode = entryStatusCode.getKey();
+      final Response response = entryStatusCode.getValue();
 
-      Map<String, JsonValidator> responseHeadersValidators = new HashMap<>();
-      fillResponseHeaderValidators(openApi, entryStatusCode.getValue().getHeaders(), responseHeadersValidators);
-      specResponseHeaderValidators.put(entryStatusCode.getKey(), responseHeadersValidators);
+      Map<String, JsonValidator> responseBodyValidators = new HashMap<>();
+      fillBodyValidators(openApi, response.getContentMediaTypes(), responseBodyValidators);
+      specResponseBodyValidators.put(statusCode, responseBodyValidators);
+
+      if (response.getHeaders() != null) {
+        Map<String, JsonValidator> responseHeadersValidators = new HashMap<>();
+        fillResponseHeaderValidators(openApi, response.getHeaders(), responseHeadersValidators);
+        specResponseHeaderValidators.put(statusCode, responseHeadersValidators);
+
+        responseHeaderParameters.put(statusCode, new HashMap<>(response.getHeaders()));
+      }
     }
   }
 
@@ -361,7 +397,7 @@ public class OperationValidator {
                                     final String key,
                                     final String in,
                                     final Map<String, JsonValidator> validators) {
-    if (schema != null) {
+    if (schema == null) {
       return;
     }
 
@@ -391,12 +427,44 @@ public class OperationValidator {
     }
   }
 
+  private void validateResponseHeaders(final Map<String, AbsParameter<?>> headerParameters,
+                                       final Map<String, JsonValidator> headerValidators,
+                                       final Map<String, JsonNode> headerValues,
+                                       final ValidationResults results) {
+
+    for (Map.Entry<String, JsonValidator> entry : headerValidators.entrySet()) {
+      String headerName = entry.getKey();
+
+      if (checkResponseHeaderRequired(headerName, headerParameters.get(headerName), headerValues, results)) {
+        JsonNode paramValue = headerValues.get(headerName);
+        entry.getValue().validate(paramValue, results);
+      }
+    }
+  }
+
   private boolean checkRequired(final Parameter parameter,
                                 final Map<String, JsonNode> paramValues,
                                 final ValidationResults results) {
 
-    if (parameter.isRequired() && !paramValues.containsKey(parameter.getName())) {
-      results.addError(String.format(PARAM_REQUIRED_ERR_MSG, parameter.getName(), parameter.getIn()));
+    if (!paramValues.containsKey(parameter.getName())) {
+      if (parameter.isRequired()) {
+        results.addError(String.format(PARAM_REQUIRED_ERR_MSG, parameter.getName(), parameter.getIn()));
+      }
+      return false;
+    }
+
+    return true;
+  }
+
+  private boolean checkResponseHeaderRequired(final String paramName,
+                                              final AbsParameter<?> parameter,
+                                              final Map<String, JsonNode> paramValues,
+                                              final ValidationResults results) {
+
+    if (!paramValues.containsKey(paramName)) {
+      if (parameter.isRequired()) {
+        results.addError(String.format(HEADER_REQUIRED_ERR_MSG, paramName));
+      }
       return false;
     }
 

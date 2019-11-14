@@ -4,33 +4,44 @@ info:
   version: 1.0.0
   title: API
 paths:
-  /fixed/{dataset}/fixed/{version}/fields/:
+  /fixed/{intPathParam}/fixed/{stringPathParam}/fixed/:
+    parameters:
+      # Not required at this stage but overridden by operation
+      - name: stringPathParam
+        in: path
+        schema:
+          type: string
+      - name: pathStringHeaderParam
+        in: header
+        required: true
+        schema:
+          type: string
     get:
       operationId: paramCheck
       parameters:
-        - name: dataset
+        - name: intPathParam
           in: path
           required: true
           schema:
             type: integer
             format: int32
-        - name: version
+        - name: stringPathParam
           in: path
           required: true
           schema:
             type: string
-        - name: queryParam
+        - name: boolQueryParam
           in: query
           required: true
           schema:
             type: boolean
-        - name: headerParam
+        - name: floatHeaderParam
           in: header
           required: true
           schema:
             type: number
             format: float
-        - name: cookieParam
+        - name: dtCookieParam
           in: cookie
           required: true
           schema:

@@ -30,6 +30,7 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
   private static final String STYLE_ONLY_IN = "Style '%s' is only allowed in %s";
   private static final String STYLE_ONLY_IN_AND = "Style '%s' is only allowed in %s and %s";
   private static final String CONTENT_ONY_ONE_ERR_MSG = "content can only contain one media type.";
+  private static final String CONTENT_SCHEMA_EXCLUSIVE_ERR_MSG = "Content and schema are mutually exclusive.";
 
   private static final Validator<OpenApi3, Parameter> INSTANCE = new ParameterValidator();
 
@@ -58,6 +59,11 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
       validateMap(api, parameter.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
       validateMap(api, parameter.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
 
+      // Content or schema, not both
+      if (parameter.getContentMediaTypes() != null && parameter.getSchema() != null) {
+        results.addError(CONTENT_SCHEMA_EXCLUSIVE_ERR_MSG);
+      }
+      // only one content type
       if (parameter.getContentMediaTypes() != null && parameter.getContentMediaTypes().size() > 1) {
         results.addError(CONTENT_ONY_ONE_ERR_MSG);
       }

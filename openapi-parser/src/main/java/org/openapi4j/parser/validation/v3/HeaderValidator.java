@@ -12,7 +12,8 @@ import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCHEMA;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.STYLE;
 
 class HeaderValidator extends Validator3Base<OpenApi3, Header> {
-  private static final String CONTENT_ONY_ONE_ERR_MSG = "content can only contain one media type.";
+  private static final String CONTENT_ONY_ONE_ERR_MSG = "Content can only contain one media type.";
+  private static final String CONTENT_SCHEMA_EXCLUSIVE_ERR_MSG = "Content and schema are mutually exclusive.";
 
   private static final Validator<OpenApi3, Header> INSTANCE = new HeaderValidator();
 
@@ -35,6 +36,11 @@ class HeaderValidator extends Validator3Base<OpenApi3, Header> {
       validateMap(api, header.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
       validateMap(api, header.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
 
+      // Content or schema, not both
+      if (header.getContentMediaTypes() != null && header.getSchema() != null) {
+        results.addError(CONTENT_SCHEMA_EXCLUSIVE_ERR_MSG);
+      }
+      // only one content type
       if (header.getContentMediaTypes() != null && header.getContentMediaTypes().size() > 1) {
         results.addError(CONTENT_ONY_ONE_ERR_MSG);
       }

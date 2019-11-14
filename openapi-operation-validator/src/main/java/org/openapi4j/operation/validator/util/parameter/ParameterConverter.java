@@ -3,9 +3,9 @@ package org.openapi4j.operation.validator.util.parameter;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.exception.ResolutionException;
+import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.Parameter;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -84,7 +84,7 @@ public final class ParameterConverter {
    *
    * @param specPath       The path from specification.
    * @param path           The rendered path from the request.
-   * @param pathParameters The path parameters rom specification.
+   * @param pathParameters The path parameters from specification.
    * @return A map with parameters names associated with the value as node
    */
   public static Map<String, JsonNode> pathToNode(String specPath, String path, Set<Parameter> pathParameters) {
@@ -106,12 +106,17 @@ public final class ParameterConverter {
         if (matcher.matches()) {
           final String style = param.getStyle();
 
+          JsonNode convertedValue;
           if (LABEL.equals(style)) {
-            paramValues.put(paramName, LabelStyleConverter.instance().convert(param, pathFragments[i]));
+            convertedValue = LabelStyleConverter.instance().convert(param, paramName, pathFragments[i]);
           } else if (MATRIX.equals(style)) {
-            paramValues.put(paramName, MatrixStyleConverter.instance().convert(param, pathFragments[i]));
+            convertedValue = MatrixStyleConverter.instance().convert(param, paramName, pathFragments[i]);
           } else { // simple is the default
-            paramValues.put(paramName, SimpleStyleConverter.instance().convert(param, pathFragments[i]));
+            convertedValue = SimpleStyleConverter.instance().convert(param, paramName, pathFragments[i]);
+          }
+
+          if (convertedValue != null) {
+            paramValues.put(paramName, convertedValue);
           }
           break;
         }
@@ -135,17 +140,22 @@ public final class ParameterConverter {
     for (Parameter param : queryParameters) {
       final String style = param.getStyle();
 
+      JsonNode convertedValue;
       if (SPACE_DELIMITED.equals(style)) {
-        values.put(param.getName(), SpaceDelimitedStyleConverter.instance().convert(param, rawValue));
+        convertedValue = SpaceDelimitedStyleConverter.instance().convert(param, param.getName(), rawValue);
       } else if (PIPE_DELIMITED.equals(style)) {
-        values.put(param.getName(), PipeDelimitedStyleConverter.instance().convert(param, rawValue));
+        convertedValue = PipeDelimitedStyleConverter.instance().convert(param, param.getName(), rawValue);
       } else if (DEEP_OBJECT.equals(style)) {
-        values.put(param.getName(), DeepObjectStyleConverter.instance().convert(param, rawValue));
+        convertedValue = DeepObjectStyleConverter.instance().convert(param, param.getName(), rawValue);
       } else { // form is the default
         if (param.getExplode() == null) { // explode true is default
           param.setExplode(true);
         }
-        values.put(param.getName(), FormStyleConverter.instance().convert(param, rawValue));
+        convertedValue = FormStyleConverter.instance().convert(param, param.getName(), rawValue);
+      }
+
+      if (convertedValue != null) {
+        values.put(param.getName(), convertedValue);
       }
     }
 
@@ -159,15 +169,16 @@ public final class ParameterConverter {
    * @param headerParameters The spec header parameters.
    * @return A map with parameters names associated with the value as node.
    */
-  public static Map<String, JsonNode> headersToNode(Map<String, Collection<String>> headers, Set<Parameter> headerParameters) {
+  public static Map<String, JsonNode> headersToNode(Map<String, Collection<String>> headers, Map<String, AbsParameter<?>> headerParameters) {
     Map<String, JsonNode> values = new HashMap<>();
 
-    for (Parameter param : headerParameters) {
-      Collection<String> headerValues = headers.get(param.getName());
-      if (headerValues == null) {
-        headerValues = new ArrayList<>();
+    for (Map.Entry<String, AbsParameter<?>> paramEntry : headerParameters.entrySet()) {
+      String paramName = paramEntry.getKey();
+
+      Collection<String> headerValues = headers.get(paramName);
+      if (headerValues != null) {
+        values.put(paramName, SimpleStyleConverter.instance().convert(paramEntry.getValue(), paramName, String.join(",", headerValues)));
       }
-      values.put(param.getName(), SimpleStyleConverter.instance().convert(param, String.join(",", headerValues)));
     }
 
     return values;
@@ -187,9 +198,12 @@ public final class ParameterConverter {
       if (param.getExplode() == null) { // explode true is default
         param.setExplode(true);
       }
-      // We choose here the simple style because of parsed input
-      // Should be form if we had a raw value
-      values.put(param.getName(), SimpleStyleConverter.instance().convert(param, cookies.get(param.getName())));
+
+      String value = cookies.get(param.getName());
+      if (value != null) {
+        // We use simple style. Cookies are already mapped with their keys.
+        values.put(param.getName(), SimpleStyleConverter.instance().convert(param, param.getName(), value));
+      }
     }
 
     return values;

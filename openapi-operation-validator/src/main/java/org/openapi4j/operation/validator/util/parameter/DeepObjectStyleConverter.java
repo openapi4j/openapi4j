@@ -1,9 +1,8 @@
 package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
-import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.util.HashMap;
@@ -23,9 +22,9 @@ class DeepObjectStyleConverter implements FlatStyleConverter {
   }
 
   @Override
-  public JsonNode convert(Parameter param, String rawValue) {
+  public JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) {
     if (rawValue == null) {
-      return JsonNodeFactory.instance.nullNode();
+      return null;
     }
 
     Map<String, Object> paramValues = new HashMap<>();
@@ -34,11 +33,11 @@ class DeepObjectStyleConverter implements FlatStyleConverter {
 
     Matcher matcher = REGEX.matcher(rawValue);
     while (matcher.find()) {
-      if (param.getName().equalsIgnoreCase(matcher.group(1)) && paramSchema.hasProperty(matcher.group(2))) {
+      if (paramName.equalsIgnoreCase(matcher.group(1)) && paramSchema.hasProperty(matcher.group(2))) {
         paramValues.put(matcher.group(2), matcher.group(3));
       }
     }
 
-    return convert(param, paramValues);
+    return paramValues.size() != 0 ? convert(param, paramName, paramValues) : null;
   }
 }

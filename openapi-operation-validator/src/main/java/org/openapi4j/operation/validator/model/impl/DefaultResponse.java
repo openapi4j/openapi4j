@@ -88,6 +88,18 @@ public class DefaultResponse implements Response {
     }
 
     /**
+     * Adds a header to this builder or value if already exists.
+     *
+     * @param name  The header name
+     * @param value A single value for this header
+     * @return This builder
+     */
+    public Builder header(final String name, final String value) {
+      headers.put(name, value);
+      return this;
+    }
+
+    /**
      * Adds a body to this builder.
      *
      * @param body the response body

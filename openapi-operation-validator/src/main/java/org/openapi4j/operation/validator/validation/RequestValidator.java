@@ -130,6 +130,7 @@ public class RequestValidator {
     final OperationValidator opValidator = compile(path, operation);
 
     final ValidationResults results = new ValidationResults();
+    opValidator.validateHeaders(response, results);
     opValidator.validateBody(response, results);
 
     if (!results.isValid()) {

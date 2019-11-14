@@ -3,10 +3,8 @@ package org.openapi4j.operation.validator.validation;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openapi4j.core.exception.EncodeException;
-import org.openapi4j.core.exception.ResolutionException;
-import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
@@ -24,11 +22,19 @@ import static org.junit.Assert.assertTrue;
 import static org.openapi4j.operation.validator.model.Request.Method.GET;
 
 public class OperationValidatorTest {
-  @Test
-  public void pathCheck() throws ResolutionException, ValidationException, EncodeException {
-    OperationValidator val = loadOperationValidator("/fixed/{dataset}/fixed/{version}/fields/", "paramCheck");
+  private static OpenApi3 api;
 
-    check(
+  @BeforeClass
+  public static void setup() throws Exception {
+    URL specPath = OperationValidatorTest.class.getResource("/operation/operationValidator.yaml");
+    api = new OpenApi3Parser().parse(specPath, true);
+  }
+
+  @Test
+  public void pathCheck() {
+    OperationValidator val = loadOperationValidator("paramCheck");
+
+    /*check(
       new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").build(),
       val::validatePath,
       true);
@@ -36,117 +42,133 @@ public class OperationValidatorTest {
     check(
       new DefaultRequest.Builder(GET, "/fixed/string/fixed/2/fields/").build(),
       val::validatePath,
+      false);*/
+
+    check(
+      new DefaultRequest.Builder(GET, "/fixed/fixed/2/fields/").build(),
+      val::validatePath,
       false);
+
+    // Empty string is still valid
+    /*check(
+      new DefaultRequest.Builder(GET, "/fixed/1/fixed//fields/").build(),
+      val::validatePath,
+      true);*/
   }
 
   @Test
-  public void queryCheck() throws ResolutionException, ValidationException, EncodeException {
-    OperationValidator val = loadOperationValidator("/fixed/{dataset}/fixed/{version}/fields/", "paramCheck");
+  public void queryCheck() {
+    OperationValidator val = loadOperationValidator("paramCheck");
 
     check(
-      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").query("queryParam=true").build(),
+      new DefaultRequest.Builder(GET, "/foo").query("boolQueryParam=true").build(),
       val::validateQuery,
       true);
 
     check(
-      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").query("queryParam=yes").build(),
+      new DefaultRequest.Builder(GET, "/foo").query("boolQueryParam=yes").build(),
       val::validateQuery,
       false);
 
+    // required
     check(
-      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").build(),
-      val::validateQuery,
-      false);
-  }
-
-  @Test
-  public void headerCheck() throws ResolutionException, ValidationException, EncodeException {
-    OperationValidator val = loadOperationValidator("/fixed/{dataset}/fixed/{version}/fields/", "paramCheck");
-
-    check(
-      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").header("headerParam", "0.1").build(),
-      val::validateHeaders,
-      true);
-
-    check(
-      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").header("headerParam", ".1").build(),
-      val::validateHeaders,
-      true);
-
-    check(
-      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").header("headerParam", "0,1").build(),
-      val::validateHeaders,
-      false);
-
-    check(
-      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").build(),
+      new DefaultRequest.Builder(GET, "/foo").build(),
       val::validateQuery,
       false);
   }
 
   @Test
-  public void cookieCheck() throws ResolutionException, ValidationException, EncodeException {
-    OperationValidator val = loadOperationValidator("/fixed/{dataset}/fixed/{version}/fields/", "paramCheck");
+  public void headerCheck() {
+    OperationValidator val = loadOperationValidator("paramCheck");
 
     check(
-      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").cookie("cookieParam", "1996-12-19T16:39:57-08:00").build(),
+      new DefaultRequest.Builder(GET, "/foo").header("pathStringHeaderParam", "foo").header("floatHeaderParam", "0.1").build(),
+      val::validateHeaders,
+      true);
+
+    check(
+      new DefaultRequest.Builder(GET, "/foo").header("pathStringHeaderParam", "foo").header("floatHeaderParam", ".1").build(),
+      val::validateHeaders,
+      true);
+
+    check(
+      new DefaultRequest.Builder(GET, "/foo").header("pathStringHeaderParam", "foo").header("floatHeaderParam", "0,1").build(),
+      val::validateHeaders,
+      false);
+
+    // operation param required
+    check(
+      new DefaultRequest.Builder(GET, "/foo").header("pathStringHeaderParam", "foo").build(),
+      val::validateHeaders,
+      false);
+
+    // path param required
+    check(
+      new DefaultRequest.Builder(GET, "/foo").header("floatHeaderParam", "0.1").build(),
+      val::validateHeaders,
+      false);
+  }
+
+  @Test
+  public void cookieCheck() {
+    OperationValidator val = loadOperationValidator("paramCheck");
+
+    check(
+      new DefaultRequest.Builder(GET, "/foo").cookie("dtCookieParam", "1996-12-19T16:39:57-08:00").build(),
       val::validateCookies,
       true);
 
+    // Not a date-time
     check(
-      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").cookie("cookieParam", "1996-12-19").build(),
+      new DefaultRequest.Builder(GET, "/foo").cookie("dtCookieParam", "1996-12-19").build(),
       val::validateCookies,
       false);
 
+    // required
     check(
-      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").build(),
-      val::validateQuery,
+      new DefaultRequest.Builder(GET, "/foo").build(),
+      val::validateCookies,
       false);
   }
 
   @Test
-  public void requestBodyCheck() throws ResolutionException, ValidationException, EncodeException {
-    OperationValidator val = loadOperationValidator("/post", "rqBodyCheck");
+  public void requestBodyCheck() {
+    OperationValidator val = loadOperationValidator("rqBodyCheck");
 
     JsonNode body = JsonNodeFactory.instance.objectNode().set(
       "param",
       JsonNodeFactory.instance.textNode("foo"));
 
     check(
-      new DefaultRequest.Builder(GET, "/post").header("Content-Type", "application/json").body(Body.from(body)).build(),
+      new DefaultRequest.Builder(GET, "/foo").header("Content-Type", "application/json").body(Body.from(body)).build(),
       val::validateBody,
       true);
 
     check(
-      new DefaultRequest.Builder(GET, "/post").header("Content-Type", "application/json").build(),
+      new DefaultRequest.Builder(GET, "/foo").header("Content-Type", "application/json").build(),
       val::validateBody,
       false);
 
     check(
-      new DefaultRequest.Builder(GET, "/post").body(Body.from(body)).build(),
+      new DefaultRequest.Builder(GET, "/foo").body(Body.from(body)).build(),
       val::validateBody,
       false);
 
     check(
-      new DefaultRequest.Builder(GET, "/post").header("Content-Type", "text/plain").body(Body.from(body)).build(),
+      new DefaultRequest.Builder(GET, "/foo").header("Content-Type", "text/plain").body(Body.from(body)).build(),
       val::validateBody,
       false);
 
     check(
-      new DefaultRequest.Builder(GET, "/post").build(),
+      new DefaultRequest.Builder(GET, "/foo").build(),
       val::validateBody,
       false);
   }
 
-  private OpenApi3 loadSpec(String path) throws ResolutionException, ValidationException {
-    URL specPath = getClass().getResource(path);
-    return new OpenApi3Parser().parse(specPath, true);
-  }
-
-  private OperationValidator loadOperationValidator(String oasPath, String opId) throws ResolutionException, ValidationException, EncodeException {
-    OpenApi3 api = loadSpec("/operation/operationValidator.yaml");
-    Path path = api.getPath(oasPath);
+  private OperationValidator loadOperationValidator(String opId) {
+    Path path = api.getPathItemByOperationId(opId);
     Operation op = api.getOperationById(opId);
+
     return new OperationValidator(api, path, op);
   }
 
@@ -156,6 +178,8 @@ public class OperationValidatorTest {
 
     ValidationResults results = new ValidationResults();
     func.accept(rq, results);
+
+    System.out.println(results);
 
     if (shouldBeValid) {
       assertTrue(results.toString(), results.isValid());

@@ -5,16 +5,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
 import org.openapi4j.operation.validator.OpenApi3Util;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
+import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.OpenApi3;
-import org.openapi4j.parser.model.v3.Parameter;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static org.openapi4j.operation.validator.parameter.ParamChecker.checkArray;
 import static org.openapi4j.operation.validator.parameter.ParamChecker.checkObject;
@@ -72,8 +70,8 @@ public class HeaderParamConverterTest {
   private Map<String, JsonNode> headerToNode(String parameterName, Map<String, Collection<String>> headers) throws Exception {
     OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/headerParameters.yaml");
 
-    Set<Parameter> parameters = new HashSet<>();
-    parameters.add(api.getComponents().getParameters().get(parameterName));
+    Map<String, AbsParameter<?>> parameters = new HashMap<>();
+    parameters.put(parameterName, api.getComponents().getParameters().get(parameterName));
 
     return ParameterConverter.headersToNode(
       headers,
