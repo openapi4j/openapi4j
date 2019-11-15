@@ -132,9 +132,9 @@ evi = new ExtValidatorInstance() {
                                      JsonNode schemaNode,
                                      JsonNode schemaParentNode,
                                      SchemaValidator parentSchema) {
-        // Call your specific constructor with additionnal argument if needed (i.e. 0.2 in this example).
+        // Call your specific constructor with additionnal argument if needed (i.e. "foo" in this example).
         // MyValidator extends BaseJsonValidator<OAI3>
-        return new MyValidator(context, schemaNode, schemaParentNode, parentSchema, 0.2);
+        return new MyValidator(context, schemaNode, schemaParentNode, parentSchema, "foo");
     }
 };
 
