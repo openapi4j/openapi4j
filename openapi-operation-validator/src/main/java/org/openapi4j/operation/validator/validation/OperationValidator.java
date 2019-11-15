@@ -63,7 +63,7 @@ public class OperationValidator {
   private final ValidationContext<OAI3> context;
   private final OpenApi3 openApi;
   private final Operation operation;
-  private Pattern pathPattern = null;
+  private final Pattern pathPattern;
 
   public OperationValidator(final OpenApi3 openApi, final Path path, final Operation operation) {
     this(new ValidationContext<>(openApi.getContext()), openApi, path, operation);
@@ -85,16 +85,7 @@ public class OperationValidator {
 
     // Request path parameters
     specRequestPathValidator = createParameterValidator(IN_PATH);
-    if (specRequestPathValidator != null) {
-      // fill path regex for validation
-      Optional<String> optRegEx;
-      try {
-        optRegEx = PathConverter.instance().solve(specPath, this.operation.getParametersIn(IN_PATH));
-        pathPattern = optRegEx.map(Pattern::compile).orElse(null);
-      } catch (ResolutionException e) {
-        e.printStackTrace();
-      }
-    }
+    pathPattern = initPathPattern(specPath);
     // Request query parameters
     specRequestQueryValidator = createParameterValidator(IN_QUERY);
     // Request header parameters
@@ -116,8 +107,7 @@ public class OperationValidator {
   /**
    * Validate path parameters from the given request.
    *
-   * @param request The request to validate. Path must match exactly the pattern defined in specification.
-   *                If your path is prefixed by server
+   * @param request The request to validate. Path MUST MATCH exactly the pattern defined in specification.
    * @param results The results.
    * @return The mapped parameters with their values.
    */
@@ -361,6 +351,21 @@ public class OperationValidator {
     }
 
     return validators.size() != 0 ? validators : null;
+  }
+
+  private Pattern initPathPattern(String specPath) {
+    if (specRequestPathValidator == null) {
+      return null;
+    }
+
+    // fill path regex for validation
+    Optional<String> optRegEx;
+    try {
+      optRegEx = PathConverter.instance().solve(specPath, this.operation.getParametersIn(IN_PATH));
+      return optRegEx.map(Pattern::compile).orElse(null);
+    } catch (ResolutionException e) {
+      return null;
+    }
   }
 
   private void mergePathToOperationParameters(final Path path) {
