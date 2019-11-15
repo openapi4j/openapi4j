@@ -110,13 +110,15 @@ All JSON types are accepted, it's up to you to describe it and setup the validat
       "type": "object",
       "properties": {
         "...": "..."
-      }
+      },
       "x-sub-object-val": {
-        "fooParam": 0.2 # You need a parameter ?
-      }  # it's up to you to place the trigger where your validation should occur.
+        "...": "You need parameters ?",
+        "fooParam": 0.2,
+        "...": "it's up to you to place the trigger where your validation should occur."
+      }  
     }
   },
-  "x-myentity-val": null # Just trigger on all entity !
+  "x-myentity-val": "Just trigger on all entity !"
 }
 ```
 or  
