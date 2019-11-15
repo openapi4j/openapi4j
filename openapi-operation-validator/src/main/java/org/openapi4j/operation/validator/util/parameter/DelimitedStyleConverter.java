@@ -45,7 +45,7 @@ class DelimitedStyleConverter implements FlatStyleConverter {
         }
       }
 
-      if (arrayValues.size() == 0) {
+      if (arrayValues.isEmpty()) {
         return null;
       }
 

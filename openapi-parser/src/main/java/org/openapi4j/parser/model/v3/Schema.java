@@ -98,7 +98,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   public boolean isExclusiveMaximum() {
-    return exclusiveMaximum != null ? exclusiveMaximum : false;
+    return Boolean.TRUE.equals(exclusiveMaximum);
   }
 
   public Schema setExclusiveMaximum(Boolean exclusiveMaximum) {
@@ -122,7 +122,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   public boolean isExclusiveMinimum() {
-    return exclusiveMinimum != null ? exclusiveMinimum : false;
+    return Boolean.TRUE.equals(exclusiveMinimum);
   }
 
   public Schema setExclusiveMinimum(Boolean exclusiveMinimum) {
@@ -186,7 +186,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   public boolean isUniqueItems() {
-    return uniqueItems != null ? uniqueItems : false;
+    return Boolean.TRUE.equals(uniqueItems);
   }
 
   public Schema setUniqueItems(Boolean uniqueItems) {
@@ -468,7 +468,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   public boolean isAdditionalPropertiesAllowed() {
-    return additionalPropertiesAllowed != null ? additionalPropertiesAllowed : true;
+    return Boolean.TRUE.equals(additionalPropertiesAllowed);
   }
 
   public Schema setAdditionalPropertiesAllowed(Boolean additionalPropertiesAllowed) {
@@ -514,7 +514,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   public boolean isNullable() {
-    return nullable != null ? nullable : false;
+    return Boolean.TRUE.equals(nullable);
   }
 
   public Schema setNullable(Boolean nullable) {
@@ -538,7 +538,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   public boolean isReadOnly() {
-    return readOnly != null ? readOnly : false;
+    return Boolean.TRUE.equals(readOnly);
   }
 
   public Schema setReadOnly(Boolean readOnly) {
@@ -552,7 +552,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   public boolean isWriteOnly() {
-    return writeOnly != null ? writeOnly : false;
+    return Boolean.TRUE.equals(writeOnly);
   }
 
   public Schema setWriteOnly(Boolean writeOnly) {
@@ -596,7 +596,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   public boolean isDeprecated() {
-    return deprecated != null ? deprecated : false;
+    return Boolean.TRUE.equals(deprecated);
   }
 
   public Schema setDeprecated(Boolean deprecated) {

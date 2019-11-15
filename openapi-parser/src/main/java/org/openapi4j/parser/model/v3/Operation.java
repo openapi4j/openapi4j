@@ -215,7 +215,7 @@ public class Operation extends AbsExtendedOpenApiSchema<Operation> {
   }
 
   public boolean isDeprecated() {
-    return deprecated != null ? deprecated : false;
+    return Boolean.TRUE.equals(deprecated);
   }
 
   public Operation setDeprecated(Boolean deprecated) {

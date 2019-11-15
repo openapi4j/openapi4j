@@ -37,7 +37,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
   }
 
   public boolean isRequired() {
-    return required != null ? required : false;
+    return Boolean.TRUE.equals(required);
   }
 
   public AbsParameter<M> setRequired(Boolean required) {
@@ -51,7 +51,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
   }
 
   public boolean isDeprecated() {
-    return deprecated != null ? deprecated : false;
+    return Boolean.TRUE.equals(deprecated);
   }
 
   public AbsParameter<M> setDeprecated(Boolean deprecated) {
@@ -75,7 +75,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
   }
 
   public boolean isExplode() {
-    return explode != null ? explode : false;
+    return Boolean.TRUE.equals(explode);
   }
 
   public AbsParameter<M> setExplode(Boolean explode) {
@@ -89,7 +89,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
   }
 
   public boolean isAllowReserved() {
-    return allowReserved != null ? allowReserved : false;
+    return Boolean.TRUE.equals(allowReserved);
   }
 
   public AbsParameter<M> setAllowReserved(Boolean allowReserved) {

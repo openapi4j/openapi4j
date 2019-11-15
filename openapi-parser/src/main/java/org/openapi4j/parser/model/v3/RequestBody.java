@@ -61,7 +61,7 @@ public class RequestBody extends AbsExtendedRefOpenApiSchema<RequestBody> {
   }
 
   public boolean isRequired() {
-    return required != null ? required : false;
+    return Boolean.TRUE.equals(required);
   }
 
   public RequestBody setRequired(Boolean required) {

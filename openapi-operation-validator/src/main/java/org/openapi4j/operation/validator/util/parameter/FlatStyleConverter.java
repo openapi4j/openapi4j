@@ -31,8 +31,8 @@ interface FlatStyleConverter extends StyleConverter {
         scanner.close();
       } else {
         String[] splitValues = rawValue.split(splitPattern);
-        int i = 0;
         if (splitValues.length % 2 == 0) {
+          int i = 0;
           while (i < splitValues.length) {
             if (param.getSchema().hasProperty(splitValues[i])) {
               values.put(splitValues[i++], splitValues[i++]);

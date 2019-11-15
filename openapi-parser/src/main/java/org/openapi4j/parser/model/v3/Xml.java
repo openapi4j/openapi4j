@@ -2,7 +2,7 @@ package org.openapi4j.parser.model.v3;
 
 import org.openapi4j.core.model.OAIContext;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess", "UnusedReturnValue"})
 public class Xml extends AbsExtendedOpenApiSchema<Xml> {
   private String name;
   private String namespace;
@@ -46,7 +46,7 @@ public class Xml extends AbsExtendedOpenApiSchema<Xml> {
   }
 
   public boolean isAttribute() {
-    return attribute != null ? attribute : false;
+    return Boolean.TRUE.equals(attribute);
   }
 
   public Xml setAttribute(Boolean attribute) {
@@ -60,7 +60,7 @@ public class Xml extends AbsExtendedOpenApiSchema<Xml> {
   }
 
   public boolean isWrapped() {
-    return wrapped != null ? wrapped : false;
+    return Boolean.TRUE.equals(wrapped);
   }
 
   public Xml setWrapped(Boolean wrapped) {

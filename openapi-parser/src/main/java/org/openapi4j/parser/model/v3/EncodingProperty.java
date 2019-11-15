@@ -67,7 +67,7 @@ public class EncodingProperty extends AbsExtendedOpenApiSchema<EncodingProperty>
   }
 
   public boolean isExplode() {
-    return explode != null ? explode : false;
+    return Boolean.TRUE.equals(explode);
   }
 
   public EncodingProperty setExplode(Boolean explode) {
