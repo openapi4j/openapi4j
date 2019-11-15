@@ -24,6 +24,6 @@ class LabelStyleConverter implements FlatStyleConverter {
     final Map<String, Object> paramValues;
     paramValues = getParameterValues(param, paramName, rawValue.substring(1), param.isExplode() ? "\\." : ",");
 
-    return paramValues.size() != 0 ? convert(param, paramName, paramValues) : null;
+    return convert(param, paramName, paramValues);
   }
 }

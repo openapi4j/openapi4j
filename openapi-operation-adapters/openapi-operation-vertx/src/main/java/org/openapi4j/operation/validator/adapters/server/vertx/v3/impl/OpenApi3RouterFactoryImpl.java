@@ -1,5 +1,25 @@
 package org.openapi4j.operation.validator.adapters.server.vertx.v3.impl;
 
+import org.openapi4j.core.exception.ResolutionException;
+import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.operation.validator.adapters.server.vertx.v3.OpenApi3RouterFactory;
+import org.openapi4j.operation.validator.util.PathConverter;
+import org.openapi4j.operation.validator.validation.OperationValidator;
+import org.openapi4j.operation.validator.validation.RequestValidator;
+import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.model.v3.Operation;
+import org.openapi4j.parser.model.v3.Path;
+import org.openapi4j.parser.model.v3.RequestBody;
+import org.openapi4j.parser.model.v3.Response;
+import org.openapi4j.schema.validator.ValidationContext;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
@@ -7,15 +27,6 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-import org.openapi4j.core.exception.ResolutionException;
-import org.openapi4j.core.model.v3.OAI3;
-import org.openapi4j.operation.validator.adapters.server.vertx.v3.OpenApi3RouterFactory;
-import org.openapi4j.operation.validator.validation.OperationValidator;
-import org.openapi4j.operation.validator.validation.RequestValidator;
-import org.openapi4j.parser.model.v3.*;
-import org.openapi4j.schema.validator.ValidationContext;
-
-import java.util.*;
 
 public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
   private static final String OP_ID_NOT_FOUND_ERR_MSG = "Operation with id '%s' not found.";
@@ -101,7 +112,7 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
   }
 
   private Route createRoute(Router router, OperationSpec operationSpec) throws ResolutionException {
-    Optional<String> optRegEx = OAI3PathConverter
+    Optional<String> optRegEx = PathConverter
       .instance()
       .solve(operationSpec.path, operationSpec.operation.getParametersIn("path"));
 

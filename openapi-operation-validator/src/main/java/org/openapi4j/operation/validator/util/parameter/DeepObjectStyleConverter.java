@@ -11,7 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class DeepObjectStyleConverter implements FlatStyleConverter {
-  private static final Pattern REGEX = Pattern.compile("(?:([^&]+)\\[([^&]+)\\])(?:=)([^&]*)");
+  private static final Pattern REGEX = Pattern.compile("(?:([^&]+)\\[([^&]+)])(?:=)([^&]*)");
 
   private static final DeepObjectStyleConverter INSTANCE = new DeepObjectStyleConverter();
 
@@ -38,6 +38,6 @@ class DeepObjectStyleConverter implements FlatStyleConverter {
       }
     }
 
-    return paramValues.size() != 0 ? convert(param, paramName, paramValues) : null;
+    return convert(param, paramName, paramValues);
   }
 }
