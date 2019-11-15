@@ -16,6 +16,10 @@ interface StyleConverter {
   JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) throws ResolutionException;
 
   default JsonNode convert(AbsParameter<?> param, String paramName, Map<String, Object> paramValues) {
+    if (paramValues == null || paramValues.size() == 0) {
+      return null;
+    }
+
     String style = param.getSchema().getSupposedType();
     Schema schema = param.getSchema();
 

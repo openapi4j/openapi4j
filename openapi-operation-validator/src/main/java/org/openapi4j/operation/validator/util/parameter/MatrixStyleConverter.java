@@ -33,16 +33,16 @@ class MatrixStyleConverter implements FlatStyleConverter {
     }
 
     final Map<String, Object> paramValues;
-    paramValues = getParameterValues(param, paramName, rawValue, PREFIXED_SEMICOLON_NAME_REGEX, param.isExplode() ? ";" : ",");
+    paramValues = getValues(param, paramName, rawValue, param.isExplode() ? ";" : ",");
 
-    return paramValues.size() != 0 ? convert(param, paramName, paramValues) : null;
+    return convert(param, paramName, paramValues);
   }
 
-  private Map<String, Object> getParameterValues(AbsParameter<?> param, String paramName, String rawValue, Pattern subPattern, String splitPattern) {
+  private Map<String, Object> getValues(AbsParameter<?> param, String paramName, String rawValue, String splitPattern) {
     String type = param.getSchema().getSupposedType();
 
     if (TYPE_OBJECT.equals(type)) {
-      return getObjectValues(param, paramName, rawValue, subPattern, splitPattern);
+      return getObjectValues(param, paramName, rawValue, splitPattern);
     }
 
     Map<String, Object> values = new HashMap<>();
@@ -50,9 +50,9 @@ class MatrixStyleConverter implements FlatStyleConverter {
     if (TYPE_ARRAY.equals(type)) {
       values.put(
         paramName,
-        getArrayValues(param, rawValue, subPattern, splitPattern));
+        getArrayValues(param, rawValue, splitPattern));
     } else {
-      Matcher matcher = subPattern.matcher(rawValue);
+      Matcher matcher = PREFIXED_SEMICOLON_NAME_REGEX.matcher(rawValue);
       if (matcher.matches()) {
         values.put(matcher.group(1), matcher.group(2));
       }
@@ -61,40 +61,35 @@ class MatrixStyleConverter implements FlatStyleConverter {
     return values;
   }
 
-  private Map<String, Object> getObjectValues(AbsParameter<?> param, String paramName, String rawValue, Pattern subPattern, String splitPattern) {
+  private Map<String, Object> getObjectValues(AbsParameter<?> param, String paramName, String rawValue, String splitPattern) {
+    Matcher matcher = PREFIXED_SEMICOLON_NAME_REGEX.matcher(rawValue);
+
     if (param.isExplode()) {
       Map<String, Object> values = new HashMap<>();
-
-      Matcher matcher = subPattern.matcher(rawValue);
       while (matcher.find()) {
         values.put(matcher.group(1), matcher.group(2));
       }
-
       return values;
+    } else {
+      return (matcher.find())
+        ? getParameterValues(param, paramName, matcher.group(2), splitPattern)
+        : null;
     }
-
-    Matcher matcher = subPattern.matcher(rawValue);
-    return (matcher.find())
-      ? getParameterValues(param, paramName, matcher.group(2), splitPattern)
-      : null;
   }
 
-  private List<String> getArrayValues(AbsParameter<?> param, String rawValue, Pattern subPattern, String splitPattern) {
+  private List<String> getArrayValues(AbsParameter<?> param, String rawValue, String splitPattern) {
+    Matcher matcher = PREFIXED_SEMICOLON_NAME_REGEX.matcher(rawValue);
+
     if (param.isExplode()) {
       List<String> arrayValues = new ArrayList<>();
-
-      Matcher matcher = subPattern.matcher(rawValue);
       while (matcher.find()) {
         arrayValues.add(matcher.group(2));
       }
-
       return arrayValues;
+    } else {
+      return matcher.matches()
+        ? Arrays.asList(matcher.group(2).split(splitPattern))
+        : null;
     }
-
-    Matcher matcher = subPattern.matcher(rawValue);
-
-    return matcher.matches()
-      ? Arrays.asList(matcher.group(2).split(splitPattern))
-      : null;
   }
 }
