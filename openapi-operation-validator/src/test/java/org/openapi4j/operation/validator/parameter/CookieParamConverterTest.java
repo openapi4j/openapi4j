@@ -5,13 +5,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
 import org.openapi4j.operation.validator.OpenApi3Util;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
+import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Parameter;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static org.openapi4j.operation.validator.parameter.ParamChecker.checkArray;
 import static org.openapi4j.operation.validator.parameter.ParamChecker.checkObject;
@@ -53,11 +52,11 @@ public class CookieParamConverterTest {
   private Map<String, JsonNode> cookieToNode(String parameterName, Map<String, String> cookies) throws Exception {
     OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/cookieParameters.yaml");
 
-    Set<Parameter> parameters = new HashSet<>();
-    parameters.add(api.getComponents().getParameters().get(parameterName));
+    Map<String, AbsParameter<Parameter>> parameters = new HashMap<>();
+    parameters.put(parameterName, api.getComponents().getParameters().get(parameterName));
 
     return ParameterConverter.cookiesToNode(
-      cookies,
-      parameters);
+      parameters,
+      cookies);
   }
 }

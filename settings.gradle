@@ -1,6 +1,6 @@
 rootProject.name = "openapi4j"
-include("openapi-parser")
 include("openapi-core")
+include("openapi-parser")
 include("openapi-operation-validator")
 include("openapi-schema-validator")
 include("openapi-perf-checker")

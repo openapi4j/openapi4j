@@ -34,26 +34,27 @@ public class OperationValidatorTest {
   public void pathCheck() {
     OperationValidator val = loadOperationValidator("paramCheck");
 
-    /*check(
-      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fields/").build(),
+    check(
+      new DefaultRequest.Builder(GET, "/fixed/1/fixed/2/fixed/").build(),
       val::validatePath,
       true);
 
     check(
-      new DefaultRequest.Builder(GET, "/fixed/string/fixed/2/fields/").build(),
+      new DefaultRequest.Builder(GET, "/fixed/string/fixed/2/fixed/").build(),
       val::validatePath,
-      false);*/
+      false);
 
+    // wrong path, parameters are not bound
     check(
-      new DefaultRequest.Builder(GET, "/fixed/fixed/2/fields/").build(),
+      new DefaultRequest.Builder(GET, "/fixed/fixed/2/fixed/").build(),
       val::validatePath,
       false);
 
     // Empty string is still valid
-    /*check(
-      new DefaultRequest.Builder(GET, "/fixed/1/fixed//fields/").build(),
+    check(
+      new DefaultRequest.Builder(GET, "/fixed/1/fixed//fixed/").build(),
       val::validatePath,
-      true);*/
+      true);
   }
 
   @Test

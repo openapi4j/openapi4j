@@ -4,13 +4,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.junit.Test;
 import org.openapi4j.operation.validator.OpenApi3Util;
+import org.openapi4j.operation.validator.util.PathConverter;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
+import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Parameter;
 
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -152,12 +156,17 @@ public class PathParamConverterTest {
   private Map<String, JsonNode> pathToNode(String parameterName, String value) throws Exception {
     OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/pathParameters.yaml");
 
-    Set<Parameter> parameters = new HashSet<>();
-    parameters.add(api.getComponents().getParameters().get(parameterName));
+    Map<String, AbsParameter<Parameter>> parameters = new HashMap<>();
+    parameters.put(parameterName, api.getComponents().getParameters().get(parameterName));
+
+    final List<Parameter> values = Collections.singletonList(api.getComponents().getParameters().get(parameterName));
+    String oasPath = PathConverter.instance().solve("/" + parameterName + "/{" + parameterName + "}/foo", values).get();
+
+    Pattern pattern = Pattern.compile(oasPath);
 
     return ParameterConverter.pathToNode(
-      parameterName + "/{" + parameterName + "}/foo",
-      "/" + parameterName + "/" + value + "/foo",
-      parameters);
+      parameters,
+      pattern,
+      "/" + parameterName + "/" + value + "/foo");
   }
 }

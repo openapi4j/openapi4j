@@ -7,6 +7,7 @@ import org.openapi4j.operation.validator.OpenApi3Util;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.model.v3.Parameter;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -70,11 +71,11 @@ public class HeaderParamConverterTest {
   private Map<String, JsonNode> headerToNode(String parameterName, Map<String, Collection<String>> headers) throws Exception {
     OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/headerParameters.yaml");
 
-    Map<String, AbsParameter<?>> parameters = new HashMap<>();
+    Map<String, AbsParameter<Parameter>> parameters = new HashMap<>();
     parameters.put(parameterName, api.getComponents().getParameters().get(parameterName));
 
     return ParameterConverter.headersToNode(
-      headers,
-      parameters);
+      parameters,
+      headers);
   }
 }

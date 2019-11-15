@@ -3,14 +3,13 @@ package org.openapi4j.operation.validator.util.parameter;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.exception.ResolutionException;
+import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.Parameter;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,135 +76,144 @@ public final class ParameterConverter {
   private static final String PIPE_DELIMITED = "pipeDelimited";
   private static final String DEEP_OBJECT = "deepObject";
 
-  private ParameterConverter() {}
+  private ParameterConverter() {
+  }
 
   /**
    * Convert path parameters to nodes.
    *
-   * @param specPath       The path from specification.
+   * @param specParameters The path parameters from specification.
    * @param path           The rendered path from the request.
-   * @param pathParameters The path parameters from specification.
-   * @return A map with parameters names associated with the value as node
+   * @return A map with parameters names associated with the value as node.
    */
-  public static Map<String, JsonNode> pathToNode(String specPath, String path, Set<Parameter> pathParameters) {
-    String[] specPathFragments = specPath.trim().split("/");
-    String[] pathFragments = path.trim().split("/");
-    // Align the paths as the spec path could be prefixed by server definition
-    if (pathFragments.length > specPathFragments.length) {
-      pathFragments = Arrays.copyOfRange(pathFragments, pathFragments.length - specPathFragments.length, pathFragments.length);
+  public static Map<String, JsonNode> pathToNode(final Map<String, AbsParameter<Parameter>> specParameters,
+                                                 final Pattern pattern,
+                                                 final String path) {
+
+    final Map<String, JsonNode> mappedValues = new HashMap<>();
+
+    if (pattern == null) {
+      return mappedValues;
     }
 
-    Map<String, JsonNode> paramValues = new HashMap<>();
+    final Matcher matcher = pattern.matcher(path);
+    if (!matcher.matches()) {
+      return mappedValues;
+    }
 
-    for (Parameter param : pathParameters) {
-      // Get {paramName}
-      String paramName = param.getName();
-      Pattern pattern = Pattern.compile("(?:\\{.*)(" + paramName + ")(?:.*})");
-      for (int i = 0; i < specPathFragments.length; i++) {
-        Matcher matcher = pattern.matcher(specPathFragments[i]);
-        if (matcher.matches()) {
-          final String style = param.getStyle();
+    for (Map.Entry<String, AbsParameter<Parameter>> paramEntry : specParameters.entrySet()) {
+      final String paramName = paramEntry.getKey();
+      final AbsParameter<Parameter> param = paramEntry.getValue();
+      final String style = param.getStyle();
 
-          JsonNode convertedValue;
-          if (LABEL.equals(style)) {
-            convertedValue = LabelStyleConverter.instance().convert(param, paramName, pathFragments[i]);
-          } else if (MATRIX.equals(style)) {
-            convertedValue = MatrixStyleConverter.instance().convert(param, paramName, pathFragments[i]);
-          } else { // simple is the default
-            convertedValue = SimpleStyleConverter.instance().convert(param, paramName, pathFragments[i]);
-          }
-
-          if (convertedValue != null) {
-            paramValues.put(paramName, convertedValue);
-          }
-          break;
+      JsonNode convertedValue;
+        if (LABEL.equals(style)) {
+          convertedValue = LabelStyleConverter.instance().convert(param, paramName, matcher.group(paramName));
+        } else if (MATRIX.equals(style)) {
+          convertedValue = MatrixStyleConverter.instance().convert(param, paramName, matcher.group(paramName));
+        } else { // simple is the default
+          convertedValue = SimpleStyleConverter.instance().convert(param, paramName, matcher.group(paramName));
         }
+
+      if (convertedValue != null) {
+        mappedValues.put(paramName, convertedValue);
       }
     }
 
-    return paramValues;
+    return mappedValues;
   }
 
   /**
    * Convert query parameters to nodes.
    * The query string MUST BE in the appropriate form corresponding to the associated style.
    *
-   * @param rawValue        The raw query string.
-   * @param queryParameters The spec query parameters.
+   * @param specParameters The spec query parameters.
+   * @param rawValue       The raw query string.
    * @return A map with parameters names associated with the value as node.
    */
-  public static Map<String, JsonNode> queryToNode(String rawValue, Set<Parameter> queryParameters) throws ResolutionException {
-    Map<String, JsonNode> values = new HashMap<>();
+  public static Map<String, JsonNode> queryToNode(final Map<String, AbsParameter<Parameter>> specParameters,
+                                                  final String rawValue) throws ResolutionException {
 
-    for (Parameter param : queryParameters) {
+    final Map<String, JsonNode> mappedValues = new HashMap<>();
+
+    for (Map.Entry<String, AbsParameter<Parameter>> paramEntry : specParameters.entrySet()) {
+      final String paramName = paramEntry.getKey();
+      final AbsParameter<Parameter> param = paramEntry.getValue();
       final String style = param.getStyle();
 
       JsonNode convertedValue;
       if (SPACE_DELIMITED.equals(style)) {
-        convertedValue = SpaceDelimitedStyleConverter.instance().convert(param, param.getName(), rawValue);
+        convertedValue = SpaceDelimitedStyleConverter.instance().convert(param, paramName, rawValue);
       } else if (PIPE_DELIMITED.equals(style)) {
-        convertedValue = PipeDelimitedStyleConverter.instance().convert(param, param.getName(), rawValue);
+        convertedValue = PipeDelimitedStyleConverter.instance().convert(param, paramName, rawValue);
       } else if (DEEP_OBJECT.equals(style)) {
-        convertedValue = DeepObjectStyleConverter.instance().convert(param, param.getName(), rawValue);
+        convertedValue = DeepObjectStyleConverter.instance().convert(param, paramName, rawValue);
       } else { // form is the default
         if (param.getExplode() == null) { // explode true is default
           param.setExplode(true);
         }
-        convertedValue = FormStyleConverter.instance().convert(param, param.getName(), rawValue);
+        convertedValue = FormStyleConverter.instance().convert(param, paramName, rawValue);
       }
 
       if (convertedValue != null) {
-        values.put(param.getName(), convertedValue);
+        mappedValues.put(paramName, convertedValue);
       }
     }
 
-    return values;
+    return mappedValues;
   }
 
   /**
    * Convert header parameters to nodes.
    *
-   * @param headers          The headers.
-   * @param headerParameters The spec header parameters.
+   * @param headers        The headers.
+   * @param specParameters The spec header parameters.
    * @return A map with parameters names associated with the value as node.
    */
-  public static Map<String, JsonNode> headersToNode(Map<String, Collection<String>> headers, Map<String, AbsParameter<?>> headerParameters) {
-    Map<String, JsonNode> values = new HashMap<>();
+  public static <M extends OpenApiSchema<M>> Map<String, JsonNode> headersToNode(final Map<String, AbsParameter<M>> specParameters,
+                                                                                 final Map<String, Collection<String>> headers) {
 
-    for (Map.Entry<String, AbsParameter<?>> paramEntry : headerParameters.entrySet()) {
+    Map<String, JsonNode> mappedValues = new HashMap<>();
+
+    for (Map.Entry<String, AbsParameter<M>> paramEntry : specParameters.entrySet()) {
       String paramName = paramEntry.getKey();
 
       Collection<String> headerValues = headers.get(paramName);
       if (headerValues != null) {
-        values.put(paramName, SimpleStyleConverter.instance().convert(paramEntry.getValue(), paramName, String.join(",", headerValues)));
+        mappedValues.put(paramName, SimpleStyleConverter.instance().convert(paramEntry.getValue(), paramName, String.join(",", headerValues)));
       }
     }
 
-    return values;
+    return mappedValues;
   }
 
   /**
    * Convert cookie parameters to nodes.
    *
-   * @param cookies          The cookies.
-   * @param cookieParameters The spec cookie parameters.
+   * @param cookies        The cookies.
+   * @param specParameters The spec cookie parameters.
    * @return A map with parameters names associated with the value as node.
    */
-  public static Map<String, JsonNode> cookiesToNode(Map<String, String> cookies, Set<Parameter> cookieParameters) {
-    Map<String, JsonNode> values = new HashMap<>();
+  public static Map<String, JsonNode> cookiesToNode(final Map<String, AbsParameter<Parameter>> specParameters,
+                                                    final Map<String, String> cookies) {
 
-    for (Parameter param : cookieParameters) {
+    Map<String, JsonNode> mappedValues = new HashMap<>();
+
+    for (Map.Entry<String, AbsParameter<Parameter>> paramEntry : specParameters.entrySet()) {
+      final String paramName = paramEntry.getKey();
+      final AbsParameter<Parameter> param = paramEntry.getValue();
+
       if (param.getExplode() == null) { // explode true is default
         param.setExplode(true);
       }
 
-      String value = cookies.get(param.getName());
+      String value = cookies.get(paramName);
       if (value != null) {
         // We use simple style. Cookies are already mapped with their keys.
-        values.put(param.getName(), SimpleStyleConverter.instance().convert(param, param.getName(), value));
+        mappedValues.put(paramName, SimpleStyleConverter.instance().convert(param, paramName, value));
       }
     }
 
-    return values;
+    return mappedValues;
   }
 }
