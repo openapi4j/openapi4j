@@ -62,21 +62,42 @@ my_schema.uniqueItems : Uniqueness is not respected 'bar'.
 ## Extensions
 
 Without doing any anything with the options, the Schema validator is compliant with the specification.
-But, considering we are in a real world, we provide the possibility to enrich the validation with your own validators.  
 
-This is done with this feature to not bloat the default implementation.  
+So why ?
 
-Depending of your implementation, your can override a known keyword or add your own keyword/validator.  
-Using specification extensions for new keywords is strongly recommended.   
+Extensions have two distinct goals :
+- Overriding a known keyword.
+- Adding your business validator.
+
+The validation integrated in OpenAPI Specification with the Schema Object part covers only basic/medium scenarios but we all know that more complex validation rules are always needed in projects.
+JSON Schema further drafts try to cover more and more scenarios, but we think it's a waste since it will never fulfill the needs.  
+Schema Object is not perfect but has the advantage to not overly complexify the specification and its location is near the right spot.  
+To illustrate the purpose, think about XML Schema Definition, Protocol Buffers, simpleSchema and other alternatives old or new, none of those go the JSON Schema way because nobody can maintain this for APIs.
+
+This is where `extensions` will let you fill the gap !  
+By implementing your own validation, you don't create you subset of the offical OpenAPI Specification, you use it at its maximum !
+
+There's no overhead to use extensions, default validators are built directly with this process.
+
+### Overriding a known keyword
+
+You can override a known keyword with your own validator.  
+Look at the example to start linking a known keyword with your implementation.
 
 Feel free to contribute to those extensions if you think your implementation could help the community !
 There's no plan yet for releasing contributions on validation extensions, for now it's "only" for sharing.  
 
-Some ideas : adding your very specific formats, checking full entity, dateStart > now() && dateStart < dateEnd, ...  
+### Business validator
 
-Whatever you need has now the possibility to be (re-)located at this SINGLE level and not after traversing all layers of the architecture before checking values.
+Whatever you need, you has now the possibility to (re-)locate almost all the validation at this SINGLE front level and not after traversing all layers of the architecture before checking business values.  
 
-Example :
+Your project should be more readable, maintainable and performance increased without efforts.
+
+Using specification extensions for new keywords is strongly recommended in this case.
+
+Some ideas : checking full entity, dateStart > now() && dateStart < dateEnd, ...
+
+### Examples :
 
 Declaration examples :  
 All JSON types are accepted, it's up to you to describe it and setup the validation in the corresponding validator.
@@ -85,9 +106,17 @@ All JSON types are accepted, it's up to you to describe it and setup the validat
 {
   "type": "object",
   "properties": {
-    ...
+    "sub-object": {
+      "type": "object",
+      "properties": {
+        "...": "..."
+      }
+      "x-sub-object-val": {
+        "fooParam": 0.2 # You need a parameter ?
+      }  # it's up to you to place the trigger where your validation should occur.
+    }
   },
-  "x-myentity-val": true  
+  "x-myentity-val": null # Just trigger on all entity !
 }
 ```
 or  
@@ -102,7 +131,7 @@ Instantiation :
 ```java
 // Declare your instantiation function, this will be called as much as needed.
 // This avoids reflection and lets you define any additional variables.
-ExtValidatorInstance evi = new ExtValidatorInstance() {
+evi = new ExtValidatorInstance() {
     @Override
     public JsonValidator<OAI3> apply(ValidationContext context,
                                      JsonNode schemaNode,
@@ -115,12 +144,12 @@ ExtValidatorInstance evi = new ExtValidatorInstance() {
 };
 
 // Load an API context with the base URI for JSON references
-OAI3Context apiContext = new OAI3Context(URI.create("/"), schemaNode); 
+apiContext = new OAI3Context(URI.create("/"), schemaNode); 
 // Setup a validation context
-ValidationContext validationContext = new ValidationContext<>(apiContext); 
+validationContext = new ValidationContext<>(apiContext); 
 // Link trigger 'x-myentity-val' (or known keyword such as maximum, format, ...) with MyValidator.
 validationContext.addValidator("x-myentity-val", evi); 
-SchemaValidator schemaValidator = new SchemaValidator(validationContext, "entity_schema", schemaNode);
+schemaValidator = new SchemaValidator(validationContext, "entity_schema", schemaNode);
 ```
 
 ## Limitations

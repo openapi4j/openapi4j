@@ -67,13 +67,6 @@ Optional additions (add the corresponding dependencies) :
 
 Other content types are considered as a single text node to cover direct file uploads (i.e string/binary or string/base64).
 
-## TODO
-
-* Enable validation context as input for schema validator overrides and options.
-* Response validator.
-* Multipart mixed.
-* More tests.
-
 ## Limitations
 
 * Security and *functional* related aspects (roles/scopes, token/cookie validity, ...) are not validated by this module unless specified on each adapter README.md.  

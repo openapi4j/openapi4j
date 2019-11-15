@@ -29,8 +29,10 @@ All modules follow the [Semantic Versioning 2.0.0](https://semver.org) and are a
 <dependency>
     <groupId>org.openapi4j</groupId>
     <artifactId>openapi4j-...</artifactId>
-    <version>0.1</version> <!-- Current release -->
-    <version>0.2-SNAPSHOT</version> <!-- Next -->
+    <!-- Current release -->
+    <version>0.2</version>
+    <!-- Next -->
+    <version>0.3-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -45,16 +47,6 @@ The modules currently support the OpenAPI Specification (OAS) version 3.x.x.
 This project has been developed while reading 3.0.2.  
 See related projects for limitations and issues.
 
-## Project status
-
-| Module                         | Maturity      |
-|--------------------------------|---------------|
-| Core                           | RC stage      |
-| Operation validator            | Alpha stage   |
-| Operation validator adapters   | Beta stage    |
-| Parser                         | Beta stage    |
-| Schema validator               | RC stage      |
-
 ## Roadmap
 
 - 0.1 :
@@ -63,7 +55,9 @@ See related projects for limitations and issues.
     - Rework on some naive code parts that could lead to NPE mostly.  
     -  Complete the multipart/mixed implementation.  
 - 0.3 :
-    - Complete response validation implementation.  
+    - Complete response validation implementation.
+- 0.4 :
+    - Validate parameter from content property.  
 - Next :
     - Ready for 1.0 candidate ?  
 
@@ -79,7 +73,7 @@ We accept Pull Requests via GitHub. There are some guidelines which will make ap
 
 * Respect the code style and indentation. .editorconfig file is provided to not be worried about this.
 * Create minimal diffs - disable on save actions like reformat source code or organize imports. If you feel the source code should be reformatted create a separate PR for this change.
-* Provide JUnit tests for your changes and make sure your changes don't break anything by running `gradlew clean testClasses`.
+* Provide JUnit tests for your changes and make sure your changes don't break anything by running `gradlew clean check`.
 * Provide a self explanatory but brief commit message with issue reference if any, as it will be reported directly for release changelog.
 
 ## License

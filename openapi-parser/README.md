@@ -4,8 +4,9 @@ This is the home page of the openapi4j parser project for Java (or JVM platform 
 
 parser module includes the following features :
 * [Open API specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md) parser and validator.
+* Manipulate the models are serialize back the modified specification.
 
-The validation is made internally by specific classes. Schema validator project could be used but some parts can't be defined via JSON Schema.  
+The validation is made internally by specific classes. Schema validator project could be used but many parts can't be checked via SchemaObject.  
 That said, you can, if you want to, do the validation from it. Check at the integration tests to get an example.
 
 ## Installation
@@ -23,13 +24,13 @@ Add the following to your `pom.xml`:
 ## Usage
 
 ```java
-// Parse without validation, setting to true is recommended in most cases.
+// Parse without validation, setting to true is strongly recommended for further data validation.
 OpenApi3 api = new OpenApi3Parser().parse(specPath, false);
 // Explicit validation of the API spec
 ValidationResults results = OpenApi3Validator.instance().validate(api);
 ```
 
-If your your document has restricted, you're able to load it with authentication values :
+If your document has restricted access, you're able to load it with authentication values :
 ```java
 // You must provide all the values for the expected chain of documents.
 List<AuthOption> authOptions = new ArrayList<>();
@@ -42,12 +43,8 @@ authOptions.add(new AuthOption(HEADER, "api_key", "xyz", url -> url.getHost().eq
 OpenApi3 api = new OpenApi3Parser().parse(specPath, authOptions, true);
 ```
 
-## TODO
-* More tests.
-
 ## Limitations
 
-* Schema Object : default value is only checked by its type.
 * Reference : content is setup when built.
 
 ## Supported versions
