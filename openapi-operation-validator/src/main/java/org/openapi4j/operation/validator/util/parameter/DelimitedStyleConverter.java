@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
 
-class DelimitedStyleConverter implements FlatStyleConverter {
+class DelimitedStyleConverter extends FlatStyleConverter {
   private static final Pattern REGEX = Pattern.compile("([^&]+)(?:=)([^&]*)");
   private final String delimRegex;
 

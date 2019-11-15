@@ -6,7 +6,7 @@ import org.openapi4j.parser.model.v3.AbsParameter;
 
 import java.util.Map;
 
-class SimpleStyleConverter implements FlatStyleConverter {
+class SimpleStyleConverter extends FlatStyleConverter {
   private static final SimpleStyleConverter INSTANCE = new SimpleStyleConverter();
 
   private SimpleStyleConverter() {}

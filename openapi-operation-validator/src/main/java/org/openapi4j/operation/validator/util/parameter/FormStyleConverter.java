@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 
-class FormStyleConverter implements FlatStyleConverter {
+class FormStyleConverter extends FlatStyleConverter {
   private static final Pattern REGEX = Pattern.compile("([^&]+)(?:=)([^&]*)");
 
   private static final FormStyleConverter INSTANCE = new FormStyleConverter();
