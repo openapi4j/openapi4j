@@ -102,24 +102,17 @@ Some ideas : checking full entity, dateStart > now() && dateStart < dateEnd, ...
 Declaration examples :  
 All JSON types are accepted, it's up to you to describe it and setup the validation in the corresponding validator.
 
-```json
-{
-  "type": "object",
-  "properties": {
-    "sub-object": {
-      "type": "object",
-      "properties": {
-        "...": "..."
-      },
-      "x-sub-object-val": {
-        "...": "You need parameters ?",
-        "fooParam": 0.2,
-        "...": "it's up to you to place the trigger where your validation should occur."
-      }  
-    }
-  },
-  "x-myentity-val": "Just trigger on all entity !"
-}
+```yaml
+type: object
+properties:
+  sub-object:
+    type: object
+    properties:
+      foo:
+        type: string
+    x-sub-object-val:  # it's up to you to place the trigger where your validation should occur.
+      fooParam: 0.2 # You need parameters ?
+x-myentity-val: null # Just trigger on all entity !
 ```
 or  
 ```json
