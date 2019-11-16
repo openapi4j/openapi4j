@@ -30,9 +30,9 @@ All modules follow the [Semantic Versioning 2.0.0](https://semver.org) and are a
     <groupId>org.openapi4j</groupId>
     <artifactId>openapi4j-...</artifactId>
     <!-- Current release -->
-    <version>0.2</version>
+    <version>0.3</version>
     <!-- Next. Available on each master commit. -->
-    <version>0.3-SNAPSHOT</version>
+    <version>0.4-SNAPSHOT</version>
 </dependency>
 ```
 
