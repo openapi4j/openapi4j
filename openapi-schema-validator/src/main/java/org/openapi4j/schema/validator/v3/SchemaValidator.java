@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3Context;
+import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.JsonValidator;
@@ -100,10 +101,28 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
     results.withCrumb(propertyName, () -> {
-      for (Map.Entry<String, JsonValidator> validatorEntry : validators.entrySet()) {
-        validatorEntry.getValue().validate(valueNode, results);
+      for (JsonValidator validator : validators.values()) {
+        validator.validate(valueNode, results);
       }
     });
+  }
+
+  @Override
+  public void validate(final JsonNode valueNode) throws ValidationException {
+    final ValidationResults results = new ValidationResults();
+
+    results.withCrumb(propertyName, () -> {
+      for (JsonValidator validator : validators.values()) {
+        validator.validate(valueNode, results);
+        if (!results.isValid()) {
+          return;
+        }
+      }
+    });
+
+    if (!results.isValid()) {
+      throw new ValidationException(VALIDATION_ERR_MSG, results);
+    }
   }
 
   /**

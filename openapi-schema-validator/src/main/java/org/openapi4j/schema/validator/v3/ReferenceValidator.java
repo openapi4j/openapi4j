@@ -27,7 +27,7 @@ class ReferenceValidator extends BaseJsonValidator<OAI3> {
     return new ReferenceValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  ReferenceValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private ReferenceValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     refValue = schemaNode.textValue();

@@ -29,7 +29,7 @@ class EnumValidator extends BaseJsonValidator<OAI3> {
     return new EnumValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  EnumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private EnumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     this.schemaNode = schemaNode;

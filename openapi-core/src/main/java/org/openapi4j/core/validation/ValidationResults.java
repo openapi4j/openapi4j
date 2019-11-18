@@ -1,8 +1,11 @@
 package org.openapi4j.core.validation;
 
 import java.io.Serializable;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 
 /**
@@ -12,10 +15,17 @@ import java.util.List;
 public class ValidationResults implements Serializable {
   private static final long serialVersionUID = 1905122041950251207L;
 
+  private static final String LINE_SEPARATOR = String.format("%n");
+  private static final String ERROR_TITLE = "Validation error(s) :" + LINE_SEPARATOR;
+  private static final String WARNING_TITLE = "Validation warning(s) :" + LINE_SEPARATOR;
+  private static final String INFO_TITLE = "Validation info(s) :" + LINE_SEPARATOR;
+
   // The validation items
   private final List<ValidationItem> items = new ArrayList<>();
   // The breadcrumb
-  private final List<String> crumbs = new ArrayList<>();
+  private final Deque<String> crumbs = new ArrayDeque<>();
+  // The current validation severity
+  private ValidationSeverity validationSeverity = ValidationSeverity.NONE;
 
   /**
    * Add a result.
@@ -25,6 +35,9 @@ public class ValidationResults implements Serializable {
    */
   public void add(ValidationSeverity severity, String msg) {
     items.add(new ValidationItem(severity, msg, crumbs));
+    if (severity.getValue() > validationSeverity.getValue()) {
+      validationSeverity = severity;
+    }
   }
 
   /**
@@ -36,6 +49,9 @@ public class ValidationResults implements Serializable {
    */
   public void add(ValidationSeverity severity, String msg, String crumb) {
     items.add(new ValidationItem(severity, msg, crumbs, crumb));
+    if (severity.getValue() > validationSeverity.getValue()) {
+      validationSeverity = severity;
+    }
   }
 
   /**
@@ -44,7 +60,7 @@ public class ValidationResults implements Serializable {
    * @param msg The associated message.
    */
   public void addInfo(String msg) {
-    items.add(new ValidationItem(ValidationSeverity.INFO, msg, crumbs));
+    add(ValidationSeverity.INFO, msg);
   }
 
   /**
@@ -54,7 +70,7 @@ public class ValidationResults implements Serializable {
    * @param crumb The path item to add the result.
    */
   public void addInfo(String msg, String crumb) {
-    items.add(new ValidationItem(ValidationSeverity.INFO, msg, crumbs, crumb));
+    add(ValidationSeverity.INFO, msg, crumb);
   }
 
   /**
@@ -63,7 +79,7 @@ public class ValidationResults implements Serializable {
    * @param msg The associated message.
    */
   public void addWarning(String msg) {
-    items.add(new ValidationItem(ValidationSeverity.WARNING, msg, crumbs));
+    add(ValidationSeverity.WARNING, msg);
   }
 
   /**
@@ -73,7 +89,7 @@ public class ValidationResults implements Serializable {
    * @param crumb The path item to add the result.
    */
   public void addWarning(String msg, String crumb) {
-    items.add(new ValidationItem(ValidationSeverity.WARNING, msg, crumbs, crumb));
+    add(ValidationSeverity.WARNING, msg, crumb);
   }
 
   /**
@@ -82,7 +98,7 @@ public class ValidationResults implements Serializable {
    * @param msg The associated message.
    */
   public void addError(String msg) {
-    items.add(new ValidationItem(ValidationSeverity.ERROR, msg, crumbs));
+    add(ValidationSeverity.ERROR, msg);
   }
 
   /**
@@ -92,7 +108,7 @@ public class ValidationResults implements Serializable {
    * @param crumb The path item to add the result.
    */
   public void addError(String msg, String crumb) {
-    items.add(new ValidationItem(ValidationSeverity.ERROR, msg, crumbs, crumb));
+    add(ValidationSeverity.ERROR, msg, crumb);
   }
 
   /**
@@ -101,14 +117,19 @@ public class ValidationResults implements Serializable {
    * @param results The stack to append.
    */
   public void add(ValidationResults results) {
-    items.addAll(results.getItems());
+    for (ValidationItem item : results.items) {
+      items.add(item);
+      if (item.severity.getValue() > validationSeverity.getValue()) {
+        validationSeverity = item.severity;
+      }
+    }
   }
 
   /**
-   * Get the individual results.
+   * Get the individual results as view.
    */
   public Collection<ValidationItem> getItems() {
-    return items;
+    return Collections.unmodifiableList(items);
   }
 
   /**
@@ -117,16 +138,7 @@ public class ValidationResults implements Serializable {
    * @return {@code ValidationSeverity.NONE} to {@code ValidationSeverity.ERROR}
    */
   public ValidationSeverity getSeverity() {
-    ValidationSeverity severity = ValidationSeverity.NONE;
-    for (ValidationItem item : items) {
-      if (item.severity().gt(severity)) {
-        severity = item.severity();
-        if (severity == ValidationSeverity.ERROR) {
-          break;
-        }
-      }
-    }
-    return severity;
+    return validationSeverity;
   }
 
   /**
@@ -138,22 +150,16 @@ public class ValidationResults implements Serializable {
   public void withCrumb(String crumb, Runnable code) {
     boolean append = false;
     try {
-      append = appendCrumb(crumb);
+      if (crumb != null) {
+        crumbs.addLast(crumb);
+        append = true;
+      }
       code.run();
     } finally {
       if (append) {
-        crumbs.remove(crumbs.size() - 1);
+        crumbs.pollLast();
       }
     }
-  }
-
-  private boolean appendCrumb(String crumb) {
-    if (crumb != null) {
-      crumbs.add(crumb);
-      return true;
-    }
-
-    return false;
   }
 
   /**
@@ -162,11 +168,12 @@ public class ValidationResults implements Serializable {
    * @return {@code true} if the results are below {@code ValidationSeverity.ERROR}.
    */
   public boolean isValid() {
-    return getSeverity() != ValidationSeverity.ERROR;
+    return validationSeverity != ValidationSeverity.ERROR;
   }
 
   /**
    * Get the number of items in the current stack.
+   *
    * @return The number of items in the current stack.
    */
   public int size() {
@@ -179,28 +186,28 @@ public class ValidationResults implements Serializable {
     StringBuilder warnBuilder = new StringBuilder();
     StringBuilder infoBuilder = new StringBuilder();
 
-    for (ValidationResults.ValidationItem item : getItems()) {
-      switch (item.severity()) {
+    for (ValidationResults.ValidationItem item : items) {
+      switch (item.severity) {
         case ERROR:
-          errBuilder.append(item.toString()).append("\n");
+          errBuilder.append(item.toString()).append(LINE_SEPARATOR);
           break;
         case WARNING:
-          warnBuilder.append(item.toString()).append("\n");
+          warnBuilder.append(item.toString()).append(LINE_SEPARATOR);
           break;
         default://case INFO:
-          infoBuilder.append(item.toString()).append("\n");
+          infoBuilder.append(item.toString()).append(LINE_SEPARATOR);
           break;
       }
     }
 
     if (errBuilder.length() != 0) {
-      errBuilder.insert(0, "Validation error(s) :\n");
+      errBuilder.insert(0, ERROR_TITLE);
     }
     if (warnBuilder.length() != 0) {
-      warnBuilder.insert(0, "Validation warning(s) :\n");
+      warnBuilder.insert(0, WARNING_TITLE);
     }
     if (infoBuilder.length() != 0) {
-      infoBuilder.insert(0, "Validation info(s) :\n");
+      infoBuilder.insert(0, INFO_TITLE);
     }
 
     return errBuilder.append(warnBuilder).append(infoBuilder).toString();
@@ -210,18 +217,18 @@ public class ValidationResults implements Serializable {
     private static final long serialVersionUID = 7905122048950251207L;
 
     private static final String DOT = ".";
+    private static final String SEMI_COLON = " : ";
+    private static final String EMPTY = "";
 
     private final ValidationSeverity severity;
     private final String msg;
     private final String crumbs;
 
-    ValidationItem(ValidationSeverity severity, String msg, List<String> crumbs) {
-      this.severity = severity;
-      this.msg = msg;
-      this.crumbs = joinCrumbs(crumbs, null);
+    ValidationItem(ValidationSeverity severity, String msg, Collection<String> crumbs) {
+      this(severity, msg, crumbs, null);
     }
 
-    ValidationItem(ValidationSeverity severity, String msg, List<String> crumbs, String crumb) {
+    ValidationItem(ValidationSeverity severity, String msg, Collection<String> crumbs, String crumb) {
       this.severity = severity;
       this.msg = msg;
       this.crumbs = joinCrumbs(crumbs, crumb);
@@ -241,7 +248,7 @@ public class ValidationResults implements Serializable {
 
     @Override
     public String toString() {
-      String label = !crumbs.isEmpty() ? crumbs + " : " : "";
+      String label = !crumbs.isEmpty() ? crumbs + SEMI_COLON : EMPTY;
       return label + msg;
     }
 

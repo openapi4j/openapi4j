@@ -16,11 +16,13 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ANYOF;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
  */
 class AnyOfValidator extends DiscriminatorValidator {
+  private static final String ERR_MSG = "No valid schema.";
+
   static AnyOfValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new AnyOfValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  AnyOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private AnyOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema, ANYOF);
   }
 
@@ -39,6 +41,9 @@ class AnyOfValidator extends DiscriminatorValidator {
       }
     }
 
-    results.add(collectedResults);
+    if (!schemas.isEmpty()) {
+      results.add(collectedResults);
+      results.addError(ERR_MSG, ANYOF);
+    }
   }
 }

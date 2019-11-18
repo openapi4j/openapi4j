@@ -25,7 +25,7 @@ class NotValidator extends BaseJsonValidator<OAI3> {
     return new NotValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  NotValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private NotValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     schema = new SchemaValidator(context, NOT, schemaNode, schemaParentNode, parentSchema);

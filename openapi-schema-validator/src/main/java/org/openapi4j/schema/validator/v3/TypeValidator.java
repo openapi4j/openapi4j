@@ -33,7 +33,7 @@ class TypeValidator extends BaseJsonValidator<OAI3> {
     return new TypeValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  TypeValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private TypeValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     type = schemaNode.textValue();

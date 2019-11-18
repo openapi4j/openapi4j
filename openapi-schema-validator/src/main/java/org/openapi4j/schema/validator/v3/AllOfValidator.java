@@ -20,7 +20,7 @@ class AllOfValidator extends DiscriminatorValidator {
     return new AllOfValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  AllOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private AllOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema, ALLOF);
   }
 

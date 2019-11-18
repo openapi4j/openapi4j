@@ -25,7 +25,7 @@ class MinPropertiesValidator extends BaseJsonValidator<OAI3> {
     return new MinPropertiesValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  MinPropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private MinPropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     min = schemaNode.isIntegralNumber() ? schemaNode.intValue() : 0;
