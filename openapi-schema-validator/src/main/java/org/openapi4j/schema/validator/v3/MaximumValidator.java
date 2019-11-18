@@ -30,7 +30,7 @@ class MaximumValidator extends BaseJsonValidator<OAI3> {
     return new MaximumValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  MaximumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private MaximumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     maximum = schemaNode.isNumber() ? schemaNode.decimalValue() : BigDecimal.valueOf(0);

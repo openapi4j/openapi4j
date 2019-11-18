@@ -30,7 +30,7 @@ class MinimumValidator extends BaseJsonValidator<OAI3> {
     return new MinimumValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  MinimumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private MinimumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     minimum = schemaNode.isNumber() ? schemaNode.decimalValue() : BigDecimal.valueOf(0);

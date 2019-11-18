@@ -11,7 +11,7 @@ import org.openapi4j.schema.validator.v3.SchemaValidator;
  * The base class of all validators.
  */
 public abstract class BaseJsonValidator<O extends OAI> implements JsonValidator {
-  private static final String VALIDATION_ERR_MSG = "Schema validation failed";
+  protected static final String VALIDATION_ERR_MSG = "Schema validation failed";
 
   private final JsonNode schemaNode;
   private final JsonNode schemaParentNode;
@@ -19,7 +19,11 @@ public abstract class BaseJsonValidator<O extends OAI> implements JsonValidator 
   protected ValidationContext<O> context;
 
   // Empty constructor to enforce the signature of validators
-  public BaseJsonValidator(final ValidationContext<O> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  public BaseJsonValidator(final ValidationContext<O> context,
+                           final JsonNode schemaNode,
+                           final JsonNode schemaParentNode,
+                           final SchemaValidator parentSchema) {
+
     this.context = context;
     this.schemaNode = schemaNode;
     this.schemaParentNode = schemaParentNode;
@@ -32,7 +36,7 @@ public abstract class BaseJsonValidator<O extends OAI> implements JsonValidator 
 
     validate(valueNode, results);
 
-    if (results.size() != 0) {
+    if (!results.isValid()) {
       throw new ValidationException(VALIDATION_ERR_MSG, results);
     }
   }

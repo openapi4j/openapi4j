@@ -25,7 +25,7 @@ class MaxPropertiesValidator extends BaseJsonValidator<OAI3> {
     return new MaxPropertiesValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  MaxPropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private MaxPropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     max = (schemaNode.isIntegralNumber()) ? schemaNode.intValue() : Integer.MAX_VALUE;

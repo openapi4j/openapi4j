@@ -23,7 +23,7 @@ class OneOfValidator extends DiscriminatorValidator {
     return new OneOfValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  OneOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private OneOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema, ONEOF);
   }
 

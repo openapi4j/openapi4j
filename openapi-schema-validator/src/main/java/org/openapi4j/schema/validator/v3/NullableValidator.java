@@ -23,7 +23,7 @@ class NullableValidator extends BaseJsonValidator<OAI3> {
     return new NullableValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  NullableValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private NullableValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     nullable = schemaNode.isBoolean() && schemaNode.booleanValue();

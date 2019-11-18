@@ -33,7 +33,7 @@ class MultipleOfValidator extends BaseJsonValidator<OAI3> {
     return new MultipleOfValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  MultipleOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private MultipleOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     multiple
