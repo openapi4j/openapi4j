@@ -234,6 +234,18 @@ public class ValidationResults implements Serializable {
       this.crumbs = joinCrumbs(crumbs, crumb);
     }
 
+    public ValidationSeverity severity() {
+      return severity;
+    }
+
+    public String message() {
+      return msg;
+    }
+
+    public String crumbs() {
+      return crumbs;
+    }
+
     @Override
     public String toString() {
       String label = !crumbs.isEmpty() ? crumbs + SEMI_COLON : EMPTY;
