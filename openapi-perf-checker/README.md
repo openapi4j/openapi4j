@@ -27,6 +27,20 @@ Notes :
 | Swagger           | 2.0.15        | 240,47 ms     | 10            | excl.   |
 | OpenApi4j         | 0.2           | 256,44 ms     | 10            | excl.   |
 
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| Swagger           | 2.0.16        | 435,82 ms     | 1             | 1       |
+| OpenApi4j         | 0.3           | 204,29 ms     | 1             | 2,13    |
+| Swagger           | 2.0.16        | 269,92 ms     | 10            | excl.   |
+| OpenApi4j         | 0.3           | 333,24 ms     | 10            | excl.   |
+
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| Swagger           | 2.0.16        | 421,53 ms     | 1             | 1       |
+| OpenApi4j         | 0.4-SNAPSHOT  | 207,33 ms     | 1             | 2,03    |
+| Swagger           | 2.0.16        | 221,60 ms     | 10            | excl.   |
+| OpenApi4j         | 0.4-SNAPSHOT  | 298,82 ms     | 10            | excl.   |
+
 ## Schema reports
 
 Notes :  
@@ -47,6 +61,20 @@ Notes :
 | Justify           | 1.1.0         | 1124,20 ms    | 1000          | 1       |
 | JsonTools         | 2.2.11        | 879,43 ms     | 100           | excl.   |
 
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| Networknt         | 1.0.26        | 445,28 ms     | 1000          | 2.44    |
+| OpenApi4j         | 0.3           | 194,46 ms     | 1000          | 5.60    |
+| Justify           | 1.1.0         | 1090,65 ms    | 1000          | 1       |
+| JsonTools         | 2.2.11        | 912,47 ms     | 100           | excl.   |
+
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| Networknt         | 1.0.26        | 444,07 ms     | 1000          | 2,52    |
+| OpenApi4j         | 0.4-SNAPSHOT  | 197,63 ms     | 1000          | 5,67    |
+| Justify           | 1.1.0         | 1120,69 ms    | 1000          | 1       |
+| JsonTools         | 2.2.11        | 900,81 ms     | 100           | excl.   |
+
 ## Operation reports
 * Replaying multiple times this process shows much shorter time values, but it's not the point here.  
 We stick with the first showed values for version comparison.
@@ -58,6 +86,22 @@ We stick with the first showed values for version comparison.
 | form-data         | 0.2           | 1076,23 ms    | 10000         | excl.   |
 | multipart/mixed   | 0.2           | 705,87 ms     | 10000         | excl.   |
 | application/xml   | 0.2           | 421,05 ms     | 10000         | excl.   |
+
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| application/json  | 0.3           | 189,94 ms     | 10000         | excl.   |
+| form-urlencoded   | 0.3           | 209,47 ms     | 10000         | excl.   |
+| form-data         | 0.3           | 946,24 ms     | 10000         | excl.   |
+| multipart/mixed   | 0.3           | 675,33 ms     | 10000         | excl.   |
+| application/xml   | 0.3           | 483,93 ms     | 10000         | excl.   |
+
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| application/json  | 0.4-SNAPSHOT  | 210,73 ms     | 10000         | excl.   |
+| form-urlencoded   | 0.4-SNAPSHOT  | 171,64 ms     | 10000         | excl.   |
+| form-data         | 0.4-SNAPSHOT  | 864,93 ms     | 10000         | excl.   |
+| multipart/mixed   | 0.4-SNAPSHOT  | 638,30 ms     | 10000         | excl.   |
+| application/xml   | 0.4-SNAPSHOT  | 624,86 ms     | 10000         | excl.   |
 
 ## Usage
 
