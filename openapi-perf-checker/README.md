@@ -13,17 +13,17 @@ Notes :
 * Swagger validates at parsing time, openapi4j as a second operation.
 * All parsers have validation option enabled. Still, Swagger validation seems incomplete.
 
-| Library           | Version       | Time          | Iterations    | % time  |
+| Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
-| Swagger           | 2.0.15        | 460,31 ms     | 1             | 100,0   |
-| OpenApi4j         | 0.1           | 227,84 ms     | 1             | 49,5    |
+| Swagger           | 2.0.15        | 460,31 ms     | 1             | 1       |
+| OpenApi4j         | 0.1           | 227,84 ms     | 1             | 2.02    |
 | Swagger           | 2.0.15        | 198,42 ms     | 10            | excl.   |
 | OpenApi4j         | 0.1           | 215,42 ms     | 10            | excl.   |
 
-| Library           | Version       | Time          | Iterations    | % time  |
+| Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
-| Swagger           | 2.0.15        | 413,37 ms     | 1             | 100,0   |
-| OpenApi4j         | 0.2           | 209,23 ms     | 1             | 50,6    |
+| Swagger           | 2.0.15        | 413,37 ms     | 1             | 1       |
+| OpenApi4j         | 0.2           | 209,23 ms     | 1             | 1.98    |
 | Swagger           | 2.0.15        | 240,47 ms     | 10            | excl.   |
 | OpenApi4j         | 0.2           | 256,44 ms     | 10            | excl.   |
 
@@ -31,27 +31,27 @@ Notes :
 
 Notes :  
 * JsonTools has only 100 iterations.
-* Networknt values are not so consistent. Performance gain is somewhere between 40-65%
+* Networknt values are not so consistent.
 
 
-| Library           | Version       | Time          | Iterations    | % time  |
+| Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
-| Networknt         | 1.0.26        | 361,14 ms     | 1000          | 100,0   |
-| OpenApi4j         | 0.1           | 198,46 ms     | 1000          | 55,0    |
+| Networknt         | 1.0.26        | 361,14 ms     | 1000          | 1       |
+| OpenApi4j         | 0.1           | 198,46 ms     | 1000          | 1.82    |
 | JsonTools         | 2.2.11        | 755,55 ms     | 100           | excl.   |
 
-| Library           | Version       | Time          | Iterations    | % time  |
+| Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
-| Networknt         | 1.0.26        | 431,79 ms     | 1000          | 100,0   |
-| OpenApi4j         | 0.2           | 204,24 ms     | 1000          | 47,3    |
-| Justify           | 1.1.0         | 1124,20 ms    | 1000          | excl.   |
+| Networknt         | 1.0.26        | 431,79 ms     | 1000          | 2.60    |
+| OpenApi4j         | 0.2           | 204,24 ms     | 1000          | 5.50    |
+| Justify           | 1.1.0         | 1124,20 ms    | 1000          | 1       |
 | JsonTools         | 2.2.11        | 879,43 ms     | 100           | excl.   |
 
 ## Operation reports
 * Replaying multiple times this process shows much shorter time values, but it's not the point here.  
 We stick with the first showed values for version comparison.
 
-| Content type      | Version       | Time          | Iterations    | % time  |
+| Content type      | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
 | application/json  | 0.2           | 283,81 ms     | 10000         | excl.   |
 | form-urlencoded   | 0.2           | 200,88 ms     | 10000         | excl.   |

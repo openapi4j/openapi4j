@@ -25,7 +25,7 @@ public class SchemaPerfRunner {
     ReportPrinter.printReports(
       validate(networknt, data, networknt.getVersion(), 1_000, false),
       validate(openApi4j, data, openApi4j.getVersion(), 1_000, false),
-      validate(justify, data, justify.getVersion(), 1_000, true),
+      validate(justify, data, justify.getVersion(), 1_000, false),
       validate(jsonTools, data, jsonTools.getVersion(), 100, true));
   }
 

@@ -1,11 +1,13 @@
 package org.perf.check.report;
 
+import java.text.DecimalFormat;
+
 public class ReportPrinter {
   private ReportPrinter() {}
 
   public static void printReports(Report... reports) {
     System.out.println();
-    System.out.println("| Library           | Version       | Time          | Iterations    | % time  |");
+    System.out.println("| Library           | Version       | Time          | Iterations    | Gain    |");
     System.out.println("|-------------------|---------------|---------------|---------------|---------|");
 
     double max = 0;
@@ -15,12 +17,14 @@ public class ReportPrinter {
       }
     }
 
+    DecimalFormat decimalFormat = new DecimalFormat("0.##");
+
     for (Report report : reports) {
-      System.out.println(getFormattedReport(report, report.getTimeMs() * 100 / max));
+      System.out.println(getFormattedReport(report, decimalFormat.format(max / report.getTimeMs())));
     }
   }
 
-  private static String getFormattedReport(Report report, double ratio) {
+  private static String getFormattedReport(Report report, String gain) {
     if (report.getError() == null) {
       return String.format(
         "| %s| %s| %s| %s| %s|",
@@ -28,7 +32,7 @@ public class ReportPrinter {
         rightpad(report.getVersion(), 14),
         rightpad(String.format("%.2f ms", report.getTimeMs()), 14),
         rightpad(String.valueOf(report.getIterations()), 14),
-        !report.isExcluded() ? rightpad(String.format("%.1f", ratio), 8) : rightpad("excl.", 8));
+        !report.isExcluded() ? rightpad(gain, 8) : rightpad("excl.", 8));
     } else {
       return String.format(
         "| %s | %s | Error : %s |",
