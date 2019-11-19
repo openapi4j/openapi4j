@@ -3,6 +3,7 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -23,14 +24,24 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEPENDENCIES;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-10" />
  */
 class DependenciesValidator extends BaseJsonValidator<OAI3> {
-  private final Map<String, Collection<String>> dependentProps = new HashMap<>();
-  private final Map<String, SchemaValidator> dependentSchemas = new HashMap<>();
+  private static final String MISSING_DEP_ERR_MSG = "Missing dependency '%s' from '%s' definition.";
 
-  static DependenciesValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
+  private final Map<String, Collection<String>> arrayDependencies = new HashMap<>();
+  private final Map<String, SchemaValidator> objectDependencies = new HashMap<>();
+
+  static DependenciesValidator create(final ValidationContext<OAI3> context,
+                                      final JsonNode schemaNode,
+                                      final JsonNode schemaParentNode,
+                                      final SchemaValidator parentSchema) {
+
     return new DependenciesValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  private DependenciesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private DependenciesValidator(final ValidationContext<OAI3> context,
+                                final JsonNode schemaNode,
+                                final JsonNode schemaParentNode,
+                                final SchemaValidator parentSchema) {
+
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     Iterator<String> fieldNames = schemaNode.fieldNames();
@@ -39,10 +50,10 @@ class DependenciesValidator extends BaseJsonValidator<OAI3> {
       final JsonNode fieldSchemaVal = schemaNode.get(fieldName);
 
       if (fieldSchemaVal.isObject()) {
-        dependentSchemas.put(fieldName, new SchemaValidator(context, fieldName, fieldSchemaVal, schemaParentNode, parentSchema));
+        objectDependencies.put(fieldName, new SchemaValidator(context, fieldName, fieldSchemaVal, schemaParentNode, parentSchema));
 
       } else if (fieldSchemaVal.isArray()) {
-        Collection<String> values = this.dependentProps.computeIfAbsent(fieldName, k -> new ArrayList<>());
+        Collection<String> values = arrayDependencies.computeIfAbsent(fieldName, k -> new ArrayList<>());
         for (int i = 0; i < fieldSchemaVal.size(); i++) {
           values.add(fieldSchemaVal.get(i).asText());
         }
@@ -51,27 +62,40 @@ class DependenciesValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(JsonNode valueNode, ValidationResults results) {
-    Iterator<String> fieldNames = valueNode.fieldNames();
+  public void validate(final JsonNode valueNode, final ValidationResults results) {
+    final Iterator<String> fieldNames = valueNode.fieldNames();
 
     validate(() -> {
       while (fieldNames.hasNext()) {
         final String fieldName = fieldNames.next();
-        Collection<String> deps = dependentProps.get(fieldName);
 
-        if (deps != null) {
-          for (String field : deps) {
-            if (valueNode.get(field) == null) {
-              results.addError(dependentProps.toString(), DEPENDENCIES);
-            }
-          }
-        }
-
-        SchemaValidator schema = dependentSchemas.get(fieldName);
-        if (schema != null) {
-          schema.validateWithContext(valueNode, results);
+        final Collection<String> values = arrayDependencies.get(fieldName);
+        if (values != null) {
+          validateArray(valueNode, values, results);
+        } else {
+          validateObject(valueNode, objectDependencies.get(fieldName), results);
         }
       }
     });
+  }
+
+  private void validateArray(final JsonNode valueNode,
+                             final Collection<String> values,
+                             final ValidationResults results) {
+
+    for (String field : values) {
+      if (valueNode.get(field) == null) {
+        results.addError(String.format(MISSING_DEP_ERR_MSG, field, arrayDependencies.toString()), DEPENDENCIES);
+      }
+    }
+  }
+
+  private void validateObject(final JsonNode valueNode,
+                              final SchemaValidator schema,
+                              final ValidationResults results) throws ValidationException {
+
+    if (schema != null) {
+      schema.validateWithContext(valueNode, results);
+    }
   }
 }
