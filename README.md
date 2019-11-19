@@ -49,15 +49,12 @@ See related projects for limitations and issues.
 
 ## Roadmap
 
-- 0.1 :
-    - First beta release.  
-- 0.2 : 
-    - Rework on some naive code parts that could lead to NPE mostly.  
-    -  Complete the multipart/mixed implementation.  
+- [See CHANGELOG.md for previous versions](https://github.com/openapi4j/openapi4j/blob/master/CHANGELOG.md)  
 - 0.3 :
     - Complete response validation implementation.
 - 0.4 :
-    - Validate parameter from content property.  
+    - Validate parameter from content property.
+    - Fast failing behaviour.
 - Next :
     - Ready for 1.0 candidate ?  
 

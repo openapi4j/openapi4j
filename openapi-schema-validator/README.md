@@ -33,19 +33,25 @@ JsonNode schemaNode = // your schema tree node.
 JsonNode contentNode = // your data.
 SchemaValidator schemaValidator = new SchemaValidator("my_schema", schemaNode);
 
-// Validation with exception (fast failing behaviour)
+// Validation with exception
 try {
     schemaValidator.validate(contentNode);
 } catch(ValidationException ex) {
     System.out.println(ex.results());
 }
 
-// or validation without exception (does not stop on error) :
+// or validation without exception
 ValidationResults results = new ValidationResults(); 
 schemaValidator.validate(contentNode, results);
 if (!results.isValid()) {
     System.out.println(results);
 }
+```
+
+Activate fast failing behaviour :
+```java
+validationContext = new ValidationContext<>(apiContext);
+validationContext.setFastFail(true);
 ```
 
 You can easily locate the error(s) with the results as we keep the path of the validation.  
