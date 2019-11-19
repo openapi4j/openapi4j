@@ -18,7 +18,8 @@ import java.util.Map;
 class ValidationUtil {
   static void validate(String testPath,
                        Map<Byte, Boolean> options,
-                       Map<String, ValidatorInstance> validators) throws Exception {
+                       Map<String, ValidatorInstance> validators,
+                       boolean isFastFail) throws Exception {
     ArrayNode testCases = (ArrayNode) TreeUtil.json.readTree(ValidationUtil.class.getResource(testPath));
 
     for (int index = 0; index < testCases.size(); index++) {
@@ -27,6 +28,7 @@ class ValidationUtil {
 
       OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
       ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
+      validationContext.setFastFail(isFastFail);
 
       if (options != null) {
         options.forEach(validationContext::setOption);

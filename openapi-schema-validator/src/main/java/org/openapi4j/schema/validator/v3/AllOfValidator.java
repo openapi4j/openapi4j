@@ -26,8 +26,10 @@ class AllOfValidator extends DiscriminatorValidator {
 
   @Override
   public void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
-    for (SchemaValidator schema : schemas) {
-      schema.validate(valueNode, results);
-    }
+    validate(() -> {
+      for (SchemaValidator schema : schemas) {
+        schema.validateWithContext(valueNode, results);
+      }
+    });
   }
 }

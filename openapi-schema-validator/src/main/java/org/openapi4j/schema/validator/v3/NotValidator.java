@@ -3,6 +3,7 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -33,11 +34,11 @@ class NotValidator extends BaseJsonValidator<OAI3> {
 
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    ValidationResults singleResult = new ValidationResults();
-    schema.validate(valueNode, singleResult);
-
-    if (singleResult.size() == 0) {
+    try {
+      schema.validate(valueNode);
       results.addError(ERR_MSG, NOT);
+    } catch (ValidationException ex) {
+      // Succeed case
     }
   }
 }

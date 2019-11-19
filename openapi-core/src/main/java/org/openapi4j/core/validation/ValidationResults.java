@@ -149,11 +149,13 @@ public class ValidationResults implements Serializable {
    */
   public void withCrumb(String crumb, Runnable code) {
     boolean append = false;
+
+    if (crumb != null) {
+      crumbs.addLast(crumb);
+      append = true;
+    }
+
     try {
-      if (crumb != null) {
-        crumbs.addLast(crumb);
-        append = true;
-      }
       code.run();
     } finally {
       if (append) {

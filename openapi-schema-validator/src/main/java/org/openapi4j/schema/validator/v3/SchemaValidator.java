@@ -100,20 +100,26 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
    */
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    results.withCrumb(propertyName, () -> {
-      for (JsonValidator validator : validators.values()) {
-        validator.validate(valueNode, results);
-      }
-    });
+    try {
+      validateWithContext(valueNode, results);
+    } catch (ValidationException ignored) {
+      // results are already populated
+    }
   }
 
-  @Override
-  public void validate(final JsonNode valueNode) throws ValidationException {
-    final ValidationResults results = new ValidationResults();
+  final void validateWithContext(final JsonNode valueNode, final ValidationResults results) throws ValidationException {
+    if (context.isFastFail()) {
+      fastFailValidate(valueNode, results);
+    } else {
+      defaultValidate(valueNode, results);
+    }
+  }
 
+  private void fastFailValidate(final JsonNode valueNode, final ValidationResults results) throws ValidationException {
     results.withCrumb(propertyName, () -> {
       for (JsonValidator validator : validators.values()) {
         validator.validate(valueNode, results);
+
         if (!results.isValid()) {
           return;
         }
@@ -121,8 +127,16 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
     });
 
     if (!results.isValid()) {
-      throw new ValidationException(VALIDATION_ERR_MSG, results);
+      throw new ValidationException(null, results);
     }
+  }
+
+  private void defaultValidate(final JsonNode valueNode, final ValidationResults results) {
+    results.withCrumb(propertyName, () -> {
+      for (JsonValidator validator : validators.values()) {
+        validator.validate(valueNode, results);
+      }
+    });
   }
 
   /**

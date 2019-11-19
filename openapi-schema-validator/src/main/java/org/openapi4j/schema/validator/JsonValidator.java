@@ -14,14 +14,11 @@ public interface JsonValidator {
    *
    * @param valueNode The given value to check.
    * @param results   The result stack to append any additional info from the validation.
-   *                  All errors are returned from the stack.
    */
   void validate(final JsonNode valueNode, final ValidationResults results);
 
   /**
    * Validate the given value from the validation setup.
-   * This method has fast fail behaviour.
-   * {@link ValidationException} is thrown on first error(s) encountered.
    *
    * @param valueNode The given value to check.
    * @throws ValidationException The result stack info from the validation in case of error.

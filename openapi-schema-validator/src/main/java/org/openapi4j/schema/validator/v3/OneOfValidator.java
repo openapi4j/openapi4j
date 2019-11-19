@@ -3,6 +3,7 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.ValidationContext;
 
@@ -23,7 +24,11 @@ class OneOfValidator extends DiscriminatorValidator {
     return new OneOfValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
 
-  private OneOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  private OneOfValidator(final ValidationContext<OAI3> context,
+                         final JsonNode schemaNode,
+                         final JsonNode schemaParentNode,
+                         final SchemaValidator parentSchema) {
+
     super(context, schemaNode, schemaParentNode, parentSchema, ONEOF);
   }
 
@@ -33,10 +38,9 @@ class OneOfValidator extends DiscriminatorValidator {
     int nbSchemasOnError = 0;
 
     for (SchemaValidator schema : schemas) {
-      ValidationResults errorResults = new ValidationResults();
-      schema.validate(valueNode, errorResults);
-
-      if (!errorResults.isValid()) {
+      try {
+        schema.validate(valueNode);
+      } catch (ValidationException ex) {
         nbSchemasOnError++;
       }
     }

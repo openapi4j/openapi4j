@@ -175,7 +175,7 @@ public class ValidationTest {
   public void additionalPropsRestrictValidation() throws Exception {
     Map<Byte, Boolean> options = new HashMap<>();
     options.put(ADDITIONAL_PROPS_RESTRICT, true);
-    ValidationUtil.validate("/schema/override/additionalPropsRestrictOption.json", options, null);
+    ValidationUtil.validate("/schema/override/additionalPropsRestrictOption.json", options, null, true);
   }
 
   @Test
@@ -183,14 +183,14 @@ public class ValidationTest {
     Map<String, ValidatorInstance> validators = new HashMap<>();
     validators.put(OAI3SchemaKeywords.MAXIMUM, MaximumToleranceValidator::create);
     validators.put("x-myentity-val", MyEntityValidator::create);
-    ValidationUtil.validate("/schema/override/maximumTolerance.json", null, validators);
+    ValidationUtil.validate("/schema/override/maximumTolerance.json", null, validators, true);
   }
 
   @Test
   public void additionalValidation() throws Exception {
     Map<String, ValidatorInstance> validators = new HashMap<>();
     validators.put("x-myentity-val", MyEntityValidator::create);
-    ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators);
+    ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators, true);
   }
 
   @Test(expected = RuntimeException.class)

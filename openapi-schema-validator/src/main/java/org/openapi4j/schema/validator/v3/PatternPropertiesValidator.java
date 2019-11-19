@@ -43,15 +43,18 @@ class PatternPropertiesValidator extends BaseJsonValidator<OAI3> {
       return;
     }
 
-    Iterator<String> names = valueNode.fieldNames();
-    while (names.hasNext()) {
-      String name = names.next();
-      for (Map.Entry<Pattern, SchemaValidator> entry : schemas.entrySet()) {
-        Matcher m = entry.getKey().matcher(name);
-        if (m.matches()) {
-          entry.getValue().validate(valueNode.get(name), results);
+    final Iterator<String> names = valueNode.fieldNames();
+
+    validate(() -> {
+      while (names.hasNext()) {
+        String name = names.next();
+        for (Map.Entry<Pattern, SchemaValidator> entry : schemas.entrySet()) {
+          Matcher m = entry.getKey().matcher(name);
+          if (m.matches()) {
+            entry.getValue().validateWithContext(valueNode.get(name), results);
+          }
         }
       }
-    }
+    });
   }
 }

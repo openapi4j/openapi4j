@@ -3,6 +3,7 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.ValidationContext;
 
@@ -28,21 +29,16 @@ class AnyOfValidator extends DiscriminatorValidator {
 
   @Override
   void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
-    ValidationResults collectedResults = new ValidationResults();
-
     for (SchemaValidator schema : schemas) {
-      ValidationResults singleResult = new ValidationResults();
-      schema.validate(valueNode, singleResult);
-
-      if (singleResult.size() == 0) {
+      try {
+        schema.validate(valueNode);
         return;
-      } else {
-        collectedResults.add(singleResult);
+      } catch (ValidationException ex) {
+        // Don't populate from sub validation
       }
     }
 
     if (!schemas.isEmpty()) {
-      results.add(collectedResults);
       results.addError(ERR_MSG, ANYOF);
     }
   }

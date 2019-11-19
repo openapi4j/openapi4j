@@ -35,8 +35,10 @@ class ItemsValidator extends BaseJsonValidator<OAI3> {
       return;
     }
 
-    for (JsonNode itemNode : valueNode) {
-      schema.validate(itemNode, results);
-    }
+    validate(() -> {
+      for (JsonNode itemNode : valueNode) {
+        schema.validateWithContext(itemNode, results);
+      }
+    });
   }
 }

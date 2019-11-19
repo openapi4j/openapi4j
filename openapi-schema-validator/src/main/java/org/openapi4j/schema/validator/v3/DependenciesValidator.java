@@ -22,7 +22,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEPENDENCIES;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-10" />
  */
-public class DependenciesValidator extends BaseJsonValidator<OAI3> {
+class DependenciesValidator extends BaseJsonValidator<OAI3> {
   private final Map<String, Collection<String>> dependentProps = new HashMap<>();
   private final Map<String, SchemaValidator> dependentSchemas = new HashMap<>();
 
@@ -53,22 +53,25 @@ public class DependenciesValidator extends BaseJsonValidator<OAI3> {
   @Override
   public void validate(JsonNode valueNode, ValidationResults results) {
     Iterator<String> fieldNames = valueNode.fieldNames();
-    while (fieldNames.hasNext()) {
-      final String fieldName = fieldNames.next();
-      Collection<String> deps = dependentProps.get(fieldName);
 
-      if (deps != null) {
-        for (String field : deps) {
-          if (valueNode.get(field) == null) {
-            results.addError(dependentProps.toString(), DEPENDENCIES);
+    validate(() -> {
+      while (fieldNames.hasNext()) {
+        final String fieldName = fieldNames.next();
+        Collection<String> deps = dependentProps.get(fieldName);
+
+        if (deps != null) {
+          for (String field : deps) {
+            if (valueNode.get(field) == null) {
+              results.addError(dependentProps.toString(), DEPENDENCIES);
+            }
           }
         }
-      }
 
-      SchemaValidator schema = dependentSchemas.get(fieldName);
-      if (schema != null) {
-        schema.validate(valueNode, results);
+        SchemaValidator schema = dependentSchemas.get(fieldName);
+        if (schema != null) {
+          schema.validateWithContext(valueNode, results);
+        }
       }
-    }
+    });
   }
 }

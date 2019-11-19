@@ -69,7 +69,7 @@ class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
 
       if (!checkAgainstPatternProperties(fieldName) && !checkAgainstProperties(fieldName)) {
         if (additionalPropertiesSchema != null) {
-          additionalPropertiesSchema.validate(valueNode.get(fieldName), results);
+          validate(() -> additionalPropertiesSchema.validateWithContext(valueNode.get(fieldName), results));
         } else {
           results.addError(String.format(ERR_MSG, fieldName), ADDITIONALPROPERTIES);
         }

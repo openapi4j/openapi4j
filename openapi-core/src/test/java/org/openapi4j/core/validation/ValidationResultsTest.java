@@ -55,7 +55,7 @@ public class ValidationResultsTest {
   }
 
   @Test
-  public void withCrumb() throws InterruptedException {
+  public void withCrumb() throws Exception {
     ValidationResults results = new ValidationResults();
     CountDownLatch latch = new CountDownLatch(1);
     results.withCrumb("crumb", latch::countDown);

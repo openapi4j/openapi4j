@@ -68,9 +68,11 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
       return;
     }
 
-    for (SchemaValidator schema : schemas) {
-      schema.validate(valueNode, results);
-    }
+    validate(() -> {
+      for (SchemaValidator schema : schemas) {
+        schema.validateWithContext(valueNode, results);
+      }
+    });
   }
 
   private void validateOneAnyOf(final JsonNode valueNode, final ValidationResults results) {
@@ -84,7 +86,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
       JsonNode refNode = schema.getSchemaNode().get(OAI3SchemaKeywords.$REF);
       // inline schemas are not considered
       if (refNode != null && discriminatorPropertyRefPath.equals(refNode.textValue())) {
-        schema.validate(valueNode, results);
+        validate(() -> schema.validateWithContext(valueNode, results));
         return;
       }
     }
