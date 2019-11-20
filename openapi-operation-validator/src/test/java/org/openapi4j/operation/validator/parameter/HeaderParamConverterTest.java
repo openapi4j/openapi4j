@@ -68,6 +68,14 @@ public class HeaderParamConverterTest {
     checkObject(nodes, "simpleExplodedObject");
   }
 
+  @Test
+  public void headerContentObject() throws Exception {
+    Map<String, Collection<String>> headers = new HashMap<>();
+    headers.put("content", Arrays.asList("{\"boolProp\":true,\"stringProp\":\"admin\"}"));
+    Map<String, JsonNode> nodes = headerToNode("content", headers);
+    checkObject(nodes, "content");
+  }
+
   private Map<String, JsonNode> headerToNode(String parameterName, Map<String, Collection<String>> headers) throws Exception {
     OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/headerParameters.yaml");
 

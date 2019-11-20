@@ -8,16 +8,16 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PathConverter {
+public class PathResolver {
   private static final Pattern OAS_PATH_PARAMETERS_PATTERN = Pattern.compile("\\{[.;?*+]*([^{}.;?*+]+)[^}]*}");
   private static final Pattern ILLEGAL_PATH_MATCHER = Pattern.compile("\\{[^/]*/[^/]*}");
 
-  private static final PathConverter INSTANCE = new PathConverter();
+  private static final PathResolver INSTANCE = new PathResolver();
 
-  private PathConverter() {
+  private PathResolver() {
   }
 
-  public static PathConverter instance() {
+  public static PathResolver instance() {
     return INSTANCE;
   }
 

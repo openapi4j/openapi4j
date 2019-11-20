@@ -8,7 +8,7 @@ import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.util.ContentType;
-import org.openapi4j.operation.validator.util.PathConverter;
+import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.Header;
@@ -361,7 +361,7 @@ public class OperationValidator {
     // fill path regex for validation
     Optional<String> optRegEx;
     try {
-      optRegEx = PathConverter.instance().solve(specPath, this.operation.getParametersIn(IN_PATH));
+      optRegEx = PathResolver.instance().solve(specPath, this.operation.getParametersIn(IN_PATH));
       return optRegEx.map(Pattern::compile).orElse(null);
     } catch (ResolutionException e) {
       return null;
