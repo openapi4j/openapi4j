@@ -91,6 +91,12 @@ public class QueryParamConverterTest {
     checkObject(nodes, "deepExplodedObject");
   }
 
+  @Test
+  public void queryContentObject() throws Exception {
+    Map<String, JsonNode> nodes = queryToNode("content", "{\"boolProp\":true,\"stringProp\":\"admin\"}");
+    checkObject(nodes, "content");
+  }
+
   private Map<String, JsonNode> queryToNode(String parameterName, String value) throws Exception {
     OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/queryParameters.yaml");
 

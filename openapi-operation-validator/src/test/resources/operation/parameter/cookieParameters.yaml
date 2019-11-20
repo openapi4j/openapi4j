@@ -32,6 +32,13 @@ paths:
       responses:
         '200':
           description: The description
+  /content/foo:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/content'
+      responses:
+        '200':
+          description: The description
 components:
   parameters:
     # FORM
@@ -69,3 +76,15 @@ components:
             type: string
           boolProp:
             type: boolean
+    content:
+      in: query
+      name: content
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              stringProp:
+                type: string
+              boolProp:
+                type: boolean

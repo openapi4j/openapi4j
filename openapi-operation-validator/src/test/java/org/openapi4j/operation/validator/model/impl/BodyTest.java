@@ -53,6 +53,6 @@ public class BodyTest {
 
     assertEquals(
       values,
-      body.getContentAsJson(schema, "application/json"));
+      body.getContentAsNode(schema, "application/json"));
   }
 }

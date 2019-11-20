@@ -63,6 +63,6 @@ class FormUrlConverter {
       }
     }
 
-    return BodyConverter.mapToNode(schema, params);
+    return ContentConverter.mapToNode(schema, params);
   }
 }

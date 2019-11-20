@@ -63,7 +63,7 @@ class MultipartConverter {
   private void setValue(Schema schema, ObjectNode mappedBody, FileItemStream item, String name, JsonNode value, String encoding) throws IOException {
     if (value == null) {
       if (item.getContentType() != null) {
-        mappedBody.set(name, Body.from(item.openStream()).getContentAsJson(schema.getProperty(name), item.getContentType()));
+        mappedBody.set(name, Body.from(item.openStream()).getContentAsNode(schema.getProperty(name), item.getContentType()));
       } else {
         mappedBody.set(name, convertType(schema.getProperty(name), item, encoding));
       }

@@ -49,6 +49,14 @@ public class CookieParamConverterTest {
     checkObject(nodes, "formNotExplodedObject");
   }
 
+  @Test
+  public void cookieContentObject() throws Exception {
+    Map<String, String> cookies = new HashMap<>();
+    cookies.put("content", "{\"boolProp\":true,\"stringProp\":\"admin\"}");
+    Map<String, JsonNode> nodes = cookieToNode("content", cookies);
+    checkObject(nodes, "content");
+  }
+
   private Map<String, JsonNode> cookieToNode(String parameterName, Map<String, String> cookies) throws Exception {
     OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/cookieParameters.yaml");
 

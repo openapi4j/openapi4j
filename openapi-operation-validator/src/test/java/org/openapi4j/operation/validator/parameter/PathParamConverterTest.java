@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.junit.Test;
 import org.openapi4j.operation.validator.OpenApi3Util;
-import org.openapi4j.operation.validator.util.PathConverter;
+import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.OpenApi3;
@@ -132,6 +132,12 @@ public class PathParamConverterTest {
     checkObject(nodes, "matrixExplodedObject");
   }
 
+  @Test
+  public void pathContentObject() throws Exception {
+    Map<String, JsonNode> nodes = pathToNode("content", "{\"boolProp\":true,\"stringProp\":\"admin\"}");
+    checkObject(nodes, "content");
+  }
+
   private void checkPrimitive(Map<String, JsonNode> nodes, String propName) {
     assertEquals(1, nodes.size());
     assertEquals(5, nodes.get(propName).intValue());
@@ -160,7 +166,7 @@ public class PathParamConverterTest {
     parameters.put(parameterName, api.getComponents().getParameters().get(parameterName));
 
     final List<Parameter> values = Collections.singletonList(api.getComponents().getParameters().get(parameterName));
-    String oasPath = PathConverter.instance().solve("/" + parameterName + "/{" + parameterName + "}/foo", values).get();
+    String oasPath = PathResolver.instance().solve("/" + parameterName + "/{" + parameterName + "}/foo", values).get();
 
     Pattern pattern = Pattern.compile(oasPath);
 

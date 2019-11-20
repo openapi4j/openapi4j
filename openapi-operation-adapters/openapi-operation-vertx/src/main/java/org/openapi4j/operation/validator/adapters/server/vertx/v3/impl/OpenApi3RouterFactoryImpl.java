@@ -3,7 +3,7 @@ package org.openapi4j.operation.validator.adapters.server.vertx.v3.impl;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.operation.validator.adapters.server.vertx.v3.OpenApi3RouterFactory;
-import org.openapi4j.operation.validator.util.PathConverter;
+import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.operation.validator.validation.OperationValidator;
 import org.openapi4j.operation.validator.validation.RequestValidator;
 import org.openapi4j.parser.model.v3.OpenApi3;
@@ -112,7 +112,7 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
   }
 
   private Route createRoute(Router router, OperationSpec operationSpec) throws ResolutionException {
-    Optional<String> optRegEx = PathConverter
+    Optional<String> optRegEx = PathResolver
       .instance()
       .solve(operationSpec.path, operationSpec.operation.getParametersIn("path"));
 

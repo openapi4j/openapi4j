@@ -3,13 +3,17 @@ package org.openapi4j.operation.validator.util.parameter;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.exception.ResolutionException;
+import org.openapi4j.operation.validator.util.ContentConverter;
 import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.AbsParameter;
+import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.Parameter;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -104,9 +108,11 @@ public final class ParameterConverter {
     for (Map.Entry<String, AbsParameter<Parameter>> paramEntry : specParameters.entrySet()) {
       final String paramName = paramEntry.getKey();
       final AbsParameter<Parameter> param = paramEntry.getValue();
-      final String style = param.getStyle();
+      final JsonNode convertedValue;
 
-      JsonNode convertedValue;
+      if (param.getSchema() != null) {
+        final String style = param.getStyle();
+
         if (LABEL.equals(style)) {
           convertedValue = LabelStyleConverter.instance().convert(param, paramName, matcher.group(paramName));
         } else if (MATRIX.equals(style)) {
@@ -114,6 +120,9 @@ public final class ParameterConverter {
         } else { // simple is the default
           convertedValue = SimpleStyleConverter.instance().convert(param, paramName, matcher.group(paramName));
         }
+      } else {
+        convertedValue = getValueFromContentType(param.getContentMediaTypes(), matcher.group(paramName));
+      }
 
       if (convertedValue != null) {
         mappedValues.put(paramName, convertedValue);
@@ -136,23 +145,32 @@ public final class ParameterConverter {
 
     final Map<String, JsonNode> mappedValues = new HashMap<>();
 
+    if (rawValue == null) {
+      return mappedValues;
+    }
+
     for (Map.Entry<String, AbsParameter<Parameter>> paramEntry : specParameters.entrySet()) {
       final String paramName = paramEntry.getKey();
       final AbsParameter<Parameter> param = paramEntry.getValue();
-      final String style = param.getStyle();
+      final JsonNode convertedValue;
 
-      JsonNode convertedValue;
-      if (SPACE_DELIMITED.equals(style)) {
-        convertedValue = SpaceDelimitedStyleConverter.instance().convert(param, paramName, rawValue);
-      } else if (PIPE_DELIMITED.equals(style)) {
-        convertedValue = PipeDelimitedStyleConverter.instance().convert(param, paramName, rawValue);
-      } else if (DEEP_OBJECT.equals(style)) {
-        convertedValue = DeepObjectStyleConverter.instance().convert(param, paramName, rawValue);
-      } else { // form is the default
-        if (param.getExplode() == null) { // explode true is default
-          param.setExplode(true);
+      if (param.getSchema() != null) {
+        final String style = param.getStyle();
+
+        if (SPACE_DELIMITED.equals(style)) {
+          convertedValue = SpaceDelimitedStyleConverter.instance().convert(param, paramName, rawValue);
+        } else if (PIPE_DELIMITED.equals(style)) {
+          convertedValue = PipeDelimitedStyleConverter.instance().convert(param, paramName, rawValue);
+        } else if (DEEP_OBJECT.equals(style)) {
+          convertedValue = DeepObjectStyleConverter.instance().convert(param, paramName, rawValue);
+        } else { // form is the default
+          if (param.getExplode() == null) { // explode true is default
+            param.setExplode(true);
+          }
+          convertedValue = FormStyleConverter.instance().convert(param, paramName, rawValue);
         }
-        convertedValue = FormStyleConverter.instance().convert(param, paramName, rawValue);
+      } else {
+        convertedValue = getValueFromContentType(param.getContentMediaTypes(), rawValue);
       }
 
       if (convertedValue != null) {
@@ -173,14 +191,30 @@ public final class ParameterConverter {
   public static <M extends OpenApiSchema<M>> Map<String, JsonNode> headersToNode(final Map<String, AbsParameter<M>> specParameters,
                                                                                  final Map<String, Collection<String>> headers) {
 
-    Map<String, JsonNode> mappedValues = new HashMap<>();
+    final Map<String, JsonNode> mappedValues = new HashMap<>();
+
+    if (headers == null) {
+      return mappedValues;
+    }
 
     for (Map.Entry<String, AbsParameter<M>> paramEntry : specParameters.entrySet()) {
       String paramName = paramEntry.getKey();
+      final AbsParameter<M> param = paramEntry.getValue();
+      final JsonNode convertedValue;
 
       Collection<String> headerValues = headers.get(paramName);
       if (headerValues != null) {
-        mappedValues.put(paramName, SimpleStyleConverter.instance().convert(paramEntry.getValue(), paramName, String.join(",", headerValues)));
+        if (param.getSchema() != null) {
+          convertedValue = SimpleStyleConverter.instance().convert(param, paramName, String.join(",", headerValues));
+        } else {
+          convertedValue = getValueFromContentType(
+            param.getContentMediaTypes(),
+            headerValues.stream().findFirst().orElse(null));
+        }
+
+        if (convertedValue != null) {
+          mappedValues.put(paramName, convertedValue);
+        }
       }
     }
 
@@ -197,11 +231,16 @@ public final class ParameterConverter {
   public static Map<String, JsonNode> cookiesToNode(final Map<String, AbsParameter<Parameter>> specParameters,
                                                     final Map<String, String> cookies) {
 
-    Map<String, JsonNode> mappedValues = new HashMap<>();
+    final Map<String, JsonNode> mappedValues = new HashMap<>();
+
+    if (cookies == null) {
+      return mappedValues;
+    }
 
     for (Map.Entry<String, AbsParameter<Parameter>> paramEntry : specParameters.entrySet()) {
       final String paramName = paramEntry.getKey();
       final AbsParameter<Parameter> param = paramEntry.getValue();
+      final JsonNode convertedValue;
 
       if (param.getExplode() == null) { // explode true is default
         param.setExplode(true);
@@ -209,11 +248,38 @@ public final class ParameterConverter {
 
       String value = cookies.get(paramName);
       if (value != null) {
-        // We use simple style. Cookies are already mapped with their keys.
-        mappedValues.put(paramName, SimpleStyleConverter.instance().convert(param, paramName, value));
+        if (param.getSchema() != null) {
+          convertedValue = SimpleStyleConverter.instance().convert(param, paramName, value);
+        } else {
+          convertedValue = getValueFromContentType(param.getContentMediaTypes(), value);
+        }
+
+        if (convertedValue != null) {
+          mappedValues.put(paramName, convertedValue);
+        }
       }
     }
 
     return mappedValues;
+  }
+
+  private static JsonNode getValueFromContentType(final Map<String, MediaType> mediaTypes,
+                                                  final String value) {
+
+    if (mediaTypes != null && value != null) {
+      Optional<Map.Entry<String, MediaType>> entry = mediaTypes.entrySet().stream().findFirst();
+
+      if (entry.isPresent()) {
+        Map.Entry<String, MediaType> mediaType = entry.get();
+
+        try {
+          return ContentConverter.convert(mediaType.getValue().getSchema(), mediaType.getKey(), value);
+        } catch (IOException e) {
+          return null;
+        }
+      }
+    }
+
+    return null;
   }
 }

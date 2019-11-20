@@ -67,7 +67,7 @@ public class UndertowTest {
 
     Assert.assertEquals(
       JsonNodeFactory.instance.textNode("a body"),
-      rq.getBody().getContentAsJson(null, null));
+      rq.getBody().getContentAsNode(null, null));
   }
 
   private void checkCommons(Request rq) {
