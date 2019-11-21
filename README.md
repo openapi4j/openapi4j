@@ -28,13 +28,14 @@ All modules follow the [Semantic Versioning 2.0.0](https://semver.org) and are a
 ```xml
 <dependency>
     <groupId>org.openapi4j</groupId>
-    <artifactId>openapi4j-...</artifactId>
-    <!-- Current release -->
-    <version>0.3</version>
-    <!-- Next. Available on each master commit. -->
-    <version>0.4-SNAPSHOT</version>
+    <artifactId>openapi-[module]</artifactId>
 </dependency>
 ```
+
+[![Release version](https://img.shields.io/nexus/r/org.openapi4j/openapi-operation-validator?style=for-the-badge&color=brightgreen&label=Release&server=https%3A%2F%2Foss.sonatype.org)](https://search.maven.org/search?q=g:org.openapi4j)
+[![Snapshot version](https://img.shields.io/nexus/s/org.openapi4j/openapi-operation-validator?style=for-the-badge&color=brightgreen&label=Snapshot&server=https%3A%2F%2Foss.sonatype.org)](https://oss.sonatype.org/content/repositories/snapshots/org/openapi4j/)
+
+Snapshot is available for latest valid commit on master branch.
 
 ## Performance
 

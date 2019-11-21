@@ -2,13 +2,14 @@
 
 Add the following to your `pom.xml` :
 
-[See main page for version](https://github.com/openapi4j/openapi4j)
 ```xml
 <dependency>
     <groupId>org.openapi4j</groupId>
-    <artifactId>openapi4j-operation-servlet</artifactId>
+    <artifactId>openapi-operation-servlet</artifactId>
 </dependency>
 ```
+[![Release version](https://img.shields.io/nexus/r/org.openapi4j/openapi-schema-validator?style=for-the-badge&color=brightgreen&label=Release&server=https%3A%2F%2Foss.sonatype.org)](https://search.maven.org/search?q=g:org.openapi4j%20a:openapi-operation-servlet)
+[![Snapshot version](https://img.shields.io/nexus/s/org.openapi4j/openapi-schema-validator?style=for-the-badge&color=brightgreen&label=Snapshot&server=https%3A%2F%2Foss.sonatype.org)](https://oss.sonatype.org/content/repositories/snapshots/org/openapi4j/openapi-operation-servlet/)
 
 ## Usage
 

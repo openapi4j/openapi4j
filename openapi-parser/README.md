@@ -13,13 +13,14 @@ That said, you can, if you want to, do the validation from it. Check at the inte
 
 Add the following to your `pom.xml`:
 
-[See main page for version](https://github.com/openapi4j/openapi4j)
 ```xml
 <dependency>
     <groupId>org.openapi4j</groupId>
-    <artifactId>openapi4j-parser</artifactId>
+    <artifactId>openapi-parser</artifactId>
 </dependency>
 ```
+[![Release version](https://img.shields.io/nexus/r/org.openapi4j/openapi-schema-validator?style=for-the-badge&color=brightgreen&label=Release&server=https%3A%2F%2Foss.sonatype.org)](https://search.maven.org/search?q=g:org.openapi4j%20a:openapi-parser)
+[![Snapshot version](https://img.shields.io/nexus/s/org.openapi4j/openapi-schema-validator?style=for-the-badge&color=brightgreen&label=Snapshot&server=https%3A%2F%2Foss.sonatype.org)](https://oss.sonatype.org/content/repositories/snapshots/org/openapi4j/openapi-parser/)
 
 ## Usage
 
