@@ -31,7 +31,7 @@ class MultipartConverter {
   }
 
   JsonNode multipartToNode(final Schema schema, final InputStream body, final String rawContentType, final String encoding) throws IOException {
-    UploadContext requestContext = rcInstance.apply(body, rawContentType, encoding);
+    UploadContext requestContext = UPLOAD_CONTEXT_INSTANCE.create(body, rawContentType, encoding);
 
     ObjectNode mappedBody = JsonNodeFactory.instance.objectNode();
 
@@ -97,13 +97,13 @@ class MultipartConverter {
    */
   @FunctionalInterface
   private interface UploadContextInstance {
-    UploadContext apply(
+    UploadContext create(
       final InputStream body,
       final String contentType,
       final String encoding);
   }
 
-  private static final UploadContextInstance rcInstance = (body, contentType, encoding) -> new UploadContext() {
+  private static final UploadContextInstance UPLOAD_CONTEXT_INSTANCE = (body, contentType, encoding) -> new UploadContext() {
     @Override
     public String getCharacterEncoding() {
       return encoding;
