@@ -33,17 +33,17 @@ allprojects {
     options.deprecation = true
   }*/
 
-  sonarqube {
+  /*sonarqube {
     properties {
       property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
     }
-  }
+  }*/
 
-  jacocoTestReport {
+  /*jacocoTestReport {
     reports {
       xml.enabled = true
     }
-  }
+  }*/
 
   jar {
     manifest {
@@ -51,5 +51,29 @@ allprojects {
       attributes 'Implementation-Title': project.name
       attributes 'Implementation-Version': project.version
     }
+  }
+}
+
+task codeCoverageReport(type: JacocoReport) {
+  executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+  subprojects.each {
+    sourceSets it.sourceSets.main
+  }
+
+  reports {
+    xml.enabled true
+    html.enabled true
+    csv.enabled false
+  }
+}
+
+codeCoverageReport.dependsOn {
+  subprojects*.test
+}
+
+sonarqube {
+  properties {
+    property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/codeCoverageReport/codeCoverageReport.xml"
   }
 }

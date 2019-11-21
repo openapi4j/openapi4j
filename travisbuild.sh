@@ -4,7 +4,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]
 then
   # run sonarqube with coverage report when not on PR
   git fetch --unshallow --quiet
-  gradle_args+=" jacocoTestReport sonarqube"
+  gradle_args+=" codeCoverageReport sonarqube"
 
   if [ -z "$TRAVIS_TAG" ]
   then
