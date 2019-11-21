@@ -6,14 +6,18 @@ import org.json.JSONException;
 import org.junit.Test;
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.EncodeException;
+import org.openapi4j.core.model.AuthOption;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class TreeUtilTest {
   @Test(expected = EncodeException.class)
@@ -49,6 +53,19 @@ public class TreeUtilTest {
   public void simpleLoad() throws DecodeException {
     assertNotNull(TreeUtil.load(getClass().getResource("/parsing/discriminator.yaml")));
     assertNotNull(TreeUtil.load(getClass().getResource("/parsing/discriminator.json")));
+  }
+
+  @Test
+  public void remoteLoad() throws DecodeException, MalformedURLException {
+    // Test authent even if it's useless, it will be ignored by bit.ly
+    AuthOption option1 = new AuthOption(AuthOption.Type.QUERY, "a", "value");
+    AuthOption option2 = new AuthOption(AuthOption.Type.HEADER, "another", "value");
+
+    // Test redirection with bit.ly
+    // https://raw.githubusercontent.com/openapi4j/openapi4j/master/openapi-core/src/test/resources/parsing/discriminator.yaml
+    assertNotNull(TreeUtil.load(
+      new URL("http://bit.ly/348ujup?foo=bar"),
+      Arrays.asList(option1, option2)));
   }
 
   @Test(expected = DecodeException.class)

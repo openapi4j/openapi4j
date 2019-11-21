@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.openapi4j.core.model.AuthOption.Type.HEADER;
 import static org.openapi4j.core.model.AuthOption.Type.QUERY;
 
 /**
@@ -96,7 +95,7 @@ public final class UrlContentRetriever {
         if (auth.getUrlMatcher().test(inUrl)) {
           if (QUERY.equals(auth.getType())) {
             queryParams.add(auth);
-          } else if (HEADER.equals(auth.getType())) {
+          } else {
             headerParams.add(auth);
           }
         }
@@ -131,7 +130,7 @@ public final class UrlContentRetriever {
     if (conn instanceof HttpURLConnection) {
       int statusCode = ((HttpURLConnection) conn).getResponseCode();
       String newLocation = conn.getHeaderField("Location");
-      if ((statusCode == 301 || statusCode == 302) || newLocation != null) {
+      if ((statusCode == 301 || statusCode == 302) && newLocation != null) {
         boolean loop = MAX_REDIRECTS > ++nbRedirects;
         if (!loop) {
           throw new ResolutionException("Too many redirects.");
