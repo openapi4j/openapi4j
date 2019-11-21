@@ -61,10 +61,13 @@ It should be very straightforward to implement a builder. Look at the code of cu
 
 * JSON (i.e pseudo (application|text)/(json|*+json))
 * Form URL encoded (application/x-www-form-urlencoded)
+* Or _whatever_ if you can provide a JsonNode or Map<String, Object> when building the body wrapper.
 
-Optional additions (add the corresponding dependencies) :   
+Optional additions (add the corresponding dependencies) :
 * Multipart (i.e pseudo multipart/(form-data|mixed)) [See Apache Commons FileUpload >= 1.3](https://github.com/apache/commons-fileupload)
 * XML (i.e pseudo (application|text)/(xml|*+xml)) [See JSON-java](https://github.com/stleary/JSON-java)
+
+Those additions are only mandatory if you can't provide JsonNode or Map<String, Object> or prefer use the provided additions.
 
 Other content types are considered as a single text node to cover direct file uploads (i.e string/binary or string/base64).
 
