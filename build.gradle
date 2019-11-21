@@ -33,18 +33,6 @@ allprojects {
     options.deprecation = true
   }*/
 
-  /*sonarqube {
-    properties {
-      property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
-    }
-  }*/
-
-  /*jacocoTestReport {
-    reports {
-      xml.enabled = true
-    }
-  }*/
-
   jar {
     manifest {
       attributes 'Build-date': new Date()
@@ -65,6 +53,12 @@ task codeCoverageReport(type: JacocoReport) {
     xml.enabled true
     html.enabled true
     csv.enabled false
+  }
+
+  afterEvaluate {
+    classDirectories = files(classDirectories.files.collect {
+      fileTree(dir: it, exclude: ['org/perf/**'])
+    })
   }
 }
 
