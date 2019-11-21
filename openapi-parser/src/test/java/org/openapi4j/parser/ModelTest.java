@@ -9,6 +9,7 @@ import org.openapi4j.parser.model.v3.Example;
 import org.openapi4j.parser.model.v3.Header;
 import org.openapi4j.parser.model.v3.Link;
 import org.openapi4j.parser.model.v3.MediaType;
+import org.openapi4j.parser.model.v3.OAuthFlow;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Parameter;
@@ -21,6 +22,7 @@ import org.openapi4j.parser.model.v3.SecurityRequirement;
 import org.openapi4j.parser.model.v3.SecurityScheme;
 import org.openapi4j.parser.model.v3.Server;
 import org.openapi4j.parser.model.v3.ServerVariable;
+import org.openapi4j.parser.model.v3.Tag;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -239,6 +241,52 @@ public class ModelTest extends ParsingChecker {
   }
 
   @Test
+  public void oAuthFlowTest() {
+    OAuthFlow obj = new OAuthFlow();
+
+    mapCheck(
+      "foo",
+      "fooscope",
+      obj::hasScope,
+      obj::getScope,
+      obj::setScope,
+      obj::setScopes,
+      obj::removeScope);
+  }
+
+  @Test
+  public void openApiTest() {
+    OpenApi3 obj = new OpenApi3();
+
+    listCheck(
+      new Server(),
+      obj::hasServers,
+      obj::getServers,
+      obj::setServers,
+      obj::addServer,
+      obj::insertServer,
+      obj::removeServer);
+
+    listCheck(
+      new Tag(),
+      obj::hasTags,
+      obj::getTags,
+      obj::setTags,
+      obj::addTag,
+      obj::insertTag,
+      obj::removeTag);
+
+    mapCheck(
+      "paths",
+      new Path(),
+      obj::hasPath,
+      obj::getPath,
+      obj::setPath,
+      obj::setPaths,
+      obj::removePath);
+  }
+
+  @Test
   public void operationTest() {
     Operation obj = new Operation();
 
@@ -277,6 +325,24 @@ public class ModelTest extends ParsingChecker {
       obj::addTag,
       obj::insertTag,
       obj::removeTag);
+
+    mapCheck(
+      "foo",
+      new Callback(),
+      obj::hasCallback,
+      obj::getCallback,
+      obj::setCallback,
+      obj::setCallbacks,
+      obj::removeCallback);
+
+    mapCheck(
+      "foo",
+      new Response(),
+      obj::hasResponse,
+      obj::getResponse,
+      obj::setResponse,
+      obj::setResponses,
+      obj::removeResponse);
   }
 
   @Test
@@ -300,6 +366,75 @@ public class ModelTest extends ParsingChecker {
       obj::addServer,
       obj::insertServer,
       obj::removeServer);
+
+    mapCheck(
+      "foo",
+      new Operation(),
+      obj::hasOperation,
+      obj::getOperation,
+      obj::setOperation,
+      obj::setOperations,
+      obj::removeOperation);
+  }
+
+  @Test
+  public void requestBodyTest() {
+    RequestBody obj = new RequestBody();
+
+    mapCheck(
+      "foocontenttype",
+      new MediaType(),
+      obj::hasContentMediaType,
+      obj::getContentMediaType,
+      obj::setContentMediaType,
+      obj::setContentMediaTypes,
+      obj::removeContentMediaType);
+  }
+
+  @Test
+  public void responseTest() {
+    Response obj = new Response();
+
+    mapCheck(
+      "headers",
+      new Header(),
+      obj::hasHeader,
+      obj::getHeader,
+      obj::setHeader,
+      obj::setHeaders,
+      obj::removeHeader);
+
+    mapCheck(
+      "foocontenttype",
+      new MediaType(),
+      obj::hasContentMediaType,
+      obj::getContentMediaType,
+      obj::setContentMediaType,
+      obj::setContentMediaTypes,
+      obj::removeContentMediaType);
+
+    mapCheck(
+      "foolink",
+      new Link(),
+      obj::hasLink,
+      obj::getLink,
+      obj::setLink,
+      obj::setLinks,
+      obj::removeLink);
+  }
+
+  @Test
+  public void serverTest() {
+    Server obj = new Server();
+
+    mapCheck(
+      "foovar",
+      new ServerVariable(),
+      obj::hasVariable,
+      obj::getVariable,
+      obj::setVariable,
+      obj::setVariables,
+      obj::removeVariable);
   }
 
   @Test
@@ -350,6 +485,15 @@ public class ModelTest extends ParsingChecker {
       obj::addOneOfSchema,
       obj::insertOneOfSchema,
       obj::removeOneOfSchema);
+
+    mapCheck(
+      "foovar",
+      new Schema(),
+      obj::hasProperty,
+      obj::getProperty,
+      obj::setProperty,
+      obj::setProperties,
+      obj::removeProperty);
   }
 
   @Test

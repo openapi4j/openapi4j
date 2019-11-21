@@ -66,6 +66,11 @@ public class OpenApi3 extends AbsExtendedOpenApiSchema<OpenApi3> implements OAI 
     return this;
   }
 
+  public OpenApi3 insertServer(int index, Server server) {
+    servers = listAdd(servers, index, server);
+    return this;
+  }
+
   public OpenApi3 removeServer(Server server) {
     listRemove(servers, server);
     return this;

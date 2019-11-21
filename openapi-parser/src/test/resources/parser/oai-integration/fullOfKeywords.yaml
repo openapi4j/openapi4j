@@ -36,6 +36,17 @@ servers:
   - url: http://my.url.com
     description: description2
     x-foo: foo
+tags:
+  - name: foo
+    description: foo
+    externalDocs:
+      description: Find more info here
+      url: https://example.com
+externalDocs:
+  description: description
+  url: http://my.url.com
+  x-foo: foo
+x-foo: foo
 paths:
   /foo:
     summary: summary
@@ -376,9 +387,3 @@ components:
         summary: summary
       x-foo: foo
   x-foo: foo
-tags: []
-externalDocs:
-  description: description
-  url: http://my.url.com
-  x-foo: foo
-x-foo: foo
