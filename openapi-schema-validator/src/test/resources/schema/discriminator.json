@@ -31,7 +31,7 @@
                 "type": "string"
               }
             },
-            "additionalProperties":  false
+            "additionalProperties": false
           }
         }
       },
@@ -52,7 +52,7 @@
               "type": "string"
             }
           },
-          "additionalProperties":  false
+          "additionalProperties": false
         }
       ],
       "discriminator": {
@@ -65,37 +65,54 @@
     "tests": [
       {
         "description": "mapping key is valid",
-        "data": {"pet_type":  "dog"},
+        "data": {
+          "pet_type": "dog"
+        },
         "valid": true
       },
       {
         "description": "mapping key is valid - additionalProperty is invalid",
-        "data": {"pet_type":  "dog", "foo": "bar"},
+        "data": {
+          "pet_type": "dog",
+          "foo": "bar"
+        },
         "valid": false
       },
       {
         "description": "Schema name is valid",
-        "data": {"pet_type":  "Dog", "bark":  "foo"},
+        "data": {
+          "pet_type": "Dog",
+          "bark": "foo"
+        },
         "valid": true
       },
       {
         "description": "Schema name is valid - additionalProperty is invalid",
-        "data": {"pet_type":  "Dog", "foo": "bar"},
+        "data": {
+          "pet_type": "Dog",
+          "foo": "bar"
+        },
         "valid": false
       },
       {
         "description": "something else is invalid",
-        "data": {"pet_type":  "foo"},
+        "data": {
+          "pet_type": "foo"
+        },
         "valid": false
       },
       {
         "description": "Schema name is valid - no mapping",
-        "data": {"pet_type":  "Cat"},
+        "data": {
+          "pet_type": "Cat"
+        },
         "valid": true
       },
       {
         "description": "Schema name is invalid - no mapping",
-        "data": {"pet_type":  "cat"},
+        "data": {
+          "pet_type": "cat"
+        },
         "valid": false
       },
       {
@@ -112,7 +129,9 @@
         "schemas": {
           "Animal": {
             "type": "object",
-            "required": [ "animal_type" ],
+            "required": [
+              "animal_type"
+            ],
             "properties": {
               "animal_type": {
                 "type": "string"
@@ -162,12 +181,20 @@
     "tests": [
       {
         "description": "Direct schema name is valid",
-        "data": {"animal_type":  "Dog", "name": "Medor", "bark":  "foo"},
+        "data": {
+          "animal_type": "Dog",
+          "name": "Medor",
+          "bark": "foo"
+        },
         "valid": true
       },
       {
         "description": "something else is invalid",
-        "data": {"animal_type":  "foo", "name": "Medor", "bark":  "foo"},
+        "data": {
+          "animal_type": "foo",
+          "name": "Medor",
+          "bark": "foo"
+        },
         "valid": false
       }
     ]
@@ -175,13 +202,76 @@
   {
     "description": "wrong discriminator setup",
     "schema": {
-      "oneOf": [ {}, {} ],
+      "oneOf": [
+        {},
+        {}
+      ],
       "discriminator": {}
     },
     "tests": [
       {
         "description": "Schema name is valid - invalid setup",
-        "data": {"pet_type":  "Dog"},
+        "data": {
+          "pet_type": "Dog"
+        },
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "discriminator for anyOf/oneOf",
+    "schema": {
+      "components": {
+        "schemas": {
+          "Cat": {
+            "type": "object",
+            "required": [
+              "pet_type"
+            ],
+            "properties": {
+              "pet_type": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "Dog": {
+            "type": "object",
+            "required": [
+              "pet_type"
+            ],
+            "properties": {
+              "pet_type": {
+                "type": "string"
+              },
+              "bark": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "oneOf": [
+        {
+          "$ref": "#/components/schemas/Cat"
+        }
+      ],
+      "discriminator": {
+        "propertyName": "pet_type",
+        "mapping": {
+          "dog": "#/components/schemas/Dog"
+        }
+      }
+    },
+    "tests": [
+      {
+        "description": "mapping key is valid - Schema detection is not",
+        "data": {
+          "pet_type": "dog"
+        },
         "valid": false
       }
     ]

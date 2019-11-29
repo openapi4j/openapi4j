@@ -86,9 +86,11 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
       JsonNode refNode = schema.getSchemaNode().get(OAI3SchemaKeywords.$REF);
       if (discriminatorPropertyRefPath.equals(refNode.textValue())) {
         validate(() -> schema.validateWithContext(valueNode, results));
-        break;
+        return;
       }
     }
+
+    results.addError(String.format(INVALID_SCHEMA, discriminatorPropertyName), DISCRIMINATOR);
   }
 
   /**
