@@ -8,8 +8,9 @@ Operation validator module includes the following features :
 
 This module is on top of both OpenAPI parser and Schema Object validator and intensively uses it.
 
-The Operation validators are lazily created and cached for re-use.  
-/!\ Manipulating the OpenAPI models is discouraged in conjunction with this module. /!\
+The Operation validators are lazily created and cached for re-use by `RequestValidator` object.
+
+⚠ Manipulating the OpenAPI models is discouraged in conjunction with this module. ⚠
 
 ## Installation
 
@@ -29,8 +30,10 @@ Add the following to your `pom.xml` :
 Standard :
 ```java
 // openAPI & operation objects are from openapi4j parser
-new RequestValidator(openAPI).validate(request, operation); // throws ValidationException
-new ResponseValidator(openAPI).validate(response, operation); // throws ValidationException
+RequestValidator val = new RequestValidator(openAPI);
+
+val.validate(request, operation); // throws ValidationException
+val.validate(response, operation); // throws ValidationException
 ```
 
 Raw :
@@ -54,7 +57,7 @@ Adapters' dependencies are not provided, you must add the one you need.
 See [openapi-operation-adapters](https://github.com/openapi4j/openapi4j/tree/master/openapi-operation-adapters) to get
 the list of currently available adapters and further documentation.
 
-Feel free to contribute to add more adapters and additional features.  
+Feel free to contribute to add more adapters and additional features.
 It should be very straightforward to implement a builder. Look at the code of current adapters as a starter.
 
 ## Supported body content types
@@ -73,13 +76,13 @@ Other content types are considered as a single text node to cover direct file up
 
 ## Limitations
 
-* Security and *functional* related aspects (roles/scopes, token/cookie validity, ...) are not validated by this module unless specified on each adapter README.md.  
-In such case, you MUST refer and fallback to your middleware layer for documentation.  
+* Security and *functional* related aspects (roles/scopes, token/cookie validity, ...) are not validated by this module unless specified on each adapter README.md.
+In such case, you MUST refer and fallback to your middleware layer for documentation.
 
-Here's a list of currently non supported keywords :  
+Here's a list of currently non supported keywords :
 * allowedReserved (maybe forever).
 * allowEmptyValue (will be removed in later version OAS).
-* XML : 
+* XML :
     * name.
     * Note, prefix and namespace are not considered too since namespace information is always removed before processing. Not really an issue, the information is useless.
     * Note, attributes are kept and always converted to direct children JSON properties.
