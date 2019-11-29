@@ -19,7 +19,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINPROPERTIES;
 class MinPropertiesValidator extends BaseJsonValidator<OAI3> {
   private static final String ERR_MSG = "Minimum is '%s', found '%s'.";
 
-  private final int min;
+  private final Integer min;
 
   static MinPropertiesValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new MinPropertiesValidator(context, schemaNode, schemaParentNode, parentSchema);
@@ -28,12 +28,15 @@ class MinPropertiesValidator extends BaseJsonValidator<OAI3> {
   private MinPropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    min = schemaNode.isIntegralNumber() ? schemaNode.intValue() : 0;
+    min
+      = schemaNode.isIntegralNumber()
+      ? schemaNode.intValue()
+      : null;
   }
 
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (!valueNode.isObject()) {
+    if (min == null || !valueNode.isObject()) {
       return;
     }
 

@@ -17,9 +17,9 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXPROPERTIES;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-9" />
  */
 class MaxPropertiesValidator extends BaseJsonValidator<OAI3> {
-  private static final String ERR_MSG = "Max properties is less than '%s'.";
+  private static final String ERR_MSG = "Maximum is '%s', found '%s'.";
 
-  private final int max;
+  private final Integer max;
 
   static MaxPropertiesValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new MaxPropertiesValidator(context, schemaNode, schemaParentNode, parentSchema);
@@ -28,17 +28,20 @@ class MaxPropertiesValidator extends BaseJsonValidator<OAI3> {
   private MaxPropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    max = (schemaNode.isIntegralNumber()) ? schemaNode.intValue() : Integer.MAX_VALUE;
+    max
+      = schemaNode.isIntegralNumber()
+      ? schemaNode.intValue()
+      : null;
   }
 
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (!valueNode.isObject()) {
+    if (max == null || !valueNode.isObject()) {
       return;
     }
 
     if (valueNode.size() > max) {
-      results.addError(String.format(ERR_MSG, valueNode.size()), MAXPROPERTIES);
+      results.addError(String.format(ERR_MSG, max, valueNode.size()), MAXPROPERTIES);
     }
   }
 }

@@ -38,8 +38,6 @@ class AnyOfValidator extends DiscriminatorValidator {
       }
     }
 
-    if (!schemas.isEmpty()) {
-      results.addError(ERR_MSG, ANYOF);
-    }
+    results.addError(ERR_MSG, ANYOF);
   }
 }

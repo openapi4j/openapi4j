@@ -41,12 +41,23 @@
         },
         {
           "$ref": "#/components/schemas/Dog"
+        },
+        {
+          "type": "object",
+          "required": [
+            "pet_type"
+          ],
+          "properties": {
+            "foo": {
+              "type": "string"
+            }
+          },
+          "additionalProperties":  false
         }
       ],
       "discriminator": {
         "propertyName": "pet_type",
         "mapping": {
-          "cat": "#/components/schemas/Cat",
           "dog": "#/components/schemas/Dog"
         }
       }
@@ -75,6 +86,21 @@
       {
         "description": "something else is invalid",
         "data": {"pet_type":  "foo"},
+        "valid": false
+      },
+      {
+        "description": "Schema name is valid - no mapping",
+        "data": {"pet_type":  "Cat"},
+        "valid": true
+      },
+      {
+        "description": "Schema name is invalid - no mapping",
+        "data": {"pet_type":  "cat"},
+        "valid": false
+      },
+      {
+        "description": "Null schema name is invalid - no mapping",
+        "data": {},
         "valid": false
       }
     ]

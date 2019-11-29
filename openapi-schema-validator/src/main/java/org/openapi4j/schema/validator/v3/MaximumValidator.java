@@ -33,7 +33,7 @@ class MaximumValidator extends BaseJsonValidator<OAI3> {
   private MaximumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    maximum = schemaNode.isNumber() ? schemaNode.decimalValue() : BigDecimal.valueOf(0);
+    maximum = schemaNode.isNumber() ? schemaNode.decimalValue() : null;
 
     JsonNode exclusiveMaximumNode = schemaParentNode.get(EXCLUSIVEMAXIMUM);
     if (exclusiveMaximumNode != null && exclusiveMaximumNode.isBoolean()) {
@@ -45,7 +45,7 @@ class MaximumValidator extends BaseJsonValidator<OAI3> {
 
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (!valueNode.isNumber()) {
+    if (maximum == null || !valueNode.isNumber()) {
       return;
     }
 

@@ -19,7 +19,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINITEMS;
 class MinItemsValidator extends BaseJsonValidator<OAI3> {
   private static final String ERR_MSG = "Min items is '%s', found '%s'.";
 
-  private final int min;
+  private final Integer min;
 
   static MinItemsValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new MinItemsValidator(context, schemaNode, schemaParentNode, parentSchema);
@@ -28,12 +28,15 @@ class MinItemsValidator extends BaseJsonValidator<OAI3> {
   private MinItemsValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    min = schemaNode.isIntegralNumber() ? schemaNode.intValue() : 0;
+    min
+      = schemaNode.isIntegralNumber()
+      ? schemaNode.intValue()
+      : null;
   }
 
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (!valueNode.isArray()) {
+    if (min == null || !valueNode.isArray()) {
       return;
     }
 

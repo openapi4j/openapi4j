@@ -28,7 +28,8 @@ class MaxLengthValidator extends BaseJsonValidator<OAI3> {
   private MaxLengthValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    maxLength = (schemaNode != null && schemaNode.isIntegralNumber())
+    maxLength
+      = schemaNode.isIntegralNumber()
       ? schemaNode.intValue()
       : null;
   }

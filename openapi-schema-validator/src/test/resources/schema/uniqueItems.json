@@ -98,5 +98,31 @@
         "valid": true
       }
     ]
+  },
+  {
+    "description": "uniqueItems validation",
+    "schema": {
+      "uniqueItems": false
+    },
+    "tests": [
+      {
+        "description": "non-unique array of integers is valid",
+        "data": [1, 1],
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "Wrong definition",
+    "schema": {
+      "uniqueItems": "foo"
+    },
+    "tests": [
+      {
+        "description": "non-unique array of integers is valid",
+        "data": [1, 1],
+        "valid": true
+      }
+    ]
   }
 ]

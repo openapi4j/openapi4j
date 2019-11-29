@@ -55,6 +55,9 @@
         },
         "bar": {
           "$ref": "#/properties/foo"
+        },
+        "baz": {
+          "$ref": "#/properties/foo"
         }
       }
     },
@@ -70,6 +73,13 @@
         "description": "mismatch",
         "data": {
           "bar": true
+        },
+        "valid": false
+      },
+      {
+        "description": "mismatch",
+        "data": {
+          "baz": "4"
         },
         "valid": false
       }

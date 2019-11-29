@@ -33,7 +33,7 @@ class MinimumValidator extends BaseJsonValidator<OAI3> {
   private MinimumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    minimum = schemaNode.isNumber() ? schemaNode.decimalValue() : BigDecimal.valueOf(0);
+    minimum = schemaNode.isNumber() ? schemaNode.decimalValue() : null;
 
     JsonNode exclusiveMaximumNode = schemaParentNode.get(EXCLUSIVEMINIMUM);
     if (exclusiveMaximumNode != null && exclusiveMaximumNode.isBoolean()) {
@@ -45,7 +45,7 @@ class MinimumValidator extends BaseJsonValidator<OAI3> {
 
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (!valueNode.isNumber()) {
+    if (minimum == null || !valueNode.isNumber()) {
       return;
     }
 

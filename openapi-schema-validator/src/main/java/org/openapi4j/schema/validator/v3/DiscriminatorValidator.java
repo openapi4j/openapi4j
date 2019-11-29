@@ -84,10 +84,9 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
 
     for (SchemaValidator schema : schemas) {
       JsonNode refNode = schema.getSchemaNode().get(OAI3SchemaKeywords.$REF);
-      // inline schemas are not considered
-      if (refNode != null && discriminatorPropertyRefPath.equals(refNode.textValue())) {
+      if (discriminatorPropertyRefPath.equals(refNode.textValue())) {
         validate(() -> schema.validateWithContext(valueNode, results));
-        return;
+        break;
       }
     }
   }
@@ -171,7 +170,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
     for (int i = 0; i < size; i++) {
       JsonNode node = schemaNode.get(i);
       JsonNode refValueNode = node.get(OAI3SchemaKeywords.$REF);
-      if (refValueNode != null && refValueNode.isTextual() && refValueNode.textValue().equals(refNode.textValue())) {
+      if (refNode.equals(refValueNode)) {
         // Add the parent schema
         schemas.add(new SchemaValidator(context, reference.getRef(), reference.getContent(), schemaParentNode, parentSchema));
       } else {
@@ -202,12 +201,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
       // "Mapping / explicit" case, find the corresponding reference
       JsonNode mappingNode = discriminatorMapping.get(discriminatorPropertyValue);
       if (mappingNode != null) {
-        String discriminatorPropertyRefPath = mappingNode.textValue();
-        if (discriminatorPropertyRefPath.startsWith("#")) {
-          ref = mappingNode.textValue();
-        } else {
-          ref = SCHEMAS_PATH + mappingNode.textValue();
-        }
+        ref = mappingNode.textValue();
       }
     }
 

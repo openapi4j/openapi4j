@@ -59,21 +59,18 @@ class TypeValidator extends BaseJsonValidator<OAI3> {
     if (valueNode == null) return TYPE_NULL;
 
     if (valueNode.isContainerNode()) {
-      if (valueNode.isObject())
-        return TYPE_OBJECT;
-      else if (valueNode.isArray())
-        return TYPE_ARRAY;
-    } else if (valueNode.isValueNode()) {
-      if (valueNode.isTextual())
-        return TYPE_STRING;
-      else if (valueNode.isIntegralNumber())
-        return TYPE_INTEGER;
-      else if (valueNode.isNumber())
-        return TYPE_NUMBER;
-      else if (valueNode.isBoolean())
-        return TYPE_BOOLEAN;
+      return valueNode.isObject() ? TYPE_OBJECT : TYPE_ARRAY;
     }
 
-    return TYPE_NULL;
+    if (valueNode.isTextual())
+      return TYPE_STRING;
+    else if (valueNode.isIntegralNumber())
+      return TYPE_INTEGER;
+    else if (valueNode.isNumber())
+      return TYPE_NUMBER;
+    else if (valueNode.isBoolean())
+      return TYPE_BOOLEAN;
+    else
+      return TYPE_NULL;
   }
 }

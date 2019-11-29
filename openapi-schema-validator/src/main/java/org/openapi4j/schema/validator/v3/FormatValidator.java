@@ -71,13 +71,13 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
         validated = valueNode.isInt();
         break;
       case FORMAT_INT64:
-        validated = (valueNode.isInt() || valueNode.isLong());
+        validated = valueNode.isInt() || valueNode.isLong();
         break;
       case FORMAT_FLOAT:
-        validated = (valueNode.isInt() || valueNode.isFloatingPointNumber());
+        validated = valueNode.isInt() || valueNode.isFloatingPointNumber();
         break;
       case FORMAT_DOUBLE:
-        validated = (valueNode.isInt() || valueNode.isLong() || valueNode.isDouble());
+        validated = valueNode.isNumber();
         break;
       case FORMAT_BYTE:
         validated = !valueNode.isTextual() || BASE64_PATTERN.matcher(valueNode.textValue()).matches();

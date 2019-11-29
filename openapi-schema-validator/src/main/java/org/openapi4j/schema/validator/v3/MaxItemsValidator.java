@@ -19,7 +19,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXITEMS;
 class MaxItemsValidator extends BaseJsonValidator<OAI3> {
   private static final String ERR_MSG = "Max items is '%s', found '%s'.";
 
-  private final int max;
+  private final Integer max;
 
   static MaxItemsValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new MaxItemsValidator(context, schemaNode, schemaParentNode, parentSchema);
@@ -28,12 +28,15 @@ class MaxItemsValidator extends BaseJsonValidator<OAI3> {
   private MaxItemsValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    max = schemaNode.isIntegralNumber() ? schemaNode.intValue() : 0;
+    max
+      = schemaNode.isIntegralNumber()
+      ? schemaNode.intValue()
+      : null;
   }
 
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (!valueNode.isArray()) {
+    if (max == null || !valueNode.isArray()) {
       return;
     }
 

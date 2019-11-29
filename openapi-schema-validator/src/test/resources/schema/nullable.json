@@ -1,7 +1,35 @@
 [
   {
-    "description": "not nullable",
+    "description": "not nullable, not filled",
     "schema": {
+      "type": "integer"
+    },
+    "tests": [
+      {
+        "description": "disallowed",
+        "data": null,
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "not nullable, filled",
+    "schema": {
+      "nullable": false,
+      "type": "integer"
+    },
+    "tests": [
+      {
+        "description": "disallowed",
+        "data": null,
+        "valid": false
+      }
+    ]
+  },
+  {
+    "description": "not nullable, wrong type",
+    "schema": {
+      "nullable": "false",
       "type": "integer"
     },
     "tests": [
