@@ -468,7 +468,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   public boolean isAdditionalPropertiesAllowed() {
-    return Boolean.TRUE.equals(additionalPropertiesAllowed);
+    return additionalPropertiesAllowed == null || Boolean.TRUE.equals(additionalPropertiesAllowed);
   }
 
   public Schema setAdditionalPropertiesAllowed(Boolean additionalPropertiesAllowed) {

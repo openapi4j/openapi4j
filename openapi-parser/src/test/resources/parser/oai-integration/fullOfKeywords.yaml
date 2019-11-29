@@ -63,6 +63,7 @@ paths:
         x-foo: foo
       operationId: operationId
       parameters:
+        - $ref: '#/components/parameters/param2'
         - name: name
           in: query
           description: description

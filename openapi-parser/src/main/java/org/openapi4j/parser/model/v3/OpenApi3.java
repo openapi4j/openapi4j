@@ -2,11 +2,9 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.reference.Reference;
 
 import java.util.HashMap;
 import java.util.List;
@@ -180,19 +178,6 @@ public class OpenApi3 extends AbsExtendedOpenApiSchema<OpenApi3> implements OAI 
   //////////////////////////////////////////////////////////////
   // UTILITY METHODS
   //////////////////////////////////////////////////////////////
-
-  public JsonNode getReferenceContent(String refString) {
-    if (context == null) {
-      return null;
-    }
-
-    Reference reference = context.getReferenceRegistry().getRef(refString);
-    if (reference != null) {
-      return reference.getContent();
-    }
-
-    return null;
-  }
 
   /**
    * @param operationId the operationId (case sensitive)

@@ -95,5 +95,11 @@ public class ValidationResultsTest {
 
     assertTrue(ValidationSeverity.WARNING.lt(ValidationSeverity.ERROR));
     assertTrue(ValidationSeverity.INFO.lt(ValidationSeverity.WARNING));
+
+
+    assertFalse(ValidationSeverity.WARNING.ge(ValidationSeverity.ERROR));
+    assertFalse(ValidationSeverity.INFO.gt(ValidationSeverity.WARNING));
+    assertFalse(ValidationSeverity.ERROR.le(ValidationSeverity.WARNING));
+    assertFalse(ValidationSeverity.ERROR.lt(ValidationSeverity.WARNING));
   }
 }

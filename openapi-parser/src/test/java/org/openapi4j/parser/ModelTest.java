@@ -33,6 +33,20 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_BINARY;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DOUBLE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_FLOAT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT32;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT64;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
+
 public class ModelTest extends ParsingChecker {
   @Test
   public void copy() throws Exception {
@@ -494,6 +508,43 @@ public class ModelTest extends ParsingChecker {
       obj::setProperty,
       obj::setProperties,
       obj::removeProperty);
+
+    assertFalse(obj.isDeprecated());
+    assertFalse(obj.isNullable());
+    assertFalse(obj.isExclusiveMaximum());
+    assertFalse(obj.isExclusiveMinimum());
+    assertFalse(obj.isUniqueItems());
+    assertFalse(obj.hasAdditionalProperties());
+    assertTrue(obj.isAdditionalPropertiesAllowed());
+  }
+
+  @Test
+  public void schemaSupposedTypeTest() {
+    Schema obj = new Schema();
+    obj.setProperty("foo", new Schema());
+    assertEquals(TYPE_OBJECT, obj.getSupposedType());
+
+    obj = new Schema();
+    obj.setItemsSchema(new Schema());
+    assertEquals(TYPE_ARRAY, obj.getSupposedType());
+
+    obj = new Schema();
+    obj.setFormat(FORMAT_INT32);
+    assertEquals(TYPE_INTEGER, obj.getSupposedType());
+    obj.setFormat(FORMAT_INT64);
+    assertEquals(TYPE_INTEGER, obj.getSupposedType());
+
+    obj.setFormat(FORMAT_FLOAT);
+    assertEquals(TYPE_NUMBER, obj.getSupposedType());
+    obj.setFormat(FORMAT_DOUBLE);
+    assertEquals(TYPE_NUMBER, obj.getSupposedType());
+
+    obj.setFormat(FORMAT_BINARY);
+    assertEquals(TYPE_STRING, obj.getSupposedType());
+
+    obj = new Schema();
+    obj.setType(TYPE_INTEGER);
+    assertEquals(TYPE_INTEGER, obj.getSupposedType());
   }
 
   @Test
@@ -537,14 +588,14 @@ public class ModelTest extends ParsingChecker {
     // add
     add.accept(value);
     Assert.assertNotNull(has.get());
-    Assert.assertEquals(value, get.get().get(0));
+    assertEquals(value, get.get().get(0));
     // insert
     insert.accept(0, value);
-    Assert.assertEquals(2, get.get().size());
+    assertEquals(2, get.get().size());
     // rem
     rem.accept(value);
     Assert.assertNotNull(has.get());
-    Assert.assertEquals(1, get.get().size());
+    assertEquals(1, get.get().size());
     // set
     set.accept(null);
     Assert.assertNull(get.get());
@@ -562,15 +613,20 @@ public class ModelTest extends ParsingChecker {
     Assert.assertNull(get.apply(key));
     // single add
     set.accept(key, value);
-    Assert.assertTrue(has.apply(key));
-    Assert.assertEquals(value, get.apply(key));
+    assertTrue(has.apply(key));
+    assertEquals(value, get.apply(key));
     // multi add
     Map<T, R> values = new HashMap<>();
     values.put(key, value);
     setMulti.accept(values);
-    Assert.assertTrue(has.apply(key));
-    Assert.assertEquals(value, get.apply(key));
+    assertTrue(has.apply(key));
+    assertEquals(value, get.apply(key));
+    // rem
     rem.accept(key);
     Assert.assertFalse(has.apply(key));
+    // single add (map already created)
+    set.accept(key, value);
+    assertTrue(has.apply(key));
+    assertEquals(value, get.apply(key));
   }
 }
