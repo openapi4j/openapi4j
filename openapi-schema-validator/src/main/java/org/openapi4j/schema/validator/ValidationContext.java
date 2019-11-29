@@ -81,8 +81,7 @@ public class ValidationContext<O extends OAI> {
    * @return The corresponding value, {@code false} if the option is not set.
    */
   public boolean getOption(byte option) {
-    Boolean value = defaultOptions.get(option);
-    return value != null && value;
+    return Boolean.TRUE.equals(defaultOptions.get(option));
   }
 
   /**
