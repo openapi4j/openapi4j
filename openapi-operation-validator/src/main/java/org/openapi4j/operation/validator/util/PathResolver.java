@@ -9,8 +9,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PathResolver {
+  private static final String PATH_NOT_SUPPORTED_ERR_MSG = "Path template not supported.";
+  private static final String PATH_PARAM_MISSING_ERR_MSG = "Missing parameter description for parameter name: '%s'.";
+
   private static final Pattern OAS_PATH_PARAMETERS_PATTERN = Pattern.compile("\\{[.;?*+]*([^{}.;?*+]+)[^}]*}");
-  private static final Pattern ILLEGAL_PATH_MATCHER = Pattern.compile("\\{[^/]*/[^/]*}");
+  private static final Pattern ILLEGAL_PATH_PATTERN = Pattern.compile("\\{[^/]*/[^/]*}");
 
   private static final PathResolver INSTANCE = new PathResolver();
 
@@ -27,32 +30,32 @@ public class PathResolver {
    * @return a pattern only if a pattern is needed.
    */
   public Optional<String> solve(String oasPath, List<Parameter> pathParameters) throws ResolutionException {
-    if (ILLEGAL_PATH_MATCHER.matcher(oasPath).matches())
-      throw new ResolutionException("Path template not supported");
+    if (ILLEGAL_PATH_PATTERN.matcher(oasPath).matches()) {
+      throw new ResolutionException(PATH_NOT_SUPPORTED_ERR_MSG);
+    }
 
     if (pathParameters.isEmpty()) {
       return Optional.empty();
     }
 
-    StringBuilder regex = new StringBuilder();
+    final StringBuilder regex = new StringBuilder();
     int lastMatchEnd = 0;
 
     Matcher parametersMatcher = OAS_PATH_PARAMETERS_PATTERN.matcher(oasPath);
     while (parametersMatcher.find()) {
-      // Append constant string
-      addFixedFragment(regex, oasPath, lastMatchEnd, parametersMatcher.start());
+      addConstantFragment(regex, oasPath, lastMatchEnd, parametersMatcher.start());
       lastMatchEnd = parametersMatcher.end();
 
-      String paramName = parametersMatcher.group(1);
-      Optional<Parameter> optParameter = pathParameters.stream().filter(p -> p.getName().equals(paramName)).findFirst();
+      final String paramName = parametersMatcher.group(1);
+      final Optional<Parameter> optParameter = pathParameters.stream().filter(p -> p.getName().equals(paramName)).findFirst();
       if (!optParameter.isPresent()) {
-        throw new ResolutionException("Missing parameter description for parameter name: " + paramName);
+        throw new ResolutionException(String.format(PATH_PARAM_MISSING_ERR_MSG, paramName));
       }
 
       addVariableFragment(regex, paramName);
     }
 
-    addFixedFragment(regex, oasPath, lastMatchEnd, oasPath.length());
+    addConstantFragment(regex, oasPath, lastMatchEnd, oasPath.length());
 
     return Optional.of(regex.toString());
   }
@@ -62,10 +65,10 @@ public class PathResolver {
     regex.append(reg);
   }
 
-  private void addFixedFragment(StringBuilder regex,
-                                String oasPath,
-                                int beginIndex,
-                                int endIndex) {
+  private void addConstantFragment(StringBuilder regex,
+                                   String oasPath,
+                                   int beginIndex,
+                                   int endIndex) {
 
     String toQuote = oasPath.substring(beginIndex, endIndex);
     if (toQuote.length() != 0) {

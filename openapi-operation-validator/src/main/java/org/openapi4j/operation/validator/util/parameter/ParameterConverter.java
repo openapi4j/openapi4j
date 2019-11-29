@@ -2,7 +2,6 @@ package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.operation.validator.util.ContentConverter;
 import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.AbsParameter;
@@ -141,7 +140,7 @@ public final class ParameterConverter {
    * @return A map with parameters names associated with the value as node.
    */
   public static Map<String, JsonNode> queryToNode(final Map<String, AbsParameter<Parameter>> specParameters,
-                                                  final String rawValue) throws ResolutionException {
+                                                  final String rawValue) {
 
     final Map<String, JsonNode> mappedValues = new HashMap<>();
 

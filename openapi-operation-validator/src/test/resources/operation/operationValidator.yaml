@@ -50,6 +50,12 @@ paths:
       responses:
         '200':
           description: a description
+          headers:
+            X-Rate-Limit:
+              description: The number of allowed requests in the current period
+              schema:
+                nullable: true
+                type: integer
           content:
             'application/json': {}
   /post:
@@ -68,4 +74,41 @@ paths:
           description: a description
           content:
             'application/json': {}
-
+        'default':
+          description: a description
+          content:
+            'application/json': {}
+  /merge_parameters:
+    parameters:
+      - name: pathStringHeaderParam
+        in: header
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/refIntHeaderParameter'
+    get:
+      operationId: merge_parameters
+      responses:
+        '200':
+          description: a description
+          content:
+            'application/json': {}
+  /wrong_definition_for_body_response:
+    post:
+      operationId: wrong_definition_for_body_response
+      requestBody:
+        required: true
+  /wrong_definition_for_body_response2:
+    post:
+      operationId: wrong_definition_for_body_response2
+      requestBody:
+        required: true
+      responses:
+components:
+  parameters:
+    refIntHeaderParameter:
+      in: header
+      name: refIntHeaderParameter
+      required: true
+      schema:
+        type: integer

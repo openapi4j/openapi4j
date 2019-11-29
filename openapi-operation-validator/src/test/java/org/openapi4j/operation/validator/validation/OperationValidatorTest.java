@@ -7,8 +7,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
+import org.openapi4j.operation.validator.model.Response;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.model.impl.DefaultRequest;
+import org.openapi4j.operation.validator.model.impl.DefaultResponse;
 import org.openapi4j.parser.OpenApi3Parser;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
@@ -20,6 +22,7 @@ import java.util.function.BiConsumer;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.openapi4j.operation.validator.model.Request.Method.GET;
+import static org.openapi4j.operation.validator.model.Request.Method.POST;
 
 public class OperationValidatorTest {
   private static OpenApi3 api;
@@ -27,7 +30,7 @@ public class OperationValidatorTest {
   @BeforeClass
   public static void setup() throws Exception {
     URL specPath = OperationValidatorTest.class.getResource("/operation/operationValidator.yaml");
-    api = new OpenApi3Parser().parse(specPath, true);
+    api = new OpenApi3Parser().parse(specPath, false);
   }
 
   @Test
@@ -166,6 +169,78 @@ public class OperationValidatorTest {
       false);
   }
 
+  @Test
+  public void mergePathToOperationParametersTest() {
+    OperationValidator val = loadOperationValidator("merge_parameters");
+
+    check(
+      new DefaultRequest.Builder(GET, "/merge_parameters").build(),
+      val::validateHeaders,
+      false);
+
+    check(
+      new DefaultRequest.Builder(GET, "/merge_parameters").header("pathStringHeaderParam", "foo").header("refIntHeaderParameter", "-1").build(),
+      val::validateHeaders,
+      true);
+  }
+
+  @Test
+  public void wrongDefinitionForBodyResponseTest() {
+    OperationValidator val = loadOperationValidator("wrong_definition_for_body_response");
+
+    check(
+      new DefaultRequest.Builder(POST, "/wrong_definition_for_body_response").build(),
+      val::validateBody,
+      true);
+
+    check(
+      new DefaultResponse.Builder(200).build(),
+      val::validateBody,
+      true);
+
+    val = loadOperationValidator("wrong_definition_for_body_response2");
+
+    check(
+      new DefaultResponse.Builder(200).build(),
+      val::validateBody,
+      true);
+  }
+
+  @Test
+  public void responseCheck() {
+    OperationValidator val = loadOperationValidator("rqBodyCheck");
+
+    check(
+      new DefaultResponse.Builder(500).header("Content-Type", "application/json").build(),
+      val::validateBody,
+      true);
+
+    // Wrong content type
+    check(
+      new DefaultResponse.Builder(500).header("Content-Type", "foo").build(),
+      val::validateBody,
+      false);
+
+    // No header validators
+    check(
+      new DefaultResponse.Builder(500).header("X-Rate-Limit", "1").build(),
+      val::validateHeaders,
+      true);
+
+    val = loadOperationValidator("paramCheck");
+
+    // No default response
+    check(
+      new DefaultResponse.Builder(500).build(),
+      val::validateBody,
+      false);
+
+    check(
+      new DefaultResponse.Builder(500).header("X-Rate-Limit", "1").build(),
+      val::validateHeaders,
+      false);
+  }
+
   private OperationValidator loadOperationValidator(String opId) {
     Path path = api.getPathItemByOperationId(opId);
     Operation op = api.getOperationById(opId);
@@ -181,6 +256,20 @@ public class OperationValidatorTest {
     func.accept(rq, results);
 
     System.out.println(results);
+
+    if (shouldBeValid) {
+      assertTrue(results.toString(), results.isValid());
+    } else {
+      assertFalse(results.toString(), results.isValid());
+    }
+  }
+
+  private void check(Response resp,
+                     BiConsumer<Response, ValidationResults> func,
+                     boolean shouldBeValid) {
+
+    ValidationResults results = new ValidationResults();
+    func.accept(resp, results);
 
     if (shouldBeValid) {
       assertTrue(results.toString(), results.isValid());

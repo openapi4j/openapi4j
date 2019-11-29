@@ -43,6 +43,7 @@ public class OperationValidator {
   private static final String OPERATION_REQUIRED_ERR_MSG = "Operation is required.";
   private static final String BODY_CONTENT_TYPE_ERR_MSG = "Body content type cannot be determined. No 'Content-Type' header available.";
   private static final String BODY_WRONG_CONTENT_TYPE_ERR_MSG = "Content type '%s' is not allowed in body.";
+  private static final String RESPONSE_STATUS_NOT_FOUND_ERR_MSG = "Response status '%s' or default has not been found.";
   // Parameter specifics
   private static final String IN_PATH = "path";
   private static final String IN_QUERY = "query";
@@ -134,17 +135,13 @@ public class OperationValidator {
   public Map<String, JsonNode> validateQuery(final Request request, final ValidationResults results) {
     if (specRequestQueryValidator == null) return null;
 
-    try {
-      Map<String, JsonNode> mappedValues = ParameterConverter.queryToNode(
-        specRequestQueryValidator.getParameters(), request.getQuery());
+    Map<String, JsonNode> mappedValues = ParameterConverter.queryToNode(
+      specRequestQueryValidator.getParameters(),
+      request.getQuery());
 
-      specRequestQueryValidator.validate(mappedValues, results);
+    specRequestQueryValidator.validate(mappedValues, results);
 
-      return mappedValues;
-    } catch (ResolutionException e) {
-      results.addError(e.getMessage());
-      return null;
-    }
+    return mappedValues;
   }
 
   /**
@@ -158,7 +155,8 @@ public class OperationValidator {
     if (specRequestHeaderValidator == null) return null;
 
     Map<String, JsonNode> mappedValues = ParameterConverter.headersToNode(
-      specRequestHeaderValidator.getParameters(), request.getHeaders());
+      specRequestHeaderValidator.getParameters(),
+      request.getHeaders());
 
     specRequestHeaderValidator.validate(mappedValues, results);
 
@@ -176,7 +174,8 @@ public class OperationValidator {
     if (specRequestCookieValidator == null) return null;
 
     final Map<String, JsonNode> mappedValues = ParameterConverter.cookiesToNode(
-      specRequestCookieValidator.getParameters(), request.getCookies());
+      specRequestCookieValidator.getParameters(),
+      request.getCookies());
 
     specRequestCookieValidator.validate(mappedValues, results);
 
@@ -210,6 +209,8 @@ public class OperationValidator {
   public void validateBody(final org.openapi4j.operation.validator.model.Response response,
                            final ValidationResults results) {
 
+    if (specResponseBodyValidators == null) return;
+
     Map<String, BodyValidator> validators = specResponseBodyValidators.get(String.valueOf(response.getStatus()));
     // Check default response if any
     if (validators == null) {
@@ -217,6 +218,7 @@ public class OperationValidator {
     }
     // Well, time to exit...
     if (validators == null) {
+      results.addError(String.format(RESPONSE_STATUS_NOT_FOUND_ERR_MSG, response.getStatus()));
       return;
     }
 
@@ -233,7 +235,6 @@ public class OperationValidator {
                             final Body body,
                             final boolean isRequired,
                             final ValidationResults results) {
-    if (validators == null) return;
 
     final String contentType = ContentType.getTypeOnly(rawContentType);
 
@@ -264,6 +265,8 @@ public class OperationValidator {
   public void validateHeaders(final org.openapi4j.operation.validator.model.Response response,
                               final ValidationResults results) {
 
+    if (specResponseHeaderValidators == null) return;
+
     ParameterValidator<Header> validator = specResponseHeaderValidators.get(String.valueOf(response.getStatus()));
     // Check default response if any
     if (validator == null) {
@@ -271,6 +274,7 @@ public class OperationValidator {
     }
     // Well, time to exit...
     if (validator == null) {
+      results.addError(String.format(RESPONSE_STATUS_NOT_FOUND_ERR_MSG, response.getStatus()));
       return;
     }
 
@@ -302,7 +306,7 @@ public class OperationValidator {
   }
 
   private Map<String, Map<String, BodyValidator>> createResponseBodyValidators() {
-    if (operation.getResponses() == null || operation.getResponses().size() == 0) {
+    if (operation.getResponses() == null) {
       return null;
     }
 
@@ -317,11 +321,11 @@ public class OperationValidator {
       validators.put(statusCode, createBodyValidators(response.getContentMediaTypes()));
     }
 
-    return validators.size() != 0 ? validators : null;
+    return validators;
   }
 
   private Map<String, BodyValidator> createBodyValidators(final Map<String, MediaType> mediaTypes) {
-    if (mediaTypes == null || mediaTypes.size() == 0) {
+    if (mediaTypes == null) {
       return null;
     }
 
@@ -331,7 +335,7 @@ public class OperationValidator {
       validators.put(entry.getKey(), new BodyValidator(context, openApi, entry.getValue()));
     }
 
-    return validators.size() != 0 ? validators : null;
+    return validators;
   }
 
   private Map<String, ParameterValidator<Header>> createResponseHeaderValidators() {
@@ -339,14 +343,16 @@ public class OperationValidator {
 
     final Map<String, Response> responses = operation.getResponses();
 
-    for (Map.Entry<String, Response> entryStatusCode : responses.entrySet()) {
-      final String statusCode = entryStatusCode.getKey();
-      final Response response = entryStatusCode.getValue();
+    if (responses != null) {
+      for (Map.Entry<String, Response> entryStatusCode : responses.entrySet()) {
+        final String statusCode = entryStatusCode.getKey();
+        final Response response = entryStatusCode.getValue();
 
-      if (response.getHeaders() != null) {
-        Map<String, AbsParameter<Header>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        headers.putAll(response.getHeaders());
-        validators.put(statusCode, new ParameterValidator<>(context, openApi, headers));
+        if (response.getHeaders() != null) {
+          Map<String, AbsParameter<Header>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+          headers.putAll(response.getHeaders());
+          validators.put(statusCode, new ParameterValidator<>(context, openApi, headers));
+        }
       }
     }
 
@@ -369,7 +375,6 @@ public class OperationValidator {
   }
 
   private void mergePathToOperationParameters(final Path path) {
-
     if (path.getParameters() == null) {
       return; // Nothing to do
     }
