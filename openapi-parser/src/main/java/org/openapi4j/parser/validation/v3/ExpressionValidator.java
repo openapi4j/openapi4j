@@ -36,10 +36,8 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
     }
 
     // Check against full expression
-    if (!paramFound) {
-      if (!checkRequestParameter(api, operation, expression, results)) {
-        checkResponseParameter(api, operation, expression, results);
-      }
+    if (!paramFound && !checkRequestParameter(api, operation, expression, results)) {
+      checkResponseParameter(api, operation, expression, results);
     }
   }
 
