@@ -9,7 +9,7 @@ paths:
     post:
       operationId: apiKey
       security:
-        - apiKey: []
+        - apiKey: [wrong]
       responses:
         '200':
           description: The description
@@ -17,7 +17,7 @@ paths:
     post:
       operationId: http
       security:
-        - http: []
+        - http: [write:pets]
       responses:
         '200':
           description: The description
@@ -27,6 +27,14 @@ paths:
       security:
         - oauth2:
           - write:pets
+      responses:
+        '200':
+          description: The description
+  /api/no_match/:
+    post:
+      operationId: no_match
+      security:
+        - no_match: []
       responses:
         '200':
           description: The description
@@ -41,7 +49,7 @@ components:
     openId:
       type: openIdConnect
     wrong:
-      type: wrong
+      in: cookie
     oauth2:
       type: oauth2
       flows:

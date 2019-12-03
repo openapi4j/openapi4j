@@ -2,10 +2,11 @@ package org.openapi4j.parser.model.v3;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openapi4j.parser.OpenApi3Parser;
 import org.openapi4j.parser.Checker;
+import org.openapi4j.parser.OpenApi3Parser;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_BINARY;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DOUBLE;
@@ -540,6 +542,36 @@ public class ModelTest extends Checker {
       obj::addParameter,
       obj::insertParameter,
       obj::removeParameter);
+  }
+
+  @Test
+  public void securityRequirementTest() {
+    SecurityRequirement obj = new SecurityRequirement();
+
+    mapCheck(
+      "foovar",
+      new ArrayList<>(),
+      obj::hasRequirement,
+      obj::getRequirement,
+      obj::setRequirement,
+      obj::setRequirements,
+      obj::removeRequirement);
+
+    // scopes
+    List<String> scopes = new ArrayList<>();
+    scopes.add("write:foo");
+    obj = new SecurityRequirement().setRequirement("foo", scopes);
+    assertTrue(obj.hasRequirementScopes("foo"));
+
+    assertFalse(new SecurityRequirement().hasRequirementScopes("foo"));
+    assertFalse(new SecurityRequirement().setRequirement("foo", new ArrayList<>()).hasRequirementScopes("foo"));
+
+    // equals / hashCode
+    assertEquals(new SecurityRequirement(), new SecurityRequirement());
+    assertEquals(new SecurityRequirement().hashCode(), new SecurityRequirement().hashCode());
+    assertNotEquals(new SecurityRequirement(), new ServerVariable());
+    assertNotEquals(new SecurityRequirement(), null);
+    assertEquals(new SecurityRequirement().setRequirement("foo", null), new SecurityRequirement().setRequirement("foo", null));
   }
 
   @Test

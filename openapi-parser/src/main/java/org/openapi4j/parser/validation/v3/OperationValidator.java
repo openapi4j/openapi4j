@@ -57,8 +57,10 @@ class OperationValidator extends Validator3Base<OpenApi3, Operation> {
         callback = getReferenceContent(api, callback.getRef(), results, CALLBACKS, Callback.class);
       }
 
-      for (String path : callback.getCallbackPaths().keySet()) {
-        CallbackValidator.instance().validateExpression(api, operation, path, results);
+      if (callback.getCallbackPaths() != null) {
+        for (String path : callback.getCallbackPaths().keySet()) {
+          CallbackValidator.instance().validateExpression(api, operation, path, results);
+        }
       }
     }
   }

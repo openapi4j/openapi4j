@@ -35,7 +35,7 @@ public class SecurityRequirement extends AbsOpenApiSchema<SecurityRequirement> {
     return scopes != null && !scopes.isEmpty();
   }
 
-  public List<String> getRequirementScopes(String name) {
+  public List<String> getRequirement(String name) {
     return mapGet(requirements, name);
   }
 
