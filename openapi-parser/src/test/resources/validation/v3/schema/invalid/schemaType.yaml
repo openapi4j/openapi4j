@@ -1,0 +1,57 @@
+﻿openapi: 3.0.0
+info:
+  title: Simple Document
+  version: 0.9.1
+paths: {}
+components:
+  schemas:
+    Int32:
+      type: string
+      format: int32
+    Int64:
+      type: number
+      format: int64
+    NumberFloat:
+      type: string
+      format: float
+    NumberDouble:
+      type: integer
+      format: double
+
+    Int32Default:
+      type: integer
+      format: int32
+      default: foo
+    Int64Default:
+      type: integer
+      format: int64
+      default: foo
+    NumberFloatDefault:
+      type: number
+      format: float
+      default: foo
+    NumberDoubleDefault:
+      type: number
+      format: double
+      default: foo
+    StringDefault:
+      type: string
+      default: foo
+    BooleanDefault:
+      type: boolean
+      default: foo
+    ObjectDefault:
+      type: object
+      properties:
+        name:
+          type: string
+      default: foo
+    ArrayDefault:
+      type: array
+      items:
+        type: string
+      default: foo
+
+    Int64DefaultNoType:
+      format: int64
+      default: foo

@@ -1,0 +1,19 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Security
+paths:
+  /api/oauth2/:
+    post:
+      operationId: oauth2
+      security:
+        - oauth2:
+          - write:pets
+      responses:
+        '200':
+          description: The description
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows: {}

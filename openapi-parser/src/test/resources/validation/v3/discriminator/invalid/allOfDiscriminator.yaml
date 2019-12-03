@@ -1,0 +1,39 @@
+openapi: 3.0.0
+info:
+  description: A description
+  version: 1.0.0
+  title: My API
+paths: {}
+components:
+  schemas:
+    Pet:
+      type: object
+      discriminator:
+        propertyName: pet_type
+        mapping:
+          kitty: '#/components/schemas/Cat'
+          #medor: 'Dog'
+    OtherPet:
+      type: object
+      required:
+        - foo
+      discriminator:
+        propertyName: pet_type
+        mapping:
+          kitty: '#/components/schemas/Cat'
+    Cat:
+      allOf:
+        - $ref: '#/components/schemas/Pet'
+        - type: object
+          # all other properties specific to a `Cat`
+          properties:
+            name:
+              type: string
+    Dog:
+      allOf:
+        - $ref: '#/components/schemas/OtherPet'
+        - type: object
+          # all other properties specific to a `Dog`
+          properties:
+            bark:
+              type: string

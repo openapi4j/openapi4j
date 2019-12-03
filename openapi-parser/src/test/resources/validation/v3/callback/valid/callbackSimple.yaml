@@ -1,0 +1,28 @@
+openapi: 3.0.0
+info:
+  title: The API
+  version: 0.9.1
+paths:
+  "/subscribe":
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        200:
+          description: description
+      callbacks:
+        callback2:
+          "/simplePath":
+            post:
+              requestBody:
+                description: Callback 2
+                content:
+                  application/json:
+                    schema:
+                      type: string
+              responses:
+                200:
+                  description: Callback Response

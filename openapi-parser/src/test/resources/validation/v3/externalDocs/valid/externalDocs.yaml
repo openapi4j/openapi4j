@@ -1,0 +1,9 @@
+openapi: 3.0.0
+info:
+  title: externalDocs
+  version: version
+externalDocs:
+  description: description
+  url: http://my.url.com
+  x-foo: foo
+paths: {}

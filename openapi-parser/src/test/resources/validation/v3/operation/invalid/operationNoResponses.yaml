@@ -1,0 +1,9 @@
+openapi: 3.0.0
+info:
+  title: My silly API
+  description: description
+  version: 1.0
+paths:
+  /foo:
+    get:
+      operationId: foo

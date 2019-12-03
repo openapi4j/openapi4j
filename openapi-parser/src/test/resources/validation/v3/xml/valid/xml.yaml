@@ -1,0 +1,14 @@
+﻿openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: parameter
+paths: {}
+components:
+  schemas:
+    schema1:
+      xml:
+        name: name
+        namespace: http://my.url.com
+        prefix: prefix
+        attribute: true
+        wrapped: false

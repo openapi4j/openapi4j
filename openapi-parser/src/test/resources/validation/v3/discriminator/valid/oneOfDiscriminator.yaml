@@ -1,0 +1,58 @@
+openapi: 3.0.0
+info:
+  description: A description
+  version: 1.0.0
+  title: My API
+paths: {}
+components:
+  schemas:
+    Pet:
+      oneOf:
+      - $ref: '#/components/schemas/Cat'
+      - $ref: '#/components/schemas/Dog'
+      discriminator:
+        propertyName: pet_type
+        mapping:
+          cat: '#/components/schemas/Cat'
+          dog: '#/components/schemas/Dog'
+    PetInline:
+      anyOf:
+      - type: object
+        required:
+          - pet_type
+        properties:
+          pet_type:
+            type: string
+          name:
+            type: string
+      - type: object
+        required:
+          - pet_type
+        properties:
+          pet_type:
+            type: string
+          bark:
+            type: string
+      discriminator:
+        propertyName: pet_type
+        mapping:
+          cat: '#/components/schemas/Cat'
+          dog: '#/components/schemas/Dog'
+    Cat:
+      type: object
+      required:
+        - pet_type
+      properties:
+        pet_type:
+          type: string
+        name:
+          type: string
+    Dog:
+      type: object
+      required:
+        - pet_type
+      properties:
+        pet_type:
+          type: string
+        bark:
+          type: string

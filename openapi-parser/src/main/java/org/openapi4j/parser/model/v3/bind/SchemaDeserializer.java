@@ -116,35 +116,28 @@ public class SchemaDeserializer extends StdDeserializer<Schema> {
           schema.setType(jp.getText());
           break;
         case ALLOF:
-          schema.setAllOfSchemas(jp.readValueAs(new TypeReference<List<Schema>>() {
-          }));
+          schema.setAllOfSchemas(jp.readValueAs(new TypeReference<List<Schema>>() {}));
           break;
         case ONEOF:
-          schema.setOneOfSchemas(jp.readValueAs(new TypeReference<List<Schema>>() {
-          }));
+          schema.setOneOfSchemas(jp.readValueAs(new TypeReference<List<Schema>>() {}));
           break;
         case ANYOF:
-          schema.setAnyOfSchemas(jp.readValueAs(new TypeReference<List<Schema>>() {
-          }));
+          schema.setAnyOfSchemas(jp.readValueAs(new TypeReference<List<Schema>>() {}));
           break;
         case NOT:
-          schema.setNotSchema(jp.readValueAs(new TypeReference<Schema>() {
-          }));
+          schema.setNotSchema(jp.readValueAs(new TypeReference<Schema>() {}));
           break;
         case ITEMS:
-          schema.setItemsSchema(jp.readValueAs(new TypeReference<Schema>() {
-          }));
+          schema.setItemsSchema(jp.readValueAs(new TypeReference<Schema>() {}));
           break;
         case PROPERTIES:
-          schema.setProperties(jp.readValueAs(new TypeReference<Map<String, Schema>>() {
-          }));
+          schema.setProperties(jp.readValueAs(new TypeReference<Map<String, Schema>>() {}));
           break;
         case ADDITIONALPROPERTIES:
           if (token.isBoolean()) {
             schema.setAdditionalPropertiesAllowed(jp.getBooleanValue());
           } else if (token.isStructStart()) {
-            schema.setAdditionalProperties(jp.readValueAs(new TypeReference<Schema>() {
-            }));
+            schema.setAdditionalProperties(jp.readValueAs(new TypeReference<Schema>() {}));
           } else {
             throw new IOException("Unexpected value type");
           }

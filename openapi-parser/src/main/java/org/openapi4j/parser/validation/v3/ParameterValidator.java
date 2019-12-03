@@ -31,6 +31,7 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
   private static final String STYLE_ONLY_IN_AND = "Style '%s' is only allowed in %s and %s";
   private static final String CONTENT_ONY_ONE_ERR_MSG = "content can only contain one media type.";
   private static final String CONTENT_SCHEMA_EXCLUSIVE_ERR_MSG = "Content and schema are mutually exclusive.";
+  private static final String STYLE_UNKNOWN = "Style '%s' is unknown.";
 
   private static final Validator<OpenApi3, Parameter> INSTANCE = new ParameterValidator();
 
@@ -110,6 +111,7 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
         }
         break;
       default:
+        results.addError(String.format(STYLE_UNKNOWN, style), STYLE);
         break;
     }
   }

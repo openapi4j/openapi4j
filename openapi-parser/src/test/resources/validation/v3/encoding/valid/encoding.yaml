@@ -1,0 +1,70 @@
+﻿openapi: 3.0.0
+info:
+  title: My silly API
+  description: description
+  version: 1.0.0
+paths:
+  /foo:
+    get:
+      parameters:
+        - name: name
+          in: query
+          content:
+            application/json:
+              schema:
+                title: title
+              encoding:
+                fooEncoding:
+                  contentType: contentType
+                  headers:
+                    foo:
+                      description: description
+                      schema:
+                        type: integer
+                    bar:
+                      description: description
+                      schema:
+                        type: integer
+                  style: simple
+                  explode: true
+                  x-foo: foo
+      requestBody:
+        description: description
+        required: true
+        content:
+          multipart/mixed:
+            schema:
+              type: object
+              properties:
+                id:
+                  # default is text/plain
+                  type: string
+                  format: uuid
+                address:
+                  # default is application/json
+                  type: object
+                  properties: {}
+                historyMetadata:
+                  # need to declare XML format!
+                  description: metadata in XML format
+                  type: object
+                  properties: {}
+                profileImage:
+                  # default is application/octet-stream, need to declare an image type only!
+                  type: string
+                  format: binary
+            encoding:
+              historyMetadata:
+                # require XML Content-Type in utf-8 encoding
+                contentType: application/xml; charset=utf-8
+              profileImage:
+                # only accept png/jpeg
+                contentType: image/png, image/jpeg
+                headers:
+                  X-Rate-Limit-Limit:
+                    description: The number of allowed requests in the current period
+                    schema:
+                      type: integer
+      responses:
+        default:
+          description: description

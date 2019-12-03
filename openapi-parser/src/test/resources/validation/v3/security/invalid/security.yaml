@@ -1,0 +1,87 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Security
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/apiKey/:
+    post:
+      operationId: apiKey
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: The description
+  /api/http/:
+    post:
+      operationId: http
+      security:
+        - http: []
+      responses:
+        '200':
+          description: The description
+  /api/oauth2/:
+    post:
+      operationId: oauth2
+      security:
+        - oauth2:
+          - write:pets
+      responses:
+        '200':
+          description: The description
+components:
+  securitySchemes:
+    apiKey:
+      in: cookie
+      name: session
+    http:
+      type: http
+      name: session
+    openId:
+      type: openIdConnect
+    wrong:
+      type: wrong
+    oauth2:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://example.org/api/oauth/dialog
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+        authorizationCode:
+          tokenUrl: foo//token
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+        clientCredentials:
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+        password:
+          tokenUrl: https://example.com/api/oauth/token
+    authorizationUrl:
+      type: oauth2
+      flows:
+        clientCredentials:
+          authorizationUrl: http://example.org/api/oauth/dialog
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+    tokenUrl:
+      type: oauth2
+      flows:
+        implicit:
+          tokenUrl: http://example.org/api/oauth/dialog
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+    authorizationUrlPassword:
+      type: oauth2
+      flows:
+        password:
+          authorizationUrl: http://example.org/api/oauth/dialog
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets

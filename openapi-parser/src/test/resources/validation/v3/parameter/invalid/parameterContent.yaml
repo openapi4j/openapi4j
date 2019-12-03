@@ -1,0 +1,26 @@
+openapi: '3.0.0'
+info:
+  version: '1.0.0'
+  title: styles
+paths: {}
+components:
+  parameters:
+    foo:
+      name: foo
+      in: header
+      schema:
+        type: string
+      content:
+        application/json:
+          schema:
+            type: string
+    bar:
+      name: bar
+      in: header
+      content:
+        application/json:
+          schema:
+            type: string
+        application/xml:
+          schema:
+            type: string

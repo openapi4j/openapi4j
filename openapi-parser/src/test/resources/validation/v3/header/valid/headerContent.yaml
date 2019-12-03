@@ -1,0 +1,14 @@
+openapi: '3.0.0'
+info:
+  version: '1.0.0'
+  title: styles
+paths: {}
+components:
+  headers:
+    foo:
+      $ref: '#/components/headers/bar'
+    bar:
+      content:
+        application/json:
+          schema:
+            type: string

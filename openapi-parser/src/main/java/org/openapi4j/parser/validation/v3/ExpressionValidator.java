@@ -20,11 +20,31 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
   private static final String PARAM_NOT_FOUND_ERR_MSG = "Parameter '%s' not found in operation.";
   private static final String PARAM_PATH_EXCEPTION_ERR_MSG = "Path '%s' is malformed.\n'%s'";
 
+  private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(.*?)}");
   private static final Pattern PATTERN_REQUEST_PARAM = Pattern.compile("^(\\$request)(?:\\.)(query(?=\\.)|path(?=\\.)|header(?=\\.)|body(?=#/))(?:\\.|#/)(.+)");
   private static final Pattern PATTERN_RESPONSE_PARAM = Pattern.compile("^(\\$response)(?:\\.)(header(?=\\.)|body(?=#/))(?:\\.|#/)(.+)");
 
+  void validateExpression(OpenApi3 api, Operation operation, String expression, ValidationResults results) {
+    // Check against expression fragments
+    boolean paramFound = false;
+    Matcher matcher = PARAM_PATTERN.matcher(expression);
+    while (matcher.find()) {
+      paramFound = true;
+      if (!checkRequestParameter(api, operation, matcher.group(1), results)) {
+        checkResponseParameter(api, operation, matcher.group(1), results);
+      }
+    }
+
+    // Check against full expression
+    if (!paramFound) {
+      if (!checkRequestParameter(api, operation, expression, results)) {
+        checkResponseParameter(api, operation, expression, results);
+      }
+    }
+  }
+
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  boolean checkRequestParameter(OpenApi3 api, Operation operation, String propValue, ValidationResults results) {
+  private boolean checkRequestParameter(OpenApi3 api, Operation operation, String propValue, ValidationResults results) {
     Matcher matcher = PATTERN_REQUEST_PARAM.matcher(propValue);
     boolean matches = matcher.matches();
 
@@ -48,7 +68,9 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
   }
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  boolean checkResponseParameter(OpenApi3 api, Operation operation, String propValue, ValidationResults results) {
+  private boolean checkResponseParameter(OpenApi3 api, Operation operation, String propValue, ValidationResults results) {
+    if (operation.getResponses() == null) return false;
+
     Matcher matcher = PATTERN_RESPONSE_PARAM.matcher(propValue);
     boolean matches = matcher.matches();
 
@@ -63,9 +85,17 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
 
         results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, propValue));
       } else {
-        if (checkParameterIn(matcher.group(2), matcher.group(3), operation, results)) {
-          return true;
+        for (Response response : operation.getResponses().values()) {
+          if (response.getHeaders() != null) {
+            for (String header : response.getHeaders().keySet()) {
+              if (header.equalsIgnoreCase(matcher.group(3))) {
+                return true;
+              }
+            }
+          }
         }
+        results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, propValue));
+        return false;
       }
     }
 
@@ -73,6 +103,8 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
   }
 
   private boolean hasBodyProperty(OpenApi3 api, String propValue, Map<String, MediaType> contentMediaTypes, ValidationResults results) {
+    if (contentMediaTypes == null) return false;
+
     String[] pathFragments = propValue.split("/");
     for (Map.Entry<String, MediaType> entry : contentMediaTypes.entrySet()) {
       try {

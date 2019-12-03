@@ -4,7 +4,6 @@ import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.core.validation.ValidationSeverity;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Server;
-import org.openapi4j.parser.model.v3.ServerVariable;
 import org.openapi4j.parser.validation.Validator;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
   private static final String VARIABLE_NOT_DEFINED = "Undefined variable '%s' for url '%s'";
   private static final String VARIABLES_NOT_DEFINED = "Undefined variables for url '%s'";
 
-  private static final Pattern PATTERN_VARIABLES = Pattern.compile("(\\{)(.*?)(\\})");
+  private static final Pattern PATTERN_VARIABLES = Pattern.compile("(\\{)(.*?)(})");
 
   private static final Validator<OpenApi3, Server> INSTANCE = new ServerValidator();
 
@@ -51,19 +50,13 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
     if (variables.isEmpty()) {
       // Validate directly
       validateUrl(url, results, true, URL, ValidationSeverity.ERROR);
-    } else if (server.getVariables() != null && server.getVariables().size() != 0) {
-      // Replace variables with default
+    } else if (server.getVariables() != null) {
+      // Validate defined variables
       for (String variable : variables) {
-        ServerVariable definedVar = server.getVariables().get(variable);
-        if (definedVar != null && definedVar.getDefault() != null) {
-          url = url.replace("{" + variable + "}", definedVar.getDefault());
-        } else {
+        if (!server.getVariables().containsKey(variable)) {
           results.addError(String.format(VARIABLE_NOT_DEFINED, variable, url), URL);
         }
       }
-
-      // Validate replaced url
-      validateUrl(url, results, true, URL, ValidationSeverity.ERROR);
     } else {
       results.addError(String.format(VARIABLES_NOT_DEFINED, url), URL);
     }

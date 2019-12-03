@@ -1,6 +1,7 @@
 package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.validation.ValidationResults;
+import org.openapi4j.parser.model.v3.Callback;
 import org.openapi4j.parser.model.v3.Link;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
@@ -9,7 +10,16 @@ import org.openapi4j.parser.validation.Validator;
 
 import java.util.Map;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CALLBACKS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTERNALDOCS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.LINKS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPERATIONID;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.PARAMETERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.REQUESTBODY;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.RESPONSES;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SECURITY;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SERVERS;
 
 class OperationValidator extends Validator3Base<OpenApi3, Operation> {
   private static final Validator<OpenApi3, Operation> INSTANCE = new OperationValidator();
@@ -42,8 +52,14 @@ class OperationValidator extends Validator3Base<OpenApi3, Operation> {
   private void validateCallbacks(OpenApi3 api, Operation operation, ValidationResults results) {
     if (operation.getCallbacks() == null) return;
 
-    for (String expression : operation.getCallbacks().keySet()) {
-      CallbackValidator.instance().validateWithOperation(api, operation, expression, results);
+    for (Callback callback : operation.getCallbacks().values()) {
+      if (callback.isRef()) {
+        callback = getReferenceContent(api, callback.getRef(), results, CALLBACKS, Callback.class);
+      }
+
+      for (String path : callback.getCallbackPaths().keySet()) {
+        CallbackValidator.instance().validateExpression(api, operation, path, results);
+      }
     }
   }
 

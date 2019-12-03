@@ -1,7 +1,0 @@
-components:
-  parameters:
-    ARef:
-      type: string
-      name: aref
-      in: header
-      description: The schema desc.

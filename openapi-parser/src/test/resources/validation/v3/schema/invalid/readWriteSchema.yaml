@@ -1,0 +1,21 @@
+﻿openapi: 3.0.0
+info:
+  title: Simple Document
+  version: 0.9.1
+paths: {}
+components:
+  schemas:
+    Pet:
+      type: object
+      readOnly: true
+      writeOnly: true
+      properties:
+        name:
+          type: string
+    Other:
+      type: object
+      readOnly: true
+      writeOnly: false
+      properties:
+        name:
+          type: string

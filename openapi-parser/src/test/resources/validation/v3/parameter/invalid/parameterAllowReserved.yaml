@@ -1,0 +1,13 @@
+openapi: '3.0.0'
+info:
+  version: '1.0.0'
+  title: styles
+paths: {}
+components:
+  parameters:
+    foo:
+      name: foo
+      in: header
+      allowReserved: true
+      schema:
+        type: string

@@ -1,0 +1,17 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: parameter
+tags:
+  - name: foo
+    description: description
+  - name: bar
+    description: description
+paths:
+  /apath2:
+    get:
+      tags:
+      - foo
+      responses:
+        '200':
+          description: The description

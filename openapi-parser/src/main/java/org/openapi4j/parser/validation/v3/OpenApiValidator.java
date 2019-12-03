@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.COMPONENTS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTERNALDOCS;
@@ -31,7 +30,6 @@ import static org.openapi4j.parser.validation.v3.OAI3Keywords.SERVERS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.TAGS;
 
 class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
-  private static final String MISSING_REF_IN_PATH = "Missing $ref '%s' for parameter in path '%s'";
   private static final String REQUIRED_PATH_PARAM = "Parameter '%s' in path '%s' must have 'required' property set to true";
   private static final String UNEXPECTED_PATH_PARAM = "Path parameter '%s' in path '%s' is unexpected";
   private static final String MISMATCH_PATH_PARAM = "Path parameter '%s' in path '%s' is expected but undefined";
@@ -100,33 +98,28 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
 
   private String checkPathParam(OpenApi3 api, String path, List<String> pathParams, Parameter parameter, ValidationResults results) {
     String in;
-    Boolean required;
+    boolean required;
     String name;
     if (parameter.isRef()) {
       Reference reference = api.getContext().getReferenceRegistry().getRef(parameter.getRef());
-      if (reference == null) {
-        results.addError(String.format(MISSING_REF_IN_PATH, parameter.getRef(), path), $REF);
-        return null;
-      }
-
       in = reference.getContent().path(IN).textValue();
       required = reference.getContent().path(REQUIRED).booleanValue();
       name = reference.getContent().path(NAME).textValue();
     } else {
       in = parameter.getIn();
-      required = parameter.getRequired();
+      required = parameter.isRequired();
       name = parameter.getName();
     }
 
     return checkPathParam(path, in, required, name, pathParams, results);
   }
 
-  private String checkPathParam(String path, String in, Boolean required, String name, List<String> pathParams, ValidationResults results) {
+  private String checkPathParam(String path, String in, boolean required, String name, List<String> pathParams, ValidationResults results) {
     if (!PATH.equals(in)) {
       return null;
     }
 
-    if (!Boolean.TRUE.equals(required)) {
+    if (!required) {
       results.addError(String.format(REQUIRED_PATH_PARAM, name, path), REQUIRED);
     }
 

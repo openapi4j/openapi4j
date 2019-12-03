@@ -1,4 +1,0 @@
-components:
-  parameters:
-    Looper2:
-      $ref: 'reference-cycling-extern1.yaml#/components/parameters/EntityId'

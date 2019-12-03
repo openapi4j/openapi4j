@@ -1,0 +1,55 @@
+openapi: '3.0.0'
+info:
+  version: '1.0.0'
+  title: styles
+paths: {}
+components:
+  parameters:
+    headerMatrix:
+      name: headerMatrix
+      in: header
+      style: matrix
+      schema:
+        type: string
+    queryLabel:
+      name: queryLabel
+      in: query
+      style: label
+      schema:
+        type: string
+    pathForm:
+      name: pathForm
+      in: path
+      style: form
+      schema:
+        type: string
+    querySimple:
+      name: querySimple
+      in: query
+      style: simple
+      schema:
+        type: string
+    pathSpaceDelimited:
+      name: pathSpaceDelimited
+      in: path
+      style: spaceDelimited
+      schema:
+        type: string
+    headerPipeDelimited:
+      name: headerPipeDelimited
+      in: path
+      style: pipeDelimited
+      schema:
+        type: string
+    cookieDeepObject:
+      name: cookieDeepObject
+      in: cookie
+      style: deepObject
+      schema:
+        type: string
+    cookieUnknown:
+      name: cookieUnknown
+      in: cookie
+      style: cookieUnknown
+      schema:
+        type: string

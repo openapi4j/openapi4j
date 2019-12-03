@@ -1,15 +1,15 @@
 package org.openapi4j.parser.validation.v3;
 
-import org.openapi4j.core.exception.DecodeException;
-import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.Discriminator;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Schema;
 import org.openapi4j.parser.validation.Validator;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;
@@ -20,6 +20,10 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEFAULT;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DISCRIMINATOR;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ENUM;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DOUBLE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_FLOAT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT32;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT64;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXITEMS;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXLENGTH;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXPROPERTIES;
@@ -48,10 +52,11 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
 
   private static final String DISCRIM_ONLY_ONE = "The discriminator mapping '%s' MUST have only one of the composite keywords 'oneOf, anyOf, allOf'";
   private static final String DISCRIM_CONSTRAINT_MISSING = "The discriminator '%s' is not required or not a property of the allOf schemas";
-  private static final String DISCRIM_REF_MAPPING = "Unable to map reference '%s' to schema content";
   private static final String DISCRIM_PROP_MISSING = "The discriminator '%s' is not a property of this schema";
   private static final String DISCRIM_REQUIRED_MISSING = "The discriminator '%s' is required in this schema";
   private static final String READ_WRITE_ONLY_EXCLUSIVE = "Schema cannot be both ReadOnly and WriteOnly";
+  private static final String FORMAT_TYPE_MISMATCH = "Format '%s' is incompatible with schema type '%s'";
+  private static final String VALUE_TYPE_MISMATCH = "Value '%s' is incompatible with schema type '%s'";
 
   private static final Validator<OpenApi3, Schema> INSTANCE = new SchemaValidator();
 
@@ -74,11 +79,11 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
       validateField(api, schema.getAdditionalProperties(), results, false, ADDITIONALPROPERTIES, SchemaValidator.instance());
       validateField(api, schema.getDiscriminator(), results, false, DISCRIMINATOR, DiscriminatorValidator.instance());
       checkDiscriminator(api, schema, results);
-      validateType(schema.getDefault(), schema.getType(), results, DEFAULT);
+      validateDefaultType(schema.getDefault(), schema.getType(), results);
       validateList(api, schema.getEnums(), results, false, ENUM, null);
       validateMap(api, schema.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
       validateField(api, schema.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
-      validateFormat(schema.getFormat(), schema.getType(), results, FORMAT);
+      validateFormat(schema.getFormat(), schema.getType(), results);
       if (schema.getItemsSchema() != null) {
         validate(api, schema.getItemsSchema(), results/*, "items"*/);
       }
@@ -145,10 +150,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
 
     for (Schema schema : schemas) {
       if (schema.isRef()) {
-        schema = getReferenceContent(api, schema, results);
-        if (schema == null) {
-          continue;
-        }
+        schema = getReferenceContent(api, schema.getRef(), results, DISCRIMINATOR, Schema.class);
       }
 
       if (!schema.hasProperty(discriminator.getPropertyName())) {
@@ -164,24 +166,68 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
     return hasProperty;
   }
 
-  private Schema getReferenceContent(OpenApi3 api, Schema schema, ValidationResults results) {
-    Reference reference = api.getContext().getReferenceRegistry().getRef(schema.getRef());
-    if (reference == null) {
-      results.addError(String.format(DISCRIM_REF_MAPPING, schema.getRef()), DISCRIMINATOR);
-      return null;
-    }
-
-    try {
-      return reference.getMappedContent(Schema.class);
-    } catch (DecodeException e) {
-      results.addError(String.format(DISCRIM_REF_MAPPING, schema.getRef()), DISCRIMINATOR);
-      return null;
-    }
-  }
-
   private void checkReadWrite(Schema schema, ValidationResults results) {
     if (schema.isReadOnly() && schema.isWriteOnly()) {
       results.addError(READ_WRITE_ONLY_EXCLUSIVE);
+    }
+  }
+
+  private void validateFormat(final String format,
+                              final String type,
+                              final ValidationResults results) {
+
+    if (format != null) {
+      String expectedType;
+      switch (format) {
+        case FORMAT_INT32:
+        case FORMAT_INT64:
+          expectedType = TYPE_INTEGER;
+          break;
+        case FORMAT_FLOAT:
+        case FORMAT_DOUBLE:
+          expectedType = TYPE_NUMBER;
+          break;
+        default:
+          expectedType = TYPE_STRING;
+          break;
+      }
+
+      if (type != null && !type.equals(expectedType)) {
+        results.addError(String.format(FORMAT_TYPE_MISMATCH, format, type), FORMAT);
+      }
+    }
+  }
+
+  private void validateDefaultType(final Object defaultValue,
+                                   final String type,
+                                   final ValidationResults results) {
+
+    if (defaultValue != null && type != null) {
+      boolean ok;
+      switch (type) {
+        case TYPE_STRING:
+          ok = defaultValue instanceof String;
+          break;
+        case TYPE_NUMBER:
+          ok = defaultValue instanceof Number;
+          break;
+        case TYPE_INTEGER:
+          ok = defaultValue instanceof Integer;
+          break;
+        case TYPE_BOOLEAN:
+          ok = defaultValue instanceof Boolean;
+          break;
+        case TYPE_OBJECT:
+          ok = defaultValue instanceof Map;
+          break;
+        case TYPE_ARRAY:
+        default:
+          ok = defaultValue instanceof Collection;
+          break;
+      }
+      if (!ok) {
+        results.addError(String.format(VALUE_TYPE_MISMATCH, defaultValue, type), DEFAULT);
+      }
     }
   }
 }

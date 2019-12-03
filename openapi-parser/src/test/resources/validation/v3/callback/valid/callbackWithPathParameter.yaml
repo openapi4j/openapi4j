@@ -1,0 +1,41 @@
+openapi: 3.0.0
+info:
+  title: Callback
+  version: 1.0.0
+paths:
+  /streams/{pathParam}:
+    post:
+      parameters:
+        - name: pathParam
+          in: path
+          required: true
+          schema:
+            type: string
+            example: https://tonys-server.com
+      responses:
+        '201':
+          description: subscription successfully created
+          content:
+            application/json:
+              schema:
+                description: subscription information
+      callbacks:
+        onData:
+          # when data is sent, it will be sent to the `callbackUrl` provided
+          # when making the subscription PLUS the suffix `/data`
+          '{$request.path.pathParam}/data':
+            post:
+              requestBody:
+                description: subscription payload
+                content:
+                  application/json:
+                    schema:
+                      properties:
+                        timestamp:
+                          type: string
+                          format: date-time
+                        userData:
+                          type: string
+              responses:
+                '202':
+                  description: description
