@@ -31,9 +31,7 @@ class NullableValidator extends BaseJsonValidator<OAI3> {
 
   @Override
   public void validate(JsonNode valueNode, ValidationResults results) {
-    if (nullable) return;
-
-    if (valueNode == null || valueNode.isNull()) {
+    if (!nullable && valueNode.isNull()) {
       results.addError(ERR_MSG, NULLABLE);
     }
   }

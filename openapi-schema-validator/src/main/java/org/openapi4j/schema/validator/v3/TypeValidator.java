@@ -56,8 +56,6 @@ class TypeValidator extends BaseJsonValidator<OAI3> {
   }
 
   private String getTypeFromValue(JsonNode valueNode) {
-    if (valueNode == null) return TYPE_NULL;
-
     if (valueNode.isContainerNode()) {
       return valueNode.isObject() ? TYPE_OBJECT : TYPE_ARRAY;
     }

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.openapi4j.core.model.OAIContext;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,80 +13,80 @@ public class Path extends AbsExtendedOpenApiSchema<Path> {
   private String description;
   @JsonAlias({"get", "put", "post", "delete", "options", "head", "patch", "trace"})
   @JsonIgnore
-  private Map<String, Operation> operations = new HashMap<>();
+  private Map<String, Operation> operations;
   private List<Parameter> parameters;
   private List<Server> servers;
   private String summary;
 
   public Operation getGet() {
-    return operations.get("get");
+    return mapGet(operations, "get");
   }
 
   public Path setGet(Operation get) {
-    operations.put("get", get);
+    operations = mapPut(operations, "get", get);
     return this;
   }
 
   public Operation getPut() {
-    return operations.get("put");
+    return mapGet(operations, "put");
   }
 
   public Path setPut(Operation put) {
-    operations.put("put", put);
+    operations = mapPut(operations, "put", put);
     return this;
   }
 
   public Operation getPost() {
-    return operations.get("post");
+    return mapGet(operations, "post");
   }
 
   public Path setPost(Operation post) {
-    operations.put("post", post);
+    operations = mapPut(operations, "post", post);
     return this;
   }
 
   public Operation getDelete() {
-    return operations.get("delete");
+    return mapGet(operations, "delete");
   }
 
   public Path setDelete(Operation delete) {
-    operations.put("delete", delete);
+    operations = mapPut(operations, "delete", delete);
     return this;
   }
 
   public Operation getOptions() {
-    return operations.get("options");
+    return mapGet(operations, "options");
   }
 
   public Path setOptions(Operation options) {
-    operations.put("options", options);
+    operations = mapPut(operations, "options", options);
     return this;
   }
 
   public Operation getHead() {
-    return operations.get("head");
+    return mapGet(operations, "head");
   }
 
   public Path setHead(Operation head) {
-    operations.put("head", head);
+    operations = mapPut(operations, "head", head);
     return this;
   }
 
   public Operation getPatch() {
-    return operations.get("patch");
+    return mapGet(operations, "patch");
   }
 
   public Path setPatch(Operation patch) {
-    operations.put("patch", patch);
+    operations = mapPut(operations, "patch", patch);
     return this;
   }
 
   public Operation getTrace() {
-    return operations.get("trace");
+    return mapGet(operations, "trace");
   }
 
   public Path setTrace(Operation trace) {
-    operations.put("trace", trace);
+    operations = mapPut(operations, "trace", trace);
     return this;
   }
 
@@ -121,24 +120,21 @@ public class Path extends AbsExtendedOpenApiSchema<Path> {
     return this;
   }
 
-  public boolean hasOperation(String id) {
-    return mapHas(operations, id);
+  public boolean hasOperation(String httpMethod) {
+    return mapHas(operations, httpMethod);
   }
 
-  public Operation getOperation(String id) {
-    return mapGet(operations, id);
+  public Operation getOperation(String httpMethod) {
+    return mapGet(operations, httpMethod);
   }
 
-  public Path setOperation(String id, Operation operation) {
-    if (operations == null) {
-      operations = new HashMap<>();
-    }
-    operations.put(id, operation);
+  public Path setOperation(String httpMethod, Operation operation) {
+    operations = mapPut(operations, httpMethod, operation);
     return this;
   }
 
-  public Path removeOperation(String id) {
-    mapRemove(operations, id);
+  public Path removeOperation(String httpMethod) {
+    mapRemove(operations, httpMethod);
     return this;
   }
 

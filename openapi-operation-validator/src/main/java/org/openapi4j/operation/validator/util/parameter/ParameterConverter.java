@@ -123,9 +123,7 @@ public final class ParameterConverter {
         convertedValue = getValueFromContentType(param.getContentMediaTypes(), matcher.group(paramName));
       }
 
-      if (convertedValue != null) {
-        mappedValues.put(paramName, convertedValue);
-      }
+      mappedValues.put(paramName, convertedValue);
     }
 
     return mappedValues;
@@ -172,9 +170,7 @@ public final class ParameterConverter {
         convertedValue = getValueFromContentType(param.getContentMediaTypes(), rawValue);
       }
 
-      if (convertedValue != null) {
-        mappedValues.put(paramName, convertedValue);
-      }
+      mappedValues.put(paramName, convertedValue);
     }
 
     return mappedValues;
@@ -199,7 +195,7 @@ public final class ParameterConverter {
     for (Map.Entry<String, AbsParameter<M>> paramEntry : specParameters.entrySet()) {
       String paramName = paramEntry.getKey();
       final AbsParameter<M> param = paramEntry.getValue();
-      final JsonNode convertedValue;
+      JsonNode convertedValue = null;
 
       Collection<String> headerValues = headers.get(paramName);
       if (headerValues != null) {
@@ -210,11 +206,9 @@ public final class ParameterConverter {
             param.getContentMediaTypes(),
             headerValues.stream().findFirst().orElse(null));
         }
-
-        if (convertedValue != null) {
-          mappedValues.put(paramName, convertedValue);
-        }
       }
+
+      mappedValues.put(paramName, convertedValue);
     }
 
     return mappedValues;
@@ -246,17 +240,13 @@ public final class ParameterConverter {
       }
 
       String value = cookies.get(paramName);
-      if (value != null) {
-        if (param.getSchema() != null) {
-          convertedValue = SimpleStyleConverter.instance().convert(param, paramName, value);
-        } else {
-          convertedValue = getValueFromContentType(param.getContentMediaTypes(), value);
-        }
-
-        if (convertedValue != null) {
-          mappedValues.put(paramName, convertedValue);
-        }
+      if (param.getSchema() != null) {
+        convertedValue = SimpleStyleConverter.instance().convert(param, paramName, value);
+      } else {
+        convertedValue = getValueFromContentType(param.getContentMediaTypes(), value);
       }
+
+      mappedValues.put(paramName, convertedValue);
     }
 
     return mappedValues;

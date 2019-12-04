@@ -81,7 +81,7 @@ public class VertxTest {
 
   private void checkCommons(Request rq) {
     assertEquals(PATH, rq.getPath());
-    assertEquals("atype", rq.getContentType().orElse(null));
+    assertEquals("atype", rq.getContentType());
 
     assertNotNull(rq.getCookies());
     assertTrue(rq.getCookies().containsKey(cookie.getName()));

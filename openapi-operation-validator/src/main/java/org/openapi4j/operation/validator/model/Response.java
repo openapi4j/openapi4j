@@ -4,7 +4,6 @@ import org.openapi4j.operation.validator.model.impl.Body;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 
 public interface Response {
   /**
@@ -38,20 +37,20 @@ public interface Response {
    * @param name The (case insensitive) name of the parameter to retrieve
    * @return The first header value for that param (if it exists)
    */
-  default Optional<String> getHeaderValue(final String name) {
+  default String getHeaderValue(final String name) {
     Collection<String> values = getHeaderValues(name);
     if (values != null) {
-      return values.stream().findFirst();
+      return values.stream().findFirst().orElse(null);
     }
-    return Optional.empty();
+    return null;
   }
 
   /**
    * Get the content-type header of this response, if it has been set.
    *
-   * @return The content-type header, or empty if it has not been set.
+   * @return The content-type header, or null if it has not been set.
    */
-  default Optional<String> getContentType() {
+  default String getContentType() {
     return getHeaderValue("Content-Type");
   }
 }

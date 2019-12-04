@@ -30,38 +30,67 @@ public class UndertowTest {
   @Before
   public void setUp() {
     exchange = Mockito.mock(HttpServerExchange.class);
+    cookie = null;
 
     Mockito.when(exchange.getRequestPath()).thenReturn(PATH);
     Mockito.when(exchange.getQueryString()).thenReturn("id=2&name=foo");
+  }
 
-    cookie = new CookieImpl("bis", "cuit");
-    Map<String, Cookie> cookies = new HashMap<>();
-    cookies.put("bis", cookie);
-    Mockito.when(exchange.getRequestCookies()).thenReturn(cookies);
+  private void mockCookies(boolean enable) {
+    if (enable) {
+      cookie = new CookieImpl("bis", "cuit");
+      Map<String, Cookie> cookies = new HashMap<>();
+      cookies.put("bis", cookie);
+      Mockito.when(exchange.getRequestCookies()).thenReturn(cookies);
+    } else {
+      Mockito.when(exchange.getRequestCookies()).thenReturn(null);
+    }
+  }
 
-    HeaderMap headers = new HeaderMap();
-    headers.add(HttpString.tryFromString(H_NAME), H_VALUE);
-    headers.add(HttpString.tryFromString("Content-Type"), "atype");
-    Mockito.when(exchange.getRequestHeaders()).thenReturn(headers);
+  private void mockHeaders(boolean enable) {
+    if (enable) {
+      HeaderMap headers = new HeaderMap();
+      headers.add(HttpString.tryFromString(H_NAME), H_VALUE);
+      headers.add(HttpString.tryFromString("Content-Type"), "atype");
+      Mockito.when(exchange.getRequestHeaders()).thenReturn(headers);
+    } else {
+      Mockito.when(exchange.getRequestHeaders()).thenReturn(null);
+    }
+  }
+
+  @Test
+  public void basicTest() {
+    mockCookies(false);
+    mockHeaders(false);
+    Mockito.when(exchange.getRequestMethod()).thenReturn(Methods.GET);
+
+    Request rq = UndertowRequest.of(exchange);
+    checkCommons(rq, false, false);
+
+    Assert.assertEquals(exchange.getQueryString(), rq.getQuery());
   }
 
   @Test
   public void getTest() {
+    mockCookies(true);
+    mockHeaders(true);
     Mockito.when(exchange.getRequestMethod()).thenReturn(Methods.GET);
 
     Request rq = UndertowRequest.of(exchange);
-    checkCommons(rq);
+    checkCommons(rq, true, true);
 
     Assert.assertEquals(exchange.getQueryString(), rq.getQuery());
   }
 
   @Test
   public void postTest() throws IOException {
+    mockCookies(true);
+    mockHeaders(true);
     Mockito.when(exchange.getRequestMethod()).thenReturn(Methods.POST);
     Mockito.when(exchange.getInputStream()).thenReturn(new ByteArrayInputStream("a body".getBytes()));
 
     Request rq = UndertowRequest.of(exchange);
-    checkCommons(rq);
+    checkCommons(rq, true, true);
 
     Assert.assertNull(rq.getQuery());
 
@@ -70,16 +99,20 @@ public class UndertowTest {
       rq.getBody().getContentAsNode(null, null));
   }
 
-  private void checkCommons(Request rq) {
+  private void checkCommons(Request rq, boolean checkCookies, boolean checkHeaders) {
     Assert.assertEquals(PATH, rq.getPath());
-    Assert.assertEquals("atype", rq.getContentType().orElse(null));
 
-    Assert.assertNotNull(rq.getCookies());
-    Assert.assertTrue(rq.getCookies().containsKey(cookie.getName()));
-    Assert.assertEquals(cookie.getValue(), rq.getCookies().get(cookie.getName()));
+    if (checkCookies) {
+      Assert.assertNotNull(rq.getCookies());
+      Assert.assertTrue(rq.getCookies().containsKey(cookie.getName()));
+      Assert.assertEquals(cookie.getValue(), rq.getCookies().get(cookie.getName()));
+    }
 
-    Assert.assertNotNull(rq.getHeaders());
-    Assert.assertTrue(rq.getHeaders().containsKey(H_NAME));
-    Assert.assertEquals(H_VALUE, rq.getHeaders().get(H_NAME).iterator().next());
+    if (checkHeaders) {
+      Assert.assertEquals("atype", rq.getContentType());
+      Assert.assertNotNull(rq.getHeaders());
+      Assert.assertTrue(rq.getHeaders().containsKey(H_NAME));
+      Assert.assertEquals(H_VALUE, rq.getHeaders().get(H_NAME).iterator().next());
+    }
   }
 }

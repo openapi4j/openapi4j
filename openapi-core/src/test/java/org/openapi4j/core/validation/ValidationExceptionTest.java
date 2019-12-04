@@ -22,5 +22,8 @@ public class ValidationExceptionTest {
     assertEquals(results, ex3.getResults());
     assertTrue(ex3.toString().contains("msg"));
     assertTrue(ex3.toString().contains("an error"));
+
+    assertNotNull(new ValidationException((String) null).toString());
+    assertNotNull(new ValidationException(null, results).toString());
   }
 }

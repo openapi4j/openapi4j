@@ -6,7 +6,7 @@ info:
 paths:
   /:
     post:
-      operationId: test
+      operationId: common
       requestBody:
         content:
           'application/x-www-form-urlencoded':
@@ -37,6 +37,36 @@ paths:
           headers:
             X-Rate-Limit:
               $ref: '#/components/headers/X-Rate-Limit'
+  /xmlFieldArray:
+    post:
+      operationId: xmlFieldArray
+      requestBody:
+        content:
+          'application/xml':
+            schema:
+              $ref: '#/components/schemas/xmlFieldArray'
+      responses:
+        '200':
+          description: a description
+          content:
+            'application/xml':
+              schema:
+                $ref: '#/components/schemas/xmlFieldArray'
+  /xmlFieldArrayWrapped:
+    post:
+      operationId: xmlFieldArrayWrapped
+      requestBody:
+        content:
+          'application/xml':
+            schema:
+              $ref: '#/components/schemas/xmlFieldArrayWrapped'
+      responses:
+        '200':
+          description: a description
+          content:
+            'application/xml':
+              schema:
+                $ref: '#/components/schemas/xmlFieldArrayWrapped'
 components:
   headers:
     X-Rate-Limit:
@@ -74,3 +104,27 @@ components:
           properties:
             id:
               type: string
+    xmlFieldArray:
+      type: array
+      minItems: 2
+      items:
+        type: integer
+        xml:
+          name: i
+      xml:
+        name: ignored
+    xmlFieldArrayWrapped:
+      type: array
+      minItems: 2
+      items:
+        type: object
+        properties:
+          id:
+            type: array
+            items:
+              type: integer
+            xml:
+              wrapped: true
+      xml:
+        wrapped: true
+        name: items

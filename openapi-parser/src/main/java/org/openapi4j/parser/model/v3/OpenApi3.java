@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.model.OAIContext;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,10 +92,7 @@ public class OpenApi3 extends AbsExtendedOpenApiSchema<OpenApi3> implements OAI 
   }
 
   public OpenApi3 setPath(String name, Path path) {
-    if (paths == null) {
-      paths = new HashMap<>();
-    }
-    paths.put(name, path);
+    paths = mapPut(paths, name, path);
     return this;
   }
 

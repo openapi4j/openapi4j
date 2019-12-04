@@ -159,7 +159,7 @@ paths:
             xxx:
               description: description
             yyy:
-              description: description
+              $ref: '#/components/headers/yyy'
           content:
             application/json:
               schema:
@@ -171,6 +171,8 @@ paths:
                 name: $request.query.name
               description: description
               x-foo: foo
+            foo:
+              $ref: '#/components/links/link1'
         200:
           description: description
       callbacks:
@@ -220,6 +222,13 @@ paths:
         - scheme1: []
       x-foo: foo
     x-foo: foo
+  /bar:
+    get:
+      requestBody:
+        $ref: '#/components/requestBodies/reqBody1'
+      responses:
+        '200':
+          $ref: '#/components/responses/resp1'
 components:
   schemas:
     schema1:
@@ -288,7 +297,7 @@ components:
         type: integer
     schema3:
       type: integer
-      format: int32
+      format: int64
     schema4:
       oneOf:
       - $ref: '#/components/schemas/schema5'
@@ -304,6 +313,14 @@ components:
       properties:
         pet_type:
           type: string
+    schema6:
+      type: number
+      format: float
+      multipleOf: 1.1
+    schema7:
+      type: integer
+      format: int64
+      multipleOf: 1000000000000000000
   responses:
     resp1:
       description: description
@@ -328,6 +345,8 @@ components:
     header1:
       description: description
     header2:
+      description: description
+    yyy:
       description: description
   securitySchemes:
     scheme1:

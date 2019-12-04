@@ -4,7 +4,6 @@ import org.openapi4j.operation.validator.model.impl.Body;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
 
 /**
@@ -61,16 +60,20 @@ public interface Request {
    * @param name The (case insensitive) name of the parameter to retrieve
    * @return The first header value for that param (if it exists)
    */
-  default Optional<String> getHeaderValue(final String name) {
-    return getHeaderValues(name).stream().findFirst();
+  default String getHeaderValue(final String name) {
+    Collection<String> values = getHeaderValues(name);
+    if (values != null) {
+      return values.stream().findFirst().orElse(null);
+    }
+    return null;
   }
 
   /**
    * Get the content-type header of this request, if it has been set.
    *
-   * @return The content-type header, or empty if it has not been set.
+   * @return The content-type header, or null if it has not been set.
    */
-  default Optional<String> getContentType() {
+  default String getContentType() {
     return getHeaderValue("Content-Type");
   }
 

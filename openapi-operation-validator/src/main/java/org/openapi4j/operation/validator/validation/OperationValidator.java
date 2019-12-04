@@ -193,7 +193,7 @@ public class OperationValidator {
 
     validateBody(
       specRequestBodyValidators,
-      request.getContentType().orElse(null),
+      request.getContentType(),
       request.getBody(),
       operation.getRequestBody().isRequired(),
       results);
@@ -224,7 +224,7 @@ public class OperationValidator {
 
     validateBody(
       validators,
-      response.getContentType().orElse(null),
+      response.getContentType(),
       response.getBody(),
       true,
       results);

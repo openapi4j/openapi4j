@@ -18,6 +18,8 @@ import java.util.function.Supplier;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_BINARY;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DOUBLE;
@@ -48,6 +50,8 @@ public class ModelTest extends Checker {
   @Test
   public void callbackTest() {
     Callback callback = new Callback();
+
+    callback.add("foo", null);
 
     mapCheck(
       "/foo",
@@ -158,6 +162,8 @@ public class ModelTest extends Checker {
   public void encodingPropertyTest() {
     EncodingProperty obj = new EncodingProperty();
 
+    assertFalse(obj.isExplode());
+
     mapCheck(
       "fooheader",
       new Header(),
@@ -170,25 +176,27 @@ public class ModelTest extends Checker {
 
   @Test
   public void headerTest() {
-    Header header = new Header();
+    Header obj = new Header();
+
+    assertFalse(obj.isDeprecated());
 
     mapCheck(
       "fooschema",
       new MediaType(),
-      header::hasContentMediaType,
-      header::getContentMediaType,
-      header::setContentMediaType,
-      header::setContentMediaTypes,
-      header::removeContentMediaType);
+      obj::hasContentMediaType,
+      obj::getContentMediaType,
+      obj::setContentMediaType,
+      obj::setContentMediaTypes,
+      obj::removeContentMediaType);
 
     mapCheck(
       "fooexample",
       new Example(),
-      header::hasExample,
-      header::getExample,
-      header::setExample,
-      header::setExamples,
-      header::removeExample);
+      obj::hasExample,
+      obj::getExample,
+      obj::setExample,
+      obj::setExamples,
+      obj::removeExample);
   }
 
   @Test
@@ -252,6 +260,16 @@ public class ModelTest extends Checker {
   }
 
   @Test
+  public void oAuthFlowsTest() {
+    OAuthFlows obj = new OAuthFlows();
+
+    obj.setImplicit(null);
+    obj.setPassword(null);
+    obj.setClientCredentials(null);
+    obj.setAuthorizationCode(null);
+  }
+
+  @Test
   public void openApiTest() {
     OpenApi3 obj = new OpenApi3();
 
@@ -281,11 +299,23 @@ public class ModelTest extends Checker {
       obj::setPath,
       obj::setPaths,
       obj::removePath);
+
+    OpenApi3 obj2 = new OpenApi3();
+    assertNull(obj2.getOperationById("foo"));
+    assertNull(obj2.getPathFrom(new Path()));
+    assertNull(obj2.getPathItemByOperationId("foo"));
+
+    obj2.setPath("/foo", new Path());
+    assertNull(obj2.getOperationById("foo"));
+    assertNull(obj2.getPathFrom(new Path()));
+    assertNull(obj2.getPathItemByOperationId("foo"));
   }
 
   @Test
   public void operationTest() {
     Operation obj = new Operation();
+
+    assertFalse(obj.isDeprecated());
 
     listCheck(
       new Parameter(),
@@ -372,6 +402,36 @@ public class ModelTest extends Checker {
       obj::setOperation,
       obj::setOperations,
       obj::removeOperation);
+
+    obj = new Path();
+    obj.setPut(new Operation());
+    assertNotNull(obj.getPut());
+    obj.setOptions(new Operation());
+    assertNotNull(obj.getOptions());
+    obj.setHead(new Operation());
+    assertNotNull(obj.getHead());
+    obj.setPatch(new Operation());
+    assertNotNull(obj.getPatch());
+    obj.setTrace(new Operation());
+    assertNotNull(obj.getTrace());
+  }
+
+  @Test
+  public void parameterTest() {
+    // equals / hashCode
+    assertEquals(new Parameter(), new Parameter());
+    assertEquals(new Parameter().hashCode(), new Parameter().hashCode());
+    assertNotEquals(new Parameter(), new ServerVariable());
+    assertNotEquals(new Parameter(), null);
+    assertEquals(new Parameter().setIn("path"), new Parameter().setIn("path"));
+    assertEquals(new Parameter().setName("foo"), new Parameter().setName("foo"));
+    assertNotEquals(new Parameter().setName("foo"), new Parameter().setName("bar"));
+
+    Parameter p1 = new Parameter();
+    p1.setRef("#/foo");
+    Parameter p2 = new Parameter();
+    p2.setRef("#/foo");
+    assertEquals(p1, p2);
   }
 
   @Test
@@ -438,6 +498,8 @@ public class ModelTest extends Checker {
   public void schemaTest() {
     Schema obj = new Schema();
 
+    assertNull(obj.getSupposedType());
+
     listCheck(
       "fooenum",
       obj::hasEnums,
@@ -497,8 +559,17 @@ public class ModelTest extends Checker {
     assertFalse(obj.isExclusiveMaximum());
     assertFalse(obj.isExclusiveMinimum());
     assertFalse(obj.isUniqueItems());
+
+
     assertFalse(obj.hasAdditionalProperties());
     assertTrue(obj.isAdditionalPropertiesAllowed());
+
+    obj.setAdditionalPropertiesAllowed(true);
+    assertTrue(obj.isAdditionalPropertiesAllowed());
+
+    obj.setAdditionalProperties(new Schema());
+    assertTrue(obj.hasAdditionalProperties());
+    assertFalse(obj.isAdditionalPropertiesAllowed());
   }
 
   @Test
@@ -528,20 +599,6 @@ public class ModelTest extends Checker {
     obj = new Schema();
     obj.setType(TYPE_INTEGER);
     assertEquals(TYPE_INTEGER, obj.getSupposedType());
-  }
-
-  @Test
-  public void securityParameterTest() {
-    SecurityParameter obj = new SecurityParameter();
-
-    listCheck(
-      "fooparam",
-      obj::hasParameters,
-      obj::getParameters,
-      obj::setParameters,
-      obj::addParameter,
-      obj::insertParameter,
-      obj::removeParameter);
   }
 
   @Test
@@ -586,6 +643,13 @@ public class ModelTest extends Checker {
       obj::addEnum,
       obj::insertEnum,
       obj::removeEnum);
+  }
+
+  @Test
+  public void xmlTest() {
+    Xml obj = new Xml();
+
+    assertFalse(obj.isAttribute());
   }
 
   private <R> void listCheck(R value,

@@ -16,8 +16,6 @@ public class ReferenceRegistry {
   }
 
   public Reference getRef(String ref) {
-    if (ref == null) return null;
-
     return references.get(ref);
   }
 

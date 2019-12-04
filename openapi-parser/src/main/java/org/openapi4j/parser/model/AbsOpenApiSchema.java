@@ -1,11 +1,16 @@
 package org.openapi4j.parser.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements OpenApiSchema<M> {
   /**
@@ -92,6 +97,15 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
     }
 
     return null;
+  }
+
+  protected <K, V> Map<K, V> mapPut(Map<K, V> map, K key, V value) {
+    if (map == null) {
+      map = new HashMap<>();
+    }
+    map.put(key, value);
+
+    return map;
   }
 
   protected <K, V> boolean mapHas(Map<K, V> map, K key) {

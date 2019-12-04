@@ -31,10 +31,20 @@ public class ValidationException extends Exception {
 
   @Override
   public String toString() {
-    StringBuilder builder = new StringBuilder(getMessage());
-    if (results != null) {
-      builder.append(String.format("%n")).append(results.toString());
+    StringBuilder builder = new StringBuilder();
+
+    if (getMessage() != null) {
+      builder.append(getMessage());
     }
+
+    if (results != null) {
+      if (getMessage() != null) {
+        builder.append(String.format("%n"));
+      }
+
+      builder.append(results.toString());
+    }
+
     return builder.toString();
   }
 }

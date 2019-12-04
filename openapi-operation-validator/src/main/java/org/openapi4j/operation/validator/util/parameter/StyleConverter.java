@@ -7,6 +7,7 @@ import org.openapi4j.operation.validator.util.TypeConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.Schema;
 
+import java.util.Collection;
 import java.util.Map;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
@@ -26,7 +27,7 @@ interface StyleConverter {
     if (TYPE_OBJECT.equals(style)) {
       return TypeConverter.instance().convertObject(schema, paramValues);
     } else if (TYPE_ARRAY.equals(style)) {
-      return TypeConverter.instance().convertArray(schema.getItemsSchema(), paramValues.get(paramName));
+      return TypeConverter.instance().convertArray(schema.getItemsSchema(), (Collection<Object>) paramValues.get(paramName));
     } else {
       return TypeConverter.instance().convertPrimitiveType(schema, paramValues.get(paramName));
     }

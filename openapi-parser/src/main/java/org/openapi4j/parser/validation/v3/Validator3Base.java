@@ -10,7 +10,6 @@ import org.openapi4j.parser.validation.ValidatorBase;
 abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T> {
   private static final String REF_MISSING = "Missing $ref '%s'";
   private static final String REF_CONTENT_UNREADABLE = "Unable to read $ref content for '%s' pointer.";
-  private static final String EMAIL_INVALID = "Invalid email address '%s'";
 
   <F> F getReferenceContent(final OpenApi3 api,
                             final String $ref,
@@ -43,13 +42,6 @@ abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T>
     F content = getReferenceContent(api, $ref, results, crumb, clazz);
     if (content != null) {
       validator.validate(api, content, results);
-    }
-  }
-
-  @Override
-  protected void checkEmail(String email, ValidationResults results, String crumb) {
-    if (!Regexes.EMAIL_REGEX.matcher(email).matches()) {
-      results.addError(String.format(EMAIL_INVALID, email), crumb);
     }
   }
 }

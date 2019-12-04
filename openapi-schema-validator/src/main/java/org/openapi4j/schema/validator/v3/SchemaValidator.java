@@ -107,7 +107,11 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
     }
   }
 
-  final void validateWithContext(final JsonNode valueNode, final ValidationResults results) throws ValidationException {
+  final void validateWithContext(JsonNode valueNode, final ValidationResults results) throws ValidationException {
+    if (valueNode == null) {
+      valueNode = JsonNodeFactory.instance.nullNode();
+    }
+
     if (context.isFastFail()) {
       fastFailValidate(valueNode, results);
     } else {

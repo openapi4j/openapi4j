@@ -7,11 +7,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 
 public class DefaultRequest implements Request {
   private final Method method;
@@ -68,19 +65,7 @@ public class DefaultRequest implements Request {
 
   @Override
   public Collection<String> getHeaderValues(final String name) {
-    return getFromMapOrEmptyList(headers, name);
-  }
-
-  private Collection<String> getFromMapOrEmptyList(final Map<String, Collection<String>> map, final String name) {
-    if (name == null || !map.containsKey(name)) {
-      return Collections.emptyList();
-    }
-
-    return map
-      .get(name)
-      .stream()
-      .filter(Objects::nonNull)
-      .collect(Collectors.collectingAndThen(toList(), Collections::unmodifiableList));
+    return headers.get(name);
   }
 
   /**

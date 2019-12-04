@@ -39,10 +39,6 @@ public class DefaultResponse implements Response {
 
   @Override
   public Collection<String> getHeaderValues(final String name) {
-    if (headers == null) {
-      return null;
-    }
-
     return headers.get(name);
   }
 

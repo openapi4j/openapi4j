@@ -1,6 +1,7 @@
 package org.openapi4j.parser.validation.v3;
 
 import org.junit.Test;
+import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.parser.Checker;
 
@@ -32,6 +33,11 @@ public class CommonValidationTest extends Checker {
   @Test(expected = ValidationException.class)
   public void malformedSpecInvalid() throws Exception {
     validate("/model/v3/invalid/malformed-spec.yaml");
+  }
+
+  @Test(expected = ResolutionException.class)
+  public void additionalPropertiesInvalid() throws Exception {
+    validate("/model/v3/invalid/additionalProperties.yaml");
   }
 
   @Test(expected = ValidationException.class)

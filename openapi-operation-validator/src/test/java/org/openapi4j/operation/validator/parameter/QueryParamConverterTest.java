@@ -12,6 +12,8 @@ import org.openapi4j.parser.model.v3.Parameter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.openapi4j.operation.validator.parameter.ParamChecker.checkArray;
 import static org.openapi4j.operation.validator.parameter.ParamChecker.checkObject;
 import static org.openapi4j.operation.validator.parameter.ParamChecker.checkPrimitive;
@@ -95,6 +97,17 @@ public class QueryParamConverterTest {
   public void queryContentObject() throws Exception {
     Map<String, JsonNode> nodes = queryToNode("content", "{\"boolProp\":true,\"stringProp\":\"admin\"}");
     checkObject(nodes, "content");
+  }
+
+  // --------------- Misc. -------------------
+  // -----------------------------------------
+  @Test
+  public void noValue() {
+    Map<String, AbsParameter<Parameter>> parameters = new HashMap<>();
+
+    Map<String, JsonNode> values = ParameterConverter.queryToNode(parameters, null);
+    assertNotNull(values);
+    assertTrue(values.isEmpty());
   }
 
   private Map<String, JsonNode> queryToNode(String parameterName, String value) throws Exception {

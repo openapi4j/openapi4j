@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.openapi4j.operation.validator.parameter.ParamChecker.checkArray;
 import static org.openapi4j.operation.validator.parameter.ParamChecker.checkObject;
 import static org.openapi4j.operation.validator.parameter.ParamChecker.checkPrimitive;
@@ -74,6 +76,17 @@ public class HeaderParamConverterTest {
     headers.put("content", Arrays.asList("{\"boolProp\":true,\"stringProp\":\"admin\"}"));
     Map<String, JsonNode> nodes = headerToNode("content", headers);
     checkObject(nodes, "content");
+  }
+
+  // --------------- Misc. -------------------
+  // -----------------------------------------
+  @Test
+  public void noValue() {
+    Map<String, AbsParameter<Parameter>> parameters = new HashMap<>();
+
+    Map<String, JsonNode> values = ParameterConverter.headersToNode(parameters, null);
+    assertNotNull(values);
+    assertTrue(values.isEmpty());
   }
 
   private Map<String, JsonNode> headerToNode(String parameterName, Map<String, Collection<String>> headers) throws Exception {

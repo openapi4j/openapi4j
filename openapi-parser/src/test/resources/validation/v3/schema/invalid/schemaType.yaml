@@ -55,3 +55,24 @@ components:
     Int64DefaultNoType:
       format: int64
       default: foo
+
+    MultipleOf:
+      type: number
+      format: float
+      multipleOf: 0
+
+    MinItems:
+      type: array
+      minItems: -1
+      items:
+        type: string
+
+    Pattern:
+      type: string
+      pattern: \
+
+    DuplicatedEnum:
+      type: string
+      enum:
+        - foo
+        - foo

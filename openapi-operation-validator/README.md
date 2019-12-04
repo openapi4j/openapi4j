@@ -83,7 +83,6 @@ Here's a list of currently non supported keywords :
 * allowedReserved (maybe forever).
 * allowEmptyValue (will be removed in later version OAS).
 * XML :
-    * name.
     * Note, prefix and namespace are not considered too since namespace information is always removed before processing. Not really an issue, the information is useless.
     * Note, attributes are kept and always converted to direct children JSON properties.
 

@@ -102,6 +102,6 @@ public final class ContentConverter {
   }
 
   public static JsonNode mapToNode(final Schema schema, final Map<String, Object> content) {
-    return TypeConverter.instance().convertTypes(schema, content);
+    return TypeConverter.instance().convertObject(schema, content);
   }
 }

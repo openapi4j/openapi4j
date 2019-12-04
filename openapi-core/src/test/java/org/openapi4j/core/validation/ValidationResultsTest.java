@@ -14,15 +14,16 @@ public class ValidationResultsTest {
   @Test
   public void add() {
     ValidationResults results = new ValidationResults();
-    results.add(ValidationSeverity.ERROR, "msg");
-    results.add(ValidationSeverity.WARNING, "msg2", "crumb");
+    results.add(ValidationSeverity.INFO, "info");
+    results.add(ValidationSeverity.WARNING, "warn", "crumb");
 
     ValidationResults others = new ValidationResults();
-    results.add(ValidationSeverity.INFO, "msg");
+    others.add(ValidationSeverity.ERROR, "error");
+    others.add(ValidationSeverity.INFO, "info2");
     results.add(others);
 
-    assertEquals(3, results.size());
-    assertEquals(3, results.getItems().size());
+    assertEquals(4, results.size());
+    assertEquals(4, results.getItems().size());
     assertEquals(ValidationSeverity.ERROR, results.getSeverity());
     assertFalse(results.isValid());
   }
