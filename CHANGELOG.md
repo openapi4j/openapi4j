@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4](https://github.com/openapi4j/openapi4j/tree/0.4) (2019-12-03)
+
+[Full Changelog](https://github.com/openapi4j/openapi4j/compare/0.3...0.4)
+
+**Implemented enhancements:**
+
+- Schema Validator - Add fast failure behaviour. [\#17](https://github.com/openapi4j/openapi4j/issues/17)
+- Operation validator - Check parameter from content property [\#15](https://github.com/openapi4j/openapi4j/issues/15)
+
+**Fixed bugs:**
+
+- OpenAPI parser - validation tests improved.
+
 ## [0.3](https://github.com/openapi4j/openapi4j/tree/0.3) (2019-11-15)
 
 [Full Changelog](https://github.com/openapi4j/openapi4j/compare/0.2...0.3)
