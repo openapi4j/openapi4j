@@ -21,39 +21,21 @@ public final class ContentConverter {
 
   public static JsonNode convert(final Schema schema,
                                  final String rawContentType,
-                                 final InputStream content) throws IOException {
+                                 final InputStream is,
+                                 final String str) throws IOException {
 
     String contentType = ContentType.getTypeOnly(rawContentType);
 
     if (ContentType.isJson(contentType)) {
-      return jsonToNode(content);
+      return is != null ? jsonToNode(is) : jsonToNode(str);
     } else if (ContentType.isXml(contentType)) {
-      return xmlToNode(schema, content);
+      return is != null ? xmlToNode(schema, is) : xmlToNode(schema, str);
     } else if (ContentType.isFormUrlEncoded(contentType)) {
-      return formUrlEncodedToNode(schema, rawContentType, content);
+      return is != null ? formUrlEncodedToNode(schema, rawContentType, is) : formUrlEncodedToNode(schema, rawContentType, str);
     } else if (ContentType.isMultipartFormData(contentType)) {
-      return multipartToNode(schema, rawContentType, content);
+      return is != null ? multipartToNode(schema, rawContentType, is) : multipartToNode(schema, rawContentType, str);
     } else { // UNKNOWN
-      return textToNode(content);
-    }
-  }
-
-  public static JsonNode convert(final Schema schema,
-                                 final String rawContentType,
-                                 final String content) throws IOException {
-
-    String contentType = ContentType.getTypeOnly(rawContentType);
-
-    if (ContentType.isJson(contentType)) {
-      return jsonToNode(content);
-    } else if (ContentType.isXml(contentType)) {
-      return xmlToNode(schema, content);
-    } else if (ContentType.isFormUrlEncoded(contentType)) {
-      return formUrlEncodedToNode(schema, rawContentType, content);
-    } else if (ContentType.isMultipartFormData(contentType)) {
-      return multipartToNode(schema, rawContentType, content);
-    } else { // UNKNOWN
-      return textToNode(content);
+      return is != null ? textToNode(is) : textToNode(str);
     }
   }
 

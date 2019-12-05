@@ -262,7 +262,7 @@ public final class ParameterConverter {
         Map.Entry<String, MediaType> mediaType = entry.get();
 
         try {
-          return ContentConverter.convert(mediaType.getValue().getSchema(), mediaType.getKey(), value);
+          return ContentConverter.convert(mediaType.getValue().getSchema(), mediaType.getKey(), null, value);
         } catch (IOException e) {
           return null;
         }

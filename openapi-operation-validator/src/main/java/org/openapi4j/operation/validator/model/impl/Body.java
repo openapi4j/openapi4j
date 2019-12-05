@@ -105,10 +105,8 @@ public class Body {
       return bodyNode;
     } else if (bodyMap != null) {
       return ContentConverter.mapToNode(schema, bodyMap);
-    } else if (bodyStr != null) {
-      return ContentConverter.convert(schema, rawContentType, bodyStr);
     } else {
-      return ContentConverter.convert(schema, rawContentType, bodyIs);
+      return ContentConverter.convert(schema, rawContentType, bodyIs, bodyStr);
     }
   }
 }

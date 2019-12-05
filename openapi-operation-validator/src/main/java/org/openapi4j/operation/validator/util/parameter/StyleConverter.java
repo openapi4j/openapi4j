@@ -16,6 +16,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 interface StyleConverter {
   JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) throws ResolutionException;
 
+  @SuppressWarnings("unchecked")
   default JsonNode convert(AbsParameter<?> param, String paramName, Map<String, Object> paramValues) {
     if (paramValues == null || paramValues.size() == 0) {
       return null;
@@ -27,7 +28,10 @@ interface StyleConverter {
     if (TYPE_OBJECT.equals(style)) {
       return TypeConverter.instance().convertObject(schema, paramValues);
     } else if (TYPE_ARRAY.equals(style)) {
-      return TypeConverter.instance().convertArray(schema.getItemsSchema(), (Collection<Object>) paramValues.get(paramName));
+      Object value = paramValues.get(paramName);
+      return (value instanceof Collection)
+        ? TypeConverter.instance().convertArray(schema.getItemsSchema(), (Collection<Object>) value)
+        : null;
     } else {
       return TypeConverter.instance().convertPrimitiveType(schema, paramValues.get(paramName));
     }
