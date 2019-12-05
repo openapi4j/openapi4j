@@ -264,9 +264,13 @@ public class ModelTest extends Checker {
     OAuthFlows obj = new OAuthFlows();
 
     obj.setImplicit(null);
+    assertNull(obj.getImplicit());
     obj.setPassword(null);
+    assertNull(obj.getPassword());
     obj.setClientCredentials(null);
+    assertNull(obj.getClientCredentials());
     obj.setAuthorizationCode(null);
+    assertNull(obj.getAuthorizationCode());
   }
 
   @Test

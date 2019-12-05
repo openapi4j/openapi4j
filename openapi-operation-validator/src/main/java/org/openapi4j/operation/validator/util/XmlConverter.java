@@ -114,18 +114,16 @@ class XmlConverter {
 
     if (TYPE_ARRAY.equals(schema.getSupposedType())) {
       // is array wrapped ?
-      if (xmlConf != null) {
-        if (xmlConf.isWrapped()) {
-          if (xmlConf.getName() != null) {
-            return getRenamedNode(xmlConf, content.get(xmlConf.getName()), xmlConf.getName());
-          }
+      if (xmlConf != null && xmlConf.isWrapped()) {
+        if (xmlConf.getName() != null) {
+          return getRenamedNode(xmlConf, content.get(xmlConf.getName()), xmlConf.getName());
+        }
 
-          // fallback for array as root element
-          if (content.size() == 1) {
-            return content.fields().next().getValue();
-          } else {
-            return JsonNodeFactory.instance.nullNode();
-          }
+        // fallback for array as root element
+        if (content.size() == 1) {
+          return content.fields().next().getValue();
+        } else {
+          return JsonNodeFactory.instance.nullNode();
         }
       }
 
