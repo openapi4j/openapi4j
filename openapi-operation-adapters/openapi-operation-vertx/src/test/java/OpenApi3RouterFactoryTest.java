@@ -69,7 +69,6 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
       rc
         .response()
         .setStatusCode(200)
-        .setStatusMessage("OK")
         .end();
     });
 
@@ -88,7 +87,6 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
       rc
         .response()
         .setStatusCode(200)
-        .setStatusMessage("OK")
         .end();
     });
 
@@ -105,7 +103,6 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     routerFactory.addOperationHandler("rqBodyCheck", BodyHandler.create(), rc -> rc
       .response()
       .setStatusCode(200)
-      .setStatusMessage("OK")
       .end());
 
     Router router = routerFactory.getRouter();
@@ -127,7 +124,6 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
       rc
         .response()
         .setStatusCode(200)
-        .setStatusMessage("OK")
         .end();
     });
 
@@ -162,7 +158,6 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
       rc
         .response()
         .setStatusCode(200)
-        .setStatusMessage("OK")
         .end();
     });
 
@@ -179,7 +174,6 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     routerFactory.addOperationHandler("secured", rc -> rc
       .response()
       .setStatusCode(200)
-      .setStatusMessage("OK")
       .end());
 
     routerFactory.getRouter();
@@ -192,7 +186,6 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     routerFactory.addOperationHandler("secured", rc -> rc
       .response()
       .setStatusCode(200)
-      .setStatusMessage("OK")
       .end());
 
     // Fake failed validation
@@ -211,7 +204,6 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     routerFactory.addOperationHandler("secured", rc -> rc
       .response()
       .setStatusCode(200)
-      .setStatusMessage("OK")
       .end());
 
     // Fake validation
@@ -230,7 +222,6 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     routerFactory.addOperationHandler("secured", rc -> rc
       .response()
       .setStatusCode(200)
-      .setStatusMessage("OK")
       .end());
 
     routerFactory.getRouter();
@@ -243,7 +234,6 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     routerFactory.addOperationHandler("secured", rc -> rc
       .response()
       .setStatusCode(200)
-      .setStatusMessage("OK")
       .end());
 
     // Fake failed validation
@@ -262,7 +252,6 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     routerFactory.addOperationHandler("secured", rc -> rc
       .response()
       .setStatusCode(200)
-      .setStatusMessage("OK")
       .end());
 
     // Fake validation
@@ -283,7 +272,6 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
       rc
         .response()
         .setStatusCode(200)
-        .setStatusMessage("OK")
         .end();
     });
 
