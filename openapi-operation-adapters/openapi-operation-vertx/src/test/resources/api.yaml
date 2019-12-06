@@ -85,3 +85,33 @@ paths:
             application/json:
               schema:
                 type: string
+  /rqBodyCheck:
+    post:
+      operationId: rqBodyCheck
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              additionalProperties: false
+              properties:
+                foo:
+                  type: string
+      responses:
+        '200':
+          description: a description
+          content:
+            'application/json': {}
+        'default':
+          description: a description
+          content:
+            'application/json': {}
+  /noContentType:
+    post:
+      operationId: noContentType
+      requestBody:
+        required: true
+        content:
+      responses:
+        '200':
+          description: a description

@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.openapi4j.operation.validator.util.ContentConverter;
 import org.openapi4j.parser.model.OpenApiSchema;
@@ -195,7 +196,7 @@ public final class ParameterConverter {
     for (Map.Entry<String, AbsParameter<M>> paramEntry : specParameters.entrySet()) {
       String paramName = paramEntry.getKey();
       final AbsParameter<M> param = paramEntry.getValue();
-      JsonNode convertedValue = null;
+      JsonNode convertedValue;
 
       Collection<String> headerValues = headers.get(paramName);
       if (headerValues != null) {
@@ -206,6 +207,8 @@ public final class ParameterConverter {
             param.getContentMediaTypes(),
             headerValues.stream().findFirst().orElse(null));
         }
+      } else {
+        convertedValue = JsonNodeFactory.instance.nullNode();
       }
 
       mappedValues.put(paramName, convertedValue);
@@ -264,11 +267,11 @@ public final class ParameterConverter {
         try {
           return ContentConverter.convert(mediaType.getValue().getSchema(), mediaType.getKey(), null, value);
         } catch (IOException e) {
-          return null;
+          return JsonNodeFactory.instance.nullNode();
         }
       }
     }
 
-    return null;
+    return JsonNodeFactory.instance.nullNode();
   }
 }

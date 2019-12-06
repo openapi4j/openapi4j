@@ -1,8 +1,9 @@
-package org.openapi4j.operation.validator.parameter;
+package org.openapi4j.operation.validator.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.junit.Test;
+import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.operation.validator.OpenApi3Util;
 import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
@@ -18,11 +19,12 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.openapi4j.operation.validator.parameter.ParamChecker.checkArray;
-import static org.openapi4j.operation.validator.parameter.ParamChecker.checkObject;
-import static org.openapi4j.operation.validator.parameter.ParamChecker.checkPrimitive;
+import static org.openapi4j.operation.validator.converter.ParamChecker.checkArray;
+import static org.openapi4j.operation.validator.converter.ParamChecker.checkObject;
+import static org.openapi4j.operation.validator.converter.ParamChecker.checkPrimitive;
 
 public class PathParamConverterTest {
+
   @Test
   public void pathSimpleNotExplodedPrimitive() throws Exception {
     Map<String, JsonNode> nodes = pathToNode("simpleNotExplodedPrimitive", "5");
@@ -152,6 +154,19 @@ public class PathParamConverterTest {
     assertTrue(values.isEmpty());
   }
 
+  @Test(expected = ResolutionException.class)
+  public void noParameterInSpec() throws Exception {
+    OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/pathParameters.yaml");
+
+    Map<String, AbsParameter<Parameter>> parameters = new HashMap<>();
+    parameters.put("matrixExplodedObject", api.getComponents().getParameters().get("matrixExplodedObject"));
+
+    final List<Parameter> values = Collections.singletonList(api.getComponents().getParameters().get("matrixExplodedObject"));
+    PathResolver.instance().solve("/{foo}/{bar}", values);
+  }
+
+
+
   private Map<String, JsonNode> pathToNode(String parameterName, String value) throws Exception {
     OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/pathParameters.yaml");
 
@@ -159,13 +174,13 @@ public class PathParamConverterTest {
     parameters.put(parameterName, api.getComponents().getParameters().get(parameterName));
 
     final List<Parameter> values = Collections.singletonList(api.getComponents().getParameters().get(parameterName));
-    String oasPath = PathResolver.instance().solve("/" + parameterName + "/{" + parameterName + "}/foo", values).get();
+    String oasPath = PathResolver.instance().solve("/" + parameterName + "/{" + parameterName + "}", values).get();
 
     Pattern pattern = Pattern.compile(oasPath);
 
     return ParameterConverter.pathToNode(
       parameters,
       pattern,
-      "/" + parameterName + "/" + value + "/foo");
+      "/" + parameterName + "/" + value);
   }
 }

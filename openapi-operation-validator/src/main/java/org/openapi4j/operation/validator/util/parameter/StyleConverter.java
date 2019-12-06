@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.operation.validator.util.TypeConverter;
@@ -19,7 +20,7 @@ interface StyleConverter {
   @SuppressWarnings("unchecked")
   default JsonNode convert(AbsParameter<?> param, String paramName, Map<String, Object> paramValues) {
     if (paramValues == null || paramValues.size() == 0) {
-      return null;
+      return JsonNodeFactory.instance.nullNode();
     }
 
     String style = param.getSchema().getSupposedType();
@@ -31,9 +32,9 @@ interface StyleConverter {
       Object value = paramValues.get(paramName);
       return (value instanceof Collection)
         ? TypeConverter.instance().convertArray(schema.getItemsSchema(), (Collection<Object>) value)
-        : null;
+        : JsonNodeFactory.instance.nullNode();
     } else {
-      return TypeConverter.instance().convertPrimitiveType(schema, paramValues.get(paramName));
+      return TypeConverter.instance().convertPrimitive(schema, paramValues.get(paramName));
     }
   }
 }

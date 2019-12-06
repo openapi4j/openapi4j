@@ -11,7 +11,7 @@ import java.util.Map;
 public class ReferenceRegistry {
   private final Map<String, Reference> references = new HashMap<>();
 
-  void addRef(URI baseUri, String ref) {
+  public void addRef(URI baseUri, String ref) {
     references.put(ref, new Reference(baseUri, ref, null));
   }
 

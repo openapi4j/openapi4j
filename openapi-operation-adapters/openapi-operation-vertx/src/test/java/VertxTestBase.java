@@ -47,18 +47,26 @@ class VertxTestBase {
     async.await(5_000);
   }
 
-  protected void testRequest(TestContext context, HttpMethod method, String path, int statusCode, String statusMessage) {
-    testRequest(context, client, method, 8080, path, statusCode, statusMessage, null);
+  protected void testRequest(TestContext context, HttpMethod method, String path, int statusCode) {
+    testRequest(context, client, method, 8080, path, statusCode, null, null);
   }
 
-  protected void testRequest(TestContext context, HttpClient client, HttpMethod method, int port,
-                             String path, int statusCode, String statusMessage,
+  protected void testRequest(TestContext context, HttpMethod method, String path, int statusCode, Buffer requestBodyBuffer) {
+    testRequest(context, client, method, 8080, path, statusCode, requestBodyBuffer, null);
+  }
+
+  protected void testRequest(TestContext context,
+                             HttpClient client,
+                             HttpMethod method,
+                             int port,
+                             String path,
+                             int statusCode,
+                             Buffer requestBodyBuffer,
                              Buffer responseBodyBuffer) {
 
     Async async = context.async();
     HttpClientRequest req = client.request(method, port, "localhost", path, resp -> {
       context.assertEquals(statusCode, resp.statusCode());
-      context.assertEquals(statusMessage, resp.statusMessage());
 
       if (responseBodyBuffer == null) {
         async.complete();
@@ -70,7 +78,13 @@ class VertxTestBase {
       }
     });
 
-    req.end();
+    if (requestBodyBuffer != null) {
+      req.putHeader("Content-Type", "application/json");
+      req.end(requestBodyBuffer);
+    } else {
+      req.end();
+    }
+
     async.await(5_000);
   }
 

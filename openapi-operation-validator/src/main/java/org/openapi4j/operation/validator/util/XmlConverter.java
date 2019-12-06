@@ -75,7 +75,7 @@ class XmlConverter {
     } else if (TYPE_OBJECT.equals(schema.getSupposedType())) {
       return parseObject(schema, content);
     } else {
-      return TypeConverter.instance().convertPrimitiveType(schema, content.asText());
+      return TypeConverter.instance().convertPrimitive(schema, content.asText());
     }
   }
 

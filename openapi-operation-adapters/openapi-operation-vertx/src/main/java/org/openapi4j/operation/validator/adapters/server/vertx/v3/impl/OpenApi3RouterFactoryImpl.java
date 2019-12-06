@@ -92,7 +92,7 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
       // Set produces/consumes
       setConsumesProduces(route, operationSpec);
       // Set body handler
-      if (!HttpMethod.GET.equals(operationSpec.method) && operationSpec.bodyHandler != null) {
+      if (operationSpec.bodyHandler != null) {
         route.handler(operationSpec.bodyHandler);
       }
       // Security handlers
@@ -133,12 +133,10 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
 
     // Produces
     Map<String, Response> responses = operationSpec.operation.getResponses();
-    if (responses != null) {
-      for (Response response : operationSpec.operation.getResponses().values()) {
-        if (response.getContentMediaTypes() != null) {
-          for (String ct : response.getContentMediaTypes().keySet()) {
-            route.produces(ct);
-          }
+    for (Response response : responses.values()) {
+      if (response.getContentMediaTypes() != null) {
+        for (String ct : response.getContentMediaTypes().keySet()) {
+          route.produces(ct);
         }
       }
     }

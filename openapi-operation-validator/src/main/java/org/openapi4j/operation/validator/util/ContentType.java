@@ -1,5 +1,6 @@
 package org.openapi4j.operation.validator.util;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,10 +67,13 @@ public final class ContentType {
 
     Matcher matcher = CHARSET_PATTERN.matcher(contentType);
     if (matcher.find()) {
-      return matcher.group(1).trim();
-    } else {
-      return StandardCharsets.UTF_8.name();
+      String charset = matcher.group(1).trim();
+      if (Charset.isSupported(charset)) {
+        return charset;
+      }
     }
+
+    return StandardCharsets.UTF_8.name();
   }
 
   public static String getTypeOnly(String contentType) {

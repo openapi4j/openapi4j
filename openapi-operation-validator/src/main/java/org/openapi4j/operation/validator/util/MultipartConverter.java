@@ -88,7 +88,7 @@ class MultipartConverter {
       case TYPE_ARRAY:
         return convertType(schema.getItemsSchema(), item, encoding);
       default:
-        return TypeConverter.instance().convertPrimitiveType(schema, IOUtil.toString(item.openStream(), encoding));
+        return TypeConverter.instance().convertPrimitive(schema, IOUtil.toString(item.openStream(), encoding));
     }
   }
 

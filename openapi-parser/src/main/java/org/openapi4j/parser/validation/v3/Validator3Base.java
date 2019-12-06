@@ -19,7 +19,7 @@ abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T>
 
     Reference reference = api.getContext().getReferenceRegistry().getRef($ref);
 
-    if (reference == null || reference.getContent().isMissingNode()) {
+    if (reference == null) {
       results.addError(String.format(REF_MISSING, $ref), crumb);
     } else {
       try {

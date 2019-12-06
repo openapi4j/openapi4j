@@ -9,11 +9,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PathResolver {
-  private static final String PATH_NOT_SUPPORTED_ERR_MSG = "Path template not supported.";
-  private static final String PATH_PARAM_MISSING_ERR_MSG = "Missing parameter description for parameter name: '%s'.";
+  private static final String PATH_PARAM_MISSING_ERR_MSG = "Missing path parameter description for : '%s'.";
 
   private static final Pattern OAS_PATH_PARAMETERS_PATTERN = Pattern.compile("\\{[.;?*+]*([^{}.;?*+]+)[^}]*}");
-  private static final Pattern ILLEGAL_PATH_PATTERN = Pattern.compile("\\{[^/]*/[^/]*}");
 
   private static final PathResolver INSTANCE = new PathResolver();
 
@@ -30,10 +28,6 @@ public class PathResolver {
    * @return a pattern only if a pattern is needed.
    */
   public Optional<String> solve(String oasPath, List<Parameter> pathParameters) throws ResolutionException {
-    if (ILLEGAL_PATH_PATTERN.matcher(oasPath).matches()) {
-      throw new ResolutionException(PATH_NOT_SUPPORTED_ERR_MSG);
-    }
-
     if (pathParameters.isEmpty()) {
       return Optional.empty();
     }

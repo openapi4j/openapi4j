@@ -2,8 +2,11 @@ package org.openapi4j.parser.model.v3;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openapi4j.core.model.v3.OAI3Context;
+import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.parser.Checker;
 import org.openapi4j.parser.OpenApi3Parser;
+import org.openapi4j.parser.validation.v3.OpenApi3Validator;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -436,6 +439,32 @@ public class ModelTest extends Checker {
     Parameter p2 = new Parameter();
     p2.setRef("#/foo");
     assertEquals(p1, p2);
+  }
+
+  @Test(expected = ValidationException.class)
+  public void invalidReferenceTest() throws Exception {
+    OpenApi3 api = new OpenApi3();
+    api.setContext(new OAI3Context(getClass().getResource("/model/v3/oai-integration/uspto.yaml").toURI()));
+
+    Parameter parameter = new Parameter();
+    parameter.setRef("#/wrong");
+    api.setPath("/foo", new Path().setGet(new Operation().addParameter(parameter)));
+    OpenApi3Validator.instance().validate(api);
+  }
+
+  @Test(expected = ValidationException.class)
+  public void invalidReferenceContentTest() throws Exception {
+    OpenApi3 api = new OpenApi3();
+    api.setContext(new OAI3Context(getClass().getResource("/model/v3/oai-integration/uspto.yaml").toURI()));
+
+    api.setComponents(new Components().setParameter("foo", null));
+
+    Parameter parameter = new Parameter();
+    parameter.setRef("#/components/parameters/foo");
+    api.getContext().getReferenceRegistry().addRef(api.getContext().getBaseUri(), parameter.getRef());
+
+    api.setPath("/foo", new Path().setGet(new Operation().addParameter(parameter)));
+    OpenApi3Validator.instance().validate(api);
   }
 
   @Test

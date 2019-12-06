@@ -26,8 +26,12 @@ public final class TypeConverter {
   public JsonNode convertObject(final Schema schema,
                                 final Map<String, Object> content) {
 
+    if (schema == null || content == null) {
+      return JsonNodeFactory.instance.nullNode();
+    }
+
     Map<String, Schema> properties = schema.getProperties();
-    if (properties == null || content == null) {
+    if (properties == null || properties.isEmpty()) {
       return JsonNodeFactory.instance.nullNode();
     }
 
@@ -36,21 +40,22 @@ public final class TypeConverter {
     for (Map.Entry<String, Schema> entry : properties.entrySet()) {
       String entryKey = entry.getKey();
 
-      Object value = content.get(entryKey);
-      if (value == null) {
+      if (!content.containsKey(entryKey)) {
         continue;
       }
+
+      Object value = content.get(entryKey);
 
       Schema propSchema = entry.getValue();
       switch (propSchema.getSupposedType()) {
         case TYPE_OBJECT:
-          convertedContent.set(entryKey, convertObject(propSchema, cast(value)));
+          convertedContent.set(entryKey, convertObject(propSchema, castMap(value)));
           break;
         case TYPE_ARRAY:
-          convertedContent.set(entryKey, convertArray(propSchema.getItemsSchema(), cast(value)));
+          convertedContent.set(entryKey, convertArray(propSchema.getItemsSchema(), castList(value)));
           break;
         default:
-          convertedContent.set(entryKey, convertPrimitiveType(propSchema, value));
+          convertedContent.set(entryKey, convertPrimitive(propSchema, value));
           break;
       }
     }
@@ -70,17 +75,17 @@ public final class TypeConverter {
     switch (schema.getSupposedType()) {
       case TYPE_OBJECT:
         for (Object value : content) {
-          convertedContent.add(convertObject(schema, cast(value)));
+          convertedContent.add(convertObject(schema, castMap(value)));
         }
         break;
       case TYPE_ARRAY:
         for (Object value : content) {
-          convertedContent.add(convertArray(schema.getItemsSchema(), cast(value)));
+          convertedContent.add(convertArray(schema.getItemsSchema(), castList(value)));
         }
         break;
       default:
         for (Object value : content) {
-          convertedContent.add(convertPrimitiveType(schema, value));
+          convertedContent.add(convertPrimitive(schema, value));
         }
         break;
     }
@@ -88,7 +93,7 @@ public final class TypeConverter {
     return convertedContent;
   }
 
-  public JsonNode convertPrimitiveType(final Schema schema, Object value) {
+  public JsonNode convertPrimitive(final Schema schema, Object value) {
     if (schema == null || value == null) {
       return JsonNodeFactory.instance.nullNode();
     }
@@ -139,10 +144,19 @@ public final class TypeConverter {
     throw new IllegalArgumentException(value);
   }
 
-  @SuppressWarnings({"unchecked"})
-  private <T> T cast(Object obj) {
+  @SuppressWarnings("unchecked")
+  private Map<String, Object> castMap(Object obj) {
     try {
-      return (T) obj;
+      return (Map<String, Object>) obj;
+    } catch (ClassCastException ex) {
+      return null;
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private Collection<Object> castList(Object obj) {
+    try {
+      return (Collection<Object>) obj;
     } catch (ClassCastException ex) {
       return null;
     }

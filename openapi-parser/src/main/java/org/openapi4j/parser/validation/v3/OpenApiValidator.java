@@ -97,14 +97,17 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
   }
 
   private String checkPathParam(OpenApi3 api, String path, List<String> pathParams, Parameter parameter, ValidationResults results) {
-    String in;
-    boolean required;
-    String name;
+    String in = null;
+    boolean required = true;
+    String name = null;
+
     if (parameter.isRef()) {
       Reference reference = api.getContext().getReferenceRegistry().getRef(parameter.getRef());
-      in = reference.getContent().path(IN).textValue();
-      required = reference.getContent().path(REQUIRED).booleanValue();
-      name = reference.getContent().path(NAME).textValue();
+      if (reference != null && reference.getContent() != null) {
+        in = reference.getContent().path(IN).textValue();
+        required = reference.getContent().path(REQUIRED).booleanValue();
+        name = reference.getContent().path(NAME).textValue();
+      }
     } else {
       in = parameter.getIn();
       required = parameter.isRequired();

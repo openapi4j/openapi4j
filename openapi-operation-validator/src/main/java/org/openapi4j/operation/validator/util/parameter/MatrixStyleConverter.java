@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.openapi4j.parser.model.v3.AbsParameter;
 
@@ -29,7 +30,7 @@ class MatrixStyleConverter extends FlatStyleConverter {
   @Override
   public JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) {
     if (rawValue == null) {
-      return null;
+      return JsonNodeFactory.instance.nullNode();
     }
 
     final Map<String, Object> paramValues;

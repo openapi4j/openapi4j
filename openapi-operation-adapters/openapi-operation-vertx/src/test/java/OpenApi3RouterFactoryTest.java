@@ -13,12 +13,14 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import java.net.URL;
 
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 
 @RunWith(VertxUnitRunner.class)
 public class OpenApi3RouterFactoryTest extends VertxTestBase {
@@ -74,7 +76,42 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     Router router = routerFactory.getRouter();
 
     startServer(context, vertx, router);
-    testRequest(context, HttpMethod.GET, "/simple", 200, "OK");
+    testRequest(context, HttpMethod.GET, "/simple", 200);
+  }
+
+  @Test
+  public void checkPostBodyTest(TestContext context) throws Exception {
+    loadSpec(context, "/api.yaml");
+
+    routerFactory.addOperationHandler("rqBodyCheck", BodyHandler.create(), rc -> {
+      context.assertEquals("{\"foo\": \"bar\"}", rc.getBodyAsString());
+      rc
+        .response()
+        .setStatusCode(200)
+        .setStatusMessage("OK")
+        .end();
+    });
+
+    Router router = routerFactory.getRouter();
+
+    startServer(context, vertx, router);
+    testRequest(context, HttpMethod.POST, "/rqBodyCheck", 200, Buffer.buffer("{\"foo\": \"bar\"}"));
+  }
+
+  @Test
+  public void checkPostBodyInvalidTest(TestContext context) throws Exception {
+    loadSpec(context, "/api.yaml");
+
+    routerFactory.addOperationHandler("rqBodyCheck", BodyHandler.create(), rc -> rc
+      .response()
+      .setStatusCode(200)
+      .setStatusMessage("OK")
+      .end());
+
+    Router router = routerFactory.getRouter();
+
+    startServer(context, vertx, router);
+    testRequest(context, HttpMethod.POST, "/rqBodyCheck", 400, Buffer.buffer("{\"wrong\": \"bar\"}"));
   }
 
   @Test
@@ -97,7 +134,7 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     Router router = routerFactory.getRouter();
 
     startServer(context, vertx, router);
-    testRequest(context, HttpMethod.GET, "/fixed/foo/fixed/bar/fields/", 200, "OK");
+    testRequest(context, HttpMethod.GET, "/fixed/foo/fixed/bar/fields/", 200);
   }
 
   @Test
@@ -132,7 +169,7 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     Router router = routerFactory.getRouter();
 
     startServer(context, vertx, router);
-    testRequest(context, HttpMethod.GET, "/.role,123,name,Alex/;matrix=3,4,5/foo/", 200, "OK");
+    testRequest(context, HttpMethod.GET, "/.role,123,name,Alex/;matrix=3,4,5/foo/", 200);
   }
 
   @Test(expected = ResolutionException.class)
@@ -164,7 +201,7 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     Router router = routerFactory.getRouter();
 
     startServer(context, vertx, router);
-    testRequest(context, HttpMethod.GET, "/secured", 401, "Unauthorized");
+    testRequest(context, HttpMethod.GET, "/secured", 401);
   }
 
   @Test
@@ -183,7 +220,7 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     Router router = routerFactory.getRouter();
 
     startServer(context, vertx, router);
-    testRequest(context, HttpMethod.GET, "/secured", 200, "OK");
+    testRequest(context, HttpMethod.GET, "/secured", 200);
   }
 
   @Test(expected = ResolutionException.class)
@@ -215,7 +252,7 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     Router router = routerFactory.getRouter();
 
     startServer(context, vertx, router);
-    testRequest(context, HttpMethod.GET, "/secured", 401, "Unauthorized");
+    testRequest(context, HttpMethod.GET, "/secured", 401);
   }
 
   @Test
@@ -234,7 +271,20 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     Router router = routerFactory.getRouter();
 
     startServer(context, vertx, router);
-    testRequest(context, HttpMethod.GET, "/secured", 200, "OK");
+    testRequest(context, HttpMethod.GET, "/secured", 200);
+  }
+
+  @Test
+  public void noContentType(TestContext context) throws ResolutionException {
+    loadSpec(context, "/api.yaml");
+
+    routerFactory.addOperationHandler("noContentType", rc -> rc
+      .response()
+      .setStatusCode(200)
+      .setStatusMessage("OK")
+      .end());
+
+    routerFactory.getRouter();
   }
 
   private void loadSpec(TestContext context, String path) {

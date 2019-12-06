@@ -26,7 +26,7 @@ class DelimitedStyleConverter extends FlatStyleConverter {
   @Override
   public JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) {
     if (rawValue == null) {
-      return null;
+      return JsonNodeFactory.instance.nullNode();
     }
 
     if (TYPE_ARRAY.equals(param.getSchema().getSupposedType())) {
@@ -46,7 +46,7 @@ class DelimitedStyleConverter extends FlatStyleConverter {
       }
 
       if (arrayValues.isEmpty()) {
-        return null;
+        return JsonNodeFactory.instance.nullNode();
       }
 
       paramValues.put(paramName, arrayValues);

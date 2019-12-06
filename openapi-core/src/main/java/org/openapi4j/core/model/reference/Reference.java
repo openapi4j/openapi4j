@@ -70,7 +70,7 @@ public class Reference {
       try {
         mappedContent = TreeUtil.json.treeToValue(content, tClass);
         return (T) mappedContent;
-      } catch (JsonProcessingException e) {
+      } catch (JsonProcessingException | RuntimeException e) {
         throw new DecodeException(String.format(ERR_MSG, ref, tClass.getSimpleName()), e);
       }
     } else if (mappedContent.getClass().equals(tClass)) {

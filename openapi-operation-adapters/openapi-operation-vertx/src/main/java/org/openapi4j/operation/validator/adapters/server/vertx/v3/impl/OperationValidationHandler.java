@@ -29,7 +29,7 @@ class OperationValidationHandler implements Handler<RoutingContext> {
       rc.data().put(RQ_PARAMETERS, rqParameters);
       rc.next();
     } catch (ValidationException e) {
-      rc.fail(e);
+      rc.fail(400, e);
     }
   }
 }

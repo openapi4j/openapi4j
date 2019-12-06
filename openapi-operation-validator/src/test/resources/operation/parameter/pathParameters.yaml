@@ -3,133 +3,133 @@ info:
   version: 1.0.0
   title: My API
 paths:
-  /simpleNotExplodedPrimitive/{simpleNotExplodedPrimitive}/foo:
+  /simpleNotExplodedPrimitive/{simpleNotExplodedPrimitive}:
     get:
       parameters:
         - $ref: '#/components/parameters/simpleNotExplodedPrimitive'
       responses:
         '200':
           description: The description
-  /simpleExplodedPrimitive/{simpleExplodedPrimitive}/foo:
+  /simpleExplodedPrimitive/{simpleExplodedPrimitive}:
     get:
       parameters:
         - $ref: '#/components/parameters/simpleExplodedPrimitive'
       responses:
         '200':
           description: The description
-  /simpleNotExplodedArray/{simpleNotExplodedArray}/foo:
+  /simpleNotExplodedArray/{simpleNotExplodedArray}:
     get:
       parameters:
         - $ref: '#/components/parameters/simpleNotExplodedArray'
       responses:
         '200':
           description: The description
-  /simpleExplodedArray/{simpleExplodedArray}/foo:
+  /simpleExplodedArray/{simpleExplodedArray}:
     get:
       parameters:
         - $ref: '#/components/parameters/simpleExplodedArray'
       responses:
         '200':
           description: The description
-  /simpleNotExplodedObject/{simpleNotExplodedObject}/foo:
+  /simpleNotExplodedObject/{simpleNotExplodedObject}:
     get:
       parameters:
         - $ref: '#/components/parameters/simpleNotExplodedObject'
       responses:
         '200':
           description: The description
-  /simpleExplodedObject/{simpleExplodedObject}/foo:
+  /simpleExplodedObject/{simpleExplodedObject}:
     get:
       parameters:
         - $ref: '#/components/parameters/simpleExplodedObject'
       responses:
         '200':
           description: The description
-  /labelNotExplodedPrimitive/{labelNotExplodedPrimitive}/foo:
+  /labelNotExplodedPrimitive/{labelNotExplodedPrimitive}:
     get:
       parameters:
         - $ref: '#/components/parameters/labelNotExplodedPrimitive'
       responses:
         '200':
           description: The description
-  /labelExplodedPrimitive/{labelExplodedPrimitive}/foo:
+  /labelExplodedPrimitive/{labelExplodedPrimitive}:
     get:
       parameters:
         - $ref: '#/components/parameters/labelExplodedPrimitive'
       responses:
         '200':
           description: The description
-  /labelNotExplodedArray/{labelNotExplodedArray}/foo:
+  /labelNotExplodedArray/{labelNotExplodedArray}:
     get:
       parameters:
         - $ref: '#/components/parameters/labelNotExplodedArray'
       responses:
         '200':
           description: The description
-  /labelExplodedArray/{labelExplodedArray}/foo:
+  /labelExplodedArray/{labelExplodedArray}:
     get:
       parameters:
         - $ref: '#/components/parameters/labelExplodedArray'
       responses:
         '200':
           description: The description
-  /labelNotExplodedObject/{labelNotExplodedObject}/foo:
+  /labelNotExplodedObject/{labelNotExplodedObject}:
     get:
       parameters:
         - $ref: '#/components/parameters/labelNotExplodedObject'
       responses:
         '200':
           description: The description
-  /labelExplodedObject/{labelExplodedObject}/foo:
+  /labelExplodedObject/{labelExplodedObject}:
     get:
       parameters:
         - $ref: '#/components/parameters/labelExplodedObject'
       responses:
         '200':
           description: The description
-  /matrixNotExplodedPrimitive/{matrixNotExplodedPrimitive}/foo:
+  /matrixNotExplodedPrimitive/{matrixNotExplodedPrimitive}:
     get:
       parameters:
         - $ref: '#/components/parameters/matrixNotExplodedPrimitive'
       responses:
         '200':
           description: The description
-  /matrixExplodedPrimitive/{matrixExplodedPrimitive}/foo:
+  /matrixExplodedPrimitive/{matrixExplodedPrimitive}:
     get:
       parameters:
         - $ref: '#/components/parameters/matrixExplodedPrimitive'
       responses:
         '200':
           description: The description
-  /matrixNotExplodedArray/{matrixNotExplodedArray}/foo:
+  /matrixNotExplodedArray/{matrixNotExplodedArray}:
     get:
       parameters:
         - $ref: '#/components/parameters/matrixNotExplodedArray'
       responses:
         '200':
           description: The description
-  /matrixExplodedArray/{matrixExplodedArray}/foo:
+  /matrixExplodedArray/{matrixExplodedArray}:
     get:
       parameters:
         - $ref: '#/components/parameters/matrixExplodedArray'
       responses:
         '200':
           description: The description
-  /matrixNotExplodedObject/{matrixNotExplodedObject}/foo:
+  /matrixNotExplodedObject/{matrixNotExplodedObject}:
     get:
       parameters:
         - $ref: '#/components/parameters/matrixNotExplodedObject'
       responses:
         '200':
           description: The description
-  /matrixExplodedObject/{matrixExplodedObject}/foo:
+  /matrixExplodedObject/{matrixExplodedObject}:
     get:
       parameters:
         - $ref: '#/components/parameters/matrixExplodedObject'
       responses:
         '200':
           description: The description
-  /content/foo:
+  /content:
     get:
       parameters:
         - $ref: '#/components/parameters/content'
