@@ -278,13 +278,19 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
   public void noContentType(TestContext context) throws ResolutionException {
     loadSpec(context, "/api.yaml");
 
-    routerFactory.addOperationHandler("noContentType", rc -> rc
-      .response()
-      .setStatusCode(200)
-      .setStatusMessage("OK")
-      .end());
+    routerFactory.addOperationHandler("noContentType", BodyHandler.create(), rc -> {
+      context.assertEquals("{\"anything\": \"bar\"}", rc.getBodyAsString());
+      rc
+        .response()
+        .setStatusCode(200)
+        .setStatusMessage("OK")
+        .end();
+    });
 
-    routerFactory.getRouter();
+    Router router = routerFactory.getRouter();
+
+    startServer(context, vertx, router);
+    testRequest(context, HttpMethod.POST, "/noContentType", 200, Buffer.buffer("{\"anything\": \"bar\"}"));
   }
 
   private void loadSpec(TestContext context, String path) {
