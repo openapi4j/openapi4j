@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5](https://github.com/openapi4j/openapi4j/tree/0.5) (2019-12-06)
+
+[Full Changelog](https://github.com/openapi4j/openapi4j/compare/0.4...0.5)
+
+**Fixed bugs:**
+
+- Global - tests improved with minor fixes.
+
 ## [0.4](https://github.com/openapi4j/openapi4j/tree/0.4) (2019-12-03)
 
 [Full Changelog](https://github.com/openapi4j/openapi4j/compare/0.3...0.4)

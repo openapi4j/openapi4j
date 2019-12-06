@@ -11,7 +11,7 @@ allprojects {
   apply plugin: 'jacoco'
 
   group = "org.openapi4j"
-  version = "0.5" + (Boolean.valueOf(System.getProperty("release")) ? "" : "-SNAPSHOT")
+  version = "0.6" + (Boolean.valueOf(System.getProperty("release")) ? "" : "-SNAPSHOT")
 
   java {
     sourceCompatibility = JavaVersion.VERSION_1_8
