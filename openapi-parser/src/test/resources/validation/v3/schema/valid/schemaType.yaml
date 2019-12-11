@@ -62,3 +62,23 @@ components:
         type: string
       default:
         ['foo']
+
+    StringEnum:
+      type: string
+      enum: ["0", "1"]
+    Int32Enum:
+      type: integer
+      format: int32
+      enum: [0, 1]
+    Int64Enum:
+      type: integer
+      format: int64
+      enum: [0, 1]
+    NumberFloatEnum:
+      type: number
+      format: float
+      enum: [0.0, 1.1]
+    NumberDoubleEnum:
+      type: number
+      format: double
+      enum: [0.0, 1.1]
