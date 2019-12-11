@@ -71,12 +71,12 @@ public class SchemaSerializer extends StdSerializer<Schema> {
       addBooleanField(gen, UNIQUEITEMS, schema.getUniqueItems());
       addNumberField(gen, MAXPROPERTIES, schema.getMaxProperties());
       addNumberField(gen, MINPROPERTIES, schema.getMinProperties());
-      addStringCollection(gen, REQUIRED, schema.getRequiredFields());
-      addStringCollection(gen, ENUM, schema.getEnums());
+      addCollection(gen, REQUIRED, schema.getRequiredFields());
+      addCollection(gen, ENUM, schema.getEnums());
       addStringField(gen, TYPE, schema.getType());
-      addSchemaCollection(gen, ALLOF, schema.getAllOfSchemas());
-      addSchemaCollection(gen, ONEOF, schema.getOneOfSchemas());
-      addSchemaCollection(gen, ANYOF, schema.getAnyOfSchemas());
+      addCollection(gen, ALLOF, schema.getAllOfSchemas());
+      addCollection(gen, ONEOF, schema.getOneOfSchemas());
+      addCollection(gen, ANYOF, schema.getAnyOfSchemas());
       addObjectField(gen, NOT, schema.getNotSchema());
       addObjectField(gen, ITEMS, schema.getItemsSchema());
       addMapField(gen, PROPERTIES, schema.getProperties());
@@ -152,20 +152,10 @@ public class SchemaSerializer extends StdSerializer<Schema> {
     }
   }
 
-  private void addStringCollection(JsonGenerator gen, String fieldName, Collection<String> collection) throws IOException {
+  private <T> void addCollection(JsonGenerator gen, String fieldName, Collection<T> collection) throws IOException {
     if (collection != null) {
       gen.writeArrayFieldStart(fieldName);
-      for (String value : collection) {
-        gen.writeString(value);
-      }
-      gen.writeEndArray();
-    }
-  }
-
-  private void addSchemaCollection(JsonGenerator gen, String fieldName, Collection<Schema> collection) throws IOException {
-    if (collection != null) {
-      gen.writeArrayFieldStart(fieldName);
-      for (Schema value : collection) {
+      for (T value : collection) {
         gen.writeObject(value);
       }
       gen.writeEndArray();

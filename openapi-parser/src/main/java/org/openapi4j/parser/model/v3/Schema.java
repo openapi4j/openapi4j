@@ -31,7 +31,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   private String description;
   private Boolean deprecated;
   private Discriminator discriminator;
-  private List<String> enums;
+  private List<Object> enums;
   private Object example;
   private Boolean exclusiveMaximum;
   private Boolean exclusiveMinimum;
@@ -244,11 +244,11 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   // Enum
-  public List<String> getEnums() {
+  public List<Object> getEnums() {
     return enums;
   }
 
-  public Schema setEnums(List<String> enums) {
+  public Schema setEnums(List<Object> enums) {
     this.enums = enums;
     return this;
   }
@@ -257,17 +257,17 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
     return enums != null;
   }
 
-  public Schema addEnum(String value) {
+  public Schema addEnum(Object value) {
     enums = listAdd(enums, value);
     return this;
   }
 
-  public Schema insertEnum(int index, String value) {
+  public Schema insertEnum(int index, Object value) {
     enums = listAdd(enums, index, value);
     return this;
   }
 
-  public Schema removeEnum(String value) {
+  public Schema removeEnum(Object value) {
     listRemove(enums, value);
     return this;
   }

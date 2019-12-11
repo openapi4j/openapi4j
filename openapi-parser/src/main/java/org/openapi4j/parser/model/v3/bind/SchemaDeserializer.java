@@ -109,7 +109,7 @@ public class SchemaDeserializer extends StdDeserializer<Schema> {
           }));
           break;
         case ENUM:
-          schema.setEnums(jp.readValueAs(new TypeReference<List<String>>() {
+          schema.setEnums(jp.readValueAs(new TypeReference<List<Object>>() {
           }));
           break;
         case TYPE:
