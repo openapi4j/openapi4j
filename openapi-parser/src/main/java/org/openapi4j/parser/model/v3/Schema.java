@@ -638,8 +638,13 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
     copy.setNotSchema(copyField(getNotSchema(), context, followRefs));
     copy.setItemsSchema(copyField(getItemsSchema(), context, followRefs));
     copy.setProperties(copyMap(getProperties(), context, followRefs));
-    copy.setAdditionalProperties(copyField(getAdditionalProperties(), context, followRefs));
-    copy.setAdditionalPropertiesAllowed(getAdditionalPropertiesAllowed());
+
+    if (hasAdditionalProperties()) {
+      copy.setAdditionalProperties(copyField(getAdditionalProperties(), context, followRefs));
+    } else if (getAdditionalPropertiesAllowed() != null) {
+      copy.setAdditionalPropertiesAllowed(getAdditionalPropertiesAllowed());
+    }
+
     copy.setDescription(getDescription());
     copy.setFormat(getFormat());
     copy.setDefault(getDefault());

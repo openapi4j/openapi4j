@@ -63,3 +63,28 @@ paths:
                 properties:
                   name:
                     type: string
+  /another2:
+    get:
+      operationId: aget
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/additionalProperties'
+                properties:
+                  name:
+                    type: string
+components:
+  schemas:
+    additionalProperties:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
