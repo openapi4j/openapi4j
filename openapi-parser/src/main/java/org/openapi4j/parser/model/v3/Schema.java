@@ -1,20 +1,30 @@
 package org.openapi4j.parser.model.v3;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.parser.model.v3.bind.SchemaDeserializer;
-import org.openapi4j.parser.model.v3.bind.SchemaSerializer;
+import org.openapi4j.core.util.TreeUtil;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ADDITIONALPROPERTIES;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ALLOF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ANYOF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEFAULT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ENUM;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DOUBLE;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_FLOAT;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT32;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT64;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ITEMS;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NOT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ONEOF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.REQUIRED;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
@@ -22,21 +32,25 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-@JsonDeserialize(using = SchemaDeserializer.class)
-@JsonSerialize(using = SchemaSerializer.class)
 public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
+  // additionalProperties field is processed by specific getters/setters
+  @JsonIgnore
   private Schema additionalProperties;
+  @JsonIgnore
   private Boolean additionalPropertiesAllowed;
+  @JsonProperty(DEFAULT)
   private Object defaultValue;
   private String description;
   private Boolean deprecated;
   private Discriminator discriminator;
+  @JsonProperty(ENUM)
   private List<Object> enums;
   private Object example;
   private Boolean exclusiveMaximum;
   private Boolean exclusiveMinimum;
   private ExternalDocs externalDocs;
   private String format;
+  @JsonProperty(ITEMS)
   private Schema itemsSchema;
   private Number maximum;
   private Number minimum;
@@ -47,13 +61,18 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   private Integer maxProperties;
   private Integer minProperties;
   private Number multipleOf;
+  @JsonProperty(NOT)
   private Schema notSchema;
   private Boolean nullable;
   private String pattern;
   private Map<String, Schema> properties;
+  @JsonProperty(REQUIRED)
   private List<String> requiredFields;
+  @JsonProperty(ALLOF)
   private List<Schema> allOfSchemas;
+  @JsonProperty(ANYOF)
   private List<Schema> anyOfSchemas;
+  @JsonProperty(ONEOF)
   private List<Schema> oneOfSchemas;
   private Boolean readOnly;
   private Boolean writeOnly;
@@ -277,6 +296,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
     return type;
   }
 
+  @JsonIgnore
   public String getSupposedType() {
     if (type != null) {
       return type;
@@ -454,9 +474,28 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
 
   public Schema setAdditionalProperties(Schema additionalProperties) {
     this.additionalProperties = additionalProperties;
-
-    additionalPropertiesAllowed = (additionalProperties != null) ? false : null;
+    additionalPropertiesAllowed = (additionalProperties == null);
     return this;
+  }
+
+  @JsonProperty(value = ADDITIONALPROPERTIES, access = JsonProperty.Access.WRITE_ONLY)
+  private void setMappedAdditionalProperties(JsonNode additionalProperties) throws JsonProcessingException {
+    if (additionalProperties.isBoolean()) {
+      setAdditionalPropertiesAllowed(additionalProperties.booleanValue());
+    } else if (additionalProperties.isObject()) {
+      setAdditionalProperties(TreeUtil.json.treeToValue(additionalProperties, Schema.class));
+    }
+  }
+
+  @JsonProperty(value = ADDITIONALPROPERTIES, access = JsonProperty.Access.READ_ONLY)
+  private Object getMappedAdditionalProperties() {
+    if (hasAdditionalProperties()) {
+      return getAdditionalProperties();
+    } else if (getAdditionalPropertiesAllowed() != null) {
+      return getAdditionalPropertiesAllowed();
+    }
+
+    return null;
   }
 
   public boolean hasAdditionalProperties() {
