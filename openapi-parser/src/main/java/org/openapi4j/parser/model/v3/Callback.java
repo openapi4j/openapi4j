@@ -71,7 +71,7 @@ public class Callback extends AbsRefOpenApiSchema<Callback> {
    * @return paths and/or extensions
    */
   @JsonAnyGetter
-  public Map<String, Object> any() {
+  private Map<String, Object> any() {
     if (callbackPaths != null && extensions != null) {
       extensions.putAll(callbackPaths);
       return extensions;
@@ -91,7 +91,7 @@ public class Callback extends AbsRefOpenApiSchema<Callback> {
    * @param value the value : path or extension
    */
   @JsonAnySetter
-  public void add(String name, Object value) {
+  private void add(String name, Object value) {
     if (value == null) return;
 
     try {

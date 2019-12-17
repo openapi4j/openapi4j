@@ -54,8 +54,6 @@ public class ModelTest extends Checker {
   public void callbackTest() {
     Callback callback = new Callback();
 
-    callback.add("foo", null);
-
     mapCheck(
       "/foo",
       new Path(),
