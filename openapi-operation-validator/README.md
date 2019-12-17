@@ -2,7 +2,8 @@
 
 This is the home page of the openapi4j Operation validator project for Java (or JVM platform in general).
 
-Operation validator module includes the following features :
+Operation validator module includes the following features:
+
 * Operation validator for requests and/or responses.
 * Collection of requests/responses adapters for your environment (with associated helpers).
 
@@ -22,12 +23,14 @@ Add the following to your `pom.xml` :
     <artifactId>openapi-operation-validator</artifactId>
 </dependency>
 ```
+
 [![Release version](https://img.shields.io/nexus/r/org.openapi4j/openapi-schema-validator?style=for-the-badge&color=blue&label=Release&server=https%3A%2F%2Foss.sonatype.org)](https://search.maven.org/search?q=g:org.openapi4j%20a:openapi-operation-validator)
 [![Snapshot version](https://img.shields.io/nexus/s/org.openapi4j/openapi-schema-validator?style=for-the-badge&color=blue&label=Snapshot&server=https%3A%2F%2Foss.sonatype.org)](https://oss.sonatype.org/content/repositories/snapshots/org/openapi4j/openapi-operation-validator/)
 
 ## Usage
 
-Standard :
+Standard:
+
 ```java
 // openAPI & operation objects are from openapi4j parser
 RequestValidator val = new RequestValidator(openAPI);
@@ -36,13 +39,15 @@ val.validate(request, operation); // throws ValidationException
 val.validate(response, operation); // throws ValidationException
 ```
 
-Raw :
+Raw:
+
 ```java
 OperationValidator val = new OperationValidator(openAPI, operation);
 val.validate...(request, results); // ... stands for query, path, headers, ...
 ```
 
 Requests and responses are wrapped with the specific adapter.
+
 ```java
 // Pseudo
 Request request = [Adapter]Request.of([AdapterRequestObject] rq);
@@ -52,7 +57,7 @@ Request request = [Adapter]Request.of([AdapterRequestObject] rq);
 
 ## Supported adapters
 
-Adapters' dependencies are not provided, you must add the one you need.
+Adapters dependencies are not provided, you must add the one you need.
 
 See [openapi-operation-adapters](https://github.com/openapi4j/openapi4j/tree/master/openapi-operation-adapters) to get
 the list of currently available adapters and further documentation.
@@ -66,7 +71,8 @@ It should be very straightforward to implement a builder. Look at the code of cu
 * Form URL encoded (application/x-www-form-urlencoded)
 * Or _whatever_ if you can provide a JsonNode or Map<String, Object> when building the body wrapper.
 
-Optional additions (add the corresponding dependencies) :
+Optional additions (add the corresponding dependencies):
+
 * Multipart (i.e pseudo multipart/(form-data|mixed)) [See Apache Commons FileUpload >= 1.3](https://github.com/apache/commons-fileupload)
 * XML (i.e pseudo (application|text)/(xml|*+xml)) [See JSON-java](https://github.com/stleary/JSON-java)
 
@@ -76,10 +82,11 @@ Other content types are considered as a single text node to cover direct file up
 
 ## Limitations
 
-* Security and *functional* related aspects (roles/scopes, token/cookie validity, ...) are not validated by this module unless specified on each adapter README.md.
+* Security and *functional* related aspects (roles/scopes, token/cookie validity, ...) are not validated by this module unless specified on each adapter `README.md`.
 In such case, you MUST refer and fallback to your middleware layer for documentation.
 
-Here's a list of currently non supported keywords :
+Here's a list of currently non supported keywords:
+
 * allowedReserved (maybe forever).
 * allowEmptyValue (will be removed in later version OAS).
 * XML :
