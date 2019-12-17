@@ -30,12 +30,12 @@ public class CommonValidationTest extends Checker {
   // INVALID
   //////////////////////////////////////////////////////////////
 
-  @Test(expected = ValidationException.class)
+  @Test(expected = ResolutionException.class)
   public void malformedSpecInvalid() throws Exception {
     validate("/model/v3/invalid/malformed-spec.yaml");
   }
 
-  @Test(expected = ResolutionException.class)
+  @Test(expected = AssertionError.class)
   public void additionalPropertiesInvalid() throws Exception {
     validate("/model/v3/invalid/additionalProperties.yaml");
   }
