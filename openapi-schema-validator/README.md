@@ -70,9 +70,9 @@ my_schema.uniqueItems : Uniqueness is not respected 'bar'.
 
 Without doing any anything with the options, the Schema validator is compliant with the specification.
 
-So why ?
+So why?
 
-Extensions have two distinct goals :
+Extensions have two distinct goals:
 - Overriding a known keyword.
 - Adding your business validator.
 
@@ -81,8 +81,8 @@ JSON Schema further drafts try to cover more and more scenarios, but we think it
 Schema Object is not perfect but has the advantage to not overly complexify the specification and its location is near the right spot.  
 To illustrate the purpose, think about XML Schema Definition, Protocol Buffers, simpleSchema and other alternatives old or new, none of those go the JSON Schema way because nobody can maintain this for APIs.
 
-This is where `extensions` will let you fill the gap !  
-By implementing your own validation, you don't create you subset of the offical OpenAPI Specification, you use it at its maximum !
+This is where `extensions` will let you fill the gap!  
+By implementing your own validation, you don't create a subset of the official OpenAPI Specification, you use it at its maximum!
 
 There's no overhead to use extensions, default validators are built directly with this process.
 
@@ -91,7 +91,7 @@ There's no overhead to use extensions, default validators are built directly wit
 You can override a known keyword with your own validator.  
 Look at the example to start linking a known keyword with your implementation.
 
-Feel free to contribute to those extensions if you think your implementation could help the community !
+Feel free to contribute to those extensions if you think your implementation could help the community!
 There's no plan yet for releasing contributions on validation extensions, for now it's "only" for sharing.  
 
 ### Business validator
