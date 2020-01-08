@@ -51,13 +51,8 @@ See related projects for limitations and issues.
 ## Roadmap
 
 - [See CHANGELOG.md for previous versions](https://github.com/openapi4j/openapi4j/blob/master/CHANGELOG.md)  
-- 0.3 :
-    - Complete response validation implementation.
-- 0.4 :
-    - Validate parameter from content property.
-    - Fast failing behaviour.
-- Next :
-    - Ready for 1.0 candidate ?  
+- 0.6 :
+    - Waiting for community feedbacks before releasing 1.0.
 
 Common until version 1.0 :
 * bug fixing / code coverage.
