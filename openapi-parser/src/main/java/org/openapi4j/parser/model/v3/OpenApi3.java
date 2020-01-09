@@ -2,6 +2,7 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.model.OAIContext;
@@ -20,7 +21,8 @@ public class OpenApi3 extends AbsExtendedOpenApiSchema<OpenApi3> implements OAI 
   private Map<String, Path> paths;
   private Components components;
   private ExternalDocs externalDocs;
-  private SecurityRequirement security;
+  @JsonProperty("security")
+  private List<SecurityRequirement> securityRequirements;
   @JsonIgnore
   private OAIContext context;
 
@@ -112,12 +114,31 @@ public class OpenApi3 extends AbsExtendedOpenApiSchema<OpenApi3> implements OAI 
   }
 
   // SecurityRequirement
-  public SecurityRequirement getSecurity() {
-    return security;
+  public List<SecurityRequirement> getSecurityRequirements() {
+    return securityRequirements;
   }
 
-  public OpenApi3 setSecurity(SecurityRequirement security) {
-    this.security = security;
+  public OpenApi3 setSecurityRequirements(List<SecurityRequirement> securityRequirements) {
+    this.securityRequirements = securityRequirements;
+    return this;
+  }
+
+  public boolean hasSecurityRequirements() {
+    return securityRequirements != null;
+  }
+
+  public OpenApi3 addSecurityRequirement(SecurityRequirement securityRequirement) {
+    securityRequirements = listAdd(securityRequirements, securityRequirement);
+    return this;
+  }
+
+  public OpenApi3 insertSecurityRequirement(int index, SecurityRequirement securityRequirement) {
+    securityRequirements = listAdd(securityRequirements, index, securityRequirement);
+    return this;
+  }
+
+  public OpenApi3 removeSecurityRequirement(SecurityRequirement securityRequirement) {
+    listRemove(securityRequirements, securityRequirement);
     return this;
   }
 
@@ -242,7 +263,7 @@ public class OpenApi3 extends AbsExtendedOpenApiSchema<OpenApi3> implements OAI 
     copy.setPaths(copyMap(getPaths(), context, followRefs));
     copy.setComponents(copyField(getComponents(), context, followRefs));
     copy.setExternalDocs(copyField(getExternalDocs(), context, followRefs));
-    copy.setSecurity(copyField(getSecurity(), context, followRefs));
+    copy.setSecurityRequirements(copyList(getSecurityRequirements(), context, followRefs));
     copy.setExtensions(copyMap(getExtensions()));
     copy.setContext(context);
 
