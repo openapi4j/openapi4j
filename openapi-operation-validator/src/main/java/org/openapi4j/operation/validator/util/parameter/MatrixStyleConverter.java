@@ -1,7 +1,6 @@
 package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.openapi4j.parser.model.v3.AbsParameter;
 
@@ -30,7 +29,7 @@ class MatrixStyleConverter extends FlatStyleConverter {
   @Override
   public JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) {
     if (rawValue == null) {
-      return JsonNodeFactory.instance.nullNode();
+      return null;
     }
 
     final Map<String, Object> paramValues;
@@ -44,22 +43,23 @@ class MatrixStyleConverter extends FlatStyleConverter {
 
     if (TYPE_OBJECT.equals(type)) {
       return getObjectValues(param, paramName, rawValue, splitPattern);
-    }
-
-    Map<String, Object> values = new HashMap<>();
-
-    if (TYPE_ARRAY.equals(type)) {
-      values.put(
-        paramName,
-        getArrayValues(param, rawValue, splitPattern));
     } else {
-      Matcher matcher = PREFIXED_SEMICOLON_NAME_REGEX.matcher(rawValue);
-      if (matcher.matches()) {
-        values.put(matcher.group(1), matcher.group(2));
-      }
-    }
+      Map<String, Object> values = new HashMap<>();
 
-    return values;
+      if (TYPE_ARRAY.equals(type)) {
+        List<String> arrayValues = getArrayValues(param, rawValue, splitPattern);
+        if (arrayValues != null && arrayValues.size() != 0) {
+          values.put(paramName, arrayValues);
+        }
+      } else {
+        Matcher matcher = PREFIXED_SEMICOLON_NAME_REGEX.matcher(rawValue);
+        if (matcher.matches()) {
+          values.put(matcher.group(1), matcher.group(2));
+        }
+      }
+
+      return values;
+    }
   }
 
   private Map<String, Object> getObjectValues(AbsParameter<?> param, String paramName, String rawValue, String splitPattern) {

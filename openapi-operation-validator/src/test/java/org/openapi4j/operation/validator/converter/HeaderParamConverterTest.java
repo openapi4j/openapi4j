@@ -108,23 +108,23 @@ public class HeaderParamConverterTest {
         JsonNodeFactory.instance.arrayNode().add(JsonNodeFactory.instance.nullNode()),
         mapToNodes(parameters, values).get(parameterName));
     } else {
-      assertEquals(
-        JsonNodeFactory.instance.nullNode(),
-        mapToNodes(parameters, values).get(parameterName));
+      Map<String, JsonNode> nodes = mapToNodes(parameters, values);
+
+      if (nodes.get(parameterName) != null) {
+        assertEquals(
+          JsonNodeFactory.instance.nullNode(),
+          nodes.get(parameterName));
+      }
     }
 
     // null value
     values.put(parameterName, null);
-    assertEquals(
-      JsonNodeFactory.instance.nullNode(),
-      mapToNodes(parameters, values).get(parameterName));
+    assertEquals(JsonNodeFactory.instance.nullNode(), mapToNodes(parameters, values).get(parameterName));
 
+    // unlinked param/value
     // empty map
     values.clear();
-    assertEquals(
-      JsonNodeFactory.instance.nullNode(),
-      mapToNodes(parameters, values).get(parameterName));
-
+    assertNull(mapToNodes(parameters, values).get(parameterName));
     // null map
     assertNull(mapToNodes(parameters, null).get(parameterName));
   }

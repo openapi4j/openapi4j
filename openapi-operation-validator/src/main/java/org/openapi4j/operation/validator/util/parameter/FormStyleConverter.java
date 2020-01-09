@@ -1,7 +1,6 @@
 package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.Schema;
@@ -32,7 +31,7 @@ class FormStyleConverter extends FlatStyleConverter {
   @Override
   public JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) {
     if (rawValue == null) {
-      return JsonNodeFactory.instance.nullNode();
+      return null;
     }
 
     String type = param.getSchema().getSupposedType();
@@ -54,6 +53,7 @@ class FormStyleConverter extends FlatStyleConverter {
 
     Matcher matcher = REGEX.matcher(rawValue);
     List<String> arrayValues = new ArrayList<>();
+
     if (matcher.find()) {
       do {
         if (matcher.group(1).equals(paramName)) {
@@ -64,11 +64,11 @@ class FormStyleConverter extends FlatStyleConverter {
           }
         }
       } while (matcher.find());
-    } else {
-      arrayValues.add(null);
     }
 
-    paramValues.put(paramName, arrayValues);
+    if (arrayValues.size() != 0) { // Param found ?
+      paramValues.put(paramName, arrayValues);
+    }
 
     return paramValues;
   }
@@ -93,7 +93,7 @@ class FormStyleConverter extends FlatStyleConverter {
       Matcher matcher = REGEX.matcher(rawValue);
       return (matcher.find())
         ? getParameterValues(param, paramName, matcher.group(2), ",")
-        : new HashMap<>();
+        : null;
     }
   }
 

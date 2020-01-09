@@ -1,7 +1,6 @@
 package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.openapi4j.parser.model.v3.AbsParameter;
 
@@ -26,7 +25,7 @@ class DelimitedStyleConverter extends FlatStyleConverter {
   @Override
   public JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) {
     if (rawValue == null) {
-      return JsonNodeFactory.instance.nullNode();
+      return null;
     }
 
     if (TYPE_ARRAY.equals(param.getSchema().getSupposedType())) {
@@ -45,16 +44,14 @@ class DelimitedStyleConverter extends FlatStyleConverter {
         }
       }
 
-      if (arrayValues.isEmpty()) {
-        return JsonNodeFactory.instance.nullNode();
+      if (arrayValues.size() != 0) { // Param found ?
+        paramValues.put(paramName, arrayValues);
       }
 
-      paramValues.put(paramName, arrayValues);
-
       return convert(param, paramName, paramValues);
-    } else {
-      // Delimited parameter cannot be an object or primitive.
-      return JsonNodeFactory.instance.nullNode();
     }
+
+    // delimited parameter cannot be an object or primitive
+    return null;
   }
 }

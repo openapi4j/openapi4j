@@ -20,7 +20,7 @@ interface StyleConverter {
   @SuppressWarnings("unchecked")
   default JsonNode convert(AbsParameter<?> param, String paramName, Map<String, Object> paramValues) {
     if (paramValues == null || paramValues.size() == 0) {
-      return JsonNodeFactory.instance.nullNode();
+      return null;
     }
 
     String style = param.getSchema().getSupposedType();

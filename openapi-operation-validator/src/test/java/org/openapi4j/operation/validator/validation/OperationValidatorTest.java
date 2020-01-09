@@ -70,6 +70,17 @@ public class OperationValidatorTest {
       true);
 
     check(
+      new DefaultRequest.Builder(GET, "/foo").query("boolQueryParam=false&intQueryParam=12").build(),
+      val::validateQuery,
+      true);
+
+    // nullable
+    check(
+      new DefaultRequest.Builder(GET, "/foo").query("boolQueryParam=false&intQueryParam=").build(),
+      val::validateQuery,
+      false);
+
+    check(
       new DefaultRequest.Builder(GET, "/foo").query("boolQueryParam=yes").build(),
       val::validateQuery,
       false);
