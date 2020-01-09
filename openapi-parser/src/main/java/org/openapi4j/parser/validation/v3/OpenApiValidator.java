@@ -53,7 +53,7 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
     validateList(api, api.getServers(), results, false, SERVERS, ServerValidator.instance());
     validateMap(api, api.getPaths(), results, true, PATHS, Regexes.PATH_REGEX, PathValidator.instance());
     validateField(api, api.getComponents(), results, false, COMPONENTS, ComponentsValidator.instance());
-    validateField(api, api.getSecurity(), results, false, SECURITY, SecurityRequirementValidator.instance());
+    validateList(api, api.getSecurityRequirements(), results, false, SECURITY, SecurityRequirementValidator.instance());
     validateList(api, api.getTags(), results, false, TAGS, TagValidator.instance());
     validateField(api, api.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
     validateMap(api, api.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);

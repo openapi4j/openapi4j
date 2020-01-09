@@ -10,6 +10,11 @@ public class SecurityTest extends Checker {
     validate("/validation/v3/security/valid/security.yaml");
   }
 
+  @Test
+  public void securityRoot() throws Exception {
+    validate("/validation/v3/security/valid/security-root.yaml");
+  }
+
   //////////////////////////////////////////////////////////////
   // INVALID
   //////////////////////////////////////////////////////////////

@@ -1,0 +1,15 @@
+openapi: 3.0.2
+info:
+  title: 'security-root'
+  version: '1'
+paths: {}
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+security:
+  - ApiKeyAuth: []
