@@ -35,6 +35,11 @@ paths:
           required: true
           schema:
             type: boolean
+        - name: intQueryParam
+          in: query
+          schema:
+            type: integer
+            format: int32
         - name: floatHeaderParam
           in: header
           required: true

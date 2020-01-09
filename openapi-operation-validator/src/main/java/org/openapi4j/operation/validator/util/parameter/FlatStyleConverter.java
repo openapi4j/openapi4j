@@ -52,6 +52,8 @@ abstract class FlatStyleConverter implements StyleConverter {
       while (i < splitValues.length) {
         if (param.getSchema().hasProperty(splitValues[i])) {
           values.put(splitValues[i++], splitValues[i++]);
+        } else {
+          i = i + 2;
         }
       }
     }

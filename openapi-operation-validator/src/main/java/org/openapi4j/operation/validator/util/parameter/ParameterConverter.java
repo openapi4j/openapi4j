@@ -171,7 +171,9 @@ public final class ParameterConverter {
         convertedValue = getValueFromContentType(param.getContentMediaTypes(), rawValue);
       }
 
-      mappedValues.put(paramName, convertedValue);
+      if (convertedValue != null) {
+        mappedValues.put(paramName, convertedValue);
+      }
     }
 
     return mappedValues;
@@ -194,24 +196,30 @@ public final class ParameterConverter {
     }
 
     for (Map.Entry<String, AbsParameter<M>> paramEntry : specParameters.entrySet()) {
-      String paramName = paramEntry.getKey();
+      final String paramName = paramEntry.getKey();
       final AbsParameter<M> param = paramEntry.getValue();
-      JsonNode convertedValue;
+      final JsonNode convertedValue;
 
-      Collection<String> headerValues = headers.get(paramName);
-      if (headerValues != null) {
-        if (param.getSchema() != null) {
-          convertedValue = SimpleStyleConverter.instance().convert(param, paramName, String.join(",", headerValues));
-        } else {
-          convertedValue = getValueFromContentType(
-            param.getContentMediaTypes(),
-            headerValues.stream().findFirst().orElse(null));
-        }
+      if (!headers.containsKey(paramName)) {
+        convertedValue = null;
       } else {
-        convertedValue = JsonNodeFactory.instance.nullNode();
+        Collection<String> headerValues = headers.get(paramName);
+        if (headerValues != null) {
+          if (param.getSchema() != null) {
+            convertedValue = SimpleStyleConverter.instance().convert(param, paramName, String.join(",", headerValues));
+          } else {
+            convertedValue = getValueFromContentType(
+              param.getContentMediaTypes(),
+              headerValues.stream().findFirst().orElse(null));
+          }
+        } else {
+          convertedValue = JsonNodeFactory.instance.nullNode();
+        }
       }
 
-      mappedValues.put(paramName, convertedValue);
+      if (convertedValue != null) {
+        mappedValues.put(paramName, convertedValue);
+      }
     }
 
     return mappedValues;
@@ -242,14 +250,24 @@ public final class ParameterConverter {
         param.setExplode(true);
       }
 
-      String value = cookies.get(paramName);
-      if (param.getSchema() != null) {
-        convertedValue = SimpleStyleConverter.instance().convert(param, paramName, value);
+      if (!cookies.containsKey(paramName)) {
+        convertedValue = null;
       } else {
-        convertedValue = getValueFromContentType(param.getContentMediaTypes(), value);
+        String value = cookies.get(paramName);
+        if (value != null) {
+          if (param.getSchema() != null) {
+            convertedValue = SimpleStyleConverter.instance().convert(param, paramName, value);
+          } else {
+            convertedValue = getValueFromContentType(param.getContentMediaTypes(), value);
+          }
+        } else {
+          convertedValue = JsonNodeFactory.instance.nullNode();
+        }
       }
 
-      mappedValues.put(paramName, convertedValue);
+      if (convertedValue != null) {
+        mappedValues.put(paramName, convertedValue);
+      }
     }
 
     return mappedValues;
@@ -267,11 +285,11 @@ public final class ParameterConverter {
         try {
           return ContentConverter.convert(mediaType.getValue().getSchema(), mediaType.getKey(), null, value);
         } catch (IOException e) {
-          return JsonNodeFactory.instance.nullNode();
+          return null;
         }
       }
     }
 
-    return JsonNodeFactory.instance.nullNode();
+    return null;
   }
 }

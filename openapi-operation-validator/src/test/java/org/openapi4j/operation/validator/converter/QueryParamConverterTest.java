@@ -152,12 +152,16 @@ public class QueryParamConverterTest {
     // wrong value
     if (isArray) {
       assertEquals(
-        JsonNodeFactory.instance.arrayNode().add(JsonNodeFactory.instance.nullNode()),
+        JsonNodeFactory.instance.arrayNode().add((JsonNode) null),
         mapToNodes(parameters, invalidValue).get(parameterName));
     } else {
-      assertEquals(
-        JsonNodeFactory.instance.nullNode(),
-        mapToNodes(parameters, invalidValue).get(parameterName));
+      Map<String, JsonNode> nodes = mapToNodes(parameters, invalidValue);
+
+      if (nodes.get(parameterName) != null) {
+        assertEquals(
+          JsonNodeFactory.instance.nullNode(),
+          nodes.get(parameterName));
+      }
     }
 
     // null
