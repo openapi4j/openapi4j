@@ -119,6 +119,7 @@ public class Link extends AbsExtendedRefOpenApiSchema<Link> {
   protected Link copyReference(OAIContext context) {
     Link copy = new Link();
     copy.setRef(getRef());
+    copy.setCanonicalRef(getCanonicalRef());
     return copy;
   }
 

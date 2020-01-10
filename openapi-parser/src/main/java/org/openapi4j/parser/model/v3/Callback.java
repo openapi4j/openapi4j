@@ -106,6 +106,7 @@ public class Callback extends AbsRefOpenApiSchema<Callback> {
   protected Callback copyReference(OAIContext context) {
     Callback copy = new Callback();
     copy.setRef(getRef());
+    copy.setCanonicalRef(getCanonicalRef());
     return copy;
   }
 

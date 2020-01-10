@@ -73,6 +73,7 @@ public class RequestBody extends AbsExtendedRefOpenApiSchema<RequestBody> {
   protected RequestBody copyReference(OAIContext context) {
     RequestBody copy = new RequestBody();
     copy.setRef(getRef());
+    copy.setCanonicalRef(getCanonicalRef());
     return copy;
   }
 

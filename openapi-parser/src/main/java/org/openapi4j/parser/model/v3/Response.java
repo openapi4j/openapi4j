@@ -122,6 +122,7 @@ public class Response extends AbsExtendedRefOpenApiSchema<Response> {
   protected Response copyReference(OAIContext context) {
     Response copy = new Response();
     copy.setRef(getRef());
+    copy.setCanonicalRef(getCanonicalRef());
     return copy;
   }
 
