@@ -29,7 +29,7 @@ class HeaderValidator extends Validator3Base<OpenApi3, Header> {
     // VALIDATION EXCLUSIONS :
     // allowReserved, deprecated, description, example, examples, explode, required
     if (header.isRef()) {
-      validateReference(api, header.getRef(), results, $REF, HeaderValidator.instance(), Header.class);
+      validateReference(api, header, results, $REF, HeaderValidator.instance(), Header.class);
     } else {
       validateString(header.getStyle(), results, false, "simple", STYLE); // Only simple is allowed.
       validateField(api, header.getSchema(), results, false, SCHEMA, SchemaValidator.instance());

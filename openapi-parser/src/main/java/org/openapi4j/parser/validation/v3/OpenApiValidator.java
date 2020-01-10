@@ -102,7 +102,7 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
     String name = null;
 
     if (parameter.isRef()) {
-      Reference reference = api.getContext().getReferenceRegistry().getRef(parameter.getRef());
+      Reference reference = parameter.getReference(api.getContext());
       if (reference != null && reference.getContent() != null) {
         in = reference.getContent().path(IN).textValue();
         required = reference.getContent().path(REQUIRED).booleanValue();

@@ -124,7 +124,7 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
 
     if (pathFragments.length > index) {
       if (schema.isRef()) {
-        schema = api.getContext().getReferenceRegistry().getRef(schema.getRef()).getMappedContent(Schema.class);
+        schema = schema.getReference(api.getContext()).getMappedContent(Schema.class);
       }
 
       if (TYPE_ARRAY.equals(schema.getType())) {

@@ -74,7 +74,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
     // example, title, exclusiveMaximum, exclusiveMinimum, nullable, uniqueItems
 
     if (schema.isRef()) {
-      validateReference(api, schema.getRef(), results, $REF, SchemaValidator.instance(), Schema.class);
+      validateReference(api, schema, results, $REF, SchemaValidator.instance(), Schema.class);
     } else {
       validateField(api, schema.getAdditionalProperties(), results, false, ADDITIONALPROPERTIES, SchemaValidator.instance());
       validateField(api, schema.getDiscriminator(), results, false, DISCRIMINATOR, DiscriminatorValidator.instance());
@@ -150,7 +150,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
 
     for (Schema schema : schemas) {
       if (schema.isRef()) {
-        schema = getReferenceContent(api, schema.getRef(), results, DISCRIMINATOR, Schema.class);
+        schema = getReferenceContent(api, schema, results, DISCRIMINATOR, Schema.class);
       }
 
       if (!schema.hasProperty(discriminator.getPropertyName())) {

@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class ReferenceResolverTest {
   @Test(expected = ResolutionException.class)
@@ -68,6 +68,15 @@ public class ReferenceResolverTest {
     OAI3Context apiContext = new OAI3Context(specPath.toURI(), spec);
     Reference reference = apiContext.getReferenceRegistry().getRef("reference2.yaml#/components/parameters/ARef");
     assertNotNull(reference.getContent());
+    Reference sameReference = apiContext.getReferenceRegistry().getRef(null, "reference2.yaml#/components/parameters/ARef");
+    assertNotNull(reference.getContent());
+    assertEquals(reference, sameReference);
+  }
+
+  @Test
+  public void referenceValueNull() throws Exception {
+    URL specPath = getClass().getResource("/reference/valid/reference.yaml");
+    assertEquals(specPath.toURI(), ReferenceUri.resolve(specPath.toURI(), null));
   }
 
   @Test
@@ -75,8 +84,14 @@ public class ReferenceResolverTest {
     URL specPath = getClass().getResource("/reference/valid/identical_relative_ref/api.yaml");
     JsonNode spec = TreeUtil.load(specPath);
     OAI3Context apiContext = new OAI3Context(specPath.toURI(), spec);
-    Reference reference = apiContext.getReferenceRegistry().getRef("reference2.yaml#/components/parameters/ARef");
-    assertNotNull(reference.getContent());
+
+    assertEquals(3, apiContext.getReferenceRegistry().getReferences().size());
+
+    Reference refType1 = apiContext.getReferenceRegistry().getRef("testType.yaml#/TestType");
+    assertNotNull(refType1.getContent());
+    Reference refType2 = apiContext.getReferenceRegistry().getRef("schema2/testType.yaml#/TestType");
+    assertNotNull(refType2.getContent());
+    assertNotEquals(refType1, refType2);
   }
 
   @Test(expected = DecodeException.class)

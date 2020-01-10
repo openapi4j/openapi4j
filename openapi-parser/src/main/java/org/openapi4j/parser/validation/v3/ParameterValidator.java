@@ -49,7 +49,7 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
 
     // checks for path params are made with path validator
     if (parameter.isRef()) {
-      validateReference(api, parameter.getRef(), results, $REF, ParameterValidator.instance(), Parameter.class);
+      validateReference(api, parameter, results, $REF, ParameterValidator.instance(), Parameter.class);
     } else {
       validateString(parameter.getName(), results, true, NAME);
       validateString(parameter.getIn(), results, true, Regexes.PARAM_IN_REGEX, IN);

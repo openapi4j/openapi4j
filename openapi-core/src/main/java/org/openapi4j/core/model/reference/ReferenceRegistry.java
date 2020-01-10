@@ -6,49 +6,62 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The reference registry cache
+ * The reference registry cache.
  */
 public class ReferenceRegistry {
-  private URI baseUri;
+  private final URI baseUri;
   private final Map<String, Reference> references = new HashMap<>();
 
   public ReferenceRegistry(URI baseUri) {
     this.baseUri = baseUri;
   }
 
-  public void addRef(URI baseUri, String canonicalRefValue, String refValue) {
-    references.put(canonicalRefValue, new Reference(baseUri, canonicalRefValue, refValue, null));
+  /**
+   * Add/replace a reference to the registry.
+   *
+   * @param uri      The base uri.
+   * @param refValue The reference expression.
+   * @return The reference created or replaced.
+   */
+  public Reference addRef(URI uri, String refValue) {
+    String canonicalRefValue = ReferenceUri.resolveAsString(uri, refValue);
+
+    Reference reference = new Reference(uri, canonicalRefValue, refValue, null);
+    references.put(canonicalRefValue, reference);
+
+    return reference;
   }
 
   /**
    * Get the reference from the given reference expression.
-   * The expression
-   * @param ref
-   * @return
+   * The expression can be absolute or relative to the base context URI.
+   *
+   * @param refValue The given reference expression.
+   * @return The reference found, {@code null} otherwise.
    */
-  public Reference getRef(String ref) {
-    URI uri = URI.create(ref);
-
-    if (uri.isAbsolute()) {
-      return references.get(ref);
+  public Reference getRef(String refValue) {
+    if (URI.create(ReferenceUri.encodeBraces(refValue)).isAbsolute()) {
+      return references.get(refValue);
     }
 
     // Try to resolve the relative path from base URI
-    return references.get(baseUri.resolve(ref).toString());
+    return getRef(baseUri, refValue);
   }
 
-  public Reference getRef(URI baseUri, String ref) {
-    if (baseUri == null) {
-      return getRef(ref);
+  /**
+   * Get the reference from the given reference expression with uri as base.
+   *
+   * @param uri      The given base URI, can be null to fallback to {@link #getRef(String)}.
+   * @param refValue The given reference expression.
+   * @return The reference found, {@code null} otherwise.
+   */
+  public Reference getRef(URI uri, String refValue) {
+    if (uri == null) {
+      return getRef(refValue);
     }
 
-    for (Reference reference : references.values()) {
-      if (reference.getBaseUri().equals(baseUri) && reference.getRef().equals(ref)) {
-        return reference;
-      }
-    }
-
-    return null;
+    String canonicalRefValue = ReferenceUri.resolveAsString(uri, refValue);
+    return references.get(canonicalRefValue);
   }
 
   public void mergeRefs(ReferenceRegistry registry) {

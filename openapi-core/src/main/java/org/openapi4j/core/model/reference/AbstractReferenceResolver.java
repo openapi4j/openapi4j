@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
+
 /**
  * Base class for JSON reference resolution implementation.
  * See <a href="https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03">JSON reference specification</a>.
@@ -68,23 +70,19 @@ public abstract class AbstractReferenceResolver {
 
       if (refValue.startsWith(HASH)) {
         // internal content of current resource (i.e. #/pointer)
-        String canonicalRefValue = uri.resolve(refValue).toString();
-        addRef(uri, refParents, canonicalRefValue, refValue);
+        addRef(uri, refParents, refValue);
       } else {
         final URI subUri;
-        final String canonicalRefValue;
 
         if (!refValue.contains(HASH)) {
           // direct content from external resource (i.e. external.yaml)
-          subUri = uri.resolve(refValue);
-          canonicalRefValue = subUri.toString();
+          subUri = ReferenceUri.resolve(uri, refValue);
         } else {
           // or relative content from external resource (i.e. external.yaml#/pointer or /base/external.yaml#/pointer)
-          subUri = uri.resolve(refValue.substring(0, refValue.indexOf(HASH)));
-          canonicalRefValue = uri.resolve(refValue).toString();
+          subUri = ReferenceUri.resolve(uri, refValue.substring(0, refValue.indexOf(HASH)));
         }
 
-        addRef(subUri, refParents, canonicalRefValue, refValue);
+        addRef(subUri, refParents, refValue);
 
         if (!documentRegistry.containsKey(subUri)) {
           JsonNode subDocument = registerDocument(subUri);
@@ -94,16 +92,17 @@ public abstract class AbstractReferenceResolver {
     }
   }
 
-  private void addRef(URI uri, List<JsonNode> refParents, String canonicalRefValue, String refValue) {
-    //canonicalRefValue = quietlyDecode(canonicalRefValue);
+  private void addRef(URI uri, List<JsonNode> refParents, String refValue) {
+    // Add the reference to the registry
+    Reference reference = referenceRegistry.addRef(uri, refValue);
 
+    // Inject the canonical value to the document
+    // to auto-setup the value when mapping from parser.
     for (JsonNode refParent : refParents) {
       if (refValue.equals(refParent.get(refKeyword).textValue())) {
-        ((ObjectNode) refParent).set("canonical$ref", TreeUtil.json.getNodeFactory().textNode(canonicalRefValue));
-        break;
+        ((ObjectNode) refParent).set(ABS_REF_FIELD, TreeUtil.json.getNodeFactory().textNode(reference.getCanonicalRef()));
       }
     }
-    referenceRegistry.addRef(uri, canonicalRefValue, refValue);
   }
 
   private JsonNode registerDocument(URI uri) throws ResolutionException {
@@ -152,7 +151,10 @@ public abstract class AbstractReferenceResolver {
 
     JsonNode subRefNode = valueNode.get(refKeyword);
     if (subRefNode != null) {
-      resolveReference(referenceRegistry.getRef(ref.getBaseUri(), subRefNode.textValue()), visitedRefs);
+      String refValue = subRefNode.textValue();
+      String canonicalRefValue = ReferenceUri.resolveAsString(ref.getBaseUri(), refValue);
+
+      resolveReference(referenceRegistry.getRef(canonicalRefValue), visitedRefs);
     }
 
     ref.setContent(valueNode);
@@ -162,22 +164,4 @@ public abstract class AbstractReferenceResolver {
     final int index = ref.indexOf(HASH);
     return (index == -1) ? "/" : ref.substring(index + 1);
   }
-
-  /*private String quietlyEncode(String value) {
-    try {
-      return URLEncoder.encode(value, "UTF-8");
-    } catch (UnsupportedEncodingException ignored) {
-      // will never happen
-      return value;
-    }
-  }
-
-  private String quietlyDecode(String refValue) {
-    try {
-      return URLDecoder.decode(refValue, "UTF-8");
-    } catch (UnsupportedEncodingException ignored) {
-      // will never happen
-      return refValue;
-    }
-  }*/
 }

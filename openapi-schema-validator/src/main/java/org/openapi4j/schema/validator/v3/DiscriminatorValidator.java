@@ -12,6 +12,7 @@ import org.openapi4j.schema.validator.ValidationContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ALLOF;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DISCRIMINATOR;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAPPING;
@@ -132,7 +133,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
     JsonNode allOfNode = getParentSchemaNode().get(ALLOF);
 
     for (int index = 0; index < allOfNode.size(); ++index) {
-      for (JsonNode refNode : allOfNode.get(index).findValues(OAI3SchemaKeywords.$REF)) {
+      for (JsonNode refNode : allOfNode.get(index).findValues(ABS_REF_FIELD)) {
         Reference reference = context.getContext().getReferenceRegistry().getRef(refNode.textValue());
         discriminatorNode = reference.getContent().get(DISCRIMINATOR);
         if (discriminatorNode != null) {

@@ -9,6 +9,8 @@ import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
+import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
+
 /**
  * JSON Reference Schema Object validator.
  * This validator is not truly a keyword validator,
@@ -42,7 +44,7 @@ class ReferenceValidator extends BaseJsonValidator<OAI3> {
     if (HASH.equals(refValue)) {
       schemaValidator = parentSchema.findParent();
     } else {
-      Reference reference = context.getContext().getReferenceRegistry().getRef(refValue);
+      Reference reference = context.getContext().getReferenceRegistry().getRef(schemaParentNode.get(ABS_REF_FIELD).textValue());
       // Check visited references to avoid infinite loops
       JsonValidator validator = context.getReference(refValue);
       if (validator == null) {

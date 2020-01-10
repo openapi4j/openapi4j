@@ -20,7 +20,7 @@ class CallbackValidator extends ExpressionValidator<Callback> {
   @Override
   public void validate(OpenApi3 api, Callback callback, ValidationResults results) {
     if (callback.isRef()) {
-      validateReference(api, callback.getRef(), results, $REF, CallbackValidator.instance(), Callback.class);
+      validateReference(api, callback, results, $REF, CallbackValidator.instance(), Callback.class);
     } else {
       validateMap(api, callback.getCallbackPaths(), results, false, null, Regexes.NOEXT_REGEX, PathValidator.instance());
       validateMap(api, callback.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
