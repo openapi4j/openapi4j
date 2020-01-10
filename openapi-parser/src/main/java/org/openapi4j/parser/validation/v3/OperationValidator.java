@@ -54,7 +54,7 @@ class OperationValidator extends Validator3Base<OpenApi3, Operation> {
 
     for (Callback callback : operation.getCallbacks().values()) {
       if (callback.isRef()) {
-        callback = getReferenceContent(api, callback.getRef(), results, CALLBACKS, Callback.class);
+        callback = getReferenceContent(api, callback, results, CALLBACKS, Callback.class);
       }
 
       if (callback.getCallbackPaths() != null) {

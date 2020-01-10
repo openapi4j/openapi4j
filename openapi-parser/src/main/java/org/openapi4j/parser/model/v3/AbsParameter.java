@@ -181,6 +181,7 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
 
   void copyReference(AbsParameter<M> copy) {
     copy.setRef(getRef());
+    copy.setCanonicalRef(getCanonicalRef());
   }
 
   void copyContent(OAIContext context, AbsParameter<M> copy, boolean followRefs) {

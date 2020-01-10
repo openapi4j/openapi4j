@@ -1,0 +1,5 @@
+TestType:
+  description: A type with a String id
+  properties:
+    id:
+      type: string

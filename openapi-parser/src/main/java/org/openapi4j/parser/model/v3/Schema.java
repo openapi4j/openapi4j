@@ -647,6 +647,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   protected Schema copyReference(OAIContext context) {
     Schema copy = new Schema();
     copy.setRef(getRef());
+    copy.setCanonicalRef(getCanonicalRef());
     return copy;
   }
 

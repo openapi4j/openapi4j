@@ -10,6 +10,7 @@ paths:
         - $ref: '#/components/parameters/EntityId'
         - $ref: 'reference2.yaml#/components/parameters/ARef'
         - $ref: 'reference2.yaml#/components/parameters/BRef'
+        - $ref: 'reference3.yaml'
       responses:
         '200':
           description: The description

@@ -1,5 +1,7 @@
 package org.openapi4j.parser.validation.v3;
 
+import org.openapi4j.core.exception.DecodeException;
+import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.Link;
 import org.openapi4j.parser.model.v3.OpenApi3;
@@ -32,7 +34,7 @@ class LinkValidator extends ExpressionValidator<Link> {
     // VALIDATION EXCLUSIONS :
     // description
     if (link.isRef()) {
-      validateReference(api, link.getRef(), results, LINKS, LinkValidator.instance(), Link.class);
+      validateReference(api, link, results, LINKS, LinkValidator.instance(), Link.class);
     } else {
       validateMap(api, link.getHeaders(), results, false, HEADERS, Regexes.NOEXT_REGEX, HeaderValidator.instance());
       validateMap(api, link.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
@@ -43,7 +45,7 @@ class LinkValidator extends ExpressionValidator<Link> {
   // This called from operation validator
   void validateWithOperation(OpenApi3 api, Operation srcOperation, Link link, ValidationResults results) {
     if (link.isRef()) {
-      link = getReferenceContent(api, link.getRef(), results, LINKS, Link.class);
+      link = getReferenceContent(api, link, results, LINKS, Link.class);
     }
 
     String operationRef = link.getOperationRef();
@@ -53,7 +55,7 @@ class LinkValidator extends ExpressionValidator<Link> {
     if (operationId != null && operationRef != null) {
       results.addError(OP_FIELD_EXCLUSIVE_ERR_MSG);
     } else if (operationRef != null) {
-      targetOperation = getReferenceContent(api, operationRef, results, OPERATIONREF, Operation.class);
+      targetOperation = getOperationRefContent(api, operationRef, results);
     } else if (operationId != null) {
       targetOperation = findOperationById(api, operationId, results);
     } else {
@@ -100,5 +102,25 @@ class LinkValidator extends ExpressionValidator<Link> {
         results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, paramName));
       }
     }
+  }
+
+  // Why didn't they used $ref ?
+  Operation getOperationRefContent(final OpenApi3 api,
+                                   final String operationRef,
+                                   final ValidationResults results) {
+
+    Reference reference = api.getContext().getReferenceRegistry().getRef(operationRef);
+
+    if (reference == null) {
+      results.addError(String.format(REF_MISSING, operationRef), OPERATIONREF);
+    } else {
+      try {
+        return reference.getMappedContent(Operation.class);
+      } catch (DecodeException e) {
+        results.addError(String.format(REF_CONTENT_UNREADABLE, operationRef), OPERATIONREF);
+      }
+    }
+
+    return null;
   }
 }

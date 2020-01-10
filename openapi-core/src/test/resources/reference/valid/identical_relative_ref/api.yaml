@@ -1,0 +1,15 @@
+openapi: "3.0.0"
+info:
+  version: 0.1.0
+  title: Broken References Demo API
+  description: Force ReferenceResolver to fail when two $refs with the same string refer to different content
+paths: {}
+components:
+  schemas:
+    Schema1:
+      description: Inline schema with $ref to brokenRefsExample/testType.yaml
+      properties:
+        testType:
+          $ref: 'testType.yaml#/TestType'
+    Schema2:
+      $ref: 'schema2/schema2.yaml#/Schema2'

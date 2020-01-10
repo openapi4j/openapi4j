@@ -1,0 +1,5 @@
+Schema2:
+  description: Contains $ref to brokenRefsExample/schema2/testType.yaml
+  properties:
+    testType:
+      $ref: 'testType.yaml#/TestType'

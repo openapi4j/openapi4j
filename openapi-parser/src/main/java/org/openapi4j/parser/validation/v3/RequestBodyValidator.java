@@ -31,7 +31,7 @@ class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
     // VALIDATION EXCLUSIONS :
     // description, required
     if (requestBody.isRef()) {
-      validateReference(api, requestBody.getRef(), results, $REF, RequestBodyValidator.instance(), RequestBody.class);
+      validateReference(api, requestBody, results, $REF, RequestBodyValidator.instance(), RequestBody.class);
     } else {
       validateMap(api, requestBody.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
       validateMap(api, requestBody.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);

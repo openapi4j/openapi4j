@@ -25,7 +25,7 @@ class ResponseValidator extends Validator3Base<OpenApi3, Response> {
   @Override
   public void validate(OpenApi3 api, Response response, ValidationResults results) {
     if (response.isRef()) {
-      validateReference(api, response.getRef(), results, $REF, ResponseValidator.instance(), Response.class);
+      validateReference(api, response, results, $REF, ResponseValidator.instance(), Response.class);
     } else {
       validateRequired(response.getDescription(), results, true, DESCRIPTION);
       validateMap(api, response.getHeaders(), results, false, HEADERS, null, HeaderValidator.instance());
