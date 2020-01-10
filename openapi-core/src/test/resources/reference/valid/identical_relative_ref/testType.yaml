@@ -1,0 +1,5 @@
+TestType:
+  description: A type with a numeric id
+  properties:
+    id:
+      type: integer

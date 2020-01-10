@@ -12,10 +12,12 @@ import org.openapi4j.core.util.TreeUtil;
 public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends AbsOpenApiSchema<M> {
   @JsonProperty("$ref")
   private String ref;
+  @JsonProperty(value = "canonical$ref", access = JsonProperty.Access.WRITE_ONLY)
+  private String canonicalRef;
 
   // $ref
   public String getRef() {
-    return ref;
+    return canonicalRef != null ? canonicalRef : ref;
   }
 
   public boolean isRef() {

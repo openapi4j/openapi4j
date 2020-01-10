@@ -21,7 +21,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;
 public class OAI3Context implements OAIContext {
   private static final String OPERATION_REF = "operationRef";
 
-  private final ReferenceRegistry referenceRegistry = new ReferenceRegistry();
+  private final ReferenceRegistry referenceRegistry;
   private final URI baseUri;
   private final List<AuthOption> authOptions;
 
@@ -67,6 +67,7 @@ public class OAI3Context implements OAIContext {
    */
   public OAI3Context(URI baseUri, List<AuthOption> authOptions, JsonNode apiNode) throws ResolutionException {
     this.baseUri = baseUri;
+    referenceRegistry = new ReferenceRegistry(baseUri);
     this.authOptions = authOptions;
     resolveReferences(apiNode);
   }
@@ -93,13 +94,13 @@ public class OAI3Context implements OAIContext {
     resolver.resolve();
 
     // Mapping JSON references
-    ReferenceRegistry mappingRefsRegistry = new ReferenceRegistry();
+    ReferenceRegistry mappingRefsRegistry = new ReferenceRegistry(baseUri);
     MappingReferenceResolver mappingResolver = new MappingReferenceResolver(baseUri, authOptions, apiNode, $REF, mappingRefsRegistry);
     mappingResolver.resolve();
     referenceRegistry.mergeRefs(mappingRefsRegistry);
 
     // Links JSON references
-    ReferenceRegistry operationRefsRegistry = new ReferenceRegistry();
+    ReferenceRegistry operationRefsRegistry = new ReferenceRegistry(baseUri);
     ReferenceResolver operationResolver = new ReferenceResolver(baseUri, authOptions, apiNode, OPERATION_REF, operationRefsRegistry);
     operationResolver.resolve();
     referenceRegistry.mergeRefs(operationRefsRegistry);

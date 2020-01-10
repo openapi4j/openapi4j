@@ -10,4 +10,4 @@ components:
       name: id
       required: true
       schema:
-        $ref: '#/components/schemas/EntityId'
+        $ref: 'reference.yaml#/components/schemas/EntityId'

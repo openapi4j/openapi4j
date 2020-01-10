@@ -17,6 +17,8 @@ public class Reference {
 
   // The URI from where the reference expression applies
   private final URI baseUri;
+  // The reference canonical expression
+  private final String canonicalRef;
   // The reference expression
   private final String ref;
   // The raw content of the targeted reference expression
@@ -24,8 +26,9 @@ public class Reference {
   // The mapped content of the targeted reference expression
   private Object mappedContent;
 
-  Reference(URI baseUri, String ref, JsonNode content) {
+  Reference(URI baseUri, String canonicalRef, String ref, JsonNode content) {
     this.baseUri = baseUri;
+    this.canonicalRef = canonicalRef;
     this.ref = ref;
     this.content = content;
   }
@@ -35,6 +38,13 @@ public class Reference {
    */
   URI getBaseUri() {
     return baseUri;
+  }
+
+  /**
+   * Get the canonical reference string
+   */
+  public String getCanonicalRef() {
+    return canonicalRef;
   }
 
   /**

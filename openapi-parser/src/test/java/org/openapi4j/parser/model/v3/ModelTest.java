@@ -459,7 +459,10 @@ public class ModelTest extends Checker {
 
     Parameter parameter = new Parameter();
     parameter.setRef("#/components/parameters/foo");
-    api.getContext().getReferenceRegistry().addRef(api.getContext().getBaseUri(), parameter.getRef());
+    api.getContext().getReferenceRegistry().addRef(
+      api.getContext().getBaseUri(),
+      api.getContext().getBaseUri().resolve(parameter.getRef()).toString(),
+      parameter.getRef());
 
     api.setPath("/foo", new Path().setGet(new Operation().addParameter(parameter)));
     OpenApi3Validator.instance().validate(api);

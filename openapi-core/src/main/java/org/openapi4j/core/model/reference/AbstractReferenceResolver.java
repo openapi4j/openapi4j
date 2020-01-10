@@ -1,6 +1,7 @@
 package org.openapi4j.core.model.reference;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.AuthOption;
@@ -57,28 +58,52 @@ public abstract class AbstractReferenceResolver {
 
   private void findReferences(URI uri, JsonNode document) throws ResolutionException {
     Collection<JsonNode> referencePaths = getReferencePaths(document);
+    List<JsonNode> refParents = document.findParents(refKeyword);
 
     for (JsonNode refNode : referencePaths) {
       String refValue = refNode.textValue();
-      if (refValue != null) {
-        if (!refValue.startsWith(HASH)) {
-          URI subUri = getReferenceUri(uri, refValue);
+      if (refValue == null) {
+        continue;
+      }
 
-          if (subUri == null) {
-            throw new ResolutionException(String.format(MISSING_REF_ERR_MSG, refValue, uri));
-          }
+      if (refValue.startsWith(HASH)) {
+        // internal content of current resource (i.e. #/pointer)
+        String canonicalRefValue = uri.resolve(refValue).toString();
+        addRef(uri, refParents, canonicalRefValue, refValue);
+      } else {
+        final URI subUri;
+        final String canonicalRefValue;
 
-          referenceRegistry.addRef(subUri, refValue);
-
-          if (!documentRegistry.containsKey(subUri)) {
-            JsonNode subDocument = registerDocument(subUri);
-            findReferences(subUri, subDocument);
-          }
+        if (!refValue.contains(HASH)) {
+          // direct content from external resource (i.e. external.yaml)
+          subUri = uri.resolve(refValue);
+          canonicalRefValue = subUri.toString();
         } else {
-          referenceRegistry.addRef(uri, refValue);
+          // or relative content from external resource (i.e. external.yaml#/pointer or /base/external.yaml#/pointer)
+          subUri = uri.resolve(refValue.substring(0, refValue.indexOf(HASH)));
+          canonicalRefValue = uri.resolve(refValue).toString();
+        }
+
+        addRef(subUri, refParents, canonicalRefValue, refValue);
+
+        if (!documentRegistry.containsKey(subUri)) {
+          JsonNode subDocument = registerDocument(subUri);
+          findReferences(subUri, subDocument);
         }
       }
     }
+  }
+
+  private void addRef(URI uri, List<JsonNode> refParents, String canonicalRefValue, String refValue) {
+    //canonicalRefValue = quietlyDecode(canonicalRefValue);
+
+    for (JsonNode refParent : refParents) {
+      if (refValue.equals(refParent.get(refKeyword).textValue())) {
+        ((ObjectNode) refParent).set("canonical$ref", TreeUtil.json.getNodeFactory().textNode(canonicalRefValue));
+        break;
+      }
+    }
+    referenceRegistry.addRef(uri, canonicalRefValue, refValue);
   }
 
   private JsonNode registerDocument(URI uri) throws ResolutionException {
@@ -107,7 +132,7 @@ public abstract class AbstractReferenceResolver {
     if (!visitedRefs.add(ref)) {
       StringBuilder stringBuilder = new StringBuilder();
       for (Reference visitedRef : visitedRefs) {
-        stringBuilder.append(visitedRef.getRef()).append("\n");
+        stringBuilder.append(visitedRef.getCanonicalRef()).append(String.format("%n"));
       }
       throw new ResolutionException(String.format(CYCLING_REF_ERR_MSG, stringBuilder.toString()));
     }
@@ -115,28 +140,44 @@ public abstract class AbstractReferenceResolver {
     JsonNode document = documentRegistry.get(ref.getBaseUri());
     String jsonPointer = getJsonPointer(ref.getRef());
 
-    JsonNode valueNode = document.at(jsonPointer);
-    if (valueNode.isMissingNode()) {
-      throw new ResolutionException(String.format(MISSING_REF_ERR_MSG, ref.getRef(), ref.getBaseUri()));
+    final JsonNode valueNode;
+    if (jsonPointer.equals("/")) {
+      valueNode = document;
+    } else {
+      valueNode = document.at(jsonPointer);
+      if (valueNode.isMissingNode()) {
+        throw new ResolutionException(String.format(MISSING_REF_ERR_MSG, ref.getRef(), ref.getBaseUri()));
+      }
     }
 
     JsonNode subRefNode = valueNode.get(refKeyword);
     if (subRefNode != null) {
-      resolveReference(referenceRegistry.getRef(subRefNode.textValue()), visitedRefs);
+      resolveReference(referenceRegistry.getRef(ref.getBaseUri(), subRefNode.textValue()), visitedRefs);
     }
 
     ref.setContent(valueNode);
   }
 
-  private URI getReferenceUri(URI uri, String ref) {
-    if (ref.contains(HASH)) {
-      return uri.resolve(ref.substring(0, ref.indexOf(HASH)));
-    }
-
-    return null;
-  }
-
   private String getJsonPointer(String ref) {
-    return ref.substring(ref.indexOf(HASH) + 1);
+    final int index = ref.indexOf(HASH);
+    return (index == -1) ? "/" : ref.substring(index + 1);
   }
+
+  /*private String quietlyEncode(String value) {
+    try {
+      return URLEncoder.encode(value, "UTF-8");
+    } catch (UnsupportedEncodingException ignored) {
+      // will never happen
+      return value;
+    }
+  }
+
+  private String quietlyDecode(String refValue) {
+    try {
+      return URLDecoder.decode(refValue, "UTF-8");
+    } catch (UnsupportedEncodingException ignored) {
+      // will never happen
+      return refValue;
+    }
+  }*/
 }
