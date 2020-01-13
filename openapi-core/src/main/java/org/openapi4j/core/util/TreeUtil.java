@@ -22,7 +22,7 @@ import static java.util.Objects.requireNonNull;
  */
 public final class TreeUtil {
   private static final String URL_REQUIRED_ERR_MSG = "URL is required.";
-  private static final String JSON_ENCODE_ERR_MSG = "Failed to encode as JSON : %s";
+  public static final String JSON_ENCODE_ERR_MSG = "Failed to encode as JSON : %s";
   private static final String YAML_ENCODE_ERR_MSG = "Failed to encode as YAML : %s";
   private static final String DECODE_ERR_MSG = "Failed to decode : %s";
 

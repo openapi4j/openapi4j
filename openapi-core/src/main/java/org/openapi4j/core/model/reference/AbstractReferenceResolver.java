@@ -29,7 +29,7 @@ public abstract class AbstractReferenceResolver {
 
   private final URI baseUri;
   private final List<AuthOption> authOptions;
-  private final JsonNode baseDocument;
+  private JsonNode baseDocument;
   private final Map<URI, JsonNode> documentRegistry = new HashMap<>();
   private final ReferenceRegistry referenceRegistry;
   final String refKeyword;
@@ -44,16 +44,20 @@ public abstract class AbstractReferenceResolver {
 
   public void resolve() throws ResolutionException {
     // Register base resolution document
-    JsonNode document
+    baseDocument
       = baseDocument != null
       ? registerDocument(baseUri, baseDocument)
       : registerDocument(baseUri);
 
     // Find all external documents from references
-    findReferences(baseUri, document);
+    findReferences(baseUri, baseDocument);
 
     // Resolves all references
     resolveReferences();
+  }
+
+  public JsonNode getBaseDocument() {
+    return baseDocument;
   }
 
   protected abstract Collection<JsonNode> getReferencePaths(JsonNode document);

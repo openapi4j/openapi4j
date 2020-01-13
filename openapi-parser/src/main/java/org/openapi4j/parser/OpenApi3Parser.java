@@ -1,6 +1,5 @@
 package org.openapi4j.parser;
 
-import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.AuthOption;
 import org.openapi4j.core.model.v3.OAI3Context;
@@ -32,9 +31,10 @@ public class OpenApi3Parser extends OpenApiParser<OpenApi3> {
     OpenApi3 api;
 
     try {
-      api = TreeUtil.load(url, authOptions, OpenApi3.class);
-      api.setContext(new OAI3Context(url.toURI()));
-    } catch (DecodeException | URISyntaxException e) {
+      OAI3Context context = new OAI3Context(url.toURI(), authOptions);
+      api = TreeUtil.json.convertValue(context.getBaseDocument(), OpenApi3.class);
+      api.setContext(context);
+    } catch (IllegalArgumentException | URISyntaxException e) {
       throw new ResolutionException(String.format(INVALID_SPEC, url.toString()), e);
     }
 
