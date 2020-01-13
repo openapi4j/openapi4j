@@ -43,9 +43,7 @@ public class Checker {
   }
 
   protected void checkModel(URL resourcePath, OpenApi3 api) throws EncodeException, JSONException, DecodeException, JsonProcessingException {
-    Object obj = TreeUtil.load(resourcePath, Object.class);
-    String expected = TreeUtil.toJson(obj);
-
+    String expected = TreeUtil.toJson(TreeUtil.load(resourcePath, OpenApi3.class));
     String actual = TreeUtil.json.writeValueAsString(api.toNode(api.getContext(), false));
 
     JSONAssert.assertEquals(expected, actual, true);

@@ -1,14 +1,7 @@
 package org.openapi4j.parser.model;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
-
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import org.openapi4j.core.exception.EncodeException;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.util.TreeUtil;
@@ -16,16 +9,15 @@ import org.openapi4j.core.util.TreeUtil;
 import java.net.URI;
 
 import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
-import static org.openapi4j.core.util.TreeUtil.JSON_ENCODE_ERR_MSG;
 
 /**
  * Base class for Open API schema which can be represented as reference.
  */
-@JsonFilter(ABS_REF_FIELD)
 public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends AbsOpenApiSchema<M> {
   @JsonProperty("$ref")
   private String ref;
   @JsonProperty(value = ABS_REF_FIELD)
+  @JsonView(Views.Internal.class)
   private String canonicalRef;
 
   // $ref
