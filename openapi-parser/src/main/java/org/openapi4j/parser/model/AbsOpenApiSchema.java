@@ -1,18 +1,23 @@
 package org.openapi4j.parser.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.openapi4j.core.util.TreeUtil.JSON_ENCODE_ERR_MSG;
 
 public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements OpenApiSchema<M> {
+  protected static class Views {
+    public static class Public {
+    }
+
+    public static class Internal extends Public {
+    }
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -23,7 +28,15 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
       ? copy(context, true)
       : this;
 
-    return TreeUtil.toJsonNode(model);
+    try {
+      byte[] content = TreeUtil.json
+        .writerWithView(Views.Public.class)
+        .writeValueAsBytes(model);
+
+      return TreeUtil.json.readTree(content);
+    } catch (Exception e) {
+      throw new EncodeException(String.format(JSON_ENCODE_ERR_MSG, e.getMessage()));
+    }
   }
 
   /**

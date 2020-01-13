@@ -24,6 +24,7 @@ public class OAI3Context implements OAIContext {
   private final ReferenceRegistry referenceRegistry;
   private final URI baseUri;
   private final List<AuthOption> authOptions;
+  private final JsonNode baseDocument;
 
   /**
    * Creates a context from the given uri.
@@ -50,11 +51,11 @@ public class OAI3Context implements OAIContext {
    * Creates a context from the given uri.
    *
    * @param baseUri The given uri.
-   * @param apiNode The tree node representing the Open API schema.
+   * @param baseDocument The tree node representing the Open API schema.
    * @throws ResolutionException
    */
-  public OAI3Context(URI baseUri, JsonNode apiNode) throws ResolutionException {
-    this(baseUri, null, apiNode);
+  public OAI3Context(URI baseUri, JsonNode baseDocument) throws ResolutionException {
+    this(baseUri, null, baseDocument);
   }
 
   /**
@@ -62,14 +63,14 @@ public class OAI3Context implements OAIContext {
    *
    * @param baseUri     The given uri.
    * @param authOptions The authentication values.
-   * @param apiNode     The tree node representing the Open API schema.
+   * @param baseDocument     The tree node representing the Open API schema.
    * @throws ResolutionException
    */
-  public OAI3Context(URI baseUri, List<AuthOption> authOptions, JsonNode apiNode) throws ResolutionException {
+  public OAI3Context(URI baseUri, List<AuthOption> authOptions, JsonNode baseDocument) throws ResolutionException {
     this.baseUri = baseUri;
     referenceRegistry = new ReferenceRegistry(baseUri);
     this.authOptions = authOptions;
-    resolveReferences(apiNode);
+    this.baseDocument = resolveReferences(baseDocument);
   }
 
   /**
@@ -84,25 +85,35 @@ public class OAI3Context implements OAIContext {
    * {@inheritDoc}
    */
   @Override
+  public JsonNode getBaseDocument() {
+    return baseDocument;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   public URI getBaseUri() {
     return baseUri;
   }
 
-  private void resolveReferences(JsonNode apiNode) throws ResolutionException {
+  private JsonNode resolveReferences(JsonNode baseDocument) throws ResolutionException {
     // Standard JSON references
-    ReferenceResolver resolver = new ReferenceResolver(baseUri, authOptions, apiNode, $REF, referenceRegistry);
+    ReferenceResolver resolver = new ReferenceResolver(baseUri, authOptions, baseDocument, $REF, referenceRegistry);
     resolver.resolve();
 
     // Mapping JSON references
     ReferenceRegistry mappingRefsRegistry = new ReferenceRegistry(baseUri);
-    MappingReferenceResolver mappingResolver = new MappingReferenceResolver(baseUri, authOptions, apiNode, $REF, mappingRefsRegistry);
+    MappingReferenceResolver mappingResolver = new MappingReferenceResolver(baseUri, authOptions, baseDocument, $REF, mappingRefsRegistry);
     mappingResolver.resolve();
     referenceRegistry.mergeRefs(mappingRefsRegistry);
 
     // Links JSON references
     ReferenceRegistry operationRefsRegistry = new ReferenceRegistry(baseUri);
-    ReferenceResolver operationResolver = new ReferenceResolver(baseUri, authOptions, apiNode, OPERATION_REF, operationRefsRegistry);
+    ReferenceResolver operationResolver = new ReferenceResolver(baseUri, authOptions, baseDocument, OPERATION_REF, operationRefsRegistry);
     operationResolver.resolve();
     referenceRegistry.mergeRefs(operationRefsRegistry);
+
+    return resolver.getBaseDocument();
   }
 }

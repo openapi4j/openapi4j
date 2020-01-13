@@ -1,10 +1,12 @@
 package org.openapi4j.parser.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.fasterxml.jackson.annotation.JsonView;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.util.TreeUtil;
+
+import java.net.URI;
 
 import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
 
@@ -14,7 +16,8 @@ import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
 public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends AbsOpenApiSchema<M> {
   @JsonProperty("$ref")
   private String ref;
-  @JsonProperty(value = ABS_REF_FIELD, access = JsonProperty.Access.WRITE_ONLY)
+  @JsonProperty(value = ABS_REF_FIELD)
+  @JsonView(Views.Internal.class)
   private String canonicalRef;
 
   // $ref
@@ -26,11 +29,11 @@ public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends Ab
     return ref != null;
   }
 
-  public void setRef(String ref) {
+  protected void setRef(String ref) {
     this.ref = ref;
   }
 
-  public void setCanonicalRef(String canonicalRef) {
+  protected void setCanonicalRef(String canonicalRef) {
     this.canonicalRef = canonicalRef;
   }
 
@@ -40,6 +43,14 @@ public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends Ab
 
   public Reference getReference(OAIContext context) {
     return context.getReferenceRegistry().getRef(canonicalRef != null ? canonicalRef : ref);
+  }
+
+  public Reference setReference(OAIContext context, URI uri, String ref) {
+    Reference reference = context.getReferenceRegistry().addRef(uri, ref);
+    setRef(reference.getRef());
+    setCanonicalRef(reference.getCanonicalRef());
+
+    return reference;
   }
 
   @SuppressWarnings("unchecked")
