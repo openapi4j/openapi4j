@@ -60,7 +60,7 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
 
   @Override
   public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (format == null) {
+    if (format == null || valueNode.isNull()) {
       return;
     }
 
