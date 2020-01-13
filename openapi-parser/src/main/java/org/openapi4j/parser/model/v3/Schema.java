@@ -672,9 +672,12 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
     copy.setRequiredFields(copyList(getRequiredFields()));
     copy.setEnums(copyList(getEnums()));
     copy.setType(getType());
-    copy.setAllOfSchemas(copyList(getAllOfSchemas(), context, followRefs));
-    copy.setOneOfSchemas(copyList(getOneOfSchemas(), context, followRefs));
-    copy.setAnyOfSchemas(copyList(getAnyOfSchemas(), context, followRefs));
+    // Exception, discriminator only works with referenced schemas.
+    final boolean followSchemaCollectionsRefs = followRefs && getDiscriminator() == null;
+    copy.setAllOfSchemas(copyList(getAllOfSchemas(), context, followSchemaCollectionsRefs));
+    copy.setOneOfSchemas(copyList(getOneOfSchemas(), context, followSchemaCollectionsRefs));
+    copy.setAnyOfSchemas(copyList(getAnyOfSchemas(), context, followSchemaCollectionsRefs));
+
     copy.setNotSchema(copyField(getNotSchema(), context, followRefs));
     copy.setItemsSchema(copyField(getItemsSchema(), context, followRefs));
     copy.setProperties(copyMap(getProperties(), context, followRefs));
