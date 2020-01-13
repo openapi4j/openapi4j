@@ -18,22 +18,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_BINARY;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DOUBLE;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_FLOAT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT32;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT64;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
+import static org.junit.Assert.*;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
 
 public class ModelTest extends Checker {
   @Test
@@ -431,35 +417,25 @@ public class ModelTest extends Checker {
     assertEquals(new Parameter().setIn("path"), new Parameter().setIn("path"));
     assertEquals(new Parameter().setName("foo"), new Parameter().setName("foo"));
     assertNotEquals(new Parameter().setName("foo"), new Parameter().setName("bar"));
-
-    Parameter p1 = new Parameter();
-    p1.setRef("#/foo");
-    Parameter p2 = new Parameter();
-    p2.setRef("#/foo");
-    assertEquals(p1, p2);
   }
 
   @Test(expected = ValidationException.class)
   public void invalidReferenceTest() throws Exception {
-    OpenApi3 api = new OpenApi3();
-    api.setContext(new OAI3Context(getClass().getResource("/model/v3/oai-integration/uspto.yaml").toURI()));
+    OpenApi3 api = new OpenApi3Parser().parse(getClass().getResource("/model/v3/oai-integration/uspto.yaml"), true);
 
     Parameter parameter = new Parameter();
-    parameter.setRef("#/wrong");
+    parameter.setReference(api.getContext(), api.getContext().getBaseUri(), "#/wrong");
     api.setPath("/foo", new Path().setGet(new Operation().addParameter(parameter)));
     OpenApi3Validator.instance().validate(api);
   }
 
   @Test(expected = ValidationException.class)
   public void invalidReferenceContentTest() throws Exception {
-    OpenApi3 api = new OpenApi3();
-    api.setContext(new OAI3Context(getClass().getResource("/model/v3/oai-integration/uspto.yaml").toURI()));
+    OpenApi3 api = new OpenApi3Parser().parse(getClass().getResource("/model/v3/oai-integration/uspto.yaml"), true);
 
     api.setComponents(new Components().setParameter("foo", null));
-
     Parameter parameter = new Parameter();
-    parameter.setRef("#/components/parameters/foo");
-    api.getContext().getReferenceRegistry().addRef(api.getContext().getBaseUri(), parameter.getRef());
+    parameter.setReference(api.getContext(), api.getContext().getBaseUri(), "#/components/parameters/foo");
 
     api.setPath("/foo", new Path().setGet(new Operation().addParameter(parameter)));
     OpenApi3Validator.instance().validate(api);

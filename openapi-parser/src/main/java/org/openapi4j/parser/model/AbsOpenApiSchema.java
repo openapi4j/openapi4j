@@ -1,18 +1,30 @@
 package org.openapi4j.parser.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
+import static org.openapi4j.core.util.TreeUtil.JSON_ENCODE_ERR_MSG;
 
 public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements OpenApiSchema<M> {
+  private static final ObjectMapper INTERNAL_MAPPER;
+
+  // Add rule to avoid export of hidden fields
+  static {
+    INTERNAL_MAPPER = new ObjectMapper();
+    SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+    // AbsRefOpenApiSchema.class filter
+    filterProvider.addFilter(ABS_REF_FIELD, SimpleBeanPropertyFilter.serializeAllExcept(ABS_REF_FIELD));
+    INTERNAL_MAPPER.setFilterProvider(filterProvider);
+  }
+
   /**
    * {@inheritDoc}
    */
@@ -23,7 +35,11 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
       ? copy(context, true)
       : this;
 
-    return TreeUtil.toJsonNode(model);
+    try {
+      return INTERNAL_MAPPER.valueToTree(model);
+    } catch (Exception e) {
+      throw new EncodeException(String.format(JSON_ENCODE_ERR_MSG, e.getMessage()));
+    }
   }
 
   /**

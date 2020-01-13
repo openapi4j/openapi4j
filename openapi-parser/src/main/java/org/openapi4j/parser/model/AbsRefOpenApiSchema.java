@@ -1,15 +1,19 @@
 package org.openapi4j.parser.model;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.util.TreeUtil;
+
+import java.net.URI;
 
 import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
 import static org.openapi4j.core.util.TreeUtil.JSON_ENCODE_ERR_MSG;
@@ -17,20 +21,8 @@ import static org.openapi4j.core.util.TreeUtil.JSON_ENCODE_ERR_MSG;
 /**
  * Base class for Open API schema which can be represented as reference.
  */
+@JsonFilter(ABS_REF_FIELD)
 public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends AbsOpenApiSchema<M> {
-  private static final ObjectMapper INTERNAL_MAPPER;
-
-  // Add rule to avoid export of hidden fields
-  static {
-    INTERNAL_MAPPER = new ObjectMapper();
-    INTERNAL_MAPPER.setAnnotationIntrospector(new JacksonAnnotationIntrospector() {
-      @Override
-      public boolean hasIgnoreMarker(final AnnotatedMember m) {
-        return ABS_REF_FIELD.equals(m.getName()) || super.hasIgnoreMarker(m);
-      }
-    });
-  }
-
   @JsonProperty("$ref")
   private String ref;
   @JsonProperty(value = ABS_REF_FIELD)
@@ -45,11 +37,11 @@ public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends Ab
     return ref != null;
   }
 
-  public void setRef(String ref) {
+  protected void setRef(String ref) {
     this.ref = ref;
   }
 
-  public void setCanonicalRef(String canonicalRef) {
+  protected void setCanonicalRef(String canonicalRef) {
     this.canonicalRef = canonicalRef;
   }
 
@@ -61,18 +53,12 @@ public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends Ab
     return context.getReferenceRegistry().getRef(canonicalRef != null ? canonicalRef : ref);
   }
 
-  @Override
-  public JsonNode toNode(OAIContext context, boolean followRefs) throws EncodeException {
-    OpenApiSchema<M> model
-      = followRefs
-      ? copy(context, true)
-      : this;
+  public Reference setReference(OAIContext context, URI uri, String ref) {
+    Reference reference = context.getReferenceRegistry().addRef(uri, ref);
+    setRef(reference.getRef());
+    setCanonicalRef(reference.getCanonicalRef());
 
-    try {
-      return INTERNAL_MAPPER.valueToTree(model);
-    } catch (Exception e) {
-      throw new EncodeException(String.format(JSON_ENCODE_ERR_MSG, e.getMessage()));
-    }
+    return reference;
   }
 
   @SuppressWarnings("unchecked")
