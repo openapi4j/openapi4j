@@ -133,7 +133,14 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
     JsonNode allOfNode = getParentSchemaNode().get(ALLOF);
 
     for (int index = 0; index < allOfNode.size(); ++index) {
-      for (JsonNode refNode : allOfNode.get(index).findValues(ABS_REF_FIELD)) {
+      JsonNode allOfNodeItem = allOfNode.get(index);
+      // Prefer absolute reference value
+      List<JsonNode> refNodes = allOfNodeItem.findValues(ABS_REF_FIELD);
+      if (refNodes.isEmpty()) {
+        refNodes = allOfNodeItem.findValues(OAI3SchemaKeywords.$REF);
+      }
+
+      for (JsonNode refNode : refNodes) {
         Reference reference = context.getContext().getReferenceRegistry().getRef(refNode.textValue());
         discriminatorNode = reference.getContent().get(DISCRIMINATOR);
         if (discriminatorNode != null) {

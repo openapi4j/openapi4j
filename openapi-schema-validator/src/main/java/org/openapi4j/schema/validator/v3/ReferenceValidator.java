@@ -44,7 +44,9 @@ class ReferenceValidator extends BaseJsonValidator<OAI3> {
     if (HASH.equals(refValue)) {
       schemaValidator = parentSchema.findParent();
     } else {
-      Reference reference = context.getContext().getReferenceRegistry().getRef(schemaParentNode.get(ABS_REF_FIELD).textValue());
+      // Prefer absolute reference value
+      JsonNode refNode = schemaParentNode.has(ABS_REF_FIELD) ? schemaParentNode.get(ABS_REF_FIELD) : schemaNode;
+      Reference reference = context.getContext().getReferenceRegistry().getRef(refNode.textValue());
       // Check visited references to avoid infinite loops
       JsonValidator validator = context.getReference(refValue);
       if (validator == null) {

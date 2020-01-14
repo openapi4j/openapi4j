@@ -32,7 +32,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   private final Map<String, JsonValidator> validators;
 
   /**
-   * Create a new Schema validator this default values.
+   * Create a new Schema Object validator.
    * A new context will be created.
    *
    * @param propertyName The property or root name of the schema.
@@ -50,7 +50,9 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   }
 
   /**
-   * Create a new Schema validator with the given context.
+   * Create a new Schema Object validator with the given context.
+   * {@code schemaNode} should be populated from {@code context} if you have JSON-references
+   * as references are searched with absolute values.
    *
    * @param context      The context to use for validation.
    * @param propertyName The property or root name of the schema.
@@ -64,7 +66,9 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   }
 
   /**
-   * Create a new Schema validator with the given context.
+   * Create a new Schema Object validator with the given context.
+   * {@code schemaNode} should be populated from {@code context} if you have JSON-references
+   * as references are searched with absolute values.
    *
    * @param context          The context to use for validation.
    * @param propertyName     The property or root name of the schema.
@@ -160,6 +164,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
       }
     }
 
+    // Setup optional restriction for additional properties
     if (validatorMap.get(ADDITIONALPROPERTIES) == null && context.getOption(ADDITIONAL_PROPS_RESTRICT)) {
       validatorMap.put(
         ADDITIONALPROPERTIES,
