@@ -66,7 +66,7 @@ class FormStyleConverter extends FlatStyleConverter {
       } while (matcher.find());
     }
 
-    if (arrayValues.size() != 0) { // Param found ?
+    if (!arrayValues.isEmpty()) { // Param found ?
       paramValues.put(paramName, arrayValues);
     }
 

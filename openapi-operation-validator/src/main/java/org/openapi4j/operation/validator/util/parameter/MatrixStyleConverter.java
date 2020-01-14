@@ -48,7 +48,7 @@ class MatrixStyleConverter extends FlatStyleConverter {
 
       if (TYPE_ARRAY.equals(type)) {
         List<String> arrayValues = getArrayValues(param, rawValue, splitPattern);
-        if (arrayValues != null && arrayValues.size() != 0) {
+        if (arrayValues != null && !arrayValues.isEmpty()) {
           values.put(paramName, arrayValues);
         }
       } else {

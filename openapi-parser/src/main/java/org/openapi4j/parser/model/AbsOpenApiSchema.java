@@ -11,10 +11,13 @@ import static org.openapi4j.core.util.TreeUtil.JSON_ENCODE_ERR_MSG;
 
 public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements OpenApiSchema<M> {
   protected static class Views {
+    private Views() {}
     public static class Public {
+      private Public() {}
     }
 
     public static class Internal extends Public {
+      private Internal() {}
     }
   }
 

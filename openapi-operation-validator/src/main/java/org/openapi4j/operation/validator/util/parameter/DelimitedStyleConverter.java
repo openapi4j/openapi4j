@@ -44,7 +44,7 @@ class DelimitedStyleConverter extends FlatStyleConverter {
         }
       }
 
-      if (arrayValues.size() != 0) { // Param found ?
+      if (!arrayValues.isEmpty()) { // Param found ?
         paramValues.put(paramName, arrayValues);
       }
 
