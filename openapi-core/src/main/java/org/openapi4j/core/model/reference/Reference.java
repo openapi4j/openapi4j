@@ -12,7 +12,7 @@ import java.net.URI;
  * The reference model.
  */
 public class Reference {
-  public static final String ABS_REF_FIELD = "asb$ref";
+  public static final String ABS_REF_FIELD = "abs$ref";
 
   private static final String CLASS_MISMATCH_ERR_MSG = "Unable to map reference '%s' from class '%s' with class '%s'.";
   private static final String ERR_MSG = "Unable to map reference '%s' content with class '%s'.";

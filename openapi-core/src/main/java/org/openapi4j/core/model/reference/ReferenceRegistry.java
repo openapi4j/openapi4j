@@ -11,6 +11,7 @@ import java.util.Map;
 public class ReferenceRegistry {
   private final URI baseUri;
   private final Map<String, Reference> references = new HashMap<>();
+  private static final String HASH = "#";
 
   public ReferenceRegistry(URI baseUri) {
     this.baseUri = baseUri;
@@ -24,7 +25,7 @@ public class ReferenceRegistry {
    * @return The reference created or replaced.
    */
   public Reference addRef(URI uri, String refValue) {
-    String canonicalRefValue = ReferenceUri.resolveAsString(uri, refValue);
+    String canonicalRefValue = buildCanonicalRef(uri, refValue);
 
     Reference reference = new Reference(uri, canonicalRefValue, refValue, null);
     references.put(canonicalRefValue, reference);
@@ -70,5 +71,13 @@ public class ReferenceRegistry {
 
   Collection<Reference> getReferences() {
     return references.values();
+  }
+
+  private String buildCanonicalRef(URI uri, String refValue) {
+    final int indexHash = refValue.indexOf(HASH);
+
+    return indexHash != -1
+      ? ReferenceUri.resolveAsString(uri, refValue.substring(indexHash))
+      : ReferenceUri.resolveAsString(uri, refValue);
   }
 }
