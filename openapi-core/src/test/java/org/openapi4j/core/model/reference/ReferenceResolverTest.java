@@ -13,7 +13,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class ReferenceResolverTest {
   @Test(expected = ResolutionException.class)
@@ -92,6 +95,34 @@ public class ReferenceResolverTest {
     Reference refType2 = apiContext.getReferenceRegistry().getRef("schema2/testType.yaml#/TestType");
     assertNotNull(refType2.getContent());
     assertNotEquals(refType1, refType2);
+  }
+
+  @Test
+  public void referenceWithRelativePathSetupTwiceExternalResolution() throws Exception {
+    URL specPath = getClass().getResource("/reference/valid/identical_relative_ref/api.yaml");
+    JsonNode spec = TreeUtil.load(specPath);
+    OAI3Context apiContext = new OAI3Context(specPath.toURI(), spec);
+
+    assertEquals(3, apiContext.getReferenceRegistry().getReferences().size());
+
+    String urlString = specPath.toString();
+
+    String absoluteUriPrefix = urlString.substring(0, urlString.indexOf("api.yaml"));
+    String correctRelativeUri = "schema2/schema2.yaml#/Schema2";
+    String incorrectRelativeUri = "schema2/" + correctRelativeUri;
+    String correctAbsoluteUri = absoluteUriPrefix + correctRelativeUri;
+    String incorrectAbsoluteUri = absoluteUriPrefix + incorrectRelativeUri;
+
+    // Search with absolute values
+    Reference correctAbsoluteReference = apiContext.getReferenceRegistry().getRef(correctAbsoluteUri);
+    Reference incorrectAbsoluteReference = apiContext.getReferenceRegistry().getRef(incorrectAbsoluteUri);
+    assertNotNull(correctAbsoluteReference);
+    assertNull(incorrectAbsoluteReference);
+    // Search with relative values
+    Reference correctSchema2RelativeReference = apiContext.getReferenceRegistry().getRef(correctRelativeUri);
+    Reference incorrectSchema2RelativeReference = apiContext.getReferenceRegistry().getRef(incorrectRelativeUri);
+    assertNotNull(correctSchema2RelativeReference);
+    assertNull(incorrectSchema2RelativeReference);
   }
 
   @Test(expected = DecodeException.class)
