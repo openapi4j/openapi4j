@@ -1,23 +1,33 @@
 package org.openapi4j.parser.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.openapi4j.core.util.TreeUtil.JSON_ENCODE_ERR_MSG;
+import static org.openapi4j.core.util.TreeUtil.ENCODE_ERR_MSG;
 
 public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements OpenApiSchema<M> {
   protected static class Views {
-    private Views() {}
+    private Views() {
+    }
+
     public static class Public {
-      private Public() {}
+      private Public() {
+      }
     }
 
     public static class Internal extends Public {
-      private Internal() {}
+      private Internal() {
+      }
     }
   }
 
@@ -38,7 +48,7 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
 
       return TreeUtil.json.readTree(content);
     } catch (Exception e) {
-      throw new EncodeException(String.format(JSON_ENCODE_ERR_MSG, e.getMessage()));
+      throw new EncodeException(String.format(ENCODE_ERR_MSG, e.getMessage()));
     }
   }
 
@@ -52,10 +62,17 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
       ? copy(context, true)
       : this;
 
-    if (flags.contains(SerializationFlag.OUT_AS_YAML)) {
-      return TreeUtil.toYaml(model);
-    } else {
-      return TreeUtil.toJson(model);
+    ObjectMapper mapper
+      = flags.contains(SerializationFlag.OUT_AS_YAML)
+      ? TreeUtil.yaml
+      : TreeUtil.json;
+
+    try {
+      return mapper
+        .writerWithView(Views.Public.class)
+        .writeValueAsString(model);
+    } catch (Exception e) {
+      throw new EncodeException(String.format(ENCODE_ERR_MSG, e.getMessage()));
     }
   }
 

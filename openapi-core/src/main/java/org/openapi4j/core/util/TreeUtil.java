@@ -22,9 +22,8 @@ import static java.util.Objects.requireNonNull;
  */
 public final class TreeUtil {
   private static final String URL_REQUIRED_ERR_MSG = "URL is required.";
-  public static final String JSON_ENCODE_ERR_MSG = "Failed to encode as JSON : %s";
-  private static final String YAML_ENCODE_ERR_MSG = "Failed to encode as YAML : %s";
-  private static final String DECODE_ERR_MSG = "Failed to decode : %s";
+  public static final String ENCODE_ERR_MSG = "Failed to encode: %s";
+  private static final String DECODE_ERR_MSG = "Failed to decode: %s";
 
   private static final Pattern FIRST_CHAR_PATTERN = Pattern.compile("(?:\\s*)(.)");
 
@@ -51,7 +50,7 @@ public final class TreeUtil {
     try {
       return json.writeValueAsString(obj);
     } catch (Exception e) {
-      throw new EncodeException(String.format(JSON_ENCODE_ERR_MSG, e.getMessage()));
+      throw new EncodeException(String.format(ENCODE_ERR_MSG, e.getMessage()));
     }
   }
 
@@ -66,7 +65,7 @@ public final class TreeUtil {
     try {
       return json.valueToTree(obj);
     } catch (Exception e) {
-      throw new EncodeException(String.format(JSON_ENCODE_ERR_MSG, e.getMessage()));
+      throw new EncodeException(String.format(ENCODE_ERR_MSG, e.getMessage()));
     }
   }
 
@@ -81,7 +80,7 @@ public final class TreeUtil {
     try {
       return yaml.writeValueAsString(obj);
     } catch (Exception e) {
-      throw new EncodeException(String.format(YAML_ENCODE_ERR_MSG, e.getMessage()));
+      throw new EncodeException(String.format(ENCODE_ERR_MSG, e.getMessage()));
     }
   }
 
