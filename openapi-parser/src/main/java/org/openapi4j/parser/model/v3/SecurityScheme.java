@@ -3,7 +3,7 @@ package org.openapi4j.parser.model.v3;
 import org.openapi4j.core.model.OAIContext;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class SecurityScheme extends AbsExtendedOpenApiSchema<SecurityScheme> {
+public class SecurityScheme extends AbsExtendedRefOpenApiSchema<SecurityScheme> {
   private String type;
   private String description;
   private String name;
@@ -94,7 +94,7 @@ public class SecurityScheme extends AbsExtendedOpenApiSchema<SecurityScheme> {
   }
 
   @Override
-  public SecurityScheme copy(OAIContext context, boolean followRefs) {
+  public SecurityScheme copyContent(OAIContext context, boolean followRefs) {
     SecurityScheme copy = new SecurityScheme();
 
     copy.setType(getType());
@@ -107,6 +107,14 @@ public class SecurityScheme extends AbsExtendedOpenApiSchema<SecurityScheme> {
     copy.setOpenIdConnectUrl(getOpenIdConnectUrl());
     copy.setExtensions(copyMap(getExtensions()));
 
+    return copy;
+  }
+
+  @Override
+  protected SecurityScheme copyReference(OAIContext context) {
+    SecurityScheme copy = new SecurityScheme();
+    copy.setRef(getRef());
+    copy.setCanonicalRef(getCanonicalRef());
     return copy;
   }
 }

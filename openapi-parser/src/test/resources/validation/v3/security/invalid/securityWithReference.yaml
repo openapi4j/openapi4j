@@ -1,0 +1,43 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Security
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/apiKey/:
+    post:
+      operationId: apiKey
+      security:
+        - apiKey: []
+      responses:
+        '200':
+          description: The description
+  /api/http/:
+    post:
+      operationId: http
+      security:
+        - http: []
+      responses:
+        '200':
+          description: The description
+  /api/oauth2/:
+    post:
+      operationId: oauth2
+      security:
+        - oauth2:
+            - write:pets
+      responses:
+        '200':
+          description: The description
+components:
+  securitySchemes:
+    apiKey:
+      $ref: 'reference.yaml#/apiKey'
+    http:
+      $ref: 'reference.yaml#/http'
+    openId:
+      $ref: 'reference.yaml#/openId'
+    oauth2:
+      $ref: 'reference.yaml#/oauth2'
+

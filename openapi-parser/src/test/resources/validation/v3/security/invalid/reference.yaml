@@ -1,0 +1,34 @@
+apiKey:
+  foo: invalid
+http:
+  type: http
+  scheme: basic
+  name: session
+openId:
+  type: openIdConnect
+  openIdConnectUrl: http://example.org/api/openid
+oauth2:
+  type: oauth2
+  flows:
+    authorizationCode:
+      authorizationUrl: https://example.com/api/oauth/dialog
+      tokenUrl: https://example.com/api/oauth/token
+      refreshUrl: https://example.com/api/oauth/token
+      scopes:
+        write:pets: modify pets in your account
+        read:pets: read your pets
+    clientCredentials:
+      tokenUrl: https://example.com/api/oauth/token
+      scopes:
+        write:pets: modify pets in your account
+        read:pets: read your pets
+    implicit:
+      authorizationUrl: http://example.org/api/oauth/dialog
+      scopes:
+        write:pets: modify pets in your account
+        read:pets: read your pets
+    password:
+      tokenUrl: https://example.com/api/oauth/token
+      scopes:
+        write:pets: modify pets in your account
+        read:pets: read your pets
