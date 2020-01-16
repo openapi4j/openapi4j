@@ -2,14 +2,12 @@ package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.core.validation.ValidationSeverity;
-import org.openapi4j.parser.model.v3.OAuthFlow;
-import org.openapi4j.parser.model.v3.OAuthFlows;
-import org.openapi4j.parser.model.v3.OpenApi3;
-import org.openapi4j.parser.model.v3.SecurityScheme;
+import org.openapi4j.parser.model.v3.*;
 import org.openapi4j.parser.validation.Validator;
 
 import java.util.regex.Pattern;
 
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.APIKEY;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.AUTHORIZATIONCODE;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CLIENTCREDENTIALS;
@@ -48,37 +46,41 @@ class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
 
   @Override
   public void validate(OpenApi3 api, SecurityScheme securityScheme, ValidationResults results) {
-    // omitted fields : description, bearerFormat
-    validateString(securityScheme.getType(), results, true, TYPE_REGEX, TYPE);
-    if (securityScheme.getType() != null) {
-      String s = securityScheme.getType();
-      if (HTTP.equals(s)) {
-        validateString(securityScheme.getScheme(), results, true, SCHEME);
+    if (securityScheme.isRef()) {
+      validateReference(api, securityScheme, results, $REF, SecuritySchemeValidator.instance(), SecurityScheme.class);
+    } else {
+      // omitted fields : description, bearerFormat
+      validateString(securityScheme.getType(), results, true, TYPE_REGEX, TYPE);
+      if (securityScheme.getType() != null) {
+        String s = securityScheme.getType();
+        if (HTTP.equals(s)) {
+          validateString(securityScheme.getScheme(), results, true, SCHEME);
 
-      } else if (APIKEY.equals(s)) {
-        validateString(securityScheme.getName(), results, true, NAME);
-        validateString(securityScheme.getIn(), results, true, IN_REGEX, IN);
+        } else if (APIKEY.equals(s)) {
+          validateString(securityScheme.getName(), results, true, NAME);
+          validateString(securityScheme.getIn(), results, true, IN_REGEX, IN);
 
-      } else if (OAUTH2.equals(s)) {
-        final OAuthFlows flows = securityScheme.getFlows();
-        final Validator<OpenApi3, OAuthFlow> flowValidator = OAuthFlowValidator.instance();
-        validateField(api, flows.getAuthorizationCode(), results, false, AUTHORIZATIONCODE, flowValidator);
-        validateField(api, flows.getClientCredentials(), results, false, CLIENTCREDENTIALS, flowValidator);
-        validateField(api, flows.getImplicit(), results, false, IMPLICIT, flowValidator);
-        validateField(api, flows.getPassword(), results, false, PASSWORD, flowValidator);
-        validateMap(api, flows.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+        } else if (OAUTH2.equals(s)) {
+          final OAuthFlows flows = securityScheme.getFlows();
+          final Validator<OpenApi3, OAuthFlow> flowValidator = OAuthFlowValidator.instance();
+          validateField(api, flows.getAuthorizationCode(), results, false, AUTHORIZATIONCODE, flowValidator);
+          validateField(api, flows.getClientCredentials(), results, false, CLIENTCREDENTIALS, flowValidator);
+          validateField(api, flows.getImplicit(), results, false, IMPLICIT, flowValidator);
+          validateField(api, flows.getPassword(), results, false, PASSWORD, flowValidator);
+          validateMap(api, flows.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
 
-        if (flows.getAuthorizationCode() == null &&
-          flows.getClientCredentials() == null &&
-          flows.getImplicit() == null &&
-          flows.getPassword() == null) {
-          results.addError(OAUTH_FLOW_REQUIRED, FLOWS);
+          if (flows.getAuthorizationCode() == null &&
+            flows.getClientCredentials() == null &&
+            flows.getImplicit() == null &&
+            flows.getPassword() == null) {
+            results.addError(OAUTH_FLOW_REQUIRED, FLOWS);
+          }
+        } else if (OPENIDCONNECT.equals(s)) {
+          validateUrl(securityScheme.getOpenIdConnectUrl(), results, true, OPENIDCONNECTURL, ValidationSeverity.ERROR);
+
         }
-      } else if (OPENIDCONNECT.equals(s)) {
-        validateUrl(securityScheme.getOpenIdConnectUrl(), results, true, OPENIDCONNECTURL, ValidationSeverity.ERROR);
-
       }
+      validateMap(api, securityScheme.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     }
-    validateMap(api, securityScheme.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
   }
 }

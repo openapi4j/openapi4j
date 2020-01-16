@@ -15,6 +15,11 @@ public class SecurityTest extends Checker {
     validate("/validation/v3/security/valid/security-root.yaml");
   }
 
+  @Test
+  public void securityWithReference() throws Exception {
+    validate("/validation/v3/security/valid/securityWithReference.yaml");
+  }
+
   //////////////////////////////////////////////////////////////
   // INVALID
   //////////////////////////////////////////////////////////////
@@ -26,5 +31,10 @@ public class SecurityTest extends Checker {
   @Test(expected = ValidationException.class)
   public void securityNoFlowInvalid() throws Exception {
     validate("/validation/v3/security/invalid/securityNoFlow.yaml");
+  }
+
+  @Test(expected = ValidationException.class)
+  public void securityWithReferenceInvalid() throws Exception {
+    validate("/validation/v3/security/invalid/securityWithReference.yaml");
   }
 }

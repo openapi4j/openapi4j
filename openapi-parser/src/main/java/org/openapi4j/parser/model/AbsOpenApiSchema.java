@@ -2,16 +2,11 @@ package org.openapi4j.parser.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.openapi4j.core.util.TreeUtil.ENCODE_ERR_MSG;
 
