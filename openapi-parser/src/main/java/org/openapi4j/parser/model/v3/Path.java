@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public class Path extends AbsExtendedOpenApiSchema<Path> {
+public class Path extends AbsExtendedRefOpenApiSchema<Path> {
   private String description;
   @JsonAlias({"get", "put", "post", "delete", "options", "head", "patch", "trace"})
   @JsonIgnore
@@ -197,7 +197,7 @@ public class Path extends AbsExtendedOpenApiSchema<Path> {
   }
 
   @Override
-  public Path copy(OAIContext context, boolean followRefs) {
+  public Path copyContent(OAIContext context, boolean followRefs) {
     Path copy = new Path();
 
     copy.setSummary(getSummary());
@@ -207,6 +207,14 @@ public class Path extends AbsExtendedOpenApiSchema<Path> {
     copy.setParameters(copyList(getParameters(), context, followRefs));
     copy.setExtensions(copyMap(getExtensions()));
 
+    return copy;
+  }
+
+  @Override
+  protected Path copyReference(OAIContext context) {
+    Path copy = new Path();
+    copy.setRef(getRef());
+    copy.setCanonicalRef(getCanonicalRef());
     return copy;
   }
 }

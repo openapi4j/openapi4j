@@ -1,0 +1,11 @@
+foo_bar:
+  get:
+    operationId: getFooBar
+    responses:
+      '200':
+        description: The FooBar
+        content:
+          application/json:
+            schema:
+              type: string
+

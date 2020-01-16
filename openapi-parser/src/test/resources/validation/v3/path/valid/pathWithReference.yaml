@@ -1,0 +1,20 @@
+﻿# https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#schemaObject
+# Add required properties in the Open API document object to avoid errors
+openapi: 3.0.0
+info:
+  title: Simple Document
+  version: 0.9.1
+paths:
+  /foo/bar:
+    $ref: 'reference.yaml#/foo_bar'
+  /foo/bar/baz:
+    get:
+      operationId: getFooBar
+      responses:
+        '200':
+          description: The FooBar
+          content:
+            application/json:
+              schema:
+                type: string
+components: {}
