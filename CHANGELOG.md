@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.6](https://github.com/openapi4j/openapi4j/tree/0.6) (2020-01-16)
+
+[Full Changelog](https://github.com/openapi4j/openapi4j/compare/0.5...0.6)
+
+**Implemented enhancements:**
+
+- Do not follow refs for discriminator properties [\#35](https://github.com/openapi4j/openapi4j/issues/35)
+- Open API parser : slim down Schema Object \(de-\)serializers [\#25](https://github.com/openapi4j/openapi4j/issues/25)
+- Add support for creating an OpenApi3 object from a JsonNode [\#24](https://github.com/openapi4j/openapi4j/issues/24)
+
+**Fixed bugs:**
+
+- Support $ref in Path and SecurityScheme [\#38](https://github.com/openapi4j/openapi4j/issues/38)
+- Validation error on nullable parameters with a format [\#34](https://github.com/openapi4j/openapi4j/issues/34)
+- Query parameters not marked as required still fail NullableValidator [\#31](https://github.com/openapi4j/openapi4j/issues/31)
+- Root-level `security` declaration causes deserialization error [\#29](https://github.com/openapi4j/openapi4j/issues/29)
+- Similar looking $ref strings can collide [\#28](https://github.com/openapi4j/openapi4j/issues/28)
+- additionalProperties using a $ref are resolved to `false` when calling toNode [\#21](https://github.com/openapi4j/openapi4j/issues/21)
+- Enum's in Schema are stored as strings [\#20](https://github.com/openapi4j/openapi4j/issues/20)
+
+Thanks to all contributors!
+
 ## [0.5](https://github.com/openapi4j/openapi4j/tree/0.5) (2019-12-06)
 
 [Full Changelog](https://github.com/openapi4j/openapi4j/compare/0.4...0.5)
