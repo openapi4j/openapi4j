@@ -21,6 +21,10 @@ openapi4j is a suite of tools, including the following :
 * [Request validator](https://github.com/openapi4j/openapi4j/tree/master/openapi-operation-validator) is high level module to manage validation for requests and/or responses against operations. More details in the related project.
 * [Request adapters](https://github.com/openapi4j/openapi4j/tree/master/openapi-operation-adapters) is the repository of specific adapters to wrap requests and responses.
 
+## Documentation
+
+The documentation for all modules is available [here](https://openapi4j.github.io/openapi4j/).
+
 ## Versioning and compatibility
 
 All modules follow the [Semantic Versioning 2.0.0](https://semver.org) and are aligned on each release even there's no changes.
@@ -43,16 +47,14 @@ Check [perf-checker](https://github.com/openapi4j/openapi4j/tree/master/openapi-
 
 ## Supported versions
 
-The modules currently support the OpenAPI Specification (OAS) version 3.x.x.  
+The modules currently support the OpenAPI Specification (OAS) version 3.x.x.
 
-This project has been developed while reading 3.0.2.  
+This project has been developed while reading 3.0.2.
 See related projects for limitations and issues.
 
 ## Roadmap
 
-- [See CHANGELOG.md for previous versions](https://github.com/openapi4j/openapi4j/blob/master/CHANGELOG.md)  
-- 0.6 :
-    - Waiting for community feedbacks before releasing 1.0.
+- [See CHANGELOG.md for previous versions](https://github.com/openapi4j/openapi4j/blob/master/CHANGELOG.md)
 
 Common until version 1.0 :
 * bug fixing / code coverage.

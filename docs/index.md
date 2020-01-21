@@ -3,7 +3,7 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=org.openapi4j%3Aopenapi4j&metric=security_rating)](https://sonarcloud.io/dashboard?id=org.openapi4j%3Aopenapi4j)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.openapi4j%3Aopenapi4j&metric=coverage)](https://sonarcloud.io/dashboard?id=org.openapi4j%3Aopenapi4j)
 
-# OpenAPI for java project home
+# OpenAPI for java
 
 This is the home page of the openapi4j project for Java (Jakarta or JVM platform in general).
 
@@ -16,10 +16,10 @@ openapi4j is a suite of tools, including the following :
 
 ## Modules
 
-* [Parser](docs/parser.md) allows the (de-)serialization and manipulation of the schema and its validation.
-* [Schema validator](docs/schema-validator.md) allows the validation of data against a given schema.
-* [Request validator](docs/operation-validator.md) is high level module to manage validation for requests and/or responses against operations. More details in the related project.
-* [Request adapters](docs/adapters.md) is the repository of specific adapters to wrap requests and responses.
+* [Parser](parser.md) allows the (de-)serialization and manipulation of the schema and its validation.
+* [Schema validator](schema-validator.md) allows the validation of data against a given schema.
+* [Request validator](operation-validator.md) is high level module to manage validation for requests and/or responses against operations. More details in the related project.
+* [Request adapters](adapters.md) is the repository of specific adapters to wrap requests and responses.
 
 ## Versioning and compatibility
 

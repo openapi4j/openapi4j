@@ -1,4 +1,4 @@
-# OpenAPI for java Operation validator project home
+# OpenAPI Operation validator module
 
 This is the home page of the openapi4j Operation validator project for Java (or JVM platform in general).
 

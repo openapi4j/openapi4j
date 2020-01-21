@@ -1,4 +1,4 @@
-# OpenAPI for java parser project home
+# OpenAPI parser module
 
 This is the home page of the openapi4j parser project for Java (or JVM platform in general).
 
