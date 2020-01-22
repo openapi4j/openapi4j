@@ -173,7 +173,9 @@ paths:
               x-foo: foo
             foo:
               $ref: '#/components/links/link1'
-        200:
+        2XX:
+          description: description
+        50X:
           description: description
       callbacks:
         cb1:

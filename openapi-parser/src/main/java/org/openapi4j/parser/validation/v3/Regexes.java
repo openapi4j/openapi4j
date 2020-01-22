@@ -13,5 +13,5 @@ class Regexes {
   static final Pattern METHOD_REGEX = Pattern.compile("get|put|post|delete|options|head|patch|trace");
   static final Pattern PARAM_IN_REGEX = Pattern.compile("path|query|header|cookie");
   static final Pattern STYLE_REGEX = Pattern.compile("matrix|label|form|simple|spaceDelimited|pipeDelimited|deepObject");
-  static final Pattern RESPONSE_REGEX = Pattern.compile("default|\\d\\d\\d");
+  static final Pattern RESPONSE_REGEX = Pattern.compile("default|(\\d[0-9X]{2})");
 }
