@@ -43,7 +43,7 @@ public class OperationValidator {
   private static final String OPERATION_REQUIRED_ERR_MSG = "Operation is required.";
   private static final String BODY_CONTENT_TYPE_ERR_MSG = "Body content type cannot be determined. No 'Content-Type' header available.";
   private static final String BODY_WRONG_CONTENT_TYPE_ERR_MSG = "Content type '%s' is not allowed in body.";
-  private static final String RESPONSE_STATUS_NOT_FOUND_ERR_MSG = "Response status '%s' or default has not been found.";
+  private static final String RESPONSE_STATUS_NOT_FOUND_ERR_MSG = "Response status '%s', ranged or default has not been found.";
   // Parameter specifics
   private static final String IN_PATH = "path";
   private static final String IN_QUERY = "query";
@@ -209,18 +209,9 @@ public class OperationValidator {
   public void validateBody(final org.openapi4j.operation.validator.model.Response response,
                            final ValidationResults results) {
 
-    if (specResponseBodyValidators == null) return;
+    Map<String, BodyValidator> validators = getResponseValidator(specResponseBodyValidators, response, results);
 
-    Map<String, BodyValidator> validators = specResponseBodyValidators.get(String.valueOf(response.getStatus()));
-    // Check default response if any
-    if (validators == null) {
-      validators = specResponseBodyValidators.get(DEFAULT_RESPONSE_CODE);
-    }
-    // Well, time to exit...
-    if (validators == null) {
-      results.addError(String.format(RESPONSE_STATUS_NOT_FOUND_ERR_MSG, response.getStatus()));
-      return;
-    }
+    if (validators == null) return;
 
     validateBody(
       validators,
@@ -265,18 +256,9 @@ public class OperationValidator {
   public void validateHeaders(final org.openapi4j.operation.validator.model.Response response,
                               final ValidationResults results) {
 
-    if (specResponseHeaderValidators == null) return;
+    ParameterValidator<Header> validator = getResponseValidator(specResponseHeaderValidators, response, results);
 
-    ParameterValidator<Header> validator = specResponseHeaderValidators.get(String.valueOf(response.getStatus()));
-    // Check default response if any
-    if (validator == null) {
-      validator = specResponseHeaderValidators.get(DEFAULT_RESPONSE_CODE);
-    }
-    // Well, time to exit...
-    if (validator == null) {
-      results.addError(String.format(RESPONSE_STATUS_NOT_FOUND_ERR_MSG, response.getStatus()));
-      return;
-    }
+    if (validator == null) return;
 
     Map<String, JsonNode> mappedValues =
       ParameterConverter.headersToNode(validator.getParameters(), response.getHeaders());
@@ -293,8 +275,8 @@ public class OperationValidator {
 
     return
       parameters.size() != 0
-      ? new ParameterValidator<>(context, openApi, parameters)
-      : null;
+        ? new ParameterValidator<>(context, openApi, parameters)
+        : null;
   }
 
   private Map<String, BodyValidator> createRequestBodyValidators() {
@@ -357,6 +339,32 @@ public class OperationValidator {
     }
 
     return validators.size() != 0 ? validators : null;
+  }
+
+  private <T> T getResponseValidator(final Map<String, T> validators,
+                                     final org.openapi4j.operation.validator.model.Response response,
+                                     final ValidationResults results) {
+
+    if (validators == null) return null;
+
+    String statusCode = String.valueOf(response.getStatus());
+
+    // Check explicit status code
+    T validator = validators.get(statusCode);
+    // Check ranged status code
+    if (validator == null) {
+      validator = validators.get(statusCode.charAt(0) + "XX");
+    }
+    // Check default
+    if (validator == null) {
+      validator = validators.get(DEFAULT_RESPONSE_CODE);
+    }
+    // Well, we tried...
+    if (validator == null) {
+      results.addError(String.format(RESPONSE_STATUS_NOT_FOUND_ERR_MSG, response.getStatus()));
+    }
+
+    return validator;
   }
 
   private Pattern initPathPattern(String specPath) {

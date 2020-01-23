@@ -175,8 +175,6 @@ paths:
               $ref: '#/components/links/link1'
         2XX:
           description: description
-        50X:
-          description: description
       callbacks:
         cb1:
           $ref: '#/components/callbacks/cb1'
