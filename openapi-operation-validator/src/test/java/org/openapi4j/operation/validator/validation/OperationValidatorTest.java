@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.Response;
@@ -16,6 +17,7 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.function.BiConsumer;
 
@@ -176,6 +178,41 @@ public class OperationValidatorTest {
 
     check(
       new DefaultRequest.Builder(GET, "/foo").build(),
+      val::validateBody,
+      false);
+  }
+
+  @Test
+  public void discriminatorCheck() throws IOException {
+    OperationValidator val = loadOperationValidator("discriminator");
+
+    JsonNode body = TreeUtil.json.readTree("{\"pet_type\": \"Cat\", \"age\": 3}");
+    check(
+      new DefaultRequest.Builder(POST, "/discriminator").header("Content-Type", "application/json").body(Body.from(body)).build(),
+      val::validateBody,
+      true);
+
+    body = TreeUtil.json.readTree("{\"pet_type\": \"Dog\", \"bark\": true}");
+    check(
+      new DefaultRequest.Builder(POST, "/discriminator").header("Content-Type", "application/json").body(Body.from(body)).build(),
+      val::validateBody,
+      true);
+
+    body = TreeUtil.json.readTree("{\"pet_type\": \"Dog\", \"bark\": false, \"breed\": \"Dingo\"}");
+    check(
+      new DefaultRequest.Builder(POST, "/discriminator").header("Content-Type", "application/json").body(Body.from(body)).build(),
+      val::validateBody,
+      true);
+
+    body = TreeUtil.json.readTree("{\"age\": 3}");
+    check(
+      new DefaultRequest.Builder(POST, "/discriminator").header("Content-Type", "application/json").body(Body.from(body)).build(),
+      val::validateBody,
+      false);
+
+    body = TreeUtil.json.readTree("{\"pet_type\": \"Dog\", \"bark\": false, \"breed\": \"foo\"}");
+    check(
+      new DefaultRequest.Builder(POST, "/discriminator").header("Content-Type", "application/json").body(Body.from(body)).build(),
       val::validateBody,
       false);
   }

@@ -16,6 +16,11 @@ public class DiscriminatorTest extends Checker {
     validate("/validation/v3/discriminator/valid/allOfDiscriminator.yaml");
   }
 
+  @Test
+  public void recursiveDiscriminator() throws Exception {
+    validate("/validation/v3/discriminator/valid/recursiveDiscriminator.yaml");
+  }
+
   //////////////////////////////////////////////////////////////
   // INVALID
   //////////////////////////////////////////////////////////////

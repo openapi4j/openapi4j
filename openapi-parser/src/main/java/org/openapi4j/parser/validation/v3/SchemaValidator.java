@@ -153,17 +153,27 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
         schema = getReferenceContent(api, schema, results, DISCRIMINATOR, Schema.class);
       }
 
-      if (!schema.hasProperty(discriminator.getPropertyName())) {
-        results.addError(String.format(DISCRIM_PROP_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
-        hasProperty = false;
+      // Check for extended model with allOf
+      if (schema.hasAllOfSchemas()) {
+        if (!checkSchemaDiscriminator(api, discriminator, schema.getAllOfSchemas(), new ValidationResults())) {
+          results.addError(String.format(DISCRIM_CONSTRAINT_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
+          hasProperty = false;
+        }
+      } else {
+        if (!schema.hasProperty(discriminator.getPropertyName())) {
+          results.addError(String.format(DISCRIM_PROP_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
+          hasProperty = false;
+        }
+        if (!schema.hasRequiredFields() || !schema.getRequiredFields().contains(discriminator.getPropertyName())) {
+          results.addError(String.format(DISCRIM_REQUIRED_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
+          hasProperty = false;
+        }
       }
-      if (!schema.hasRequiredFields() || !schema.getRequiredFields().contains(discriminator.getPropertyName())) {
-        results.addError(String.format(DISCRIM_REQUIRED_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
-        hasProperty = false;
-      }
+
+      return hasProperty;
     }
 
-    return hasProperty;
+    return true;
   }
 
   private void checkReadWrite(Schema schema, ValidationResults results) {
