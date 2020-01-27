@@ -340,7 +340,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   public boolean hasAllOfSchemas() {
-    return allOfSchemas != null;
+    return allOfSchemas != null && !allOfSchemas.isEmpty();
   }
 
   public Schema addAllOfSchema(Schema value) {
@@ -369,7 +369,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   public boolean hasOneOfSchemas() {
-    return oneOfSchemas != null;
+    return oneOfSchemas != null && !oneOfSchemas.isEmpty();
   }
 
   public Schema addOneOfSchema(Schema value) {
@@ -398,7 +398,7 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   public boolean hasAnyOfSchemas() {
-    return anyOfSchemas != null;
+    return anyOfSchemas != null && !anyOfSchemas.isEmpty();
   }
 
   public Schema addAnyOfSchema(Schema value) {
