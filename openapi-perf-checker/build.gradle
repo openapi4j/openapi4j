@@ -40,8 +40,8 @@ dependencies {
 jar {
   manifest {
     attributes(
-      'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
-      'Main-Class': 'org.openapi4j.perf.GlobalRunner'
+      'Class-Path': configurations.compileClasspath.collect { it.getName() }.join(' '),
+      'Main-Class': 'org.perf.check.GlobalRunner'
     )
   }
 }
