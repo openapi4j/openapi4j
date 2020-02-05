@@ -165,12 +165,13 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
   protected void validateUrl(final String value,
                              final ValidationResults results,
                              final boolean required,
+                             final boolean allowRelative,
                              final String crumb,
                              final ValidationSeverity severity) {
 
     validateString(value, results, required, (Pattern) null, crumb);
     if (value != null) {
-      checkUrl(value, results, crumb, severity);
+      checkUrl(value, allowRelative, results, crumb, severity);
     }
   }
 
@@ -204,13 +205,16 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
   }
 
   private void checkUrl(final String urlSpec,
+                        final boolean allowRelative,
                         final ValidationResults results,
                         final String crumb,
                         final ValidationSeverity severity) {
     try {
       new URL(urlSpec);
     } catch (MalformedURLException e) {
-      results.add(severity, String.format(INVALID_URL, urlSpec), crumb);
+      if (!allowRelative) {
+        results.add(severity, String.format(INVALID_URL, urlSpec), crumb);
+      }
     }
   }
 }

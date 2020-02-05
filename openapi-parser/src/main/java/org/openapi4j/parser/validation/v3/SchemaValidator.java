@@ -170,10 +170,10 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
         }
       }
 
-      return hasProperty;
+      break;
     }
 
-    return true;
+    return hasProperty;
   }
 
   private void checkReadWrite(Schema schema, ValidationResults results) {

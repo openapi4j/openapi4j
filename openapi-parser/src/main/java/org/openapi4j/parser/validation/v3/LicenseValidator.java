@@ -24,6 +24,6 @@ class LicenseValidator extends Validator3Base<OpenApi3, License> {
   public void validate(OpenApi3 api, License license, ValidationResults results) {
     validateMap(api, license.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateString(license.getName(), results, true, NAME);
-    validateUrl(license.getUrl(), results, false, URL, ValidationSeverity.ERROR);
+    validateUrl(license.getUrl(), results, false, false, URL, ValidationSeverity.ERROR);
   }
 }

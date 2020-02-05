@@ -8,6 +8,8 @@ servers:
     description: Development server
   - url: https://staging.gigantic-server.com/v1
     description: Staging server
+  - url: /v1
+    description: Staging server
   - url: https://{username}.api.gigantic-server.com/{basePath}
     description: Production server
     variables:

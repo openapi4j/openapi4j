@@ -26,6 +26,6 @@ class ContactValidator extends Validator3Base<OpenApi3, Contact> {
     validateString(contact.getEmail(), results, false, EMAIL_REGEX, EMAIL);
     validateMap(api, contact.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateString(contact.getName(), results, false, NAME);
-    validateUrl(contact.getUrl(), results, false, URL, ValidationSeverity.ERROR);
+    validateUrl(contact.getUrl(), results, false, false, URL, ValidationSeverity.ERROR);
   }
 }
