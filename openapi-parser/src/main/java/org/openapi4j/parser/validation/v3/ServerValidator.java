@@ -40,6 +40,8 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
   private void checkUrlWithVariables(Server server, ValidationResults results) {
     String url = server.getUrl();
 
+    validateUrl(url, results, true, true, URL, ValidationSeverity.ERROR);
+
     // Find variables
     Matcher matcher = PATTERN_VARIABLES.matcher(url);
     final List<String> variables = new ArrayList<>();
@@ -47,9 +49,8 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
       variables.add(matcher.group(2));
     }
 
-    if (variables.isEmpty()) {
-      // Validate directly
-      validateUrl(url, results, true, URL, ValidationSeverity.ERROR);
+    if (!variables.isEmpty() && server.getVariables() == null) {
+      results.addError(String.format(VARIABLES_NOT_DEFINED, url), URL);
     } else if (server.getVariables() != null) {
       // Validate defined variables
       for (String variable : variables) {
@@ -57,8 +58,6 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
           results.addError(String.format(VARIABLE_NOT_DEFINED, variable, url), URL);
         }
       }
-    } else {
-      results.addError(String.format(VARIABLES_NOT_DEFINED, url), URL);
     }
   }
 }

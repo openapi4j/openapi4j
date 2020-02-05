@@ -6,8 +6,6 @@ info:
 servers:
   - url: https://development.gigantic-server.com/v1/{basePath}
     description: No variables
-  - url: foo.url
-    description: Not a URL
   - url: https://{username}.api.gigantic-server.com/{basePath}
     description: Wrong variables
     variables:

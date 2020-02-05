@@ -3,7 +3,6 @@ package org.openapi4j.parser.validation.v3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Path;
-import org.openapi4j.parser.model.v3.Schema;
 import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;

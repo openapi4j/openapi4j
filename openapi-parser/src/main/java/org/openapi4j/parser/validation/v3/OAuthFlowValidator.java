@@ -34,18 +34,18 @@ class OAuthFlowValidator extends Validator3Base<OpenApi3, OAuthFlow> {
     String conf = oauthFlow.getConfiguration();
 
     if (IMPLICIT.equals(conf) || AUTHORIZATIONCODE.equals(conf)) {
-      validateUrl(oauthFlow.getAuthorizationUrl(), results, true, AUTHORIZATIONURL, ValidationSeverity.ERROR);
+      validateUrl(oauthFlow.getAuthorizationUrl(), results, true, false, AUTHORIZATIONURL, ValidationSeverity.ERROR);
     } else if (oauthFlow.getAuthorizationUrl() != null) {
       results.addError(AUTH_URL_NOT_ALLOWED, AUTHORIZATIONURL);
     }
 
     if (PASSWORD.equals(conf) || CLIENTCREDENTIALS.equals(conf) || AUTHORIZATIONCODE.equals(conf)) {
-      validateUrl(oauthFlow.getTokenUrl(), results, true, TOKENURL, ValidationSeverity.ERROR);
+      validateUrl(oauthFlow.getTokenUrl(), results, true, false, TOKENURL, ValidationSeverity.ERROR);
     } else if (oauthFlow.getTokenUrl() != null) {
       results.addError(TOKEN_URL_NOT_ALLOWED, TOKENURL);
     }
 
-    validateUrl(oauthFlow.getRefreshUrl(), results, false, REFRESHURL, ValidationSeverity.ERROR);
+    validateUrl(oauthFlow.getRefreshUrl(), results, false, false, REFRESHURL, ValidationSeverity.ERROR);
     validateMap(api, oauthFlow.getScopes(), results, true, SCOPES, Regexes.NOEXT_REGEX, null);
     validateMap(api, oauthFlow.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
   }
