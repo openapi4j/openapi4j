@@ -9,13 +9,13 @@ import org.perf.check.report.ReportPrinter;
 import java.util.Iterator;
 
 public class SchemaPerfRunner {
-  private static final String SCHEMA_FILE = "/schema/schema-draft4.json";
-  private static final String DATA_FILE = "/schema/data.json";
+  private static final String SCHEMA_FILE = "schema/schema-draft4.json";
+  private static final String DATA_FILE = "schema/data.json";
   private static final String DATA_SCHEMAS = "schemas";
 
   public static void main(final String... args) throws Exception {
-    final JsonNode schema = TreeUtil.json.readTree(SchemaPerfRunner.class.getResource(SCHEMA_FILE));
-    final JsonNode data = TreeUtil.json.readTree(SchemaPerfRunner.class.getResource(DATA_FILE)).get(DATA_SCHEMAS);
+    final JsonNode schema = TreeUtil.json.readTree(SchemaPerfRunner.class.getClassLoader().getResource(SCHEMA_FILE));
+    final JsonNode data = TreeUtil.json.readTree(SchemaPerfRunner.class.getClassLoader().getResource(DATA_FILE)).get(DATA_SCHEMAS);
 
     final Networknt networknt = new Networknt(schema);
     final OpenApi4j openApi4j = new OpenApi4j(schema);

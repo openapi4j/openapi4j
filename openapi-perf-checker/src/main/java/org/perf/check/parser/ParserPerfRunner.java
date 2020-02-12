@@ -4,7 +4,7 @@ import org.perf.check.report.Report;
 import org.perf.check.report.ReportPrinter;
 
 public class ParserPerfRunner {
-  private static final String SCHEMA_FILE = "/org/openapi4j/parser/api-definition.yaml";
+  private static final String SCHEMA_FILE = "org/openapi4j/parser/api-definition.yaml";
 
   public static void main(final String... args) {
     final Swagger swagger = new Swagger();
