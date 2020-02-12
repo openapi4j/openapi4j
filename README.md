@@ -45,11 +45,23 @@ Snapshot is available for latest valid commit on master branch.
 
 Check [perf-checker](https://github.com/openapi4j/openapi4j/tree/master/openapi-perf-checker) project for some values.
 
+## Native compilation (GraalVM)
+
+From version 0.7, the toolset is fully compliant with native compilation (AOT).  
+This was tested with GraalVM 19.3.1.  
+No further configuration or directive is needed to include the modules if available on classpath.
+
+```shell script
+native-image -H:+ReportExceptionStackTraces --no-fallback -jar your-app.jar
+```
+
+FYI, testing runs made don't show much performance improvements but parser module.
+
 ## Supported versions
 
 The modules currently support the OpenAPI Specification (OAS) version 3.x.x.
 
-This project has been developed while reading 3.0.2.
+This project has been developed while reading 3.0.2.  
 See related projects for limitations and issues.
 
 ## Roadmap
