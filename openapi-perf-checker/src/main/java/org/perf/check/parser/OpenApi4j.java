@@ -9,7 +9,7 @@ class OpenApi4j implements PerfParser {
   public String load(String schemaFile) {
     // Check parsing with validation
     try {
-      new OpenApi3Parser().parse(getClass().getResource(schemaFile), false);
+      new OpenApi3Parser().parse(getClass().getClassLoader().getResource(schemaFile), false);
     } catch (ValidationException | ResolutionException e) {
       return e.toString();
     }

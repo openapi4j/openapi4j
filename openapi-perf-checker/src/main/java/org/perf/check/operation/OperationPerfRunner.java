@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class OperationPerfRunner {
-  private static final String SCHEMA_FILE = "/operation/api.yaml";
+  private static final String SCHEMA_FILE = "operation/api.yaml";
 
   public static void main(final String... args) throws Exception {
     List<Report> reports = new ArrayList<>();
