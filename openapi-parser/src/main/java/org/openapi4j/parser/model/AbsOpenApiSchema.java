@@ -81,7 +81,7 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
 
   protected <K, T> Map<K, T> copyMap(Map<K, T> original) {
     if (original != null) {
-      return new HashMap<>(original);
+      return new LinkedHashMap<>(original);
     }
 
     return null;
@@ -110,7 +110,7 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
 
   protected <K, T extends OpenApiSchema<T>> Map<K, T> copyMap(Map<K, T> original, OAIContext context, boolean followRefs) {
     if (original != null) {
-      Map<K, T> copy = new HashMap<>(original.size());
+      Map<K, T> copy = new LinkedHashMap<>(original.size());
       for (Map.Entry<K, T> element : original.entrySet()) {
         OpenApiSchema<T> schema = element.getValue();
         if (schema != null) {
@@ -129,7 +129,7 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
 
   protected <K, V> Map<K, V> mapPut(Map<K, V> map, K key, V value) {
     if (map == null) {
-      map = new HashMap<>();
+      map = new LinkedHashMap<>();
     }
     map.put(key, value);
 
