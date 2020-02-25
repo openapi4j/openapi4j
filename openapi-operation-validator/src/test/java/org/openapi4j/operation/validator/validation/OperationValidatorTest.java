@@ -184,7 +184,7 @@ public class OperationValidatorTest {
     val = loadOperationValidator("postComplexMediaType");
 
     check(
-      new DefaultRequest.Builder(GET, "/complexMediaType").header("Content-Type", "application/json; charset=UTF-8").body(Body.from(body)).build(),
+      new DefaultRequest.Builder(GET, "/complexMediaType").header("Content-Type", "text/plain; charset=iso-8859-1").body(Body.from("dummy")).build(),
       val::validateBody,
       true);
   }
@@ -298,7 +298,7 @@ public class OperationValidatorTest {
     val = loadOperationValidator("getComplexMediaType");
 
     check(
-      new DefaultResponse.Builder(200).header("Content-Type", "application/json; charset=UTF-8").build(),
+      new DefaultResponse.Builder(200).header("Content-Type", "text/plain; charset=iso-8859-1").build(),
       val::validateBody,
       true);
   }
