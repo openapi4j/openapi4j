@@ -180,6 +180,13 @@ public class OperationValidatorTest {
       new DefaultRequest.Builder(GET, "/foo").build(),
       val::validateBody,
       false);
+
+    val = loadOperationValidator("postComplexMediaType");
+
+    check(
+      new DefaultRequest.Builder(GET, "/complexMediaType").header("Content-Type", "application/json; charset=UTF-8").body(Body.from(body)).build(),
+      val::validateBody,
+      true);
   }
 
   @Test
@@ -287,6 +294,13 @@ public class OperationValidatorTest {
       new DefaultResponse.Builder(500).header("X-Rate-Limit", "1").build(),
       val::validateHeaders,
       false);
+
+    val = loadOperationValidator("getComplexMediaType");
+
+    check(
+      new DefaultResponse.Builder(200).header("Content-Type", "application/json; charset=UTF-8").build(),
+      val::validateBody,
+      true);
   }
 
   private OperationValidator loadOperationValidator(String opId) {

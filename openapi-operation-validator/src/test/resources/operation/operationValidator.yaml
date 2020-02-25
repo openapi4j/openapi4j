@@ -83,6 +83,33 @@ paths:
           description: a description
           content:
             'application/json': {}
+  /complexMediaType:
+    get:
+      operationId: getComplexMediaType
+      responses:
+        '200':
+          description: a description
+          content:
+            'application/json; charset=UTF-8':
+            schema:
+              properties:
+                param:
+                  type: string
+    post:
+      operationId: postComplexMediaType
+      requestBody:
+        required: true
+        content:
+          'application/json; charset=UTF-8':
+            schema:
+              properties:
+                param:
+                  type: string
+      responses:
+        '200':
+          description: a description
+          content:
+            'application/json': {}
   /merge_parameters:
     parameters:
       - name: pathStringHeaderParam

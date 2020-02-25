@@ -314,7 +314,7 @@ public class OperationValidator {
     final Map<String, BodyValidator> validators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     for (Map.Entry<String, MediaType> entry : mediaTypes.entrySet()) {
-      validators.put(entry.getKey(), new BodyValidator(context, openApi, entry.getValue()));
+      validators.put(ContentType.getTypeOnly(entry.getKey()), new BodyValidator(context, openApi, entry.getValue()));
     }
 
     return validators;
