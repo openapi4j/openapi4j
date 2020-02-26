@@ -76,6 +76,25 @@ public final class ContentType {
     return StandardCharsets.UTF_8.name();
   }
 
+  /**
+   * @param contentType The given content type to check.
+   * @return The defined charset for the current content type.
+   * 'utf-8' if none defined.
+   */
+  public static String getCharSetOrNull(String contentType) {
+    if (contentType == null) return null;
+
+    Matcher matcher = CHARSET_PATTERN.matcher(contentType);
+    if (matcher.find()) {
+      String charset = matcher.group(1).trim();
+      if (Charset.isSupported(charset)) {
+        return charset;
+      }
+    }
+
+    return null;
+  }
+
   public static String getTypeOnly(String contentType) {
     if (contentType == null) return null;
     final int endIndex = contentType.indexOf(';');

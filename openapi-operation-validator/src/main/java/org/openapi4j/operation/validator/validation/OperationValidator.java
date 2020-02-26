@@ -7,7 +7,7 @@ import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
-import org.openapi4j.operation.validator.util.ContentType;
+import org.openapi4j.operation.validator.model.impl.MediaTypeContainer;
 import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
@@ -21,6 +21,7 @@ import org.openapi4j.parser.model.v3.Response;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -56,9 +57,9 @@ public class OperationValidator {
   private final ParameterValidator<Parameter> specRequestHeaderValidator;
   private final ParameterValidator<Parameter> specRequestCookieValidator;
   // Map<content type, validator>
-  private final Map<String, BodyValidator> specRequestBodyValidators;
+  private final Map<MediaTypeContainer, BodyValidator> specRequestBodyValidators;
   // Map<status code, Map<content type, validator>>
-  private final Map<String, Map<String, BodyValidator>> specResponseBodyValidators;
+  private final Map<String, Map<MediaTypeContainer, BodyValidator>> specResponseBodyValidators;
   // Map<status code, validator>
   private final Map<String, ParameterValidator<Header>> specResponseHeaderValidators;
   private final ValidationContext<OAI3> context;
@@ -209,7 +210,7 @@ public class OperationValidator {
   public void validateBody(final org.openapi4j.operation.validator.model.Response response,
                            final ValidationResults results) {
 
-    Map<String, BodyValidator> validators = getResponseValidator(specResponseBodyValidators, response, results);
+    Map<MediaTypeContainer, BodyValidator> validators = getResponseValidator(specResponseBodyValidators, response, results);
 
     if (validators == null) return;
 
@@ -221,20 +222,26 @@ public class OperationValidator {
       results);
   }
 
-  private void validateBody(final Map<String, BodyValidator> validators,
+  private void validateBody(final Map<MediaTypeContainer, BodyValidator> validators,
                             final String rawContentType,
                             final Body body,
                             final boolean isRequired,
                             final ValidationResults results) {
 
-    final String contentType = ContentType.getTypeOnly(rawContentType);
+    final MediaTypeContainer contentType = MediaTypeContainer.create(rawContentType);
 
     if (contentType == null) {
       results.addError(BODY_CONTENT_TYPE_ERR_MSG);
       return;
     }
 
-    BodyValidator validator = validators.get(contentType);
+    BodyValidator validator = null;
+    for (Map.Entry<MediaTypeContainer, BodyValidator> mediaType : validators.entrySet()) {
+      if (mediaType.getKey().match(contentType)) {
+        validator = mediaType.getValue();
+        break;
+      }
+    }
     if (validator == null) {
       results.addError(String.format(BODY_WRONG_CONTENT_TYPE_ERR_MSG, contentType));
       return;
@@ -279,7 +286,7 @@ public class OperationValidator {
         : null;
   }
 
-  private Map<String, BodyValidator> createRequestBodyValidators() {
+  private Map<MediaTypeContainer, BodyValidator> createRequestBodyValidators() {
     if (operation.getRequestBody() == null) {
       return null;
     }
@@ -287,12 +294,12 @@ public class OperationValidator {
     return createBodyValidators(operation.getRequestBody().getContentMediaTypes());
   }
 
-  private Map<String, Map<String, BodyValidator>> createResponseBodyValidators() {
+  private Map<String, Map<MediaTypeContainer, BodyValidator>> createResponseBodyValidators() {
     if (operation.getResponses() == null) {
       return null;
     }
 
-    final Map<String, Map<String, BodyValidator>> validators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    final Map<String, Map<MediaTypeContainer, BodyValidator>> validators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     final Map<String, Response> responses = operation.getResponses();
 
@@ -306,15 +313,15 @@ public class OperationValidator {
     return validators;
   }
 
-  private Map<String, BodyValidator> createBodyValidators(final Map<String, MediaType> mediaTypes) {
+  private Map<MediaTypeContainer, BodyValidator> createBodyValidators(final Map<String, MediaType> mediaTypes) {
     if (mediaTypes == null) {
       return null;
     }
 
-    final Map<String, BodyValidator> validators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    final Map<MediaTypeContainer, BodyValidator> validators = new HashMap<>();
 
     for (Map.Entry<String, MediaType> entry : mediaTypes.entrySet()) {
-      validators.put(entry.getKey(), new BodyValidator(context, openApi, entry.getValue()));
+      validators.put(MediaTypeContainer.create(entry.getKey()), new BodyValidator(context, openApi, entry.getValue()));
     }
 
     return validators;

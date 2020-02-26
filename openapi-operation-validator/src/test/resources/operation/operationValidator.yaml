@@ -74,11 +74,21 @@ paths:
               properties:
                 param:
                   type: string
+          'text/plain; charset=UTF-8': {}
+          'image/*':
+            schema:
+              type: string
+              format: binary
       responses:
         '200':
           description: a description
           content:
             'application/json': {}
+            'text/plain': {}
+            'image/*':
+              schema:
+                type: string
+                format: binary
         'default':
           description: a description
           content:

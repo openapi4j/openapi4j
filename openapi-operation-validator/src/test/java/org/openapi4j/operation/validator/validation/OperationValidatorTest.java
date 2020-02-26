@@ -177,6 +177,21 @@ public class OperationValidatorTest {
       false);
 
     check(
+      new DefaultRequest.Builder(GET, "/foo").header("Content-Type", "text/plain; charset=utf-8").body(Body.from("dummy")).build(),
+      val::validateBody,
+      true);
+
+    check(
+      new DefaultRequest.Builder(GET, "/foo").header("Content-Type", "text/plain; charset=iso-8859-1").body(Body.from("dummy")).build(),
+      val::validateBody,
+      false);
+
+    check(
+      new DefaultRequest.Builder(GET, "/foo").header("Content-Type", "image/png").body(Body.from("dummy")).build(),
+      val::validateBody,
+      true);
+
+    check(
       new DefaultRequest.Builder(GET, "/foo").build(),
       val::validateBody,
       false);
@@ -260,6 +275,11 @@ public class OperationValidatorTest {
 
     check(
       new DefaultResponse.Builder(500).header("Content-Type", "application/json").build(),
+      val::validateBody,
+      true);
+
+    check(
+      new DefaultResponse.Builder(200).header("Content-Type", "text/plain").body(Body.from("dummy")).build(),
       val::validateBody,
       true);
 
