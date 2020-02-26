@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.7](https://github.com/openapi4j/openapi4j/tree/0.6) (2020-02-26)
+
+[Full Changelog](https://github.com/openapi4j/openapi4j/compare/0.6...0.7)
+
+**Implemented enhancements:**
+
+- Allow native compilation with GraalVM [\#49](https://github.com/openapi4j/openapi4j/issues/49)
+- Operation validator : support status code ranges for response description [\#41](https://github.com/openapi4j/openapi4j/issues/41)
+
+**Fixed bugs:**
+
+- Operation validator: detection of media type variance [\#53](https://github.com/openapi4j/openapi4j/issues/53)
+- relative url support in Server Object [\#47](https://github.com/openapi4j/openapi4j/issues/47)
+- Schema composition with discriminator causes validation errors [\#44](https://github.com/openapi4j/openapi4j/issues/44)
+- Validation error on responses http status code ranges [\#39](https://github.com/openapi4j/openapi4j/issues/39)
+
+**Closed issues:**
+
+- Validate against discriminator-related "subclass" schemas [\#46](https://github.com/openapi4j/openapi4j/issues/46)
+
+
 ## [0.6](https://github.com/openapi4j/openapi4j/tree/0.6) (2020-01-16)
 
 [Full Changelog](https://github.com/openapi4j/openapi4j/compare/0.5...0.6)
