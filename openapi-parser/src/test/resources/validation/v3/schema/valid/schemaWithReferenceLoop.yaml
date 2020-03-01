@@ -1,0 +1,47 @@
+openapi: 3.0.2
+info:
+  title: test $ref loop
+  version: 1.0.0
+
+paths:
+
+  /self-reference:
+    get:
+      responses:
+        '200':
+          description: none
+          content:
+            application/json:
+                schema:
+                  $ref: '#/components/schemas/Self'
+
+  /nested-self-reference:
+    get:
+      responses:
+        '200':
+          description: none
+          content:
+            application/json:
+                schema:
+                  $ref: '#/components/schemas/Foo'
+
+components:
+  schemas:
+
+    Self:
+      type: object
+      properties:
+        self:
+          $ref: '#/components/schemas/Self'
+
+    Foo:
+      type: object
+      properties:
+        child:
+          $ref: '#/components/schemas/Bar'
+
+    Bar:
+      type: object
+      properties:
+        parent:
+          $ref: '#/components/schemas/Foo'
