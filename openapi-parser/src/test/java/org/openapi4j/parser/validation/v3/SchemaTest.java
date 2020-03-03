@@ -20,6 +20,11 @@ public class SchemaTest extends Checker {
     validate("/validation/v3/schema/valid/schemaType.yaml");
   }
 
+  @Test
+  public void referenceNestedLoop() throws Exception {
+    validate("/validation/v3/schema/valid/referenceNestedLoop.yaml");
+  }
+
   //////////////////////////////////////////////////////////////
   // INVALID
   //////////////////////////////////////////////////////////////

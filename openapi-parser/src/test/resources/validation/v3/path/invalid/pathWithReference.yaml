@@ -9,10 +9,10 @@ paths:
     $ref: 'reference.yaml#/foo_bar'
   /foo/bar/baz:
     get:
-      operationId: getFooBar
+      operationId: getFooBarBaz
       responses:
         '200':
-          description: The FooBar
+          description: FooBarBaz
           content:
             application/json:
               schema:

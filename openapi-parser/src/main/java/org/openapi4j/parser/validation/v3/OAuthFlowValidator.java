@@ -4,6 +4,7 @@ import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.core.validation.ValidationSeverity;
 import org.openapi4j.parser.model.v3.OAuthFlow;
 import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.AUTHORIZATIONCODE;
@@ -30,7 +31,7 @@ class OAuthFlowValidator extends Validator3Base<OpenApi3, OAuthFlow> {
   }
 
   @Override
-  public void validate(OpenApi3 api, OAuthFlow oauthFlow, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, OAuthFlow oauthFlow, ValidationResults results) {
     String conf = oauthFlow.getConfiguration();
 
     if (IMPLICIT.equals(conf) || AUTHORIZATIONCODE.equals(conf)) {
@@ -46,7 +47,7 @@ class OAuthFlowValidator extends Validator3Base<OpenApi3, OAuthFlow> {
     }
 
     validateUrl(oauthFlow.getRefreshUrl(), results, false, false, REFRESHURL, ValidationSeverity.ERROR);
-    validateMap(api, oauthFlow.getScopes(), results, true, SCOPES, Regexes.NOEXT_REGEX, null);
-    validateMap(api, oauthFlow.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+    validateMap(context, api, oauthFlow.getScopes(), results, true, SCOPES, Regexes.NOEXT_REGEX, null);
+    validateMap(context, api, oauthFlow.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
   }
 }

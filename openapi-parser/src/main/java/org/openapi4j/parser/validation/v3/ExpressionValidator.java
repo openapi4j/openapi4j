@@ -65,7 +65,7 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
     return matches;
   }
 
-  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+  @SuppressWarnings("UnusedReturnValue")
   private boolean checkResponseParameter(OpenApi3 api, Operation operation, String propValue, ValidationResults results) {
     if (operation.getResponses() == null) return false;
 

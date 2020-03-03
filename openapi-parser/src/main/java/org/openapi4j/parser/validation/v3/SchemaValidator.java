@@ -4,6 +4,7 @@ import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.Discriminator;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Schema;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import java.util.Collection;
@@ -68,24 +69,24 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
   }
 
   @Override
-  public void validate(OpenApi3 api, Schema schema, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Schema schema, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // additionalPropertiesAllowed, description, deprecated,
     // example, title, exclusiveMaximum, exclusiveMinimum, nullable, uniqueItems
 
     if (schema.isRef()) {
-      validateReference(api, schema, results, $REF, SchemaValidator.instance(), Schema.class);
+      validateReference(context, api, schema, results, $REF, SchemaValidator.instance(), Schema.class);
     } else {
-      validateField(api, schema.getAdditionalProperties(), results, false, ADDITIONALPROPERTIES, SchemaValidator.instance());
-      validateField(api, schema.getDiscriminator(), results, false, DISCRIMINATOR, DiscriminatorValidator.instance());
+      validateField(context, api, schema.getAdditionalProperties(), results, false, ADDITIONALPROPERTIES, SchemaValidator.instance());
+      validateField(context, api, schema.getDiscriminator(), results, false, DISCRIMINATOR, DiscriminatorValidator.instance());
       checkDiscriminator(api, schema, results);
       validateDefaultType(schema.getDefault(), schema.getType(), results);
-      validateList(api, schema.getEnums(), results, false, ENUM, null);
-      validateMap(api, schema.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
-      validateField(api, schema.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
+      validateList(context, api, schema.getEnums(), results, false, ENUM, null);
+      validateMap(context, api, schema.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+      validateField(context, api, schema.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
       validateFormat(schema.getFormat(), schema.getType(), results);
       if (schema.getItemsSchema() != null) {
-        validate(api, schema.getItemsSchema(), results/*, "items"*/);
+        context.validate(api, schema.getItemsSchema(), SchemaValidator.instance(), results/*, "items"*/);
       }
       validateNonNegative(schema.getMaxItems(), results, false, MAXITEMS);
       validateNonNegative(schema.getMinItems(), results, false, MINITEMS);
@@ -95,17 +96,17 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
       validateNonNegative(schema.getMinProperties(), results, false, MINPROPERTIES);
       validatePositive(schema.getMultipleOf(), results, false, MULTIPLEOF);
       if (schema.getNotSchema() != null) {
-        validate(api, schema.getNotSchema(), results/*, "not"*/);
+        context.validate(api, schema.getNotSchema(), SchemaValidator.instance(), results/*, "not"*/);
       }
       validatePattern(schema.getPattern(), results, false, PATTERN);
-      validateMap(api, schema.getProperties(), results, false, PROPERTIES, null, this);
-      validateList(api, schema.getRequiredFields(), results, false, REQUIRED, null);
-      validateList(api, schema.getAllOfSchemas(), results, false, ALLOF, this);
-      validateList(api, schema.getAnyOfSchemas(), results, false, ANYOF, this);
-      validateList(api, schema.getOneOfSchemas(), results, false, ONEOF, this);
+      validateMap(context, api, schema.getProperties(), results, false, PROPERTIES, null, this);
+      validateList(context, api, schema.getRequiredFields(), results, false, REQUIRED, null);
+      validateList(context, api, schema.getAllOfSchemas(), results, false, ALLOF, this);
+      validateList(context, api, schema.getAnyOfSchemas(), results, false, ANYOF, this);
+      validateList(context, api, schema.getOneOfSchemas(), results, false, ONEOF, this);
       checkReadWrite(schema, results);
       validateString(schema.getType(), results, false, TYPE_REGEX, TYPE);
-      validateField(api, schema.getXml(), results, false, XML, XmlValidator.instance());
+      validateField(context, api, schema.getXml(), results, false, XML, XmlValidator.instance());
     }
   }
 

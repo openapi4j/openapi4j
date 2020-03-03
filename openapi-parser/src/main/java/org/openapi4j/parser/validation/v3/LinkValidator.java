@@ -7,6 +7,7 @@ import org.openapi4j.parser.model.v3.Link;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.parser.validation.ValidationContext;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADERS;
@@ -30,15 +31,15 @@ class LinkValidator extends ExpressionValidator<Link> {
   }
 
   @Override
-  public void validate(OpenApi3 api, Link link, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Link link, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // description
     if (link.isRef()) {
-      validateReference(api, link, results, LINKS, LinkValidator.instance(), Link.class);
+      validateReference(context, api, link, results, LINKS, LinkValidator.instance(), Link.class);
     } else {
-      validateMap(api, link.getHeaders(), results, false, HEADERS, Regexes.NOEXT_REGEX, HeaderValidator.instance());
-      validateMap(api, link.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
-      validateField(api, link.getServer(), results, false, SERVER, ServerValidator.instance());
+      validateMap(context, api, link.getHeaders(), results, false, HEADERS, Regexes.NOEXT_REGEX, HeaderValidator.instance());
+      validateMap(context, api, link.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+      validateField(context, api, link.getServer(), results, false, SERVER, ServerValidator.instance());
     }
   }
 

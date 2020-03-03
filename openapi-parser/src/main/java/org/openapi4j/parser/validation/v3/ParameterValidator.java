@@ -3,6 +3,7 @@ package org.openapi4j.parser.validation.v3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
@@ -43,22 +44,22 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
   }
 
   @Override
-  public void validate(OpenApi3 api, Parameter parameter, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Parameter parameter, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // allowReserved, deprecated, description, example, examples, explode, required
 
     // checks for path params are made with path validator
     if (parameter.isRef()) {
-      validateReference(api, parameter, results, $REF, ParameterValidator.instance(), Parameter.class);
+      validateReference(context, api, parameter, results, $REF, ParameterValidator.instance(), Parameter.class);
     } else {
       validateString(parameter.getName(), results, true, NAME);
       validateString(parameter.getIn(), results, true, Regexes.PARAM_IN_REGEX, IN);
       validateString(parameter.getStyle(), results, false, Regexes.STYLE_REGEX, STYLE);
       checkStyleValues(parameter, results);
       checkAllowReserved(parameter, results);
-      validateField(api, parameter.getSchema(), results, false, SCHEMA, SchemaValidator.instance());
-      validateMap(api, parameter.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
-      validateMap(api, parameter.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+      validateField(context, api, parameter.getSchema(), results, false, SCHEMA, SchemaValidator.instance());
+      validateMap(context, api, parameter.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
+      validateMap(context, api, parameter.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
 
       // Content or schema, not both
       if (parameter.getContentMediaTypes() != null && parameter.getSchema() != null) {

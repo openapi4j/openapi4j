@@ -6,11 +6,14 @@ import org.openapi4j.core.model.OAIContext;
 
 import java.util.List;
 
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEFAULT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ENUM;
+
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class ServerVariable extends AbsExtendedOpenApiSchema<ServerVariable> {
-  @JsonProperty("enum")
+  @JsonProperty(ENUM)
   private List<String> enums;
-  @JsonProperty("default")
+  @JsonProperty(DEFAULT)
   private String defaultValue;
   private String description;
 
