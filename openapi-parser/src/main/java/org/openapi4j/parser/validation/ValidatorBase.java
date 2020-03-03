@@ -34,36 +34,39 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
     "(?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:" +
     "(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
 
-  protected <F> void validate(final O api,
-                              final F value,
+  protected <V> void validate(final ValidationContext<O> context,
+                              final O api,
+                              final V value,
                               final ValidationResults results,
                               final String crumb,
-                              final Validator<O, F> validator) {
+                              final Validator<O, V> validator) {
 
     if (validator != null) {
       if (value == null) {
         results.addError(String.format(MALFORMED_SPEC, crumb));
       } else {
-        validator.validate(api, value, results);
+        context.validate(api, value, validator, results);
       }
     }
   }
 
-  protected <F> void validateField(final O api,
-                                   final F value,
+  protected <V> void validateField(final ValidationContext<O> context,
+                                   final O api,
+                                   final V value,
                                    final ValidationResults results,
                                    final boolean required,
                                    final String crumb,
-                                   final Validator<O, F> validator) {
+                                   final Validator<O, V> validator) {
 
     results.withCrumb(crumb, () -> {
       if (validateRequired(value, results, required, crumb)) {
-        validate(api, value, results, crumb, validator);
+        validate(context, api, value, results, crumb, validator);
       }
     });
   }
 
-  protected <V> void validateList(final O api,
+  protected <V> void validateList(final ValidationContext<O> context,
+                                  final O api,
                                   final Collection<? extends V> value,
                                   final ValidationResults results,
                                   final boolean required,
@@ -79,7 +82,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
 
         if (validator != null) {
           for (V element : value) {
-            validate(api, element, results, crumb, validator);
+            validate(context, api, element, results, crumb, validator);
           }
         }
       }
@@ -100,7 +103,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
     }
   }
 
-  protected <N extends Number> void validatePositive(final N value,
+  protected <V extends Number> void validatePositive(final V value,
                                                      final ValidationResults results,
                                                      final boolean required,
                                                      final String crumb) {
@@ -110,7 +113,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
     }
   }
 
-  protected <N extends Number> void validateNonNegative(final N value,
+  protected <V extends Number> void validateNonNegative(final V value,
                                                         final ValidationResults results,
                                                         final boolean required,
                                                         final String crumb) {
@@ -175,7 +178,8 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
     }
   }
 
-  protected <V> void validateMap(final O api,
+  protected <V> void validateMap(final ValidationContext<O> context,
+                                 final O api,
                                  final Map<String, ? extends V> value,
                                  final ValidationResults results,
                                  final boolean required,
@@ -188,7 +192,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
         for (final Map.Entry<String, ? extends V> entry : value.entrySet()) {
           results.withCrumb(entry.getKey(), () -> {
             checkKey(entry.getKey(), pattern, results);
-            validate(api, entry.getValue(), results, crumb, validator);
+            validate(context, api, entry.getValue(), results, crumb, validator);
           });
         }
       }

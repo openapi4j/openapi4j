@@ -4,6 +4,7 @@ import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.core.validation.ValidationSeverity;
 import org.openapi4j.parser.model.v3.ExternalDocs;
 import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
@@ -20,10 +21,10 @@ class ExternalDocsValidator extends Validator3Base<OpenApi3, ExternalDocs> {
   }
 
   @Override
-  public void validate(OpenApi3 api, ExternalDocs externalDocs, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, ExternalDocs externalDocs, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // description
-    validateMap(api, externalDocs.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+    validateMap(context, api, externalDocs.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateUrl(externalDocs.getUrl(), results, true, false, EXTERNALDOCS, ValidationSeverity.ERROR);
   }
 }
