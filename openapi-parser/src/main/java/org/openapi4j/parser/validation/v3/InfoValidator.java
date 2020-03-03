@@ -4,6 +4,7 @@ import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.core.validation.ValidationSeverity;
 import org.openapi4j.parser.model.v3.Info;
 import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTACT;
@@ -24,12 +25,12 @@ class InfoValidator extends Validator3Base<OpenApi3, Info> {
   }
 
   @Override
-  public void validate(OpenApi3 api, Info info, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Info info, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // description
-    validateField(api, info.getContact(), results, false, CONTACT, ContactValidator.instance());
-    validateMap(api, info.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
-    validateField(api, info.getLicense(), results, false, LICENSE, LicenseValidator.instance());
+    validateField(context, api, info.getContact(), results, false, CONTACT, ContactValidator.instance());
+    validateMap(context, api, info.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+    validateField(context, api, info.getLicense(), results, false, LICENSE, LicenseValidator.instance());
     validateUrl(info.getTermsOfService(), results, false, false, TERMSOFSERVICE, ValidationSeverity.WARNING);
     validateString(info.getTitle(), results, true, TITLE);
     validateString(info.getVersion(), results, true, VERSION);

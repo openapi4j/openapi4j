@@ -9,12 +9,13 @@ import org.openapi4j.core.util.TreeUtil;
 import java.net.URI;
 
 import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;
 
 /**
  * Base class for Open API schema which can be represented as reference.
  */
 public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends AbsOpenApiSchema<M> {
-  @JsonProperty("$ref")
+  @JsonProperty($REF)
   private String ref;
   @JsonProperty(value = ABS_REF_FIELD)
   @JsonView(Views.Internal.class)

@@ -3,6 +3,7 @@ package org.openapi4j.parser.validation.v3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Response;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
@@ -23,15 +24,15 @@ class ResponseValidator extends Validator3Base<OpenApi3, Response> {
   }
 
   @Override
-  public void validate(OpenApi3 api, Response response, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Response response, ValidationResults results) {
     if (response.isRef()) {
-      validateReference(api, response, results, $REF, ResponseValidator.instance(), Response.class);
+      validateReference(context, api, response, results, $REF, ResponseValidator.instance(), Response.class);
     } else {
       validateRequired(response.getDescription(), results, true, DESCRIPTION);
-      validateMap(api, response.getHeaders(), results, false, HEADERS, null, HeaderValidator.instance());
-      validateMap(api, response.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
-      validateMap(api, response.getLinks(), results, false, LINKS, Regexes.NOEXT_NAME_REGEX, LinkValidator.instance());
-      validateMap(api, response.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+      validateMap(context, api, response.getHeaders(), results, false, HEADERS, null, HeaderValidator.instance());
+      validateMap(context, api, response.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
+      validateMap(context, api, response.getLinks(), results, false, LINKS, Regexes.NOEXT_NAME_REGEX, LinkValidator.instance());
+      validateMap(context, api, response.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     }
   }
 }

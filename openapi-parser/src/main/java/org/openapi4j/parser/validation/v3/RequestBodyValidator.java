@@ -4,6 +4,7 @@ import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.RequestBody;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import java.util.Map;
@@ -27,14 +28,14 @@ class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
   }
 
   @Override
-  public void validate(OpenApi3 api, RequestBody requestBody, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, RequestBody requestBody, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // description, required
     if (requestBody.isRef()) {
-      validateReference(api, requestBody, results, $REF, RequestBodyValidator.instance(), RequestBody.class);
+      validateReference(context, api, requestBody, results, $REF, RequestBodyValidator.instance(), RequestBody.class);
     } else {
-      validateMap(api, requestBody.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
-      validateMap(api, requestBody.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+      validateMap(context, api, requestBody.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
+      validateMap(context, api, requestBody.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
       checkAllowedEncoding(requestBody, results);
     }
   }

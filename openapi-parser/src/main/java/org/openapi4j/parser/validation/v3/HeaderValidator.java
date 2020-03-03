@@ -3,6 +3,7 @@ package org.openapi4j.parser.validation.v3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.Header;
 import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
@@ -25,16 +26,16 @@ class HeaderValidator extends Validator3Base<OpenApi3, Header> {
   }
 
   @Override
-  public void validate(OpenApi3 api, Header header, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Header header, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // allowReserved, deprecated, description, example, examples, explode, required
     if (header.isRef()) {
-      validateReference(api, header, results, $REF, HeaderValidator.instance(), Header.class);
+      validateReference(context, api, header, results, $REF, HeaderValidator.instance(), Header.class);
     } else {
       validateString(header.getStyle(), results, false, "simple", STYLE); // Only simple is allowed.
-      validateField(api, header.getSchema(), results, false, SCHEMA, SchemaValidator.instance());
-      validateMap(api, header.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
-      validateMap(api, header.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+      validateField(context, api, header.getSchema(), results, false, SCHEMA, SchemaValidator.instance());
+      validateMap(context, api, header.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
+      validateMap(context, api, header.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
 
       // Content or schema, not both
       if (header.getContentMediaTypes() != null && header.getSchema() != null) {

@@ -2,7 +2,11 @@ package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.core.validation.ValidationSeverity;
-import org.openapi4j.parser.model.v3.*;
+import org.openapi4j.parser.model.v3.OAuthFlow;
+import org.openapi4j.parser.model.v3.OAuthFlows;
+import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.model.v3.SecurityScheme;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import java.util.regex.Pattern;
@@ -45,9 +49,9 @@ class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
   }
 
   @Override
-  public void validate(OpenApi3 api, SecurityScheme securityScheme, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, SecurityScheme securityScheme, ValidationResults results) {
     if (securityScheme.isRef()) {
-      validateReference(api, securityScheme, results, $REF, SecuritySchemeValidator.instance(), SecurityScheme.class);
+      validateReference(context, api, securityScheme, results, $REF, SecuritySchemeValidator.instance(), SecurityScheme.class);
     } else {
       // omitted fields : description, bearerFormat
       validateString(securityScheme.getType(), results, true, TYPE_REGEX, TYPE);
@@ -63,11 +67,11 @@ class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
         } else if (OAUTH2.equals(s)) {
           final OAuthFlows flows = securityScheme.getFlows();
           final Validator<OpenApi3, OAuthFlow> flowValidator = OAuthFlowValidator.instance();
-          validateField(api, flows.getAuthorizationCode(), results, false, AUTHORIZATIONCODE, flowValidator);
-          validateField(api, flows.getClientCredentials(), results, false, CLIENTCREDENTIALS, flowValidator);
-          validateField(api, flows.getImplicit(), results, false, IMPLICIT, flowValidator);
-          validateField(api, flows.getPassword(), results, false, PASSWORD, flowValidator);
-          validateMap(api, flows.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+          validateField(context, api, flows.getAuthorizationCode(), results, false, AUTHORIZATIONCODE, flowValidator);
+          validateField(context, api, flows.getClientCredentials(), results, false, CLIENTCREDENTIALS, flowValidator);
+          validateField(context, api, flows.getImplicit(), results, false, IMPLICIT, flowValidator);
+          validateField(context, api, flows.getPassword(), results, false, PASSWORD, flowValidator);
+          validateMap(context, api, flows.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
 
           if (flows.getAuthorizationCode() == null &&
             flows.getClientCredentials() == null &&
@@ -80,7 +84,7 @@ class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
 
         }
       }
-      validateMap(api, securityScheme.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+      validateMap(context, api, securityScheme.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     }
   }
 }

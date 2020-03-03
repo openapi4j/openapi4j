@@ -3,6 +3,7 @@ package org.openapi4j.parser.validation.v3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.SecurityRequirement;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import java.util.List;
@@ -26,7 +27,7 @@ class SecurityRequirementValidator extends Validator3Base<OpenApi3, SecurityRequ
   }
 
   @Override
-  public void validate(OpenApi3 api, SecurityRequirement securityRequirement, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, SecurityRequirement securityRequirement, ValidationResults results) {
     Set<String> schemes = api.getComponents().getSecuritySchemes().keySet();
 
     for (Map.Entry<String, List<String>> entry : securityRequirement.getRequirements().entrySet()) {

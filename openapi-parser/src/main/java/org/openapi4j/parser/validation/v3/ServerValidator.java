@@ -4,6 +4,7 @@ import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.core.validation.ValidationSeverity;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Server;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import java.util.ArrayList;
@@ -31,10 +32,10 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
   }
 
   @Override
-  public void validate(OpenApi3 api, Server server, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Server server, ValidationResults results) {
     checkUrlWithVariables(server, results);
-    validateMap(api, server.getVariables(), results, false, VARIABLES, Regexes.NAME_REGEX, ServerVariableValidator.instance());
-    validateMap(api, server.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+    validateMap(context, api, server.getVariables(), results, false, VARIABLES, Regexes.NAME_REGEX, ServerVariableValidator.instance());
+    validateMap(context, api, server.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
   }
 
   private void checkUrlWithVariables(Server server, ValidationResults results) {

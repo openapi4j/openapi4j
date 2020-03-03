@@ -3,6 +3,7 @@ package org.openapi4j.parser.validation.v3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Tag;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
@@ -20,9 +21,9 @@ class TagValidator extends Validator3Base<OpenApi3, Tag> {
   }
 
   @Override
-  public void validate(OpenApi3 api, Tag tag, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Tag tag, ValidationResults results) {
     validateString(tag.getName(), results, true, NAME);
-    validateField(api, tag.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
-    validateMap(api, tag.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+    validateField(context, api, tag.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
+    validateMap(context, api, tag.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
   }
 }

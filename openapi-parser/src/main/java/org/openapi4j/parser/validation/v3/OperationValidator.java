@@ -6,6 +6,7 @@ import org.openapi4j.parser.model.v3.Link;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Response;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import java.util.Map;
@@ -32,18 +33,18 @@ class OperationValidator extends Validator3Base<OpenApi3, Operation> {
   }
 
   @Override
-  public void validate(OpenApi3 api, Operation operation, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Operation operation, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // summary, description, deprecated, tags
-    validateField(api, operation.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
+    validateField(context, api, operation.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
     validateString(operation.getOperationId(), results, false, OPERATIONID);
-    validateList(api, operation.getParameters(), results, false, PARAMETERS, ParameterValidator.instance());
-    validateField(api, operation.getRequestBody(), results, false, REQUESTBODY, RequestBodyValidator.instance());
-    validateMap(api, operation.getResponses(), results, true, RESPONSES, Regexes.RESPONSE_REGEX, ResponseValidator.instance());
-    validateMap(api, operation.getCallbacks(), results, false, CALLBACKS, Regexes.NOEXT_REGEX, CallbackValidator.instance());
-    validateList(api, operation.getSecurityRequirements(), results, false, SECURITY, SecurityRequirementValidator.instance());
-    validateList(api, operation.getServers(), results, false, SERVERS, ServerValidator.instance());
-    validateMap(api, operation.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+    validateList(context, api, operation.getParameters(), results, false, PARAMETERS, ParameterValidator.instance());
+    validateField(context, api, operation.getRequestBody(), results, false, REQUESTBODY, RequestBodyValidator.instance());
+    validateMap(context, api, operation.getResponses(), results, true, RESPONSES, Regexes.RESPONSE_REGEX, ResponseValidator.instance());
+    validateMap(context, api, operation.getCallbacks(), results, false, CALLBACKS, Regexes.NOEXT_REGEX, CallbackValidator.instance());
+    validateList(context, api, operation.getSecurityRequirements(), results, false, SECURITY, SecurityRequirementValidator.instance());
+    validateList(context, api, operation.getServers(), results, false, SERVERS, ServerValidator.instance());
+    validateMap(context, api, operation.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
 
     validateCallbacks(api, operation, results);
     validateResponseLinks(api, operation, results);

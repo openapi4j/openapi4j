@@ -6,6 +6,7 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Parameter;
 import org.openapi4j.parser.model.v3.Path;
+import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import java.util.ArrayList;
@@ -35,16 +36,16 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
   }
 
   @Override
-  public void validate(OpenApi3 root, OpenApi3 api, ValidationResults results) {
+  public void validate(ValidationContext<OpenApi3> context, OpenApi3 root, OpenApi3 api, ValidationResults results) {
     validateString(api.getOpenapi(), results, true, PATTERN_OAI3, OPENAPI);
-    validateField(api, api.getInfo(), results, true, INFO, InfoValidator.instance());
-    validateList(api, api.getServers(), results, false, SERVERS, ServerValidator.instance());
-    validateMap(api, api.getPaths(), results, true, PATHS, Regexes.PATH_REGEX, PathValidator.instance());
-    validateField(api, api.getComponents(), results, false, COMPONENTS, ComponentsValidator.instance());
-    validateList(api, api.getSecurityRequirements(), results, false, SECURITY, SecurityRequirementValidator.instance());
-    validateList(api, api.getTags(), results, false, TAGS, TagValidator.instance());
-    validateField(api, api.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
-    validateMap(api, api.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+    validateField(context, api, api.getInfo(), results, true, INFO, InfoValidator.instance());
+    validateList(context, api, api.getServers(), results, false, SERVERS, ServerValidator.instance());
+    validateMap(context, api, api.getPaths(), results, true, PATHS, Regexes.PATH_REGEX, PathValidator.instance());
+    validateField(context, api, api.getComponents(), results, false, COMPONENTS, ComponentsValidator.instance());
+    validateList(context, api, api.getSecurityRequirements(), results, false, SECURITY, SecurityRequirementValidator.instance());
+    validateList(context, api, api.getTags(), results, false, TAGS, TagValidator.instance());
+    validateField(context, api, api.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
+    validateMap(context, api, api.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
 
     checkOperationsParams(api, api.getPaths(), results);
   }
