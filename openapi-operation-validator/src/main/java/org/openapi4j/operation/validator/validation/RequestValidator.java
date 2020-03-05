@@ -95,7 +95,7 @@ public class RequestValidator {
    * @throws ValidationException A validation report containing validation errors
    */
   public RequestParameters validate(final Request request) throws ValidationException {
-    Path path = findPath(pathPatterns, request);
+    Path path = findPath(request);
 
     Operation operation = path.getOperation(request.getMethod().name().toLowerCase());
     if (operation == null) {
@@ -170,17 +170,17 @@ public class RequestValidator {
 
     for (Map.Entry<String, Path> pathEntry : paths.entrySet()) {
       Pattern pattern = PathResolver.instance().solve(pathEntry.getKey(), true);
-      if (pattern != null) {
-        patterns.put(pattern, pathEntry.getValue());
-      } else {
-        patterns.put(PathResolver.instance().solveFixedPath(pathEntry.getKey(), true), pathEntry.getValue());
-      }
+
+      patterns.put(pattern != null
+        ? pattern
+        : PathResolver.instance().solveFixedPath(pathEntry.getKey(), true),
+        pathEntry.getValue());
     }
 
     return patterns;
   }
 
-  private Path findPath(Map<Pattern, Path> pathPatterns, Request request) throws ValidationException {
+  private Path findPath(Request request) throws ValidationException {
     String pathValue = request.getPath();
 
     // Match path pattern

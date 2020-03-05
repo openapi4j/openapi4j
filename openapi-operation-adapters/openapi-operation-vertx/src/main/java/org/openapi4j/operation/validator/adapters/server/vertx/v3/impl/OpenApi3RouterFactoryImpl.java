@@ -114,7 +114,7 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
   private Route createRoute(Router router, OperationSpec operationSpec) {
     Pattern pattern = PathResolver
       .instance()
-      .solve(operationSpec.path);
+      .solve(operationSpec.path, true);
 
     // If this optional is empty, this route doesn't need regex
     return pattern != null
