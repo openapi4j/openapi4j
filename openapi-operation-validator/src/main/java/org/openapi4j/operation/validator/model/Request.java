@@ -11,6 +11,11 @@ import java.util.TreeMap;
  */
 public interface Request {
   /**
+   * @return The request URL.
+   */
+  String getURL();
+
+  /**
    * @return The request path without the query string.
    */
   String getPath();

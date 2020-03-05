@@ -33,8 +33,8 @@ public abstract class UndertowRequest implements Request {
 
     // Method & path
     final DefaultRequest.Builder builder = new DefaultRequest.Builder(
-      Request.Method.getMethod(hse.getRequestMethod().toString()),
-      hse.getRequestPath());
+      hse.getRequestURL(),
+      Request.Method.getMethod(hse.getRequestMethod().toString()));
 
     // Query string or body
     if (Methods.GET.equals(hse.getRequestMethod())) {

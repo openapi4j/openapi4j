@@ -153,7 +153,7 @@ class OpenApi4j {
   }
 
   private String validateRequest(String contentType, String body) {
-    DefaultRequest.Builder rqBuilder = new DefaultRequest.Builder(Request.Method.POST, "/");
+    DefaultRequest.Builder rqBuilder = new DefaultRequest.Builder("/", Request.Method.POST);
     Request rq = rqBuilder
       .header("Content-Type", contentType)
       .body(Body.from(body))
