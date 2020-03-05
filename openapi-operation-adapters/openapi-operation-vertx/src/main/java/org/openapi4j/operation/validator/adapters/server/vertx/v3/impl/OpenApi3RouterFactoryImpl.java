@@ -86,7 +86,7 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
     for (OperationSpec operationSpec : operationSpecs.values()) {
       // Pre-compile validators from the operation spec.
       // This flatten the operation and combine path & operation parameters
-      OperationValidator opValidator = rqValidator.compile(operationSpec.pathModel, operationSpec.operation);
+      OperationValidator opValidator = rqValidator.getValidator(operationSpec.pathModel, operationSpec.operation);
       // Create route with regex path if needed
       Route route = createRoute(router, operationSpec);
       // Set produces/consumes

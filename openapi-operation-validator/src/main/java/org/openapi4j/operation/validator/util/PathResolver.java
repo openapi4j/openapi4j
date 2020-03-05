@@ -61,6 +61,18 @@ public class PathResolver {
     return null;
   }
 
+  /**
+   * This method returns a pattern for a non templated path.
+   *
+   * @param oasPath The OAS path to build.
+   * @return a pattern only if a pattern is needed.
+   */
+  public Pattern solveFixedPath(String oasPath, boolean addEndString) {
+    return addEndString
+      ? Pattern.compile(Pattern.quote(oasPath))
+      : Pattern.compile(Pattern.quote(oasPath) + "$");
+  }
+
   private void addVariableFragment(StringBuilder regex, String paramName) {
     String reg = "(?<" + paramName + ">[^\\/]*)";
     regex.append(reg);
