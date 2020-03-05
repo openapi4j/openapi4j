@@ -20,7 +20,8 @@ import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 
 public class UndertowTest {
-  private static final String PATH = "http://localhost:8080";
+  private static final String URL = "http://localhost:8080/path";
+  private static final String PATH = "/path";
   private static final String H_NAME = "headerName";
   private static final String H_VALUE = "headerValue";
 
@@ -32,8 +33,7 @@ public class UndertowTest {
     exchange = Mockito.mock(HttpServerExchange.class);
     cookie = null;
 
-    Mockito.when(exchange.getRequestURI()).thenReturn(PATH);
-    Mockito.when(exchange.getRequestPath()).thenReturn(PATH);
+    Mockito.when(exchange.getRequestURL()).thenReturn(URL);
     Mockito.when(exchange.getQueryString()).thenReturn("id=2&name=foo");
   }
 

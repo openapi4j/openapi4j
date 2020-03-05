@@ -216,7 +216,7 @@ public class OperationContentTypeTest {
   private void checkRequest(String contentType,
                             Body body) throws Exception {
 
-    DefaultRequest.Builder builder = new DefaultRequest.Builder("/", Request.Method.POST, "/");
+    DefaultRequest.Builder builder = new DefaultRequest.Builder("/", Request.Method.POST);
 
     Request rq = builder
       .header("Content-Type", contentType)

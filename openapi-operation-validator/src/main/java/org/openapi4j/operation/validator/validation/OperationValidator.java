@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,7 +33,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * Validator for OpenAPI Operation.
- * It validates all aspects of interaction between request and response.
+ * It validates all aspects of interaction between request and response for a given Operation.
  */
 public class OperationValidator {
   // Error messages
@@ -43,6 +44,7 @@ public class OperationValidator {
   private static final String BODY_CONTENT_TYPE_ERR_MSG = "Body content type cannot be determined. No 'Content-Type' header available.";
   private static final String BODY_WRONG_CONTENT_TYPE_ERR_MSG = "Content type '%s' is not allowed in body.";
   private static final String RESPONSE_STATUS_NOT_FOUND_ERR_MSG = "Response status '%s', ranged or default has not been found.";
+  private static final String PATH_NOT_FOUND_ERR_MSG = "Path template '%s' has not been found in value '%s'.";
   // Parameter specifics
   private static final String IN_PATH = "path";
   private static final String IN_QUERY = "query";
@@ -63,17 +65,37 @@ public class OperationValidator {
   private final ValidationContext<OAI3> context;
   private final OpenApi3 openApi;
   private final Operation operation;
+  private final String templatePath;
   private final Pattern pathPattern;
 
+  /**
+   * Creates a validator for the given operation.
+   *
+   * @param openApi   The full Document Description where the Operation is located.
+   * @param path      The Path of the Operation.
+   * @param operation The Operation to validate.
+   */
   public OperationValidator(final OpenApi3 openApi, final Path path, final Operation operation) {
     this(new ValidationContext<>(openApi.getContext()), openApi, path, operation);
   }
 
+  /**
+   * Creates a validator for the given operation.
+   *
+   * @param context           The validation context for additional or changing behaviours.
+   * @param openApi           The full Document Description where the Operation is located.
+   * @param path              The Path of the Operation.
+   * @param operation         The Operation to validate.
+   */
   @SuppressWarnings("WeakerAccess")
-  public OperationValidator(final ValidationContext<OAI3> context, final OpenApi3 openApi, final Path path, final Operation operation) {
+  public OperationValidator(final ValidationContext<OAI3> context,
+                            final OpenApi3 openApi,
+                            final Path path,
+                            final Operation operation) {
+
     this.context = requireNonNull(context, VALIDATION_CTX_REQUIRED_ERR_MSG);
     this.openApi = requireNonNull(openApi, OAI_REQUIRED_ERR_MSG);
-    String specPath = openApi.getPathFrom(requireNonNull(path, PATH_REQUIRED_ERR_MSG));
+    this.templatePath = openApi.getPathFrom(requireNonNull(path, PATH_REQUIRED_ERR_MSG));
     requireNonNull(operation, OPERATION_REQUIRED_ERR_MSG);
 
     // Clone operation and get the flatten content
@@ -85,7 +107,7 @@ public class OperationValidator {
 
     // Request path parameters
     specRequestPathValidator = createParameterValidator(IN_PATH);
-    pathPattern = initPathPattern(specPath);
+    pathPattern = initPathPattern(templatePath);
     // Request query parameters
     specRequestQueryValidator = createParameterValidator(IN_QUERY);
     // Request header parameters
@@ -114,10 +136,18 @@ public class OperationValidator {
   public Map<String, JsonNode> validatePath(final Request request, final ValidationResults results) {
     if (specRequestPathValidator == null) return null;
 
+    // Check paths are matching before trying to map values
+    // This also aligns the result to the relative path template
+    Matcher matcher = pathPattern.matcher(request.getPath());
+    if (!matcher.find()) {
+      results.addError(String.format(PATH_NOT_FOUND_ERR_MSG, templatePath, request.getPath()), IN_PATH);
+      return new HashMap<>();
+    }
+
     Map<String, JsonNode> mappedValues = ParameterConverter.pathToNode(
       specRequestPathValidator.getParameters(),
       pathPattern,
-      request.getPath());
+      matcher.group());
 
     specRequestPathValidator.validate(mappedValues, results);
 
@@ -377,8 +407,12 @@ public class OperationValidator {
       return null;
     }
 
-    // fill path regex for validation
-    return PathResolver.instance().solve(specPath);
+    Pattern pattern = PathResolver.instance().solve(specPath, true);
+    // No parameter found in template, build full fixed path
+    if (pattern == null) {
+      pattern = Pattern.compile(Pattern.quote(specPath));
+    }
+    return pattern;
   }
 
   private void mergePathToOperationParameters(final Path path) {

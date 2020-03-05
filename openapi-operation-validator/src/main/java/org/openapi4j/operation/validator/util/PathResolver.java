@@ -16,11 +16,24 @@ public class PathResolver {
   }
 
   /**
-   * This method returns a pattern only if a pattern is needed, otherwise it returns {@code null}
+   * This method returns a pattern only if a pattern is needed, otherwise it returns {@code null}.
+   * This will not add begin or end of string anchors to the regular expression.
    *
+   * @param oasPath The OAS path to build.
    * @return a pattern only if a pattern is needed.
    */
   public Pattern solve(String oasPath) {
+    return solve(oasPath, false);
+  }
+
+  /**
+   * This method returns a pattern only if a pattern is needed, otherwise it returns {@code null}.
+   *
+   * @param oasPath      The OAS path to build.
+   * @param addEndString Add end of string anchor to the regular expression.
+   * @return a pattern only if a pattern is needed.
+   */
+  public Pattern solve(String oasPath, boolean addEndString) {
     final StringBuilder regex = new StringBuilder();
     int lastMatchEnd = 0;
     boolean foundParameter = false;
@@ -37,6 +50,11 @@ public class PathResolver {
 
     if (foundParameter) {
       addConstantFragment(regex, oasPath, lastMatchEnd, oasPath.length());
+
+      if (addEndString) {
+        regex.append("$");
+      }
+
       return Pattern.compile(regex.toString());
     }
 

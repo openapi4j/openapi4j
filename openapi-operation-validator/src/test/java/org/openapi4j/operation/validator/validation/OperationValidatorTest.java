@@ -39,25 +39,51 @@ public class OperationValidatorTest {
   public void pathCheck() {
     OperationValidator val = loadOperationValidator("paramCheck");
 
+    // String can be also a number
     check(
-      new DefaultRequest.Builder("/", GET, "/fixed/1/fixed/2/fixed/").build(),
+      new DefaultRequest.Builder("/fixed/1/fixed/2/fixed/", GET).build(),
       val::validatePath,
       true);
 
+    // String can be also a number, with server prefixes
     check(
-      new DefaultRequest.Builder("/", GET, "/fixed/string/fixed/2/fixed/").build(),
+      new DefaultRequest.Builder("/foo/bar/fixed/1/fixed/2/fixed/", GET).build(),
+      val::validatePath,
+      true);
+    check(
+      new DefaultRequest.Builder("https://api.com/foo/bar/fixed/1/fixed/2/fixed/", GET).build(),
+      val::validatePath,
+      true);
+
+    // 'string' is not a number
+    check(
+      new DefaultRequest.Builder("https://api.com/fixed/string/fixed/2/fixed/", GET).build(),
       val::validatePath,
       false);
 
-    // wrong path, parameters are not bound
+    // wrong path
     check(
-      new DefaultRequest.Builder("/", GET, "/fixed/fixed/2/fixed/").build(),
+      new DefaultRequest.Builder("https://api.com/fixed/fixed/2/fixed/", GET).build(),
       val::validatePath,
       false);
 
     // Empty string is still valid
     check(
-      new DefaultRequest.Builder("/", GET, "/fixed/1/fixed//fixed/").build(),
+      new DefaultRequest.Builder("https://api.com/fixed/1/fixed//fixed/", GET).build(),
+      val::validatePath,
+      true);
+
+
+    // Validation with full fixed path template
+    val = loadOperationValidator("merge_parameters");
+
+    check(
+      new DefaultRequest.Builder("/merge_parameters", GET).build(),
+      val::validatePath,
+      true);
+
+    check(
+      new DefaultRequest.Builder("https://api.com/foo/bar/merge_parameters", GET).build(),
       val::validatePath,
       true);
   }
@@ -67,29 +93,29 @@ public class OperationValidatorTest {
     OperationValidator val = loadOperationValidator("paramCheck");
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").query("boolQueryParam=true").build(),
+      new DefaultRequest.Builder("/foo", GET).query("boolQueryParam=true").build(),
       val::validateQuery,
       true);
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").query("boolQueryParam=false&intQueryParam=12").build(),
+      new DefaultRequest.Builder("/foo", GET).query("boolQueryParam=false&intQueryParam=12").build(),
       val::validateQuery,
       true);
 
     // nullable
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").query("boolQueryParam=false&intQueryParam=").build(),
+      new DefaultRequest.Builder("/foo", GET).query("boolQueryParam=false&intQueryParam=").build(),
       val::validateQuery,
       false);
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").query("boolQueryParam=yes").build(),
+      new DefaultRequest.Builder("/foo", GET).query("boolQueryParam=yes").build(),
       val::validateQuery,
       false);
 
     // required
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").build(),
+      new DefaultRequest.Builder("/foo", GET).build(),
       val::validateQuery,
       false);
   }
@@ -99,29 +125,29 @@ public class OperationValidatorTest {
     OperationValidator val = loadOperationValidator("paramCheck");
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").header("pathStringHeaderParam", "foo").header("floatHeaderParam", "0.1").build(),
+      new DefaultRequest.Builder("/foo", GET).header("pathStringHeaderParam", "foo").header("floatHeaderParam", "0.1").build(),
       val::validateHeaders,
       true);
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").header("pathStringHeaderParam", "foo").header("floatHeaderParam", ".1").build(),
+      new DefaultRequest.Builder("/foo", GET).header("pathStringHeaderParam", "foo").header("floatHeaderParam", ".1").build(),
       val::validateHeaders,
       true);
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").header("pathStringHeaderParam", "foo").header("floatHeaderParam", "0,1").build(),
+      new DefaultRequest.Builder("/foo", GET).header("pathStringHeaderParam", "foo").header("floatHeaderParam", "0,1").build(),
       val::validateHeaders,
       false);
 
     // operation param required
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").header("pathStringHeaderParam", "foo").build(),
+      new DefaultRequest.Builder("/foo", GET).header("pathStringHeaderParam", "foo").build(),
       val::validateHeaders,
       false);
 
     // path param required
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").header("floatHeaderParam", "0.1").build(),
+      new DefaultRequest.Builder("/foo", GET).header("floatHeaderParam", "0.1").build(),
       val::validateHeaders,
       false);
   }
@@ -131,19 +157,19 @@ public class OperationValidatorTest {
     OperationValidator val = loadOperationValidator("paramCheck");
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").cookie("dtCookieParam", "1996-12-19T16:39:57-08:00").build(),
+      new DefaultRequest.Builder("/foo", GET).cookie("dtCookieParam", "1996-12-19T16:39:57-08:00").build(),
       val::validateCookies,
       true);
 
     // Not a date-time
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").cookie("dtCookieParam", "1996-12-19").build(),
+      new DefaultRequest.Builder("/foo", GET).cookie("dtCookieParam", "1996-12-19").build(),
       val::validateCookies,
       false);
 
     // required
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").build(),
+      new DefaultRequest.Builder("/foo", GET).build(),
       val::validateCookies,
       false);
   }
@@ -157,42 +183,42 @@ public class OperationValidatorTest {
       JsonNodeFactory.instance.textNode("foo"));
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").header("Content-Type", "application/json").body(Body.from(body)).build(),
+      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "application/json").body(Body.from(body)).build(),
       val::validateBody,
       true);
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").header("Content-Type", "application/json").build(),
+      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "application/json").build(),
       val::validateBody,
       false);
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").body(Body.from(body)).build(),
+      new DefaultRequest.Builder("/foo", GET).body(Body.from(body)).build(),
       val::validateBody,
       false);
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").header("Content-Type", "text/plain").body(Body.from(body)).build(),
+      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "text/plain").body(Body.from(body)).build(),
       val::validateBody,
       false);
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").header("Content-Type", "text/plain; charset=utf-8").body(Body.from("dummy")).build(),
+      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "text/plain; charset=utf-8").body(Body.from("dummy")).build(),
       val::validateBody,
       true);
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").header("Content-Type", "text/plain; charset=iso-8859-1").body(Body.from("dummy")).build(),
+      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "text/plain; charset=iso-8859-1").body(Body.from("dummy")).build(),
       val::validateBody,
       false);
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").header("Content-Type", "image/png").body(Body.from("dummy")).build(),
+      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "image/png").body(Body.from("dummy")).build(),
       val::validateBody,
       true);
 
     check(
-      new DefaultRequest.Builder("/", GET, "/foo").build(),
+      new DefaultRequest.Builder("/foo", GET).build(),
       val::validateBody,
       false);
   }
@@ -203,31 +229,31 @@ public class OperationValidatorTest {
 
     JsonNode body = TreeUtil.json.readTree("{\"pet_type\": \"Cat\", \"age\": 3}");
     check(
-      new DefaultRequest.Builder("/", POST, "/discriminator").header("Content-Type", "application/json").body(Body.from(body)).build(),
+      new DefaultRequest.Builder("/discriminator", POST).header("Content-Type", "application/json").body(Body.from(body)).build(),
       val::validateBody,
       true);
 
     body = TreeUtil.json.readTree("{\"pet_type\": \"Dog\", \"bark\": true}");
     check(
-      new DefaultRequest.Builder("/", POST, "/discriminator").header("Content-Type", "application/json").body(Body.from(body)).build(),
+      new DefaultRequest.Builder("/discriminator", POST).header("Content-Type", "application/json").body(Body.from(body)).build(),
       val::validateBody,
       true);
 
     body = TreeUtil.json.readTree("{\"pet_type\": \"Dog\", \"bark\": false, \"breed\": \"Dingo\"}");
     check(
-      new DefaultRequest.Builder("/", POST, "/discriminator").header("Content-Type", "application/json").body(Body.from(body)).build(),
+      new DefaultRequest.Builder("/discriminator", POST).header("Content-Type", "application/json").body(Body.from(body)).build(),
       val::validateBody,
       true);
 
     body = TreeUtil.json.readTree("{\"age\": 3}");
     check(
-      new DefaultRequest.Builder("/", POST, "/discriminator").header("Content-Type", "application/json").body(Body.from(body)).build(),
+      new DefaultRequest.Builder("/discriminator", POST).header("Content-Type", "application/json").body(Body.from(body)).build(),
       val::validateBody,
       false);
 
     body = TreeUtil.json.readTree("{\"pet_type\": \"Dog\", \"bark\": false, \"breed\": \"foo\"}");
     check(
-      new DefaultRequest.Builder("/", POST, "/discriminator").header("Content-Type", "application/json").body(Body.from(body)).build(),
+      new DefaultRequest.Builder("/discriminator", POST).header("Content-Type", "application/json").body(Body.from(body)).build(),
       val::validateBody,
       false);
   }
@@ -237,12 +263,12 @@ public class OperationValidatorTest {
     OperationValidator val = loadOperationValidator("merge_parameters");
 
     check(
-      new DefaultRequest.Builder("/", GET, "/merge_parameters").build(),
+      new DefaultRequest.Builder("/merge_parameters", GET).build(),
       val::validateHeaders,
       false);
 
     check(
-      new DefaultRequest.Builder("/", GET, "/merge_parameters").header("pathStringHeaderParam", "foo").header("refIntHeaderParameter", "-1").build(),
+      new DefaultRequest.Builder("/merge_parameters", GET).header("pathStringHeaderParam", "foo").header("refIntHeaderParameter", "-1").build(),
       val::validateHeaders,
       true);
   }
@@ -252,7 +278,7 @@ public class OperationValidatorTest {
     OperationValidator val = loadOperationValidator("wrong_definition_for_body_response");
 
     check(
-      new DefaultRequest.Builder("/", POST, "/wrong_definition_for_body_response").build(),
+      new DefaultRequest.Builder("/wrong_definition_for_body_response", POST).build(),
       val::validateBody,
       true);
 

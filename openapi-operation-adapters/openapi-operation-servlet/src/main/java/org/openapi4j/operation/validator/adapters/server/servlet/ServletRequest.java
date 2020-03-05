@@ -43,8 +43,7 @@ public abstract class ServletRequest implements Request {
     // Method & path
     final DefaultRequest.Builder builder = new DefaultRequest.Builder(
       hsr.getRequestURL().toString(),
-      Request.Method.getMethod(hsr.getMethod()),
-      hsr.getRequestURI());
+      Request.Method.getMethod(hsr.getMethod()));
 
     // Query string or body
     if (HTTP_GET.equalsIgnoreCase(hsr.getMethod())) {

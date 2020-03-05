@@ -3,6 +3,7 @@ package org.openapi4j.operation.validator.model.impl;
 import org.openapi4j.core.util.MultiStringMap;
 import org.openapi4j.operation.validator.model.Request;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,7 +22,6 @@ public class DefaultRequest implements Request {
 
   private DefaultRequest(final String url,
                          final Method method,
-                         final String path,
                          final Map<String, String> cookies,
                          final Map<String, Collection<String>> headers,
                          final String query,
@@ -29,11 +29,11 @@ public class DefaultRequest implements Request {
 
     this.url = requireNonNull(url, "A URL is required");
     this.method = requireNonNull(method, "A method is required");
-    this.path = requireNonNull(path, "A request path is required");
     this.cookies = requireNonNull(cookies);
     this.headers = requireNonNull(headers);
     this.query = query;
     this.body = body;
+    this.path = URI.create(url).getPath();
   }
 
   @Override
@@ -82,7 +82,6 @@ public class DefaultRequest implements Request {
   public static final class Builder {
     private final String url;
     private final Method method;
-    private final String path;
     private final Map<String, String> cookies;
     private final MultiStringMap<String> headers;
     private String query;
@@ -94,12 +93,10 @@ public class DefaultRequest implements Request {
      *
      * @param url The HTTP URL request
      * @param method The HTTP method
-     * @param path   The requests path
      */
-    public Builder(final String url, final Method method, final String path) {
+    public Builder(final String url, final Method method) {
       this.url = requireNonNull(url, "A URL is required");
       this.method = requireNonNull(method, "A method is required");
-      this.path = requireNonNull(path, "A path is required");
 
       this.cookies = new HashMap<>();
       this.headers = new MultiStringMap<>(false);
@@ -194,7 +191,6 @@ public class DefaultRequest implements Request {
       return new DefaultRequest(
         url,
         method,
-        path,
         Collections.unmodifiableMap(cookies),
         headers.asUnmodifiableMap(),
         query,
