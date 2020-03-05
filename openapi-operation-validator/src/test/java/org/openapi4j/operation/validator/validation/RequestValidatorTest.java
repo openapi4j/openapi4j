@@ -15,56 +15,50 @@ import static org.openapi4j.operation.validator.model.Request.Method.GET;
 
 public class RequestValidatorTest {
   @Test
-  public void noServersFindOperationCheck() throws ResolutionException, ValidationException {
+  public void withoutServerPathFindOperationCheck() throws ResolutionException, ValidationException {
     URL specPath = RequestValidatorTest.class.getResource("/request/requestValidator.yaml");
     OpenApi3 api = new OpenApi3Parser().parse(specPath, false);
     RequestValidator requestValidator = new RequestValidator(api);
 
     check(
       requestValidator,
-      new DefaultRequest.Builder("https://api.com/fixed/1/fixed/2/fixed/", GET, "/fixed/1/fixed/2/fixed/").build(),
+      new DefaultRequest.Builder("https://api.com/fixed/1/fixed/2/fixed/", GET).build(),
       true);
 
     check(
       requestValidator,
-      new DefaultRequest.Builder("https://api.com/fixed/string/fixed/2/fixed/", GET, "/fixed/string/fixed/2/fixed/").build(),
+      new DefaultRequest.Builder("https://api.com/fixed/string/fixed/2/fixed/", GET).build(),
       false);
 
     // wrong path, parameters are not bound
     check(
       requestValidator,
-      new DefaultRequest.Builder("https://api.com/fixed/fixed/2/fixed/", GET, "/fixed/fixed/2/fixed/").build(),
+      new DefaultRequest.Builder("https://api.com/fixed/fixed/2/fixed/", GET).build(),
       false);
 
     // Empty string is still valid
     check(
       requestValidator,
-      new DefaultRequest.Builder("https://api.com/fixed/1/fixed//fixed/", GET, "/fixed/1/fixed//fixed/").build(),
+      new DefaultRequest.Builder("https://api.com/fixed/1/fixed//fixed/", GET).build(),
       true);
   }
 
   @Test
-  public void serversWithVariablesFindOperationCheck() throws ResolutionException, ValidationException {
-    URL specPath = RequestValidatorTest.class.getResource("/request/requestValidatorWithServers.yaml");
+  public void withServerPathFindOperationCheck() throws ResolutionException, ValidationException {
+    URL specPath = RequestValidatorTest.class.getResource("/request/requestValidator.yaml");
     OpenApi3 api = new OpenApi3Parser().parse(specPath, false);
     RequestValidator requestValidator = new RequestValidator(api);
 
-    // absolute url (no variable)
+    // absolute url
     check(
       requestValidator,
-      new DefaultRequest.Builder("https://api.com/v1/fixed/1/fixed/2/fixed/", GET, "/v1/fixed/1/fixed/2/fixed/").build(),
+      new DefaultRequest.Builder("https://api.com/v1/foo/fixed/1/fixed/2/fixed/", GET).build(),
       true);
 
-    // relative (no variable)
+    // relative
     check(
       requestValidator,
-      new DefaultRequest.Builder("https://foo.bar/v2/fixed/1/fixed/2/fixed/", GET, "/v2/fixed/1/fixed/2/fixed/").build(),
-      true);
-
-    // with server variables
-    check(
-      requestValidator,
-      new DefaultRequest.Builder("https://foo.api.com/v1/fixed/1/fixed/2/fixed/", GET, "/v1/fixed/1/fixed/2/fixed/").build(),
+      new DefaultRequest.Builder("/v1/foo/fixed/1/fixed/2/fixed/", GET).build(),
       true);
   }
 

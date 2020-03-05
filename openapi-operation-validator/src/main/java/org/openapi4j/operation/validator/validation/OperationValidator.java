@@ -410,7 +410,7 @@ public class OperationValidator {
     Pattern pattern = PathResolver.instance().solve(specPath, true);
     // No parameter found in template, build full fixed path
     if (pattern == null) {
-      pattern = Pattern.compile(Pattern.quote(specPath));
+      pattern = PathResolver.instance().solveFixedPath(specPath, true);
     }
     return pattern;
   }
