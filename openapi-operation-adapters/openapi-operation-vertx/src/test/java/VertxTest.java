@@ -23,7 +23,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class VertxTest {
-  private static final String PATH = "http://localhost:8080";
+  private static final String URL = "http://localhost:8080/path";
+  private static final String PATH = "/path";
   private static final String H_NAME = "headerName";
   private static final String H_VALUE = "headerValue";
 
@@ -37,7 +38,7 @@ public class VertxTest {
     serverRq = Mockito.mock(HttpServerRequest.class);
 
     Mockito.when(routingContext.request()).thenReturn(serverRq);
-    Mockito.when(serverRq.path()).thenReturn(PATH);
+    Mockito.when(serverRq.absoluteURI()).thenReturn(URL);
     Mockito.when(serverRq.query()).thenReturn("id=2&name=foo");
 
     cookie = new CookieImpl("bis", "cuit");

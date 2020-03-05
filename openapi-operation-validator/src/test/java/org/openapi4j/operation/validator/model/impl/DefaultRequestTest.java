@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNull;
 public class DefaultRequestTest {
   @Test
   public void testRequestBuild() {
-    DefaultRequest.Builder builder = new DefaultRequest.Builder(Request.Method.POST, "/");
+    DefaultRequest.Builder builder = new DefaultRequest.Builder("/", Request.Method.POST);
 
     Map<String, String> cookies = new HashMap<>();
     cookies.put("cookie2", "2");
@@ -41,7 +41,7 @@ public class DefaultRequestTest {
     assertEquals(Collections.singleton(String.valueOf(1)), rq.getHeaderValues("x-rate-limit"));
     assertNull(rq.getHeaderValues("non_filled"));
 
-    rq = new DefaultRequest.Builder(Request.Method.POST, "/").build();
+    rq = new DefaultRequest.Builder("/", Request.Method.POST).build();
     assertNull(rq.getHeaderValues("non_filled"));
     assertNull(rq.getHeaderValue("non_filled"));
   }

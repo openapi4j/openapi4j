@@ -32,8 +32,8 @@ public abstract class VertxRequest implements Request {
 
     // Method & path
     final DefaultRequest.Builder builder = new DefaultRequest.Builder(
-      Request.Method.getMethod(serverRq.rawMethod()),
-      serverRq.path());
+      serverRq.absoluteURI(),
+      Request.Method.getMethod(serverRq.rawMethod()));
 
     // Query string or body
     if (HttpMethod.GET.equals(serverRq.method())) {

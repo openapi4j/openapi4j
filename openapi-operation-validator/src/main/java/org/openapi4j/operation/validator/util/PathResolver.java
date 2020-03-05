@@ -1,16 +1,9 @@
 package org.openapi4j.operation.validator.util;
 
-import org.openapi4j.core.exception.ResolutionException;
-import org.openapi4j.parser.model.v3.Parameter;
-
-import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PathResolver {
-  private static final String PATH_PARAM_MISSING_ERR_MSG = "Missing path parameter description for : '%s'.";
-
   private static final Pattern OAS_PATH_PARAMETERS_PATTERN = Pattern.compile("\\{[.;?*+]*([^{}.;?*+]+)[^}]*}");
 
   private static final PathResolver INSTANCE = new PathResolver();
@@ -23,17 +16,27 @@ public class PathResolver {
   }
 
   /**
-   * This method returns a pattern only if a pattern is needed, otherwise it returns an empty optional
+   * This method returns a pattern only if a pattern is needed, otherwise it returns {@code null}.
+   * This will not add begin or end of string anchors to the regular expression.
    *
+   * @param oasPath The OAS path to build.
    * @return a pattern only if a pattern is needed.
    */
-  public Optional<String> solve(String oasPath, List<Parameter> pathParameters) throws ResolutionException {
-    if (pathParameters.isEmpty()) {
-      return Optional.empty();
-    }
+  public Pattern solve(String oasPath) {
+    return solve(oasPath, false);
+  }
 
+  /**
+   * This method returns a pattern only if a pattern is needed, otherwise it returns {@code null}.
+   *
+   * @param oasPath      The OAS path to build.
+   * @param addEndString Add end of string anchor to the regular expression.
+   * @return a pattern only if a pattern is needed.
+   */
+  public Pattern solve(String oasPath, boolean addEndString) {
     final StringBuilder regex = new StringBuilder();
     int lastMatchEnd = 0;
+    boolean foundParameter = false;
 
     Matcher parametersMatcher = OAS_PATH_PARAMETERS_PATTERN.matcher(oasPath);
     while (parametersMatcher.find()) {
@@ -41,17 +44,21 @@ public class PathResolver {
       lastMatchEnd = parametersMatcher.end();
 
       final String paramName = parametersMatcher.group(1);
-      final Optional<Parameter> optParameter = pathParameters.stream().filter(p -> p.getName().equals(paramName)).findFirst();
-      if (!optParameter.isPresent()) {
-        throw new ResolutionException(String.format(PATH_PARAM_MISSING_ERR_MSG, paramName));
-      }
-
       addVariableFragment(regex, paramName);
+      foundParameter = true;
     }
 
-    addConstantFragment(regex, oasPath, lastMatchEnd, oasPath.length());
+    if (foundParameter) {
+      addConstantFragment(regex, oasPath, lastMatchEnd, oasPath.length());
 
-    return Optional.of(regex.toString());
+      if (addEndString) {
+        regex.append("$");
+      }
+
+      return Pattern.compile(regex.toString());
+    }
+
+    return null;
   }
 
   private void addVariableFragment(StringBuilder regex, String paramName) {

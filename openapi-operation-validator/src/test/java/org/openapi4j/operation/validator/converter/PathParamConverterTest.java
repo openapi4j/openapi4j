@@ -3,7 +3,6 @@ package org.openapi4j.operation.validator.converter;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.junit.Test;
-import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.operation.validator.OpenApi3Util;
 import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
@@ -11,9 +10,7 @@ import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Parameter;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -154,29 +151,13 @@ public class PathParamConverterTest {
     assertTrue(values.isEmpty());
   }
 
-  @Test(expected = ResolutionException.class)
-  public void noParameterInSpec() throws Exception {
-    OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/pathParameters.yaml");
-
-    Map<String, AbsParameter<Parameter>> parameters = new HashMap<>();
-    parameters.put("matrixExplodedObject", api.getComponents().getParameters().get("matrixExplodedObject"));
-
-    final List<Parameter> values = Collections.singletonList(api.getComponents().getParameters().get("matrixExplodedObject"));
-    PathResolver.instance().solve("/{foo}/{bar}", values);
-  }
-
-
-
   private Map<String, JsonNode> pathToNode(String parameterName, String value) throws Exception {
     OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/pathParameters.yaml");
 
     Map<String, AbsParameter<Parameter>> parameters = new HashMap<>();
     parameters.put(parameterName, api.getComponents().getParameters().get(parameterName));
 
-    final List<Parameter> values = Collections.singletonList(api.getComponents().getParameters().get(parameterName));
-    String oasPath = PathResolver.instance().solve("/" + parameterName + "/{" + parameterName + "}", values).get();
-
-    Pattern pattern = Pattern.compile(oasPath);
+    Pattern pattern = PathResolver.instance().solve("/" + parameterName + "/{" + parameterName + "}");
 
     return ParameterConverter.pathToNode(
       parameters,

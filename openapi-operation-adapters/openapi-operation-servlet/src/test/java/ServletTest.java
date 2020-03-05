@@ -18,7 +18,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 public class ServletTest {
-  private static final String PATH = "http://localhost:8080";
+  private static final String URL = "http://localhost:8080/path";
+  private static final String PATH = "/path";
   private static final String H_NAME = "headerName";
   private static final String H_VALUE = "headerValue";
 
@@ -30,7 +31,7 @@ public class ServletTest {
     servletRequest = Mockito.mock(HttpServletRequest.class);
     cookie = null;
 
-    Mockito.when(servletRequest.getRequestURI()).thenReturn(PATH);
+    Mockito.when(servletRequest.getRequestURL()).thenReturn(new StringBuffer(URL));
     Mockito.when(servletRequest.getQueryString()).thenReturn("id=2&name=foo");
 
     MockServletInputStream msis = new MockServletInputStream(new ByteArrayInputStream("a body".getBytes()));
