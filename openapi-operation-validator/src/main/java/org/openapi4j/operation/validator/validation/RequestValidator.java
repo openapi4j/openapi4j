@@ -8,13 +8,16 @@ import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.Response;
 import org.openapi4j.operation.validator.model.impl.RequestParameters;
+import org.openapi4j.operation.validator.util.PathUtil;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
 import org.openapi4j.schema.validator.ValidationContext;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
@@ -36,6 +39,8 @@ public class RequestValidator {
   private final OpenApi3 openApi;
   private final ValidationContext<OAI3> context;
   private final Map<Operation, OperationValidator> operationValidators;
+  private final List<Pattern> serverUrlPatterns;
+  private final Map<Pattern, Path> pathPatterns;
 
   /**
    * Construct a new request validator with the given open API.
@@ -60,22 +65,41 @@ public class RequestValidator {
     this.openApi = openApi;
     this.context = context;
     operationValidators = new ConcurrentHashMap<>();
+    serverUrlPatterns = PathUtil.buildServerUrlPatterns(openApi.getServers());
+    pathPatterns = PathUtil.buildPathPatterns(openApi.getPaths());
   }
 
   /**
-   * The compile the given path/operation and fill the validators to associate with.
+   * Compile the given path/operation and fill the validators to associate with.
    *
    * @param path      The OAS path model of the operation.
    * @param operation The operation object from specification.
-   * @return The generated validator for the operation.
+   * @return The generated validator for the operation or cached version.
    */
-  public OperationValidator compile(final Path path, final Operation operation) {
+  public OperationValidator getValidator(final Path path, final Operation operation) {
     requireNonNull(path, PATH_REQUIRED_ERR_MSG);
     requireNonNull(operation, OPERATION_REQUIRED_ERR_MSG);
 
     return operationValidators.computeIfAbsent(
       operation,
       op -> new OperationValidator(context, openApi, path, op));
+  }
+
+  /**
+   * Validate the request from its given URL
+   *
+   * @param request The request to validate. Must be {@code nonnull}.
+   * @throws ValidationException A validation report containing validation errors
+   */
+  public RequestParameters validate(final Request request) throws ValidationException {
+    Path path = PathUtil.findPath(serverUrlPatterns, pathPatterns, request);
+
+    Operation operation = path.getOperation(request.getMethod().name().toLowerCase());
+    if (operation == null) {
+      throw new ValidationException(String.format("Operation not found from URL: %s", request.getURL()));
+    }
+
+    return validate(request, path, operation);
   }
 
   /**
@@ -92,7 +116,7 @@ public class RequestValidator {
 
     requireNonNull(request, REQUEST_REQUIRED_ERR_MSG);
 
-    final OperationValidator opValidator = compile(path, operation);
+    final OperationValidator opValidator = getValidator(path, operation);
 
     final ValidationResults results = new ValidationResults();
     final Map<String, JsonNode> pathParameters = opValidator.validatePath(request, results);
@@ -127,7 +151,7 @@ public class RequestValidator {
 
     requireNonNull(response, RESPONSE_REQUIRED_ERR_MSG);
 
-    final OperationValidator opValidator = compile(path, operation);
+    final OperationValidator opValidator = getValidator(path, operation);
 
     final ValidationResults results = new ValidationResults();
     opValidator.validateHeaders(response, results);

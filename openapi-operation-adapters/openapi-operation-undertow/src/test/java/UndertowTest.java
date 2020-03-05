@@ -32,6 +32,7 @@ public class UndertowTest {
     exchange = Mockito.mock(HttpServerExchange.class);
     cookie = null;
 
+    Mockito.when(exchange.getRequestURI()).thenReturn(PATH);
     Mockito.when(exchange.getRequestPath()).thenReturn(PATH);
     Mockito.when(exchange.getQueryString()).thenReturn("id=2&name=foo");
   }

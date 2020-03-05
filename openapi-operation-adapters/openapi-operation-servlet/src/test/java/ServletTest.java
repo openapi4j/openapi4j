@@ -30,6 +30,7 @@ public class ServletTest {
     servletRequest = Mockito.mock(HttpServletRequest.class);
     cookie = null;
 
+    Mockito.when(servletRequest.getRequestURL()).thenReturn(new StringBuffer(PATH));
     Mockito.when(servletRequest.getRequestURI()).thenReturn(PATH);
     Mockito.when(servletRequest.getQueryString()).thenReturn("id=2&name=foo");
 

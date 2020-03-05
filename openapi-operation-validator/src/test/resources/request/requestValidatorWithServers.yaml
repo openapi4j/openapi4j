@@ -1,0 +1,41 @@
+openapi: 3.0.1
+info:
+  description: a description
+  version: 1.0.0
+  title: API
+servers:
+  - url: https://api.com/v1
+  - url: /v2
+  - url: https://{username}.api.com/{basePath}
+    variables:
+      username:
+        default: demo
+      basePath:
+        default: v2
+paths:
+  /fixed/{intPathParam}/fixed/{stringPathParam}/fixed/:
+    get:
+      operationId: paramCheck
+      parameters:
+        - name: intPathParam
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: stringPathParam
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: a description
+          headers:
+            X-Rate-Limit:
+              description: The number of allowed requests in the current period
+              schema:
+                nullable: true
+                type: integer
+          content:
+            'application/json': {}

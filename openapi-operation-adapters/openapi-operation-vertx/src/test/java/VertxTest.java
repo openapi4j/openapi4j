@@ -37,6 +37,7 @@ public class VertxTest {
     serverRq = Mockito.mock(HttpServerRequest.class);
 
     Mockito.when(routingContext.request()).thenReturn(serverRq);
+    Mockito.when(serverRq.absoluteURI()).thenReturn(PATH);
     Mockito.when(serverRq.path()).thenReturn(PATH);
     Mockito.when(serverRq.query()).thenReturn("id=2&name=foo");
 

@@ -11,6 +11,7 @@ import java.util.Map;
 import static java.util.Objects.requireNonNull;
 
 public class DefaultRequest implements Request {
+  private final String url;
   private final Method method;
   private final String path;
   private final Map<String, String> cookies;
@@ -18,19 +19,26 @@ public class DefaultRequest implements Request {
   private final String query;
   private final Body body;
 
-  private DefaultRequest(final Method method,
+  private DefaultRequest(final String url,
+                         final Method method,
                          final String path,
                          final Map<String, String> cookies,
                          final Map<String, Collection<String>> headers,
                          final String query,
                          final Body body) {
 
+    this.url = requireNonNull(url, "A URL is required");
     this.method = requireNonNull(method, "A method is required");
     this.path = requireNonNull(path, "A request path is required");
     this.cookies = requireNonNull(cookies);
     this.headers = requireNonNull(headers);
     this.query = query;
     this.body = body;
+  }
+
+  @Override
+  public String getURL() {
+    return url;
   }
 
   @Override
@@ -72,6 +80,7 @@ public class DefaultRequest implements Request {
    * A builder for {@link DefaultRequest} construction.
    */
   public static final class Builder {
+    private final String url;
     private final Method method;
     private final String path;
     private final Map<String, String> cookies;
@@ -83,10 +92,12 @@ public class DefaultRequest implements Request {
      * Creates a {@link DefaultRequest.Builder} with the given HTTP {@link Request.Method} and path.
      * Headers are always treated as case insensitive.
      *
+     * @param url The HTTP URL request
      * @param method The HTTP method
      * @param path   The requests path
      */
-    public Builder(final Method method, final String path) {
+    public Builder(final String url, final Method method, final String path) {
+      this.url = requireNonNull(url, "A URL is required");
       this.method = requireNonNull(method, "A method is required");
       this.path = requireNonNull(path, "A path is required");
 
@@ -181,6 +192,7 @@ public class DefaultRequest implements Request {
      */
     public DefaultRequest build() {
       return new DefaultRequest(
+        url,
         method,
         path,
         Collections.unmodifiableMap(cookies),

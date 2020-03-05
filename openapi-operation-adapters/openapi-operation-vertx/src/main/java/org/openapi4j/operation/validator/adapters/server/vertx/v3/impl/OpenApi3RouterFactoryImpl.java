@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.regex.Pattern;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -86,7 +86,7 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
     for (OperationSpec operationSpec : operationSpecs.values()) {
       // Pre-compile validators from the operation spec.
       // This flatten the operation and combine path & operation parameters
-      OperationValidator opValidator = rqValidator.compile(operationSpec.pathModel, operationSpec.operation);
+      OperationValidator opValidator = rqValidator.getValidator(operationSpec.pathModel, operationSpec.operation);
       // Create route with regex path if needed
       Route route = createRoute(router, operationSpec);
       // Set produces/consumes
@@ -111,14 +111,14 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
     return router;
   }
 
-  private Route createRoute(Router router, OperationSpec operationSpec) throws ResolutionException {
-    Optional<String> optRegEx = PathResolver
+  private Route createRoute(Router router, OperationSpec operationSpec) {
+    Pattern pattern = PathResolver
       .instance()
-      .solve(operationSpec.path, operationSpec.operation.getParametersIn("path"));
+      .solve(operationSpec.path);
 
     // If this optional is empty, this route doesn't need regex
-    return optRegEx.isPresent()
-      ? router.routeWithRegex(operationSpec.method, optRegEx.get())
+    return pattern != null
+      ? router.routeWithRegex(operationSpec.method, pattern.pattern())
       : router.route(operationSpec.method, operationSpec.path);
   }
 

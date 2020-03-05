@@ -2,7 +2,6 @@ package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -380,13 +378,7 @@ public class OperationValidator {
     }
 
     // fill path regex for validation
-    Optional<String> optRegEx;
-    try {
-      optRegEx = PathResolver.instance().solve(specPath, this.operation.getParametersIn(IN_PATH));
-      return optRegEx.map(Pattern::compile).orElse(null);
-    } catch (ResolutionException e) {
-      return null;
-    }
+    return PathResolver.instance().solve(specPath);
   }
 
   private void mergePathToOperationParameters(final Path path) {
