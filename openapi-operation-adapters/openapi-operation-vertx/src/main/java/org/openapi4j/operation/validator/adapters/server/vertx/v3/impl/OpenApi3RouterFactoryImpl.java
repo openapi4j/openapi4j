@@ -15,6 +15,7 @@ import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,8 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+
+import static org.openapi4j.operation.validator.util.PathResolver.Anchor.END_STRING;
 
 public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
   private static final String OP_ID_NOT_FOUND_ERR_MSG = "Operation with id '%s' not found.";
@@ -114,7 +117,7 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
   private Route createRoute(Router router, OperationSpec operationSpec) {
     Pattern pattern = PathResolver
       .instance()
-      .solve(operationSpec.path, true);
+      .solve(operationSpec.path, EnumSet.of(END_STRING));
 
     // If this optional is empty, this route doesn't need regex
     return pattern != null

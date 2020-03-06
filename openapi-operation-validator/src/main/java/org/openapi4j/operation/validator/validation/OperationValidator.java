@@ -20,6 +20,7 @@ import org.openapi4j.parser.model.v3.Response;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
+import static org.openapi4j.operation.validator.util.PathResolver.Anchor.END_STRING;
 
 /**
  * Validator for OpenAPI Operation.
@@ -407,10 +409,10 @@ public class OperationValidator {
       return null;
     }
 
-    Pattern pattern = PathResolver.instance().solve(specPath, true);
+    Pattern pattern = PathResolver.instance().solve(specPath, EnumSet.of(END_STRING));
     // No parameter found in template, build full fixed path
     if (pattern == null) {
-      pattern = PathResolver.instance().solveFixedPath(specPath, true);
+      pattern = PathResolver.instance().solveFixedPath(specPath, EnumSet.of(END_STRING));
     }
     return pattern;
   }

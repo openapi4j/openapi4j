@@ -3,6 +3,16 @@ info:
   description: a description
   version: 1.0.0
   title: API
+servers:
+  - url: https://api.com
+  - url: https://api.com/v1
+  - url: /v2
+  - url: https://{sub}.api.com/{basePath}
+    variables:
+      sub:
+        default: demo
+      basePath:
+        default: v2
 paths:
   # this path is setup to ensure it will not found by matching only /fixed/
   # from paramCheck operation ending with /fixed/ too.

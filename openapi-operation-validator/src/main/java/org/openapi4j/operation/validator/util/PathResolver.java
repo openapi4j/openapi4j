@@ -1,9 +1,16 @@
 package org.openapi4j.operation.validator.util;
 
+import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PathResolver {
+  public enum Anchor {
+    NONE,
+    START_STRING,
+    END_STRING
+  }
+
   private static final Pattern OAS_PATH_PARAMETERS_PATTERN = Pattern.compile("\\{[.;?*+]*([^{}.;?*+]+)[^}]*}");
 
   private static final PathResolver INSTANCE = new PathResolver();
@@ -17,23 +24,23 @@ public class PathResolver {
 
   /**
    * This method returns a pattern only if a pattern is needed, otherwise it returns {@code null}.
-   * This will not add begin or end of string anchors to the regular expression.
+   * This will not add any anchor to the regular expression.
    *
    * @param oasPath The OAS path to build.
    * @return a pattern only if a pattern is needed.
    */
   public Pattern solve(String oasPath) {
-    return solve(oasPath, false);
+    return solve(oasPath, EnumSet.of(Anchor.NONE));
   }
 
   /**
    * This method returns a pattern only if a pattern is needed, otherwise it returns {@code null}.
    *
-   * @param oasPath      The OAS path to build.
-   * @param addEndString Add end of string anchor to the regular expression.
+   * @param oasPath The OAS path to build.
+   * @param anchors Anchor options to add to the regular expression.
    * @return a pattern only if a pattern is needed.
    */
-  public Pattern solve(String oasPath, boolean addEndString) {
+  public Pattern solve(String oasPath, EnumSet<Anchor> anchors) {
     final StringBuilder regex = new StringBuilder();
     int lastMatchEnd = 0;
     boolean foundParameter = false;
@@ -51,7 +58,10 @@ public class PathResolver {
     if (foundParameter) {
       addConstantFragment(regex, oasPath, lastMatchEnd, oasPath.length());
 
-      if (addEndString) {
+      if (anchors.contains(Anchor.START_STRING)) {
+        regex.insert(0, "^");
+      }
+      if (anchors.contains(Anchor.END_STRING)) {
         regex.append("$");
       }
 
@@ -65,12 +75,20 @@ public class PathResolver {
    * This method returns a pattern for a non templated path.
    *
    * @param oasPath The OAS path to build.
+   * @param anchors Anchor options to add to the regular expression.
    * @return a pattern only if a pattern is needed.
    */
-  public Pattern solveFixedPath(String oasPath, boolean addEndString) {
-    return addEndString
-      ? Pattern.compile(Pattern.quote(oasPath))
-      : Pattern.compile(Pattern.quote(oasPath) + "$");
+  public Pattern solveFixedPath(String oasPath, EnumSet<Anchor> anchors) {
+    final StringBuilder regex = new StringBuilder(Pattern.quote(oasPath));
+
+    if (anchors.contains(Anchor.START_STRING)) {
+      regex.insert(0, "^");
+    }
+    if (anchors.contains(Anchor.END_STRING)) {
+      regex.append("$");
+    }
+
+    return Pattern.compile(regex.toString());
   }
 
   private void addVariableFragment(StringBuilder regex, String paramName) {

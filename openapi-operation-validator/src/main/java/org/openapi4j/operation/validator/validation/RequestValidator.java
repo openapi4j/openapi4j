@@ -12,15 +12,26 @@ import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
+import org.openapi4j.parser.model.v3.Server;
 import org.openapi4j.schema.validator.ValidationContext;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
+import static org.openapi4j.operation.validator.util.PathResolver.Anchor.END_STRING;
+import static org.openapi4j.operation.validator.util.PathResolver.Anchor.START_STRING;
 
 /**
  * Validate a request data against a given OpenAPI Operation defined in the Spec.
@@ -44,6 +55,8 @@ public class RequestValidator {
   private final ValidationContext<OAI3> context;
   private final Map<Operation, OperationValidator> operationValidators;
   private final Map<Pattern, Path> pathPatterns;
+  // Map<path pattern, number of path fragment in url>
+  private final List<Map.Entry<Pattern, Long>> serverUrlPatterns;
 
   /**
    * Construct a new request validator with the given open API.
@@ -69,6 +82,7 @@ public class RequestValidator {
     this.openApi = openApi;
     this.context = context;
     this.operationValidators = new ConcurrentHashMap<>();
+    this.serverUrlPatterns = buildServerUrlPatterns(openApi.getServers());
     this.pathPatterns = buildPathPatterns(openApi.getPaths());
   }
 
@@ -89,7 +103,12 @@ public class RequestValidator {
   }
 
   /**
-   * Validate the request from its given URL
+   * Validate the request from its given URL.
+   * <p/>
+   * In no server URL has been defined in the Document,
+   * any path fragment from the request prior to the
+   * path operation template will lead to a failure in path lookup.<br/>
+   * Thus, a {@code ValidationException} will be thrown.
    *
    * @param request The request to validate. Must be {@code nonnull}.
    * @throws ValidationException A validation report containing validation errors
@@ -165,15 +184,53 @@ public class RequestValidator {
     }
   }
 
+  private List<Map.Entry<Pattern, Long>> buildServerUrlPatterns(List<Server> servers) {
+    Map<Pattern, Long> patterns = new HashMap<>();
+
+    if (servers == null) {
+      return Collections.emptyList();
+    }
+
+    for (Server server : servers) {
+      URL serverUrl = null;
+      try {
+        serverUrl = new URL(server.getUrl());
+      } catch (MalformedURLException e) {
+        e.printStackTrace();
+      }
+
+      // server URL may be relative to the location where the OpenAPI document is being served.
+      // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#server-object
+      URI resolvedBaseUri = serverUrl.isAbsolute() ? serverUrl : context.getContext().getBaseUri().resolve(serverUrl);
+      String path = resolvedBaseUri.getPath();
+
+      Pattern pattern = PathResolver.instance().solve(resolvedBaseUri.toString(), EnumSet.of(START_STRING));
+
+      patterns.put(pattern != null
+          ? pattern
+          : PathResolver.instance().solveFixedPath(resolvedBaseUri.toString(), EnumSet.of(START_STRING)),
+        path.codePoints().filter(ch -> ch == '/').count());
+    }
+
+    // Sorting the path patterns from longest to shortest
+    // to limit potential conflicts in path lookup
+    return patterns.entrySet()
+      .stream()
+      .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+      .collect(Collectors.toList());
+  }
+
   private Map<Pattern, Path> buildPathPatterns(Map<String, Path> paths) {
+    // Sorting the path patterns by longest to shortest
+    // to limit potential conflicts in path lookup
     Map<Pattern, Path> patterns = new HashMap<>();
 
     for (Map.Entry<String, Path> pathEntry : paths.entrySet()) {
-      Pattern pattern = PathResolver.instance().solve(pathEntry.getKey(), true);
+      Pattern pattern = PathResolver.instance().solve(pathEntry.getKey(), EnumSet.of(END_STRING));
 
       patterns.put(pattern != null
-        ? pattern
-        : PathResolver.instance().solveFixedPath(pathEntry.getKey(), true),
+          ? pattern
+          : PathResolver.instance().solveFixedPath(pathEntry.getKey(), EnumSet.of(END_STRING)),
         pathEntry.getValue());
     }
 
@@ -181,16 +238,30 @@ public class RequestValidator {
   }
 
   private Path findPath(Request request) throws ValidationException {
-    String pathValue = request.getPath();
+    String requestUrl = request.getURL();
 
+    // Match server url pattern
+    if (!serverUrlPatterns.isEmpty()) {
+      for (Map.Entry<Pattern, Long> serverUrlPatternEntry : serverUrlPatterns) {
+        Matcher matcher = serverUrlPatternEntry.getKey().matcher(requestUrl);
+        if (matcher.find()) { // find to match start path only
+          return findPath(requestUrl, requestUrl.substring(matcher.group().length()));
+        }
+      }
+    }
+
+    return findPath(requestUrl, request.getPath());
+  }
+
+  private Path findPath(String requestUrl, String pathValue) throws ValidationException {
     // Match path pattern
     for (Map.Entry<Pattern, Path> pathPatternEntry : pathPatterns.entrySet()) {
-      Matcher matcher = pathPatternEntry.getKey().matcher(request.getPath());
-      if (matcher.find()) {
+      Matcher matcher = pathPatternEntry.getKey().matcher(pathValue);
+      if (matcher.matches()) { // must match exactly
         return pathPatternEntry.getValue();
       }
     }
 
-    throw new ValidationException(String.format(INVALID_OP_PATH_ERR_MSG, pathValue));
+    throw new ValidationException(String.format(INVALID_OP_PATH_ERR_MSG, requestUrl));
   }
 }
