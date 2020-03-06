@@ -1,7 +1,6 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
@@ -9,22 +8,10 @@ import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.model.impl.MediaTypeContainer;
 import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
-import org.openapi4j.parser.model.v3.AbsParameter;
-import org.openapi4j.parser.model.v3.Header;
-import org.openapi4j.parser.model.v3.MediaType;
-import org.openapi4j.parser.model.v3.OpenApi3;
-import org.openapi4j.parser.model.v3.Operation;
-import org.openapi4j.parser.model.v3.Parameter;
-import org.openapi4j.parser.model.v3.Path;
-import org.openapi4j.parser.model.v3.Response;
+import org.openapi4j.parser.model.v3.*;
 import org.openapi4j.schema.validator.ValidationContext;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -32,6 +19,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static org.openapi4j.operation.validator.util.PathResolver.Anchor.END_STRING;
+import static org.openapi4j.operation.validator.util.PathResolver.Anchor.START_STRING;
 
 /**
  * Validator for OpenAPI Operation.
@@ -46,7 +34,8 @@ public class OperationValidator {
   private static final String BODY_CONTENT_TYPE_ERR_MSG = "Body content type cannot be determined. No 'Content-Type' header available.";
   private static final String BODY_WRONG_CONTENT_TYPE_ERR_MSG = "Content type '%s' is not allowed in body.";
   private static final String RESPONSE_STATUS_NOT_FOUND_ERR_MSG = "Response status '%s', ranged or default has not been found.";
-  private static final String PATH_NOT_FOUND_ERR_MSG = "Path template '%s' has not been found in value '%s'.";
+  private static final String PATH_NOT_FOUND_ERR_MSG = "Path template '%s' has not been found from value '%s'.";
+
   // Parameter specifics
   private static final String IN_PATH = "path";
   private static final String IN_QUERY = "query";
@@ -68,7 +57,7 @@ public class OperationValidator {
   private final OpenApi3 openApi;
   private final Operation operation;
   private final String templatePath;
-  private final Pattern pathPattern;
+  private final List<Pattern> pathPatterns;
 
   /**
    * Creates a validator for the given operation.
@@ -109,7 +98,7 @@ public class OperationValidator {
 
     // Request path parameters
     specRequestPathValidator = createParameterValidator(IN_PATH);
-    pathPattern = initPathPattern(templatePath);
+    pathPatterns = buildPathPatterns(openApi.getServers(), templatePath);
     // Request query parameters
     specRequestQueryValidator = createParameterValidator(IN_QUERY);
     // Request header parameters
@@ -136,20 +125,20 @@ public class OperationValidator {
    * @return The mapped parameters with their values.
    */
   public Map<String, JsonNode> validatePath(final Request request, final ValidationResults results) {
-    if (specRequestPathValidator == null) return null;
-
     // Check paths are matching before trying to map values
     // This also aligns the result to the relative path template
-    Matcher matcher = pathPattern.matcher(request.getPath());
-    if (!matcher.find()) {
+    Pattern pathPattern = findPathPattern(request);
+    if (pathPattern == null) {
       results.addError(String.format(PATH_NOT_FOUND_ERR_MSG, templatePath, request.getPath()), IN_PATH);
-      return new HashMap<>();
+      return null;
     }
+
+    if (specRequestPathValidator == null) return null;
 
     Map<String, JsonNode> mappedValues = ParameterConverter.pathToNode(
       specRequestPathValidator.getParameters(),
       pathPattern,
-      matcher.group());
+      request.getPath());
 
     specRequestPathValidator.validate(mappedValues, results);
 
@@ -404,19 +393,6 @@ public class OperationValidator {
     return validator;
   }
 
-  private Pattern initPathPattern(String specPath) {
-    if (specRequestPathValidator == null) {
-      return null;
-    }
-
-    Pattern pattern = PathResolver.instance().solve(specPath, EnumSet.of(END_STRING));
-    // No parameter found in template, build full fixed path
-    if (pattern == null) {
-      pattern = PathResolver.instance().solveFixedPath(specPath, EnumSet.of(END_STRING));
-    }
-    return pattern;
-  }
-
   private void mergePathToOperationParameters(final Path path) {
     if (path.getParameters() == null) {
       return; // Nothing to do
@@ -446,5 +422,44 @@ public class OperationValidator {
 
       operation.setParameters(result);
     }
+  }
+
+  private List<Pattern> buildPathPatterns(List<Server> servers, String templatePath) {
+    List<Pattern> patterns = new ArrayList<>();
+
+    if (servers == null) {
+      patterns.add(buildPathPattern("", templatePath));
+    } else {
+      for (Server server : servers) {
+        patterns.add(
+          buildPathPattern(
+            PathResolver.instance().getResolvedPath(context.getContext(), server.getUrl()),
+            templatePath));
+      }
+    }
+
+    return patterns;
+  }
+
+  private Pattern buildPathPattern(String basePath, String templatePath) {
+    Pattern pattern = PathResolver.instance().solve(basePath + templatePath, EnumSet.of(START_STRING, END_STRING));
+
+    return pattern != null
+        ? pattern
+        : PathResolver.instance().solveFixedPath(basePath + templatePath, EnumSet.of(START_STRING, END_STRING));
+  }
+
+  private Pattern findPathPattern(Request request) {
+    String requestPath = request.getPath();
+
+    // Match path pattern
+    for (Pattern pathPattern : pathPatterns) {
+      Matcher matcher = pathPattern.matcher(requestPath);
+      if (matcher.matches()) {
+        return pathPattern;
+      }
+    }
+
+    return null;
   }
 }

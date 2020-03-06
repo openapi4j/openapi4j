@@ -1,5 +1,9 @@
 package org.openapi4j.operation.validator.util;
 
+import org.openapi4j.core.model.OAIContext;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,6 +16,7 @@ public class PathResolver {
   }
 
   private static final Pattern OAS_PATH_PARAMETERS_PATTERN = Pattern.compile("\\{[.;?*+]*([^{}.;?*+]+)[^}]*}");
+  private static final Pattern ABSOLUTE_URL_PATTERN = Pattern.compile("\\A[a-z0-9.+-]+://.*", Pattern.CASE_INSENSITIVE);
 
   private static final PathResolver INSTANCE = new PathResolver();
 
@@ -89,6 +94,46 @@ public class PathResolver {
     }
 
     return Pattern.compile(regex.toString());
+  }
+
+  public String getResolvedPath(OAIContext context, String url) {
+    // server URL may be relative to the location where the OpenAPI document is being served.
+    // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#server-object
+    try {
+      if (isAbsoluteUrl(url)) {
+        return new URL(url).getPath();
+      } else {
+        // Check if there's a defined file name in URL
+        URL resource = context.getBaseUri().toURL();
+        // trim query & anchor
+        String basePath = resource.toString().split("\\?")[0].split("#")[0];
+        // handle scheme://api.com
+        String host = resource.getHost();
+        if (host.length() > 0 && basePath.endsWith(host)) {
+          return "/";
+        }
+
+        // Get last path fragment (maybe file name)
+        String lastFragment = basePath.substring(basePath.lastIndexOf('/') + 1);
+
+        // remove filename from URL
+        if (lastFragment.contains(".")) {
+          basePath = basePath.substring(0, basePath.indexOf(lastFragment));
+        }
+
+        return new URL(new URL(basePath), url).getPath();
+      }
+    } catch (MalformedURLException e) {
+      return "/";
+    }
+  }
+
+  /**
+   * Decides if a URL is absolute based on whether it contains a valid scheme name, as
+   * defined in RFC 1738.
+   */
+  private boolean isAbsoluteUrl(String url) {
+    return ABSOLUTE_URL_PATTERN.matcher(url).matches();
   }
 
   private void addVariableFragment(StringBuilder regex, String paramName) {

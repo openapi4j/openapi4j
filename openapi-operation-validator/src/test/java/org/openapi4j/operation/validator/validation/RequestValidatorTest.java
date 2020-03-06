@@ -65,6 +65,10 @@ public class RequestValidatorTest {
       requestValidator,
       new DefaultRequest.Builder("file:/v2/fixed/1/fixed/2/fixed/", GET).build(),
       true);
+    check(
+      requestValidator,
+      new DefaultRequest.Builder("file:/v2/bar/fixed/1/fixed/2/fixed/", GET).build(),
+      true);
 
     // with path parameter
     check(

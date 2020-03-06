@@ -45,15 +45,6 @@ public class OperationValidatorTest {
       val::validatePath,
       true);
 
-    // String can be also a number, with server prefixes
-    check(
-      new DefaultRequest.Builder("/foo/bar/fixed/1/fixed/2/fixed/", GET).build(),
-      val::validatePath,
-      true);
-    check(
-      new DefaultRequest.Builder("https://api.com/foo/bar/fixed/1/fixed/2/fixed/", GET).build(),
-      val::validatePath,
-      true);
 
     // 'string' is not a number
     check(
@@ -83,9 +74,14 @@ public class OperationValidatorTest {
       true);
 
     check(
+      new DefaultRequest.Builder("/foo/bar/merge_parameters", GET).build(),
+      val::validatePath,
+      false);
+
+    check(
       new DefaultRequest.Builder("https://api.com/foo/bar/merge_parameters", GET).build(),
       val::validatePath,
-      true);
+      false);
   }
 
   @Test

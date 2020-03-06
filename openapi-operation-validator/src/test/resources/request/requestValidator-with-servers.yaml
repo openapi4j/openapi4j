@@ -7,6 +7,10 @@ servers:
   - url: https://api.com
   - url: https://api.com/v1
   - url: /v2
+  - url: /v2/{basePath}
+    variables:
+      basePath:
+        default: foo
   - url: https://{sub}.api.com/{basePath}
     variables:
       sub:
