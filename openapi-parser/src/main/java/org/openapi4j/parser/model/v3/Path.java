@@ -217,4 +217,31 @@ public class Path extends AbsExtendedRefOpenApiSchema<Path> {
     copy.setCanonicalRef(getCanonicalRef());
     return copy;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Path path = (Path) o;
+
+    if (getDescription() != null ? !getDescription().equals(path.getDescription()) : path.getDescription() != null)
+      return false;
+    if (getOperations() != null ? !getOperations().equals(path.getOperations()) : path.getOperations() != null)
+      return false;
+    if (getParameters() != null ? !getParameters().equals(path.getParameters()) : path.getParameters() != null)
+      return false;
+    if (getServers() != null ? !getServers().equals(path.getServers()) : path.getServers() != null) return false;
+    return getSummary() != null ? getSummary().equals(path.getSummary()) : path.getSummary() == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = getDescription() != null ? getDescription().hashCode() : 0;
+    result = 31 * result + (getOperations() != null ? getOperations().hashCode() : 0);
+    result = 31 * result + (getParameters() != null ? getParameters().hashCode() : 0);
+    result = 31 * result + (getServers() != null ? getServers().hashCode() : 0);
+    result = 31 * result + (getSummary() != null ? getSummary().hashCode() : 0);
+    return result;
+  }
 }

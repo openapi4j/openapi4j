@@ -23,8 +23,6 @@ import static org.junit.Assert.assertFalse;
 public class OperationContentTypeTest {
   private static OpenApi3 api;
   private static RequestValidator requestValidator;
-  private Path path;
-  private Operation operation;
 
   @BeforeClass
   public static void setup() throws Exception {
@@ -37,10 +35,10 @@ public class OperationContentTypeTest {
     final String body = "fieldInt=1&fieldString=value%202&fieldBool= true &fieldFloat=1.2&fieldArray=1&fieldArray=2";
 
     // will fall back to UTF-8
-    checkRequest("common", "application/x-www-form-urlencoded; charset=WRONG-ENCODING", body);
-    checkRequest("common", "application/x-www-form-urlencoded", body);
+    checkRequest("https://api.com", "application/x-www-form-urlencoded; charset=WRONG-ENCODING", body);
+    checkRequest("https://api.com", "application/x-www-form-urlencoded", body);
 
-    checkRequest("common", "application/x-www-form-urlencoded; charset=utf-8", body);
+    checkRequest("https://api.com", "application/x-www-form-urlencoded; charset=utf-8", body);
   }
 
   @Test
@@ -86,7 +84,7 @@ public class OperationContentTypeTest {
       + "3\r\n"
       + "--1234--\r\n";
 
-    checkRequest("common", "multipart/form-data;boundary=\"1234\"", body);
+    checkRequest("https://api.com", "multipart/form-data;boundary=\"1234\"", body);
   }
 
   @Test
@@ -126,7 +124,7 @@ public class OperationContentTypeTest {
       + "[1, 2, 3]\r\n"
       + "--1234--\r\n";
 
-    checkRequest("common", "multipart/mixed;boundary=\"1234\"", body);
+    checkRequest("https://api.com", "multipart/mixed;boundary=\"1234\"", body);
   }
 
   @Test
@@ -141,7 +139,7 @@ public class OperationContentTypeTest {
       + "  \"fieldObject\": {\"id\":\"myId\"}\n"
       + "}";
 
-    checkRequest("common", "application/json", body);
+    checkRequest("https://api.com/", "application/json", body);
     checkResponse("common", "application/json", body);
   }
 
@@ -160,7 +158,7 @@ public class OperationContentTypeTest {
       + "  <fieldObject><id>myId</id></fieldObject>\n"
       + "</FooModel>";
 
-    checkRequest("common", "application/xml", body);
+    checkRequest("https://api.com", "application/xml", body);
     checkResponse("common", "application/xml", body);
   }
 
@@ -171,7 +169,7 @@ public class OperationContentTypeTest {
       + "<i>3</i><i>4</i>\n"
       + "<i>5</i><i>6</i>\n";
 
-    checkRequest("xmlFieldArray", "application/xml", body);
+    checkRequest("https://api.com/xmlFieldArray", "application/xml", body);
     checkResponse("xmlFieldArray", "application/xml", body);
   }
 
@@ -184,13 +182,13 @@ public class OperationContentTypeTest {
       + "  <items><id><id>5</id><id>6</id></id></items>\n"
       + "</items>";
 
-    checkRequest("xmlFieldArrayWrapped", "application/xml", body);
+    checkRequest("https://api.com/xmlFieldArrayWrapped", "application/xml", body);
     checkResponse("xmlFieldArrayWrapped", "application/xml", body);
   }
 
   @Test(expected = ValidationException.class)
   public void testXmlArrayMinItemsMissingRequest() throws Exception {
-    checkRequest("xmlFieldArray", "application/xml", "");
+    checkRequest("https://api.com/xmlFieldArray", "application/xml", "");
   }
 
   @Test(expected = ValidationException.class)
@@ -204,34 +202,32 @@ public class OperationContentTypeTest {
     assertEquals(StandardCharsets.UTF_8.name(), ContentType.getCharSet(null));
   }
 
-  private void checkRequest(String operationId, String contentType, String body) throws Exception {
-    operation = api.getOperationById(operationId);
-    path = api.getPathItemByOperationId(operationId);
-
-    checkRequest(contentType, Body.from(body));
+  private void checkRequest(String url, String contentType, String body) throws Exception {
+    checkRequest(url, contentType, Body.from(body));
     // With input stream
-    checkRequest(contentType, Body.from(new ByteArrayInputStream(body.getBytes())));
+    checkRequest(url, contentType, Body.from(new ByteArrayInputStream(body.getBytes())));
   }
 
-  private void checkRequest(String contentType,
+  private void checkRequest(String url,
+                            String contentType,
                             Body body) throws Exception {
 
-    DefaultRequest.Builder builder = new DefaultRequest.Builder("/", Request.Method.POST);
+    DefaultRequest.Builder builder = new DefaultRequest.Builder(url, Request.Method.POST);
 
     Request rq = builder
       .header("Content-Type", contentType)
       .body(body)
       .build();
 
-    requestValidator.validate(rq, path, operation);
+    requestValidator.validate(rq);
   }
 
   private void checkResponse(String operationId,
                              String contentType,
                              String body) throws Exception {
 
-    operation = api.getOperationById(operationId);
-    path = api.getPathItemByOperationId(operationId);
+    Operation operation = api.getOperationById(operationId);
+    Path path = api.getPathItemByOperationId(operationId);
 
     DefaultResponse.Builder builder = new DefaultResponse.Builder(200);
 

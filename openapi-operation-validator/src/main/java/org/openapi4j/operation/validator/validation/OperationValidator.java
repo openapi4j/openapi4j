@@ -73,16 +73,33 @@ public class OperationValidator {
   /**
    * Creates a validator for the given operation.
    *
-   * @param context           The validation context for additional or changing behaviours.
-   * @param openApi           The full Document Description where the Operation is located.
-   * @param path              The Path of the Operation.
-   * @param operation         The Operation to validate.
+   * @param context   The validation context for additional or changing behaviours.
+   * @param openApi   The full Document Description where the Operation is located.
+   * @param path      The Path of the Operation.
+   * @param operation The Operation to validate.
    */
   @SuppressWarnings("WeakerAccess")
   public OperationValidator(final ValidationContext<OAI3> context,
                             final OpenApi3 openApi,
                             final Path path,
                             final Operation operation) {
+    this(context, null, openApi, path, operation);
+  }
+
+  /**
+   * Creates a validator for the given operation.
+   *
+   * @param context      The validation context for additional or changing behaviours.
+   * @param pathPatterns Pattern for the current path related to servers or OAI Document origin.
+   * @param openApi      The full Document Description where the Operation is located.
+   * @param path         The Path of the Operation.
+   * @param operation    The Operation to validate.
+   */
+  OperationValidator(final ValidationContext<OAI3> context,
+                     final List<Pattern> pathPatterns,
+                     final OpenApi3 openApi,
+                     final Path path,
+                     final Operation operation) {
 
     this.context = requireNonNull(context, VALIDATION_CTX_REQUIRED_ERR_MSG);
     this.openApi = requireNonNull(openApi, OAI_REQUIRED_ERR_MSG);
@@ -98,7 +115,11 @@ public class OperationValidator {
 
     // Request path parameters
     specRequestPathValidator = createParameterValidator(IN_PATH);
-    pathPatterns = buildPathPatterns(openApi.getServers(), templatePath);
+    this.pathPatterns
+      = pathPatterns == null
+      ? buildPathPatterns(openApi.getServers(), templatePath)
+      : pathPatterns;
+
     // Request query parameters
     specRequestQueryValidator = createParameterValidator(IN_QUERY);
     // Request header parameters
@@ -445,12 +466,15 @@ public class OperationValidator {
     Pattern pattern = PathResolver.instance().solve(basePath + templatePath, EnumSet.of(START_STRING, END_STRING));
 
     return pattern != null
-        ? pattern
-        : PathResolver.instance().solveFixedPath(basePath + templatePath, EnumSet.of(START_STRING, END_STRING));
+      ? pattern
+      : PathResolver.instance().solveFixedPath(basePath + templatePath, EnumSet.of(START_STRING, END_STRING));
   }
 
   private Pattern findPathPattern(Request request) {
     String requestPath = request.getPath();
+    if (requestPath.isEmpty()) {
+      requestPath = "/";
+    }
 
     // Match path pattern
     for (Pattern pathPattern : pathPatterns) {

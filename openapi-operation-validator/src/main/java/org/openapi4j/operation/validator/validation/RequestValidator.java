@@ -14,10 +14,7 @@ import org.openapi4j.parser.model.v3.Path;
 import org.openapi4j.parser.model.v3.Server;
 import org.openapi4j.schema.validator.ValidationContext;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -89,7 +86,16 @@ public class RequestValidator {
 
     return operationValidators.computeIfAbsent(
       operation,
-      op -> new OperationValidator(context, openApi, path, op));
+      op -> {
+        // extract resolved path patterns for the given path
+        List<Pattern> patterns = new ArrayList<>();
+        for (Map.Entry<Pattern, Path> patternPathEntry : pathPatterns.entrySet()) {
+          if (patternPathEntry.getValue().equals(path)) {
+            patterns.add(patternPathEntry.getKey());
+          }
+        }
+        return new OperationValidator(context, patterns, openApi, path, op);
+      });
   }
 
   /**
@@ -208,6 +214,9 @@ public class RequestValidator {
 
   private Path findPath(Request request) throws ValidationException {
     String requestPath = request.getPath();
+    if (requestPath.isEmpty()) {
+      requestPath = "/";
+    }
 
     // Match path pattern
     for (Map.Entry<Pattern, Path> pathPatternEntry : pathPatterns.entrySet()) {
