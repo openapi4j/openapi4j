@@ -1,7 +1,6 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
@@ -12,15 +11,17 @@ import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
+import org.openapi4j.parser.model.v3.Server;
 import org.openapi4j.schema.validator.ValidationContext;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
+import static org.openapi4j.operation.validator.util.PathResolver.Anchor.END_STRING;
+import static org.openapi4j.operation.validator.util.PathResolver.Anchor.START_STRING;
 
 /**
  * Validate a request data against a given OpenAPI Operation defined in the Spec.
@@ -69,7 +70,7 @@ public class RequestValidator {
     this.openApi = openApi;
     this.context = context;
     this.operationValidators = new ConcurrentHashMap<>();
-    this.pathPatterns = buildPathPatterns(openApi.getPaths());
+    this.pathPatterns = buildPathPatterns(openApi.getServers(), openApi.getPaths());
   }
 
   /**
@@ -85,11 +86,25 @@ public class RequestValidator {
 
     return operationValidators.computeIfAbsent(
       operation,
-      op -> new OperationValidator(context, openApi, path, op));
+      op -> {
+        // extract resolved path patterns for the given path
+        List<Pattern> patterns = new ArrayList<>();
+        for (Map.Entry<Pattern, Path> patternPathEntry : pathPatterns.entrySet()) {
+          if (patternPathEntry.getValue().equals(path)) {
+            patterns.add(patternPathEntry.getKey());
+          }
+        }
+        return new OperationValidator(context, patterns, openApi, path, op);
+      });
   }
 
   /**
-   * Validate the request from its given URL
+   * Validate the request from its given URL.
+   * <p/>
+   * In no server URL has been defined in the Document,
+   * any path fragment from the request prior to the
+   * path operation template will lead to a failure in path lookup.<br/>
+   * Thus, a {@code ValidationException} will be thrown.
    *
    * @param request The request to validate. Must be {@code nonnull}.
    * @throws ValidationException A validation report containing validation errors
@@ -165,15 +180,32 @@ public class RequestValidator {
     }
   }
 
-  private Map<Pattern, Path> buildPathPatterns(Map<String, Path> paths) {
+  private Map<Pattern, Path> buildPathPatterns(List<Server> servers, Map<String, Path> paths) {
+    Map<Pattern, Path> patterns = new HashMap<>();
+
+    if (servers == null) {
+      patterns.putAll(buildPathPatterns("", paths));
+    } else {
+      for (Server server : servers) {
+        patterns.putAll(
+          buildPathPatterns(
+            PathResolver.instance().getResolvedPath(context.getContext(), server.getUrl()),
+            paths));
+      }
+    }
+
+    return patterns;
+  }
+
+  private Map<Pattern, Path> buildPathPatterns(String basePath, Map<String, Path> paths) {
     Map<Pattern, Path> patterns = new HashMap<>();
 
     for (Map.Entry<String, Path> pathEntry : paths.entrySet()) {
-      Pattern pattern = PathResolver.instance().solve(pathEntry.getKey(), true);
+      Pattern pattern = PathResolver.instance().solve(basePath + pathEntry.getKey(), EnumSet.of(START_STRING, END_STRING));
 
       patterns.put(pattern != null
-        ? pattern
-        : PathResolver.instance().solveFixedPath(pathEntry.getKey(), true),
+          ? pattern
+          : PathResolver.instance().solveFixedPath(basePath + pathEntry.getKey(), EnumSet.of(START_STRING, END_STRING)),
         pathEntry.getValue());
     }
 
@@ -181,16 +213,19 @@ public class RequestValidator {
   }
 
   private Path findPath(Request request) throws ValidationException {
-    String pathValue = request.getPath();
+    String requestPath = request.getPath();
+    if (requestPath.isEmpty()) {
+      requestPath = "/";
+    }
 
     // Match path pattern
     for (Map.Entry<Pattern, Path> pathPatternEntry : pathPatterns.entrySet()) {
-      Matcher matcher = pathPatternEntry.getKey().matcher(request.getPath());
-      if (matcher.find()) {
+      Matcher matcher = pathPatternEntry.getKey().matcher(requestPath);
+      if (matcher.matches()) { // must match exactly
         return pathPatternEntry.getValue();
       }
     }
 
-    throw new ValidationException(String.format(INVALID_OP_PATH_ERR_MSG, pathValue));
+    throw new ValidationException(String.format(INVALID_OP_PATH_ERR_MSG, request.getURL()));
   }
 }

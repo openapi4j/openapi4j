@@ -12,6 +12,7 @@ import java.net.URL;
 
 import static org.junit.Assert.fail;
 import static org.openapi4j.operation.validator.model.Request.Method.GET;
+import static org.openapi4j.operation.validator.model.Request.Method.POST;
 
 public class RequestValidatorTest {
   @Test
@@ -45,20 +46,39 @@ public class RequestValidatorTest {
 
   @Test
   public void withServerPathFindOperationCheck() throws ResolutionException, ValidationException {
-    URL specPath = RequestValidatorTest.class.getResource("/request/requestValidator.yaml");
+    URL specPath = RequestValidatorTest.class.getResource("/request/requestValidator-with-servers.yaml");
     OpenApi3 api = new OpenApi3Parser().parse(specPath, false);
     RequestValidator requestValidator = new RequestValidator(api);
 
     // absolute url
     check(
       requestValidator,
-      new DefaultRequest.Builder("https://api.com/v1/foo/fixed/1/fixed/2/fixed/", GET).build(),
+      new DefaultRequest.Builder("https://api.com/fixed/1/fixed/2/fixed/", GET).build(),
       true);
-
-    // relative
     check(
       requestValidator,
-      new DefaultRequest.Builder("/v1/foo/fixed/1/fixed/2/fixed/", GET).build(),
+      new DefaultRequest.Builder("https://api.com/v1/fixed/1/fixed/2/fixed/", GET).build(),
+      true);
+
+    // relative (value = file:/2, so we serve from file:/.../openapi4j/openapi-operation-validator/build/resources/test/request/requestValidator-with-servers.yaml)
+    check(
+      requestValidator,
+      new DefaultRequest.Builder("file:/v2/fixed/1/fixed/2/fixed/", GET).build(),
+      true);
+    check(
+      requestValidator,
+      new DefaultRequest.Builder("file:/v2/bar/fixed/1/fixed/2/fixed/", GET).build(),
+      true);
+
+    // with path parameter
+    check(
+      requestValidator,
+      new DefaultRequest.Builder("https://foo.api.com/bar/fixed/1/fixed/2/fixed/", GET).build(),
+      true);
+
+    check(
+      requestValidator,
+      new DefaultRequest.Builder("https://foo.api.com/bar/fixed/", POST).header("Content-Type", "application/json").build(),
       true);
   }
 
