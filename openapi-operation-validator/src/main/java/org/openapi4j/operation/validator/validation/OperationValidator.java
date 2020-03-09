@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
@@ -8,18 +9,26 @@ import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.model.impl.MediaTypeContainer;
 import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
-import org.openapi4j.parser.model.v3.*;
+import org.openapi4j.parser.model.v3.AbsParameter;
+import org.openapi4j.parser.model.v3.Header;
+import org.openapi4j.parser.model.v3.MediaType;
+import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.model.v3.Operation;
+import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.parser.model.v3.Path;
+import org.openapi4j.parser.model.v3.Response;
 import org.openapi4j.schema.validator.ValidationContext;
 
-import java.util.*;
-import java.util.regex.Matcher;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
-import static org.openapi4j.operation.validator.util.PathResolver.Anchor.END_STRING;
-import static org.openapi4j.operation.validator.util.PathResolver.Anchor.START_STRING;
 
 /**
  * Validator for OpenAPI Operation.
@@ -103,8 +112,8 @@ public class OperationValidator {
 
     this.context = requireNonNull(context, VALIDATION_CTX_REQUIRED_ERR_MSG);
     this.openApi = requireNonNull(openApi, OAI_REQUIRED_ERR_MSG);
-    this.templatePath = openApi.getPathFrom(requireNonNull(path, PATH_REQUIRED_ERR_MSG));
     requireNonNull(operation, OPERATION_REQUIRED_ERR_MSG);
+    this.templatePath = openApi.getPathFrom(requireNonNull(path, PATH_REQUIRED_ERR_MSG));
 
     // Clone operation and get the flatten content
     this.operation = operation.copy(openApi.getContext(), true);
@@ -117,7 +126,7 @@ public class OperationValidator {
     specRequestPathValidator = createParameterValidator(IN_PATH);
     this.pathPatterns
       = pathPatterns == null
-      ? buildPathPatterns(openApi.getServers(), templatePath)
+      ? PathResolver.instance().buildPathPatterns(openApi.getContext(), openApi.getServers(), templatePath)
       : pathPatterns;
 
     // Request query parameters
@@ -147,13 +156,23 @@ public class OperationValidator {
    */
   public Map<String, JsonNode> validatePath(final Request request, final ValidationResults results) {
     // Check paths are matching before trying to map values
-    // This also aligns the result to the relative path template
-    Pattern pathPattern = findPathPattern(request);
+    Pattern pathPattern = PathResolver.instance().findPathPattern(pathPatterns, request.getPath());
     if (pathPattern == null) {
       results.addError(String.format(PATH_NOT_FOUND_ERR_MSG, templatePath, request.getPath()), IN_PATH);
       return null;
     }
 
+    return validatePath(request, pathPattern, results);
+  }
+
+  /**
+   * Validate path parameters from the given request.
+   *
+   * @param request The request to validate. Path MUST MATCH exactly the pattern defined in specification.
+   * @param results The results.
+   * @return The mapped parameters with their values.
+   */
+  Map<String, JsonNode> validatePath(final Request request, Pattern pathPattern, final ValidationResults results) {
     if (specRequestPathValidator == null) return null;
 
     Map<String, JsonNode> mappedValues = ParameterConverter.pathToNode(
@@ -307,8 +326,9 @@ public class OperationValidator {
 
     if (validator == null) return;
 
-    Map<String, JsonNode> mappedValues =
-      ParameterConverter.headersToNode(validator.getParameters(), response.getHeaders());
+    Map<String, JsonNode> mappedValues = ParameterConverter.headersToNode(
+      validator.getParameters(),
+      response.getHeaders());
 
     validator.validate(mappedValues, results);
   }
@@ -443,47 +463,5 @@ public class OperationValidator {
 
       operation.setParameters(result);
     }
-  }
-
-  private List<Pattern> buildPathPatterns(List<Server> servers, String templatePath) {
-    List<Pattern> patterns = new ArrayList<>();
-
-    if (servers == null) {
-      patterns.add(buildPathPattern("", templatePath));
-    } else {
-      for (Server server : servers) {
-        patterns.add(
-          buildPathPattern(
-            PathResolver.instance().getResolvedPath(context.getContext(), server.getUrl()),
-            templatePath));
-      }
-    }
-
-    return patterns;
-  }
-
-  private Pattern buildPathPattern(String basePath, String templatePath) {
-    Pattern pattern = PathResolver.instance().solve(basePath + templatePath, EnumSet.of(START_STRING, END_STRING));
-
-    return pattern != null
-      ? pattern
-      : PathResolver.instance().solveFixedPath(basePath + templatePath, EnumSet.of(START_STRING, END_STRING));
-  }
-
-  private Pattern findPathPattern(Request request) {
-    String requestPath = request.getPath();
-    if (requestPath.isEmpty()) {
-      requestPath = "/";
-    }
-
-    // Match path pattern
-    for (Pattern pathPattern : pathPatterns) {
-      Matcher matcher = pathPattern.matcher(requestPath);
-      if (matcher.matches()) {
-        return pathPattern;
-      }
-    }
-
-    return null;
   }
 }

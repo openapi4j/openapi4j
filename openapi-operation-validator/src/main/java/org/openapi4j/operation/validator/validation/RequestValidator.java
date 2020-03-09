@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
@@ -11,17 +12,16 @@ import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
-import org.openapi4j.parser.model.v3.Server;
 import org.openapi4j.schema.validator.ValidationContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
-import static org.openapi4j.operation.validator.util.PathResolver.Anchor.END_STRING;
-import static org.openapi4j.operation.validator.util.PathResolver.Anchor.START_STRING;
 
 /**
  * Validate a request data against a given OpenAPI Operation defined in the Spec.
@@ -29,17 +29,17 @@ import static org.openapi4j.operation.validator.util.PathResolver.Anchor.START_S
  * for the given Open API.
  */
 public class RequestValidator {
-  private static final String OPENAPI_REQUIRED_ERR_MSG = "OpenAPI is required.";
+  private static final String OAI_REQUIRED_ERR_MSG = "OpenAPI is required.";
   private static final String VALIDATION_CTX_REQUIRED_ERR_MSG = "Validation context is required.";
   private static final String PATHS_REQUIRED_ERR_MSG = "Paths Object is required in Document Description.";
   private static final String PATH_REQUIRED_ERR_MSG = "Path is required.";
   private static final String OPERATION_REQUIRED_ERR_MSG = "Operation is required.";
   private static final String REQUEST_REQUIRED_ERR_MSG = "Request is required.";
   private static final String RESPONSE_REQUIRED_ERR_MSG = "Response is required.";
-  private static final String INVALID_REQUEST_ERR_MSG = "Invalid request";
-  private static final String INVALID_RESPONSE_ERR_MSG = "Invalid response";
-  private static final String INVALID_OP_ERR_MSG = "Operation not found from URL '%s' with method '%s'";
-  private static final String INVALID_OP_PATH_ERR_MSG = "Operation path not found from URL '%s'";
+  private static final String INVALID_REQUEST_ERR_MSG = "Invalid request.";
+  private static final String INVALID_RESPONSE_ERR_MSG = "Invalid response.";
+  private static final String INVALID_OP_ERR_MSG = "Operation not found from URL '%s' with method '%s'.";
+  private static final String INVALID_OP_PATH_ERR_MSG = "Operation path not found from URL '%s'.";
 
   private final OpenApi3 openApi;
   private final ValidationContext<OAI3> context;
@@ -63,14 +63,14 @@ public class RequestValidator {
    */
   @SuppressWarnings("WeakerAccess")
   public RequestValidator(final ValidationContext<OAI3> context, final OpenApi3 openApi) {
-    requireNonNull(openApi, OPENAPI_REQUIRED_ERR_MSG);
+    requireNonNull(openApi, OAI_REQUIRED_ERR_MSG);
     requireNonNull(context, VALIDATION_CTX_REQUIRED_ERR_MSG);
     requireNonNull(openApi.getPaths(), PATHS_REQUIRED_ERR_MSG);
 
     this.openApi = openApi;
     this.context = context;
     this.operationValidators = new ConcurrentHashMap<>();
-    this.pathPatterns = buildPathPatterns(openApi.getServers(), openApi.getPaths());
+    this.pathPatterns = buildPathPatterns();
   }
 
   /**
@@ -110,14 +110,18 @@ public class RequestValidator {
    * @throws ValidationException A validation report containing validation errors
    */
   public RequestParameters validate(final Request request) throws ValidationException {
-    Path path = findPath(request);
+    Pattern pathPattern = PathResolver.instance().findPathPattern(pathPatterns.keySet(), request.getPath());
+    if (pathPattern == null) {
+      throw new ValidationException(String.format(INVALID_OP_PATH_ERR_MSG, request.getURL()));
+    }
 
+    Path path = pathPatterns.get(pathPattern);
     Operation operation = path.getOperation(request.getMethod().name().toLowerCase());
     if (operation == null) {
       throw new ValidationException(String.format(INVALID_OP_ERR_MSG, request.getURL(), request.getMethod().name()));
     }
 
-    return validate(request, path, operation);
+    return validate(request, pathPattern, path, operation);
   }
 
   /**
@@ -131,13 +135,34 @@ public class RequestValidator {
   public RequestParameters validate(final Request request,
                                     final Path path,
                                     final Operation operation) throws ValidationException {
+    return validate(request, null, path, operation);
+  }
+
+  /**
+   * Validate the request against the given API operation
+   *
+   * @param request     The request to validate. Must be {@code nonnull}.
+   * @param pathPattern The path pattern for the current path operation.
+   * @param path        The OAS path. Must be {@code nonnull}.
+   * @param operation   OpenAPI operation. Must be {@code nonnull}.
+   * @throws ValidationException A validation report containing validation errors
+   */
+  private RequestParameters validate(final Request request,
+                                     final Pattern pathPattern,
+                                     final Path path,
+                                     final Operation operation) throws ValidationException {
 
     requireNonNull(request, REQUEST_REQUIRED_ERR_MSG);
 
     final OperationValidator opValidator = getValidator(path, operation);
 
     final ValidationResults results = new ValidationResults();
-    final Map<String, JsonNode> pathParameters = opValidator.validatePath(request, results);
+
+    final Map<String, JsonNode> pathParameters
+      = (pathPattern != null)
+      ? opValidator.validatePath(request, pathPattern, results)
+      : opValidator.validatePath(request, results);
+
     final Map<String, JsonNode> queryParameters = opValidator.validateQuery(request, results);
     final Map<String, JsonNode> headerParameters = opValidator.validateHeaders(request, results);
     final Map<String, JsonNode> cookieParameters = opValidator.validateCookies(request, results);
@@ -161,7 +186,7 @@ public class RequestValidator {
    * @param response  The response to validate. Must be {@code nonnull}.
    * @param path      The OAS path. Must be {@code nonnull}.
    * @param operation OpenAPI operation. Must be {@code nonnull}.
-   * @throws ValidationException A validation report containing validation errors
+   * @throws ValidationException A validation report containing validation errors.
    */
   public void validate(final Response response,
                        final Path path,
@@ -180,52 +205,20 @@ public class RequestValidator {
     }
   }
 
-  private Map<Pattern, Path> buildPathPatterns(List<Server> servers, Map<String, Path> paths) {
+  private Map<Pattern, Path> buildPathPatterns() {
     Map<Pattern, Path> patterns = new HashMap<>();
 
-    if (servers == null) {
-      patterns.putAll(buildPathPatterns("", paths));
-    } else {
-      for (Server server : servers) {
-        patterns.putAll(
-          buildPathPatterns(
-            PathResolver.instance().getResolvedPath(context.getContext(), server.getUrl()),
-            paths));
+    for (Map.Entry<String, Path> pathEntry : openApi.getPaths().entrySet()) {
+      List<Pattern> builtPathPatterns = PathResolver.instance().buildPathPatterns(
+        openApi.getContext(),
+        openApi.getServers(),
+        pathEntry.getKey());
+
+      for (Pattern pathPattern : builtPathPatterns) {
+        patterns.put(pathPattern, pathEntry.getValue());
       }
     }
 
     return patterns;
-  }
-
-  private Map<Pattern, Path> buildPathPatterns(String basePath, Map<String, Path> paths) {
-    Map<Pattern, Path> patterns = new HashMap<>();
-
-    for (Map.Entry<String, Path> pathEntry : paths.entrySet()) {
-      Pattern pattern = PathResolver.instance().solve(basePath + pathEntry.getKey(), EnumSet.of(START_STRING, END_STRING));
-
-      patterns.put(pattern != null
-          ? pattern
-          : PathResolver.instance().solveFixedPath(basePath + pathEntry.getKey(), EnumSet.of(START_STRING, END_STRING)),
-        pathEntry.getValue());
-    }
-
-    return patterns;
-  }
-
-  private Path findPath(Request request) throws ValidationException {
-    String requestPath = request.getPath();
-    if (requestPath.isEmpty()) {
-      requestPath = "/";
-    }
-
-    // Match path pattern
-    for (Map.Entry<Pattern, Path> pathPatternEntry : pathPatterns.entrySet()) {
-      Matcher matcher = pathPatternEntry.getKey().matcher(requestPath);
-      if (matcher.matches()) { // must match exactly
-        return pathPatternEntry.getValue();
-      }
-    }
-
-    throw new ValidationException(String.format(INVALID_OP_PATH_ERR_MSG, request.getURL()));
   }
 }

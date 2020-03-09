@@ -29,7 +29,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 
-import static org.openapi4j.operation.validator.util.PathResolver.Anchor.END_STRING;
+import static org.openapi4j.operation.validator.util.PathResolver.Options.END_STRING;
 
 public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
   private static final String OP_ID_NOT_FOUND_ERR_MSG = "Operation with id '%s' not found.";
