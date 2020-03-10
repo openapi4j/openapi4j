@@ -3,6 +3,7 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.EXCLUSIVEMINIMUM;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINIMUM;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * minimum keyword validator.
@@ -20,8 +22,8 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINIMUM;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-6" />
  */
 class MinimumValidator extends BaseJsonValidator<OAI3> {
-  private static final String EXCLUSIVE_ERR_MSG = "'%s' cannot be lower than '%s' excluded.";
-  private static final String ERR_MSG = "'%s' cannot be lower than '%s'.";
+  private static final ValidationResult EXCLUSIVE_ERR = new ValidationResult(ERROR, 1014, "Excluded minimum is '%s', found '%s'.");
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1015, "Minimum is '%s', found '%s'.");
 
   private final BigDecimal minimum;
   private final boolean excludeEqual;
@@ -52,9 +54,9 @@ class MinimumValidator extends BaseJsonValidator<OAI3> {
     final BigDecimal value = valueNode.decimalValue();
     final int compResult = value.compareTo(minimum);
     if (excludeEqual && compResult == 0) {
-      results.addError(String.format(EXCLUSIVE_ERR_MSG, value, minimum), MINIMUM);
+      results.add(MINIMUM, EXCLUSIVE_ERR, minimum, value);
     } else if (compResult < 0) {
-      results.addError(String.format(ERR_MSG, value, minimum), MINIMUM);
+      results.add(MINIMUM, ERR, minimum, value);
     }
   }
 }

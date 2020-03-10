@@ -3,11 +3,13 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINLENGTH;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * minLength keyword validator.
@@ -17,7 +19,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINLENGTH;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-7" />
  */
 class MinLengthValidator extends BaseJsonValidator<OAI3> {
-  private static final String ERR_MSG = "Minimum is '%s', found '%s'.";
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1017, "Min length is '%s', found '%s'.");
 
   private final Integer minLength;
 
@@ -43,7 +45,7 @@ class MinLengthValidator extends BaseJsonValidator<OAI3> {
     String value = valueNode.textValue();
     int length = value.codePointCount(0, value.length());
     if (length < minLength) {
-      results.addError(String.format(ERR_MSG, minLength, length), MINLENGTH);
+      results.add(MINLENGTH, ERR, minLength, length);
     }
   }
 }

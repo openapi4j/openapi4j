@@ -3,6 +3,7 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -10,6 +11,7 @@ import org.openapi4j.schema.validator.ValidationContext;
 import java.math.BigDecimal;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MULTIPLEOF;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * multipleOf keyword validator.
@@ -24,7 +26,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MULTIPLEOF;
  * results in an integer.
  */
 class MultipleOfValidator extends BaseJsonValidator<OAI3> {
-  private static final String ERR_MSG = "Value '%s' is not a multiple of '%s'.";
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1019, "Value '%s' is not a multiple of '%s'.");
 
   private static final BigDecimal DIVISIBLE = BigDecimal.valueOf(0.0);
   private final BigDecimal multiple;
@@ -51,7 +53,7 @@ class MultipleOfValidator extends BaseJsonValidator<OAI3> {
     BigDecimal value = valueNode.decimalValue();
     BigDecimal remainder = value.remainder(multiple);
     if (remainder.compareTo(DIVISIBLE) != 0) {
-      results.addError(String.format(ERR_MSG, value, multiple), MULTIPLEOF);
+      results.add(MULTIPLEOF, ERR, value, multiple);
     }
   }
 }

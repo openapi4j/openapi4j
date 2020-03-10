@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -15,6 +16,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEPENDENCIES;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * dependencies keyword validator.
@@ -24,7 +26,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEPENDENCIES;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-10" />
  */
 class DependenciesValidator extends BaseJsonValidator<OAI3> {
-  private static final String MISSING_DEP_ERR_MSG = "Missing dependency '%s' from '%s' definition.";
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1002, "Missing dependency '%s' from '%s' definition.");
 
   private final Map<String, Collection<String>> arrayDependencies = new HashMap<>();
   private final Map<String, SchemaValidator> objectDependencies = new HashMap<>();
@@ -85,7 +87,7 @@ class DependenciesValidator extends BaseJsonValidator<OAI3> {
 
     for (String field : values) {
       if (valueNode.get(field) == null) {
-        results.addError(String.format(MISSING_DEP_ERR_MSG, field, arrayDependencies.toString()), DEPENDENCIES);
+        results.add(DEPENDENCIES, ERR, field, arrayDependencies.toString());
       }
     }
   }

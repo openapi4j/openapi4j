@@ -3,12 +3,14 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.regex.Pattern;
 
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_BINARY;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_BYTE;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DATE;
@@ -25,6 +27,8 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_PASSWORD;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URI;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URIREF;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URI_REFERENCE;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
+import static org.openapi4j.core.validation.ValidationSeverity.WARNING;
 
 /**
  * format keyword validator.
@@ -34,8 +38,8 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URI_REFERENC
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-13" />
  */
 class FormatValidator extends BaseJsonValidator<OAI3> {
-  private static final String ERR_MSG = "Value '%s' does not match format '%s'.";
-  private static final String UNKNOWN_WARN_MSG = "Format '%s' is unknown, validation passes.";
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1007, "Value '%s' does not match format '%s'.");
+  private static final ValidationResult UNKNOWN_WARN = new ValidationResult(WARNING, 1008, "Format '%s' is unknown, validation passes.");
 
   private static final Pattern BASE64_PATTERN = Pattern.compile("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$");
   private static final Pattern DATE_PATTERN = Pattern.compile("^\\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(0?[1-9]|[12][0-9]|3[01])$");
@@ -110,13 +114,13 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
         validated = !valueNode.isTextual() || URI_PATTERN.matcher(valueNode.textValue()).matches();
         break;
       default:
-        results.addWarning(String.format(UNKNOWN_WARN_MSG, format));
+        results.add(FORMAT, UNKNOWN_WARN, format);
         validated = true;
         break;
     }
 
     if (!validated) {
-      results.addError(String.format(ERR_MSG, valueNode.asText(), format));
+      results.add(FORMAT, ERR, valueNode.asText(), format);
     }
   }
 }

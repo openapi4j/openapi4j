@@ -3,11 +3,13 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NULLABLE;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * nullable keyword validator.
@@ -15,7 +17,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NULLABLE;
  * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject" />
  */
 class NullableValidator extends BaseJsonValidator<OAI3> {
-  private static final String ERR_MSG = "Null value is not allowed.";
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1021, "Null value is not allowed.");
 
   private final boolean nullable;
 
@@ -32,7 +34,7 @@ class NullableValidator extends BaseJsonValidator<OAI3> {
   @Override
   public void validate(JsonNode valueNode, ValidationResults results) {
     if (!nullable && valueNode.isNull()) {
-      results.addError(ERR_MSG, NULLABLE);
+      results.add(NULLABLE, ERR);
     }
   }
 }

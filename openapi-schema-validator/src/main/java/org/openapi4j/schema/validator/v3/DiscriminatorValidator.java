@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -17,6 +18,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ALLOF;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DISCRIMINATOR;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAPPING;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PROPERTYNAME;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * discriminator keyword validator.
@@ -24,9 +26,10 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PROPERTYNAME;
  * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#discriminatorObject" />
  */
 abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
-  private static final String INVALID_SCHEMA = "Schema selection can't be made for discriminator '%s'.";
-  private static final String INVALID_PROPERTY = "Property name in schema is not set.";
-  private static final String INVALID_PROPERTY_CONTENT = "Property name in content '%s' is not set.";
+  private static final ValidationResult INVALID_SCHEMA_ERR = new ValidationResult(ERROR, 1003, "Schema selection can't be made for discriminator '%s'.");
+  private static final ValidationResult INVALID_PROPERTY_ERR = new ValidationResult(ERROR, 1004, "Property name in schema is not set.");
+  private static final ValidationResult INVALID_PROPERTY_CONTENT_ERR = new ValidationResult(ERROR, 1005, "Property name in content '%s' is not set.");
+
   private static final String SCHEMAS_PATH = "#/components/schemas/";
 
   final List<SchemaValidator> schemas = new ArrayList<>();
@@ -65,7 +68,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   private void validateAllOf(final JsonNode valueNode, final ValidationResults results) {
     String discriminatorPropertyRefPath = getDiscriminatorPropertyRefPath(valueNode, results);
     if (discriminatorPropertyRefPath == null) {
-      results.addError(String.format(INVALID_SCHEMA, discriminatorPropertyName), DISCRIMINATOR);
+      results.add(DISCRIMINATOR, INVALID_SCHEMA_ERR, discriminatorPropertyName);
       return;
     }
 
@@ -79,7 +82,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   private void validateOneAnyOf(final JsonNode valueNode, final ValidationResults results) {
     String discriminatorPropertyRefPath = getDiscriminatorPropertyRefPath(valueNode, results);
     if (discriminatorPropertyRefPath == null) {
-      results.addError(String.format(INVALID_SCHEMA, discriminatorPropertyName), DISCRIMINATOR);
+      results.add(DISCRIMINATOR, INVALID_SCHEMA_ERR, discriminatorPropertyName);
       return;
     }
 
@@ -91,7 +94,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
       }
     }
 
-    results.addError(String.format(INVALID_SCHEMA, discriminatorPropertyName), DISCRIMINATOR);
+    results.add(DISCRIMINATOR, INVALID_SCHEMA_ERR, discriminatorPropertyName);
   }
 
   /**
@@ -193,13 +196,13 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   private String getDiscriminatorPropertyRefPath(final JsonNode valueNode, final ValidationResults results) {
     // check discriminator definition
     if (discriminatorPropertyName == null) {
-      results.addError(INVALID_PROPERTY, DISCRIMINATOR);
+      results.add(DISCRIMINATOR, INVALID_PROPERTY_ERR);
       return null;
     }
     // check discriminator in content
     JsonNode discriminatorPropertyNameNode = valueNode.get(discriminatorPropertyName);
     if (discriminatorPropertyNameNode == null) {
-      results.addError(String.format(INVALID_PROPERTY_CONTENT, discriminatorPropertyName), DISCRIMINATOR);
+      results.add(DISCRIMINATOR, INVALID_PROPERTY_CONTENT_ERR, discriminatorPropertyName);
       return null;
     }
 

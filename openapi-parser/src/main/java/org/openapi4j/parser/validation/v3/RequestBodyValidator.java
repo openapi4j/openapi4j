@@ -1,5 +1,6 @@
 package org.openapi4j.parser.validation.v3;
 
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.OpenApi3;
@@ -9,14 +10,16 @@ import org.openapi4j.parser.validation.Validator;
 
 import java.util.Map;
 
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
 
 class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
+  private static final ValidationResult ENCODING_MISMATCH = new ValidationResult(ERROR, 131, "The encoding object SHALL only apply to requestBody objects when the media type is multipart or application/x-www-form-urlencoded");
+
   private static final String MULTIPART = "multipart/";
   private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
-  private static final String ENCODING_MISMATCH = "The encoding object SHALL only apply to requestBody objects when the media type is multipart or application/x-www-form-urlencoded";
 
   private static final Validator<OpenApi3, RequestBody> INSTANCE = new RequestBodyValidator();
 
@@ -53,7 +56,7 @@ class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
         mediaType.getEncodings() != null
           && !entry.getKey().startsWith(MULTIPART)
           && !entry.getKey().equals(FORM_URL_ENCODED)) {
-        results.addWarning(ENCODING_MISMATCH, entry.getKey());
+        results.add(ENCODING_MISMATCH, entry.getKey());
       }
     }
   }

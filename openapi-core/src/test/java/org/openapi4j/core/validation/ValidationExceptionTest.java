@@ -16,7 +16,7 @@ public class ValidationExceptionTest {
     assertNull(ex2.getResults());
 
     ValidationResults results = new ValidationResults();
-    results.addError("an error");
+    results.add(new ValidationResult(ValidationSeverity.ERROR, 15, "an error"));
     ValidationException ex3 = new ValidationException("msg", results);
     assertEquals("msg", ex3.getMessage());
     assertEquals(results, ex3.getResults());

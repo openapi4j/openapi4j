@@ -1,6 +1,7 @@
 package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.exception.DecodeException;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.OpenApi3;
@@ -15,10 +16,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
-  private static final String PARAM_NOT_FOUND_ERR_MSG = "Parameter '%s' not found in operation.";
-  private static final String PARAM_PATH_EXCEPTION_ERR_MSG = "Path '%s' is malformed.\n'%s'";
+  private static final ValidationResult PARAM_NOT_FOUND_ERR = new ValidationResult(ERROR, 111, "Parameter '%s' not found in operation.");
+  private static final ValidationResult PARAM_PATH_EXCEPTION_ERR = new ValidationResult(ERROR, 112, "Path '%s' is malformed.\n'%s'");
 
   private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(.*?)}");
   private static final Pattern PATTERN_REQUEST_PARAM = Pattern.compile("^(\\$request)(?:\\.)(query(?=\\.)|path(?=\\.)|header(?=\\.)|body(?=#/))(?:\\.|#/)(.+)");
@@ -54,7 +56,7 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
           return true;
         }
 
-        results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, propValue));
+        results.add(PARAM_NOT_FOUND_ERR, propValue);
       } else {
         if (checkParameterIn(matcher.group(2), matcher.group(3), operation, results)) {
           return true;
@@ -81,7 +83,7 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
           }
         }
 
-        results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, propValue));
+        results.add(PARAM_NOT_FOUND_ERR, propValue);
       } else {
         for (Response response : operation.getResponses().values()) {
           if (response.getHeaders() != null) {
@@ -92,7 +94,7 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
             }
           }
         }
-        results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, propValue));
+        results.add(PARAM_NOT_FOUND_ERR, propValue);
         return false;
       }
     }
@@ -110,7 +112,7 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
           return true;
         }
       } catch (DecodeException e) {
-        results.addError(String.format(PARAM_PATH_EXCEPTION_ERR_MSG, propValue, e.getMessage()));
+        results.add(PARAM_PATH_EXCEPTION_ERR, propValue, e.getMessage());
       }
     }
 
@@ -149,7 +151,7 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
         return true;
       }
     }
-    results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, propName));
+    results.add(PARAM_NOT_FOUND_ERR, propName);
     return false;
   }
 }

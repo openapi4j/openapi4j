@@ -1,6 +1,7 @@
 package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.model.reference.Reference;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
@@ -16,12 +17,26 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.COMPONENTS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTERNALDOCS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.IN;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.INFO;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.NAME;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPENAPI;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.PATH;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.PATHS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.REQUIRED;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SECURITY;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.SERVERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.TAGS;
 
 class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
-  private static final String REQUIRED_PATH_PARAM = "Parameter '%s' in path '%s' must have 'required' property set to true";
-  private static final String UNEXPECTED_PATH_PARAM = "Path parameter '%s' in path '%s' is unexpected";
-  private static final String MISMATCH_PATH_PARAM = "Path parameter '%s' in path '%s' is expected but undefined";
+  private static final ValidationResult REQUIRED_PATH_PARAM = new ValidationResult(ERROR, 122, "Parameter '%s' in path '%s' must have 'required' property set to true");
+  private static final ValidationResult UNEXPECTED_PATH_PARAM = new ValidationResult(ERROR, 123, "Path parameter '%s' in path '%s' is unexpected");
+  private static final ValidationResult MISMATCH_PATH_PARAM = new ValidationResult(ERROR, 124, "Path parameter '%s' in path '%s' is expected but undefined");
 
   private static final Pattern PATTERN_PATH_PARAM = Pattern.compile("/\\{(\\w+)\\}");
   private static final Pattern PATTERN_OAI3 = Pattern.compile("3\\.\\d+(\\.\\d+.*)?");
@@ -114,7 +129,7 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
     }
 
     if (!required) {
-      results.addError(String.format(REQUIRED_PATH_PARAM, name, path), REQUIRED);
+      results.add(REQUIRED, REQUIRED_PATH_PARAM, name, path);
     }
 
     // Name is required but could be missing in spec definition
@@ -123,7 +138,7 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
     }
 
     if (!pathParams.contains(name)) {
-      results.addError(String.format(UNEXPECTED_PATH_PARAM, name, path), NAME);
+      results.add(NAME, UNEXPECTED_PATH_PARAM, name, path);
     }
 
     return name;
@@ -143,7 +158,7 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
   private void validatePathParametersMatching(String path, List<String> refParams, List<String> discoveredParams, ValidationResults results) {
     for (String name : refParams) {
       if (!discoveredParams.contains(name)) {
-        results.addError(String.format(MISMATCH_PATH_PARAM, name, path), NAME);
+        results.add(NAME, MISMATCH_PATH_PARAM, name, path);
       }
     }
   }

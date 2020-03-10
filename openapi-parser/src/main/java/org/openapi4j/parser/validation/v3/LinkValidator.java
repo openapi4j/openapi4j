@@ -2,6 +2,7 @@ package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.model.reference.Reference;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.Link;
 import org.openapi4j.parser.model.v3.OpenApi3;
@@ -9,6 +10,7 @@ import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Parameter;
 import org.openapi4j.parser.validation.ValidationContext;
 
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADERS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.LINKS;
@@ -16,10 +18,10 @@ import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPERATIONREF;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.SERVER;
 
 class LinkValidator extends ExpressionValidator<Link> {
-  private static final String OP_FIELD_MISSING_ERR_MSG = "'operationRef', 'operationId' or '$ref' field missing.";
-  private static final String OP_FIELD_EXCLUSIVE_ERR_MSG = "'operationRef' and 'operationId' fields are mutually exclusives.";
-  private static final String OP_NOT_FOUND_ERR_MSG = "'%s' not found.";
-  private static final String PARAM_NOT_FOUND_ERR_MSG = "Parameter name '%s' not found in target operation.";
+  private static final ValidationResult OP_FIELD_MISSING_ERR = new ValidationResult(ERROR, 115, "'operationRef', 'operationId' or '$ref' field missing.");
+  private static final ValidationResult OP_FIELD_EXCLUSIVE_ERR = new ValidationResult(ERROR, 116, "'operationRef' and 'operationId' fields are mutually exclusives.");
+  private static final ValidationResult OP_NOT_FOUND_ERR = new ValidationResult(ERROR, 117, "'%s' not found.");
+  private static final ValidationResult PARAM_NOT_FOUND_ERR = new ValidationResult(ERROR, 118, "Parameter name '%s' not found in target operation.");
 
   private static final LinkValidator INSTANCE = new LinkValidator();
 
@@ -54,13 +56,13 @@ class LinkValidator extends ExpressionValidator<Link> {
     Operation targetOperation = null;
 
     if (operationId != null && operationRef != null) {
-      results.addError(OP_FIELD_EXCLUSIVE_ERR_MSG);
+      results.add(OP_FIELD_EXCLUSIVE_ERR);
     } else if (operationRef != null) {
       targetOperation = getOperationRefContent(api, operationRef, results);
     } else if (operationId != null) {
       targetOperation = findOperationById(api, operationId, results);
     } else {
-      results.addError(OP_FIELD_MISSING_ERR_MSG);
+      results.add(OP_FIELD_MISSING_ERR);
     }
 
     if (targetOperation != null) {
@@ -80,7 +82,7 @@ class LinkValidator extends ExpressionValidator<Link> {
   private Operation findOperationById(OpenApi3 api, String operationId, ValidationResults results) {
     Operation operation = api.getOperationById(operationId);
     if (operation == null) {
-      results.addError(String.format(OP_NOT_FOUND_ERR_MSG, operationId), OPERATIONREF);
+      results.add(OPERATIONREF, OP_NOT_FOUND_ERR, operationId);
     }
 
     return operation;
@@ -100,7 +102,7 @@ class LinkValidator extends ExpressionValidator<Link> {
       }
 
       if (!hasParameter) {
-        results.addError(String.format(PARAM_NOT_FOUND_ERR_MSG, paramName));
+        results.add(PARAM_NOT_FOUND_ERR, paramName);
       }
     }
   }
@@ -113,12 +115,12 @@ class LinkValidator extends ExpressionValidator<Link> {
     Reference reference = api.getContext().getReferenceRegistry().getRef(operationRef);
 
     if (reference == null) {
-      results.addError(String.format(REF_MISSING, operationRef), OPERATIONREF);
+      results.add(OPERATIONREF, REF_MISSING, operationRef);
     } else {
       try {
         return reference.getMappedContent(Operation.class);
       } catch (DecodeException e) {
-        results.addError(String.format(REF_CONTENT_UNREADABLE, operationRef), OPERATIONREF);
+        results.add(OPERATIONREF, REF_CONTENT_UNREADABLE, operationRef);
       }
     }
 

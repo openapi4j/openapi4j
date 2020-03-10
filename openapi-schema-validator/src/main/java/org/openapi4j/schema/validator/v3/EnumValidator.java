@@ -1,9 +1,10 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import com.fasterxml.jackson.databind.node.NumericNode;
+
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -11,6 +12,7 @@ import org.openapi4j.schema.validator.ValidationContext;
 import java.util.Comparator;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ENUM;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * enum keyword validator.
@@ -20,7 +22,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ENUM;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-10" />
  */
 class EnumValidator extends BaseJsonValidator<OAI3> {
-  private static final String ERR_MSG = "Value '%s' is not defined in the schema.";
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1006, "Value '%s' is not defined in the schema.");
 
   private final JsonNode schemaNode;
   private static final NodeComparator NODE_COMPARATOR = new NodeComparator();
@@ -44,7 +46,7 @@ class EnumValidator extends BaseJsonValidator<OAI3> {
         }
       }
 
-      results.addError(String.format(ERR_MSG, valueNode.asText()), ENUM);
+      results.add(ENUM, ERR, valueNode.asText());
     }
   }
 

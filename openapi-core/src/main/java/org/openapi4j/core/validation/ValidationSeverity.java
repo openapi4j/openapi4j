@@ -6,10 +6,10 @@ package org.openapi4j.core.validation;
 public enum ValidationSeverity {
   NONE(0), INFO(1), WARNING(2), ERROR(3);
 
-  private final int value;
+  private final byte value;
 
   ValidationSeverity(int value) {
-    this.value = value;
+    this.value = (byte) value;
   }
 
   public int getValue() {

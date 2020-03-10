@@ -1,5 +1,6 @@
 package org.openapi4j.parser.validation.v3;
 
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.Discriminator;
 import org.openapi4j.parser.model.v3.OpenApi3;
@@ -43,6 +44,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTERNALDOCS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.XML;
@@ -51,13 +53,13 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
   private static final Pattern TYPE_REGEX = Pattern.compile(
     String.join("|", TYPE_BOOLEAN, TYPE_OBJECT, TYPE_ARRAY, TYPE_NUMBER, TYPE_INTEGER, TYPE_STRING));
 
-  private static final String DISCRIM_ONLY_ONE = "The discriminator mapping '%s' MUST have only one of the composite keywords 'oneOf, anyOf, allOf'";
-  private static final String DISCRIM_CONSTRAINT_MISSING = "The discriminator '%s' is not required or not a property of the allOf schemas";
-  private static final String DISCRIM_PROP_MISSING = "The discriminator '%s' is not a property of this schema";
-  private static final String DISCRIM_REQUIRED_MISSING = "The discriminator '%s' is required in this schema";
-  private static final String READ_WRITE_ONLY_EXCLUSIVE = "Schema cannot be both ReadOnly and WriteOnly";
-  private static final String FORMAT_TYPE_MISMATCH = "Format '%s' is incompatible with schema type '%s'";
-  private static final String VALUE_TYPE_MISMATCH = "Value '%s' is incompatible with schema type '%s'";
+  private static final ValidationResult DISCRIM_ONLY_ONE = new ValidationResult(ERROR, 132, "The discriminator mapping '%s' MUST have only one of the composite keywords 'oneOf, anyOf, allOf'");
+  private static final ValidationResult DISCRIM_CONSTRAINT_MISSING = new ValidationResult(ERROR, 133, "The discriminator '%s' is not required or not a property of the allOf schemas");
+  private static final ValidationResult DISCRIM_PROP_MISSING = new ValidationResult(ERROR, 134, "The discriminator '%s' is not a property of this schema");
+  private static final ValidationResult DISCRIM_REQUIRED_MISSING = new ValidationResult(ERROR, 135, "The discriminator '%s' is required in this schema");
+  private static final ValidationResult READ_WRITE_ONLY_EXCLUSIVE = new ValidationResult(ERROR, 136, "Schema cannot be both ReadOnly and WriteOnly");
+  private static final ValidationResult FORMAT_TYPE_MISMATCH = new ValidationResult(ERROR, 137, "Format '%s' is incompatible with schema type '%s'");
+  private static final ValidationResult VALUE_TYPE_MISMATCH = new ValidationResult(ERROR, 138, "Value '%s' is incompatible with schema type '%s'");
 
   private static final Validator<OpenApi3, Schema> INSTANCE = new SchemaValidator();
 
@@ -123,7 +125,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
     count += schema.hasOneOfSchemas() ? 1 : 0;
 
     if (count > 1) {
-      results.addError(String.format(DISCRIM_ONLY_ONE, discriminator.getPropertyName()), DISCRIMINATOR);
+      results.add(DISCRIMINATOR, DISCRIM_ONLY_ONE, discriminator.getPropertyName());
     } else if (count == 0) {
       // discriminator is located aside properties
       checkSchemaDiscriminator(api, discriminator, Collections.singletonList(schema), results);
@@ -137,7 +139,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
   private void checkSchemaCollections(OpenApi3 api, Schema schema, Discriminator discriminator, ValidationResults results) {
     if (schema.hasAllOfSchemas()) {
       if (!checkSchemaDiscriminator(api, discriminator, schema.getAllOfSchemas(), new ValidationResults())) {
-        results.addError(String.format(DISCRIM_CONSTRAINT_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
+        results.add(DISCRIMINATOR, DISCRIM_CONSTRAINT_MISSING, discriminator.getPropertyName());
       }
     } else if (schema.hasAnyOfSchemas()) {
       checkSchemaDiscriminator(api, discriminator, schema.getAnyOfSchemas(), results);
@@ -157,16 +159,16 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
       // Check for extended model with allOf
       if (schema.hasAllOfSchemas()) {
         if (!checkSchemaDiscriminator(api, discriminator, schema.getAllOfSchemas(), new ValidationResults())) {
-          results.addError(String.format(DISCRIM_CONSTRAINT_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
+          results.add(DISCRIMINATOR, DISCRIM_CONSTRAINT_MISSING, discriminator.getPropertyName());
           hasProperty = false;
         }
       } else {
         if (!schema.hasProperty(discriminator.getPropertyName())) {
-          results.addError(String.format(DISCRIM_PROP_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
+          results.add(DISCRIMINATOR, DISCRIM_PROP_MISSING, discriminator.getPropertyName());
           hasProperty = false;
         }
         if (!schema.hasRequiredFields() || !schema.getRequiredFields().contains(discriminator.getPropertyName())) {
-          results.addError(String.format(DISCRIM_REQUIRED_MISSING, discriminator.getPropertyName()), DISCRIMINATOR);
+          results.add(DISCRIMINATOR, DISCRIM_REQUIRED_MISSING, discriminator.getPropertyName());
           hasProperty = false;
         }
       }
@@ -179,7 +181,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
 
   private void checkReadWrite(Schema schema, ValidationResults results) {
     if (schema.isReadOnly() && schema.isWriteOnly()) {
-      results.addError(READ_WRITE_ONLY_EXCLUSIVE);
+      results.add(READ_WRITE_ONLY_EXCLUSIVE);
     }
   }
 
@@ -204,7 +206,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
       }
 
       if (type != null && !type.equals(expectedType)) {
-        results.addError(String.format(FORMAT_TYPE_MISMATCH, format, type), FORMAT);
+        results.add(FORMAT, FORMAT_TYPE_MISMATCH, format, type);
       }
     }
   }
@@ -237,7 +239,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
           break;
       }
       if (!ok) {
-        results.addError(String.format(VALUE_TYPE_MISMATCH, defaultValue, type), DEFAULT);
+        results.add(DEFAULT, VALUE_TYPE_MISMATCH, defaultValue, type);
       }
     }
   }

@@ -3,6 +3,7 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -14,6 +15,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * type keyword validator.
@@ -23,7 +25,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
  */
 class TypeValidator extends BaseJsonValidator<OAI3> {
-  private static final String ERR_MSG = "Type expected '%s', found '%s'.";
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1027, "Type expected '%s', found '%s'.");
   // non-OAS type
   private static final String TYPE_NULL = "null";
 
@@ -50,7 +52,7 @@ class TypeValidator extends BaseJsonValidator<OAI3> {
       }
 
       if (!TYPE_NULL.equals(valueType)) {
-        results.addError(String.format(ERR_MSG, type, valueType), TYPE);
+        results.add(TYPE, ERR, type, valueType);
       }
     }
   }

@@ -3,6 +3,7 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.EXCLUSIVEMAXIMUM;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXIMUM;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * maximum keyword validator.
@@ -20,8 +22,8 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXIMUM;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-6" />
  */
 class MaximumValidator extends BaseJsonValidator<OAI3> {
-  private static final String EXCLUSIVE_ERR_MSG = "'%s' cannot be greater than '%s' excluded.";
-  private static final String ERR_MSG = "'%s' cannot be greater than '%s'.";
+  private static final ValidationResult EXCLUSIVE_ERR = new ValidationResult(ERROR, 1009, "Excluded maximum is '%s', found '%s'.");
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1010, "Maximum is '%s', found '%s'.");
 
   private final BigDecimal maximum;
   private final boolean excludeEqual;
@@ -52,9 +54,9 @@ class MaximumValidator extends BaseJsonValidator<OAI3> {
     final BigDecimal value = valueNode.decimalValue();
     final int compResult = value.compareTo(maximum);
     if (excludeEqual && compResult == 0) {
-      results.addError(String.format(EXCLUSIVE_ERR_MSG, value, maximum), MAXIMUM);
+      results.add(MAXIMUM, EXCLUSIVE_ERR, maximum, value);
     } else if (compResult > 0) {
-      results.addError(String.format(ERR_MSG, value, maximum), MAXIMUM);
+      results.add(MAXIMUM, ERR, maximum, value);
     }
   }
 }

@@ -1,5 +1,6 @@
 package org.openapi4j.parser.validation.v3;
 
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.EncodingProperty;
 import org.openapi4j.parser.model.v3.MediaType;
@@ -11,12 +12,13 @@ import org.openapi4j.parser.validation.Validator;
 import java.util.Map;
 import java.util.Set;
 
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.ENCODING;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCHEMA;
 
 class MediaTypeValidator extends Validator3Base<OpenApi3, MediaType> {
-  private static final String ENCODING_MISMATCH = "Encoding property '%s' is not a corresponding schema property";
+  private static final ValidationResult ENCODING_MISMATCH = new ValidationResult(ERROR, 119, "Encoding property '%s' is not a corresponding schema property");
 
   private static final Validator<OpenApi3, MediaType> INSTANCE = new MediaTypeValidator();
 
@@ -50,7 +52,7 @@ class MediaTypeValidator extends Validator3Base<OpenApi3, MediaType> {
       Set<String> propNames = schemaProps.keySet();
       for (String encodingPropertyName : mediaEncodings.keySet()) {
         if (!propNames.contains(encodingPropertyName)) {
-          results.addError(String.format(ENCODING_MISMATCH, encodingPropertyName), encodingPropertyName);
+          results.add(encodingPropertyName, ENCODING_MISMATCH, encodingPropertyName);
         }
       }
     }

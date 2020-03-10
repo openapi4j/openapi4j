@@ -1,11 +1,14 @@
 package org.openapi4j.parser.validation.v3;
 
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Parameter;
 import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
+import static org.openapi4j.core.validation.ValidationSeverity.WARNING;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.ALLOWRESERVED;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
@@ -27,12 +30,12 @@ import static org.openapi4j.parser.validation.v3.OAI3Keywords.SPACEDELIMITED;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.STYLE;
 
 class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
-  private static final String ALLOWED_RESERVED_IGNORED = "AllowReserved is ignored for non-query parameter '%s'";
-  private static final String STYLE_ONLY_IN = "Style '%s' is only allowed in %s";
-  private static final String STYLE_ONLY_IN_AND = "Style '%s' is only allowed in %s and %s";
-  private static final String CONTENT_ONY_ONE_ERR_MSG = "content can only contain one media type.";
-  private static final String CONTENT_SCHEMA_EXCLUSIVE_ERR_MSG = "Content and schema are mutually exclusive.";
-  private static final String STYLE_UNKNOWN = "Style '%s' is unknown.";
+  private static final ValidationResult ALLOWED_RESERVED_IGNORED = new ValidationResult(WARNING, 125, "AllowReserved is ignored for non-query parameter '%s'");
+  private static final ValidationResult STYLE_ONLY_IN = new ValidationResult(ERROR, 126, "Style '%s' is only allowed in %s");
+  private static final ValidationResult STYLE_ONLY_IN_AND = new ValidationResult(ERROR, 127, "Style '%s' is only allowed in %s and %s");
+  private static final ValidationResult CONTENT_ONY_ONE_ERR = new ValidationResult(ERROR, 128, "content can only contain one media type.");
+  private static final ValidationResult CONTENT_SCHEMA_EXCLUSIVE_ERR = new ValidationResult(ERROR, 129, "Content and schema are mutually exclusive.");
+  private static final ValidationResult STYLE_UNKNOWN = new ValidationResult(ERROR, 130, "Style '%s' is unknown.");
 
   private static final Validator<OpenApi3, Parameter> INSTANCE = new ParameterValidator();
 
@@ -63,18 +66,18 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
 
       // Content or schema, not both
       if (parameter.getContentMediaTypes() != null && parameter.getSchema() != null) {
-        results.addError(CONTENT_SCHEMA_EXCLUSIVE_ERR_MSG);
+        results.add(CONTENT_SCHEMA_EXCLUSIVE_ERR);
       }
       // only one content type
       if (parameter.getContentMediaTypes() != null && parameter.getContentMediaTypes().size() > 1) {
-        results.addError(CONTENT_ONY_ONE_ERR_MSG);
+        results.add(CONTENT_ONY_ONE_ERR);
       }
     }
   }
 
   private void checkAllowReserved(Parameter parameter, ValidationResults results) {
     if (parameter.isAllowReserved() && !QUERY.equals(parameter.getIn())) {
-      results.addWarning(String.format(ALLOWED_RESERVED_IGNORED, parameter.getName()), ALLOWRESERVED);
+      results.add(ALLOWRESERVED, ALLOWED_RESERVED_IGNORED, parameter.getName());
     }
   }
 
@@ -91,28 +94,28 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
       case MATRIX:
       case LABEL:
         if (!PATH.equals(in)) {
-          results.addError(String.format(STYLE_ONLY_IN, style, PATH), STYLE);
+          results.add(STYLE, STYLE_ONLY_IN, style, PATH);
         }
         break;
       case FORM:
         if (!QUERY.equals(in) && !COOKIE.equals(in)) {
-          results.addError(String.format(STYLE_ONLY_IN_AND, style, QUERY, COOKIE), STYLE);
+          results.add(STYLE, STYLE_ONLY_IN_AND, style, QUERY, COOKIE);
         }
         break;
       case SIMPLE:
         if (!PATH.equals(in) && !HEADER.equals(in)) {
-          results.addError(String.format(STYLE_ONLY_IN_AND, style, PATH, HEADER), STYLE);
+          results.add(STYLE, STYLE_ONLY_IN_AND, style, PATH, HEADER);
         }
         break;
       case SPACEDELIMITED:
       case PIPEDELIMITED:
       case DEEPOBJECT:
         if (!QUERY.equals(in)) {
-          results.addError(String.format(STYLE_ONLY_IN, style, QUERY), STYLE);
+          results.add(STYLE, STYLE_ONLY_IN, style, QUERY);
         }
         break;
       default:
-        results.addError(String.format(STYLE_UNKNOWN, style), STYLE);
+        results.add(STYLE, STYLE_UNKNOWN, style);
         break;
     }
   }
