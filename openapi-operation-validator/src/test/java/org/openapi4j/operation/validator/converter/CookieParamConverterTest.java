@@ -12,7 +12,7 @@ import org.openapi4j.parser.model.v3.Parameter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.function.BiConsumer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -20,33 +20,34 @@ import static org.junit.Assert.assertNull;
 public class CookieParamConverterTest {
   @Test
   public void cookieFormNotExplodedPrimitive() throws Exception {
-    check("formNotExplodedPrimitive", "5", "wrong", ParamChecker::checkPrimitive);
+    check("formNotExplodedPrimitive", "5", "wrong", ParamChecker::checkPrimitive, ParamChecker::checkWrongPrimitive);
   }
 
   @Test
   public void cookieFormExplodedPrimitive() throws Exception {
-    check("formExplodedPrimitive", "5", "wrong", ParamChecker::checkPrimitive);
+    check("formExplodedPrimitive", "5", "wrong", ParamChecker::checkPrimitive, ParamChecker::checkWrongPrimitive);
   }
 
   @Test
   public void cookieFormNotExplodedArray() throws Exception {
-    check("formNotExplodedArray", "3,4,5", "wrong", ParamChecker::checkArray);
+    check("formNotExplodedArray", "3,4,5", "wrong", ParamChecker::checkArray, ParamChecker::checkWrongArray);
   }
 
   @Test
   public void cookieFormNotExplodedObject() throws Exception {
-    check("formNotExplodedObject", "boolProp,true,stringProp,admin", "foo,bar", ParamChecker::checkObject);
+    check("formNotExplodedObject", "boolProp,true,stringProp,admin", "boolProp,wrong", ParamChecker::checkObject, ParamChecker::checkWrongObject);
   }
 
   @Test
   public void cookieContentObject() throws Exception {
-    check("content", "{\"boolProp\":true,\"stringProp\":\"admin\"}", "wrong", ParamChecker::checkObject);
+    check("content", "{\"boolProp\":true,\"stringProp\":\"admin\"}", "{\"boolProp\":\"wrong\"}", ParamChecker::checkObject, ParamChecker::checkWrongObject);
   }
 
   private void check(String parameterName,
                      String validValue,
                      String invalidValue,
-                     BiFunction<Map<String, JsonNode>, String, Boolean> validChecker) throws Exception {
+                     BiConsumer<Map<String, JsonNode>, String> validChecker,
+                     BiConsumer<Map<String, JsonNode>, String> invalidChecker) throws Exception {
 
     OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/cookieParameters.yaml");
 
@@ -56,25 +57,10 @@ public class CookieParamConverterTest {
     // Valid check
     Map<String, String> values = new HashMap<>();
     values.put(parameterName, validValue);
-    boolean isArray = validChecker.apply(mapToNodes(parameters, values), parameterName);
-
-    // Invalid checks
-
-    // wrong value
+    validChecker.accept(mapToNodes(parameters, values), parameterName);
+    // Invalid check
     values.put(parameterName, invalidValue);
-    if (isArray) {
-      assertEquals(
-        JsonNodeFactory.instance.arrayNode().add(JsonNodeFactory.instance.nullNode()),
-        mapToNodes(parameters, values).get(parameterName));
-    } else {
-      Map<String, JsonNode> nodes = mapToNodes(parameters, values);
-
-      if (nodes.get(parameterName) != null) {
-        assertEquals(
-          JsonNodeFactory.instance.nullNode(),
-          nodes.get(parameterName));
-      }
-    }
+    invalidChecker.accept(mapToNodes(parameters, values), parameterName);
 
     // null value
     values.put(parameterName, null);

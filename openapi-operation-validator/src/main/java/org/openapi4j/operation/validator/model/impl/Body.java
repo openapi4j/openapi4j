@@ -2,6 +2,7 @@ package org.openapi4j.operation.validator.model.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.operation.validator.util.ContentConverter;
 import org.openapi4j.parser.model.v3.Schema;
 
@@ -104,7 +105,7 @@ public class Body {
     if (bodyNode != null) {
       return bodyNode;
     } else if (bodyMap != null) {
-      return ContentConverter.mapToNode(schema, bodyMap);
+      return TreeUtil.json.convertValue(bodyMap, JsonNode.class);
     } else {
       return ContentConverter.convert(schema, rawContentType, bodyIs, bodyStr);
     }

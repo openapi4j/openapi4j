@@ -174,14 +174,38 @@ public class OperationValidatorTest {
   public void requestBodyCheck() {
     OperationValidator val = loadOperationValidator("rqBodyCheck");
 
-    JsonNode body = JsonNodeFactory.instance.objectNode().set(
-      "param",
-      JsonNodeFactory.instance.textNode("foo"));
+    JsonNode bodyInteger = JsonNodeFactory.instance.objectNode().set(
+      "paramInteger",
+      JsonNodeFactory.instance.numberNode(1));
+    JsonNode bodyIntegerWrong = JsonNodeFactory.instance.objectNode().set(
+      "paramInteger",
+      JsonNodeFactory.instance.textNode("1"));
+
+
+    JsonNode bodyString = JsonNodeFactory.instance.objectNode().set(
+      "paramString",
+      JsonNodeFactory.instance.textNode("2"));
+    JsonNode bodyStringWrong = JsonNodeFactory.instance.objectNode().set(
+      "paramString",
+      JsonNodeFactory.instance.numberNode(1));
 
     check(
-      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "application/json").body(Body.from(body)).build(),
+      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "application/json").body(Body.from(bodyInteger)).build(),
       val::validateBody,
       true);
+    check(
+      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "application/json").body(Body.from(bodyIntegerWrong)).build(),
+      val::validateBody,
+      false);
+
+    check(
+      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "application/json").body(Body.from(bodyString)).build(),
+      val::validateBody,
+      true);
+    check(
+      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "application/json").body(Body.from(bodyStringWrong)).build(),
+      val::validateBody,
+      false);
 
     check(
       new DefaultRequest.Builder("/foo", GET).header("Content-Type", "application/json").build(),
@@ -189,12 +213,12 @@ public class OperationValidatorTest {
       false);
 
     check(
-      new DefaultRequest.Builder("/foo", GET).body(Body.from(body)).build(),
+      new DefaultRequest.Builder("/foo", GET).body(Body.from(bodyInteger)).build(),
       val::validateBody,
       false);
 
     check(
-      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "text/plain").body(Body.from(body)).build(),
+      new DefaultRequest.Builder("/foo", GET).header("Content-Type", "text/plain").body(Body.from(bodyInteger)).build(),
       val::validateBody,
       false);
 
