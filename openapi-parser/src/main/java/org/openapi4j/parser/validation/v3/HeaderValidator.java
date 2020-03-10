@@ -1,11 +1,13 @@
 package org.openapi4j.parser.validation.v3;
 
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.Header;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
@@ -13,8 +15,8 @@ import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCHEMA;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.STYLE;
 
 class HeaderValidator extends Validator3Base<OpenApi3, Header> {
-  private static final String CONTENT_ONY_ONE_ERR_MSG = "Content can only contain one media type.";
-  private static final String CONTENT_SCHEMA_EXCLUSIVE_ERR_MSG = "Content and schema are mutually exclusive.";
+  private static final ValidationResult CONTENT_ONY_ONE_ERR = new ValidationResult(ERROR, 113, "Content can only contain one media type.");
+  private static final ValidationResult CONTENT_SCHEMA_EXCLUSIVE_ERR = new ValidationResult(ERROR, 114, "Content and schema are mutually exclusive.");
 
   private static final Validator<OpenApi3, Header> INSTANCE = new HeaderValidator();
 
@@ -39,11 +41,11 @@ class HeaderValidator extends Validator3Base<OpenApi3, Header> {
 
       // Content or schema, not both
       if (header.getContentMediaTypes() != null && header.getSchema() != null) {
-        results.addError(CONTENT_SCHEMA_EXCLUSIVE_ERR_MSG);
+        results.add(CONTENT_SCHEMA_EXCLUSIVE_ERR);
       }
       // only one content type
       if (header.getContentMediaTypes() != null && header.getContentMediaTypes().size() > 1) {
-        results.addError(CONTENT_ONY_ONE_ERR_MSG);
+        results.add(CONTENT_ONY_ONE_ERR);
       }
     }
   }

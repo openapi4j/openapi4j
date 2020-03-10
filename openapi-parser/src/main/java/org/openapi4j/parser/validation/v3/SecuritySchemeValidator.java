@@ -1,7 +1,7 @@
 package org.openapi4j.parser.validation.v3;
 
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
-import org.openapi4j.core.validation.ValidationSeverity;
 import org.openapi4j.parser.model.v3.OAuthFlow;
 import org.openapi4j.parser.model.v3.OAuthFlows;
 import org.openapi4j.parser.model.v3.OpenApi3;
@@ -12,6 +12,7 @@ import org.openapi4j.parser.validation.Validator;
 import java.util.regex.Pattern;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.APIKEY;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.AUTHORIZATIONCODE;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CLIENTCREDENTIALS;
@@ -32,12 +33,10 @@ import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCHEME;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.TYPE;
 
 class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
-  private static final Pattern TYPE_REGEX = Pattern.compile(
-    String.join("|", APIKEY, HTTP, OAUTH2, OPENIDCONNECT));
-  private static final Pattern IN_REGEX = Pattern.compile(
-    String.join("|", QUERY, HEADER, COOKIE));
+  private static final ValidationResult OAUTH_FLOW_REQUIRED = new ValidationResult(ERROR, 141, "At least one OAuth flow is required");
 
-  private static final String OAUTH_FLOW_REQUIRED = "At least one OAuth flow is required";
+  private static final Pattern TYPE_REGEX = Pattern.compile(String.join("|", APIKEY, HTTP, OAUTH2, OPENIDCONNECT));
+  private static final Pattern IN_REGEX = Pattern.compile(String.join("|", QUERY, HEADER, COOKIE));
 
   private static final Validator<OpenApi3, SecurityScheme> INSTANCE = new SecuritySchemeValidator();
 
@@ -77,10 +76,10 @@ class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
             flows.getClientCredentials() == null &&
             flows.getImplicit() == null &&
             flows.getPassword() == null) {
-            results.addError(OAUTH_FLOW_REQUIRED, FLOWS);
+            results.add(FLOWS, OAUTH_FLOW_REQUIRED);
           }
         } else if (OPENIDCONNECT.equals(s)) {
-          validateUrl(securityScheme.getOpenIdConnectUrl(), results, true, false, OPENIDCONNECTURL, ValidationSeverity.ERROR);
+          validateUrl(securityScheme.getOpenIdConnectUrl(), results, true, false, OPENIDCONNECTURL);
 
         }
       }

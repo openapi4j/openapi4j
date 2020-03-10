@@ -1,7 +1,6 @@
 package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.validation.ValidationResults;
-import org.openapi4j.core.validation.ValidationSeverity;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Xml;
 import org.openapi4j.parser.validation.ValidationContext;
@@ -24,7 +23,7 @@ class XmlValidator extends Validator3Base<OpenApi3, Xml> {
   public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Xml xml, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // name, prefix, attribute, wrapped
-    validateUrl(xml.getNamespace(), results, false, false, NAMESPACE, ValidationSeverity.WARNING);
+    validateUrl(xml.getNamespace(), results, false, false, NAMESPACE);
     validateMap(context, api, xml.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
   }
 }

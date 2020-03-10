@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.parser.model.v3.MediaType;
@@ -14,9 +15,11 @@ import org.openapi4j.schema.validator.v3.SchemaValidator;
 
 import java.io.IOException;
 
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
+
 class BodyValidator {
-  private static final String BODY_REQUIRED_ERR_MSG = "Body is required but none provided.";
-  private static final String BODY_CONTENT_ERR_MSG = "An error occurred when getting the body content from type '%s'.%n%s";
+  private static final ValidationResult BODY_REQUIRED_ERR = new ValidationResult(ERROR, 200, "Body is required but none provided.");
+  private static final ValidationResult BODY_CONTENT_ERR = new ValidationResult(ERROR, 201, "An error occurred when getting the body content from type '%s'.%n%s");
 
   private static final String BODY = "body";
 
@@ -42,7 +45,7 @@ class BodyValidator {
       return; // No schema specified for body
     } else if (body == null) {
       if (isBodyRequired) {
-        results.addError(BODY_REQUIRED_ERR_MSG);
+        results.add(BODY_REQUIRED_ERR);
       }
       return;
     }
@@ -51,7 +54,7 @@ class BodyValidator {
       JsonNode jsonBody = body.getContentAsNode(mediaType.getSchema(), rawContentType);
       validator.validate(jsonBody, results);
     } catch (IOException ex) {
-      results.addError(String.format(BODY_CONTENT_ERR_MSG, rawContentType, ex));
+      results.add(BODY_CONTENT_ERR, rawContentType, ex);
     }
   }
 

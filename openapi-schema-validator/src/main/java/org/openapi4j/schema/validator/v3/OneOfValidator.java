@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ONEOF;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * oneOf keyword validator.
@@ -17,8 +19,8 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ONEOF;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
  */
 class OneOfValidator extends DiscriminatorValidator {
-  private static final String NO_VALID_SCHEMA_ERR_MSG = "No valid schema.";
-  private static final String MANY_VALID_SCHEMA_ERR_MSG = "More than 1 schema is valid.";
+  private static final ValidationResult NO_VALID_SCHEMA_ERR = new ValidationResult(ERROR, 1022, "No valid schema.");
+  private static final ValidationResult MANY_VALID_SCHEMA_ERR = new ValidationResult(ERROR, 1023, "More than 1 schema is valid.");
 
   static OneOfValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new OneOfValidator(context, schemaNode, schemaParentNode, parentSchema);
@@ -46,9 +48,9 @@ class OneOfValidator extends DiscriminatorValidator {
     }
 
     if (nbSchemasOnError == schemasSize) {
-      results.addError(NO_VALID_SCHEMA_ERR_MSG, ONEOF);
+      results.add(ONEOF, NO_VALID_SCHEMA_ERR);
     } else if ((schemasSize - nbSchemasOnError) > 1) {
-      results.addError(MANY_VALID_SCHEMA_ERR_MSG, ONEOF);
+      results.add(ONEOF, MANY_VALID_SCHEMA_ERR);
     }
   }
 }

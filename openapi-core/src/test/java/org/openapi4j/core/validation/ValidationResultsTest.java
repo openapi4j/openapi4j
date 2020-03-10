@@ -14,44 +14,17 @@ public class ValidationResultsTest {
   @Test
   public void add() {
     ValidationResults results = new ValidationResults();
-    results.add(ValidationSeverity.INFO, "info");
-    results.add(ValidationSeverity.WARNING, "warn", "crumb");
+    results.add(new ValidationResult(ValidationSeverity.INFO, 1, "info"));
+    results.add("crumb", new ValidationResult(ValidationSeverity.WARNING, 2, "warn"));
 
     ValidationResults others = new ValidationResults();
-    others.add(ValidationSeverity.ERROR, "error");
-    others.add(ValidationSeverity.INFO, "info2");
+    others.add(new ValidationResult(ValidationSeverity.ERROR, 3, "error"));
+    others.add(new ValidationResult(ValidationSeverity.INFO, 4, "info2"));
     results.add(others);
 
     assertEquals(4, results.size());
     assertEquals(4, results.getItems().size());
     assertEquals(ValidationSeverity.ERROR, results.getSeverity());
-    assertFalse(results.isValid());
-  }
-
-  @Test
-  public void addInfo() {
-    ValidationResults results = new ValidationResults();
-    results.addInfo("msg");
-    results.addInfo("msg2", "crumb");
-    assertEquals(2, results.size());
-    assertTrue(results.isValid());
-  }
-
-  @Test
-  public void addWarning() {
-    ValidationResults results = new ValidationResults();
-    results.addWarning("msg");
-    results.addWarning("msg2", "crumb");
-    assertEquals(2, results.size());
-    assertTrue(results.isValid());
-  }
-
-  @Test
-  public void addError() {
-    ValidationResults results = new ValidationResults();
-    results.addError("msg");
-    results.addError("msg2", "crumb");
-    assertEquals(2, results.size());
     assertFalse(results.isValid());
   }
 
@@ -71,9 +44,9 @@ public class ValidationResultsTest {
   @Test
   public void provideString() {
     ValidationResults results = new ValidationResults();
-    results.add(ValidationSeverity.WARNING, "msg2", "crumb");
-    results.add(ValidationSeverity.ERROR, "msg");
-    results.add(ValidationSeverity.INFO, "msg");
+    results.add("crumb", new ValidationResult(ValidationSeverity.WARNING, 1, "msg2"));
+    results.add(new ValidationResult(ValidationSeverity.ERROR, 2, "msg"));
+    results.add(new ValidationResult(ValidationSeverity.INFO, 3, "msg"));
     assertNotNull(results.toString());
 
     assertEquals("msg2", results.getItems().iterator().next().message());

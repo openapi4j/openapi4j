@@ -2,6 +2,7 @@ package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.model.reference.Reference;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 import org.openapi4j.parser.model.OpenApiSchema;
@@ -10,9 +11,11 @@ import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 import org.openapi4j.parser.validation.ValidatorBase;
 
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
+
 abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T> {
-  protected static final String REF_MISSING = "Missing $ref '%s'";
-  protected static final String REF_CONTENT_UNREADABLE = "Unable to read $ref content for '%s' pointer.";
+  protected static final ValidationResult REF_MISSING = new ValidationResult(ERROR, 109, "Missing $ref '%s'");
+  protected static final ValidationResult REF_CONTENT_UNREADABLE = new ValidationResult(ERROR, 110, "Unable to read $ref content for '%s' pointer.");
 
   <F extends OpenApiSchema<F>> F getReferenceContent(final O api,
                                                      final AbsRefOpenApiSchema<F> schema,
@@ -23,12 +26,12 @@ abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T>
     Reference reference = schema.getReference(api.getContext());
 
     if (reference == null) {
-      results.addError(String.format(REF_MISSING, schema.getRef()), crumb);
+      results.add(crumb, REF_MISSING, schema.getRef());
     } else {
       try {
         return reference.getMappedContent(clazz);
       } catch (DecodeException e) {
-        results.addError(String.format(REF_CONTENT_UNREADABLE, schema.getRef()), crumb);
+        results.add(crumb, REF_CONTENT_UNREADABLE, schema.getRef());
       }
     }
 

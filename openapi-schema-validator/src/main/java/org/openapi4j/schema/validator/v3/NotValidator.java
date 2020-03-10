@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NOT;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * not keyword validator.
@@ -18,7 +20,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NOT;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-12" />
  */
 class NotValidator extends BaseJsonValidator<OAI3> {
-  private static final String ERR_MSG = "Schema should not be valid.";
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1020, "Schema should not be valid.");
 
   private final SchemaValidator schema;
 
@@ -36,7 +38,7 @@ class NotValidator extends BaseJsonValidator<OAI3> {
   public void validate(final JsonNode valueNode, final ValidationResults results) {
     try {
       schema.validate(valueNode);
-      results.addError(ERR_MSG, NOT);
+      results.add(NOT, ERR);
     } catch (ValidationException ex) {
       // Succeed case
     }

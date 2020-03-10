@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.AbsParameter;
@@ -15,8 +16,10 @@ import org.openapi4j.schema.validator.v3.SchemaValidator;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
+
 class ParameterValidator<M extends OpenApiSchema<M>> {
-  private static final String PARAM_REQUIRED_ERR_MSG = "Parameter '%s' is required.";
+  private static final ValidationResult PARAM_REQUIRED_ERR = new ValidationResult(ERROR, 206, "Parameter '%s' is required.");
 
   private final ValidationContext<OAI3> context;
   private final OpenApi3 openApi;
@@ -84,7 +87,7 @@ class ParameterValidator<M extends OpenApiSchema<M>> {
 
     if (!paramValues.containsKey(paramName)) {
       if (parameter.isRequired()) {
-        results.addError(String.format(PARAM_REQUIRED_ERR_MSG, paramName));
+        results.add(PARAM_REQUIRED_ERR, paramName);
       }
       return false;
     }

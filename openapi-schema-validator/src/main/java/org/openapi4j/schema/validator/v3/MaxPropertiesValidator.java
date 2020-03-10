@@ -3,11 +3,13 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXPROPERTIES;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * maxProperties keyword validator.
@@ -17,7 +19,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXPROPERTIES;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-9" />
  */
 class MaxPropertiesValidator extends BaseJsonValidator<OAI3> {
-  private static final String ERR_MSG = "Maximum is '%s', found '%s'.";
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1013, "Maximum is '%s', found '%s'.");
 
   private final Integer max;
 
@@ -41,7 +43,7 @@ class MaxPropertiesValidator extends BaseJsonValidator<OAI3> {
     }
 
     if (valueNode.size() > max) {
-      results.addError(String.format(ERR_MSG, max, valueNode.size()), MAXPROPERTIES);
+      results.add(MAXPROPERTIES, ERR, max, valueNode.size());
     }
   }
 }

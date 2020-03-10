@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.JsonValidator;
@@ -16,6 +17,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ADDITIONALPROPERTIES;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * additionalProperties keyword validator.
@@ -25,7 +27,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ADDITIONALPROPERTIE
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-10" />
  */
 class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
-  private static final String ERR_MSG = "Additional property '%s' is not allowed.";
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1000, "Additional property '%s' is not allowed.");
 
   private final Set<String> allowedProperties;
   private final Set<Pattern> allowedPatternProperties;
@@ -71,7 +73,7 @@ class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
         if (additionalPropertiesSchema != null) {
           validate(() -> additionalPropertiesSchema.validateWithContext(valueNode.get(fieldName), results));
         } else {
-          results.addError(String.format(ERR_MSG, fieldName), ADDITIONALPROPERTIES);
+          results.add(ADDITIONALPROPERTIES, ERR, fieldName);
         }
       }
     }

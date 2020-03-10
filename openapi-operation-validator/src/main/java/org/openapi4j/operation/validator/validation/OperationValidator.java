@@ -3,6 +3,7 @@ package org.openapi4j.operation.validator.validation;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * Validator for OpenAPI Operation.
@@ -40,10 +42,10 @@ public class OperationValidator {
   private static final String OAI_REQUIRED_ERR_MSG = "OpenAPI is required.";
   private static final String PATH_REQUIRED_ERR_MSG = "Path is required.";
   private static final String OPERATION_REQUIRED_ERR_MSG = "Operation is required.";
-  private static final String BODY_CONTENT_TYPE_ERR_MSG = "Body content type cannot be determined. No 'Content-Type' header available.";
-  private static final String BODY_WRONG_CONTENT_TYPE_ERR_MSG = "Content type '%s' is not allowed in body.";
-  private static final String RESPONSE_STATUS_NOT_FOUND_ERR_MSG = "Response status '%s', ranged or default has not been found.";
-  private static final String PATH_NOT_FOUND_ERR_MSG = "Path template '%s' has not been found from value '%s'.";
+  private static final ValidationResult BODY_CONTENT_TYPE_ERR = new ValidationResult(ERROR, 202, "Body content type cannot be determined. No 'Content-Type' header available.");
+  private static final ValidationResult BODY_WRONG_CONTENT_TYPE_ERR = new ValidationResult(ERROR, 203, "Content type '%s' is not allowed for body content.");
+  private static final ValidationResult RESPONSE_STATUS_NOT_FOUND_ERR = new ValidationResult(ERROR, 204, "Response status '%s', ranged or default has not been found.");
+  private static final ValidationResult PATH_NOT_FOUND_ERR = new ValidationResult(ERROR, 205, "Path template '%s' has not been found from value '%s'.");
 
   // Parameter specifics
   private static final String IN_PATH = "path";
@@ -158,7 +160,7 @@ public class OperationValidator {
     // Check paths are matching before trying to map values
     Pattern pathPattern = PathResolver.instance().findPathPattern(pathPatterns, request.getPath());
     if (pathPattern == null) {
-      results.addError(String.format(PATH_NOT_FOUND_ERR_MSG, templatePath, request.getPath()), IN_PATH);
+      results.add(IN_PATH, PATH_NOT_FOUND_ERR, templatePath, request.getPath());
       return null;
     }
 
@@ -290,7 +292,7 @@ public class OperationValidator {
     final MediaTypeContainer contentType = MediaTypeContainer.create(rawContentType);
 
     if (contentType == null) {
-      results.addError(BODY_CONTENT_TYPE_ERR_MSG);
+      results.add(BODY_CONTENT_TYPE_ERR);
       return;
     }
 
@@ -302,7 +304,7 @@ public class OperationValidator {
       }
     }
     if (validator == null) {
-      results.addError(String.format(BODY_WRONG_CONTENT_TYPE_ERR_MSG, contentType));
+      results.add(BODY_WRONG_CONTENT_TYPE_ERR, rawContentType);
       return;
     }
 
@@ -428,7 +430,7 @@ public class OperationValidator {
     }
     // Well, we tried...
     if (validator == null) {
-      results.addError(String.format(RESPONSE_STATUS_NOT_FOUND_ERR_MSG, response.getStatus()));
+      results.add(RESPONSE_STATUS_NOT_FOUND_ERR, response.getStatus());
     }
 
     return validator;

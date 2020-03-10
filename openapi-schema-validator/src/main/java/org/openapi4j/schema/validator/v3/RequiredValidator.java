@@ -3,6 +3,7 @@ package org.openapi4j.schema.validator.v3;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.REQUIRED;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * required keyword validator.
@@ -20,7 +22,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.REQUIRED;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-9" />
  */
 class RequiredValidator extends BaseJsonValidator<OAI3> {
-  private static final String ERR_MSG = "Field '%s' is required.";
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1026, "Field '%s' is required.");
 
   private final List<String> fieldNames;
 
@@ -48,7 +50,7 @@ class RequiredValidator extends BaseJsonValidator<OAI3> {
 
     for (String fieldName : fieldNames) {
       if (null == valueNode.get(fieldName)) {
-        results.addError(String.format(ERR_MSG, fieldName), REQUIRED);
+        results.add(REQUIRED, ERR, fieldName);
       }
     }
   }

@@ -1,7 +1,6 @@
 package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.validation.ValidationResults;
-import org.openapi4j.core.validation.ValidationSeverity;
 import org.openapi4j.parser.model.v3.Contact;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.ValidationContext;
@@ -27,6 +26,6 @@ class ContactValidator extends Validator3Base<OpenApi3, Contact> {
     validateString(contact.getEmail(), results, false, EMAIL_REGEX, EMAIL);
     validateMap(context, api, contact.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateString(contact.getName(), results, false, NAME);
-    validateUrl(contact.getUrl(), results, false, false, URL, ValidationSeverity.ERROR);
+    validateUrl(contact.getUrl(), results, false, false, URL);
   }
 }

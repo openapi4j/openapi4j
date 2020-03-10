@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
+import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ANYOF;
+import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
  * anyOf keyword validator.
@@ -17,7 +19,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ANYOF;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
  */
 class AnyOfValidator extends DiscriminatorValidator {
-  private static final String ERR_MSG = "No valid schema.";
+  private static final ValidationResult ERR = new ValidationResult(ERROR, 1001, "No valid schema.");
 
   static AnyOfValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new AnyOfValidator(context, schemaNode, schemaParentNode, parentSchema);
@@ -38,6 +40,6 @@ class AnyOfValidator extends DiscriminatorValidator {
       }
     }
 
-    results.addError(ERR_MSG, ANYOF);
+    results.add(ANYOF, ERR);
   }
 }
