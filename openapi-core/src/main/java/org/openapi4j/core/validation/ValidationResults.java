@@ -1,6 +1,5 @@
 package org.openapi4j.core.validation;
 
-import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,9 +11,7 @@ import java.util.List;
  * Representation of results from a validation process.
  */
 @SuppressWarnings("unused")
-public class ValidationResults implements Serializable {
-  private static final long serialVersionUID = 1905122041950251207L;
-
+public class ValidationResults {
   private static final String LINE_SEPARATOR = String.format("%n");
   private static final String ERROR_TITLE = "Validation error(s) :" + LINE_SEPARATOR;
   private static final String WARNING_TITLE = "Validation warning(s) :" + LINE_SEPARATOR;
@@ -164,9 +161,7 @@ public class ValidationResults implements Serializable {
   /**
    * Validation result with crumbs and values to format message.
    */
-  public static class ValidationItem extends ValidationResult implements Serializable {
-    private static final long serialVersionUID = 7905122048950251207L;
-
+  public static class ValidationItem extends ValidationResult {
     private static final String DOT = ".";
     private static final String SEMI_COLON = " : ";
 
