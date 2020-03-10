@@ -72,8 +72,11 @@ paths:
           'application/json':
             schema:
               properties:
-                param:
+                paramInteger:
+                  type: integer
+                paramString:
                   type: string
+              additionalProperties: false
           'text/plain; charset=UTF-8': {}
           'image/*':
             schema:
