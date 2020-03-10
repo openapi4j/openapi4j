@@ -123,7 +123,7 @@ public final class TypeConverter {
           return JsonNodeFactory.instance.textNode(value.toString());
       }
     } catch (IllegalArgumentException ex) {
-      return JsonNodeFactory.instance.nullNode();
+      return JsonNodeFactory.instance.textNode(value.toString());
     }
   }
 

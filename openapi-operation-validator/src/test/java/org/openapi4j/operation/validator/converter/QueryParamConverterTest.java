@@ -1,7 +1,6 @@
 package org.openapi4j.operation.validator.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.junit.Test;
 import org.openapi4j.operation.validator.OpenApi3Util;
@@ -12,9 +11,8 @@ import org.openapi4j.parser.model.v3.Parameter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.function.BiConsumer;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class QueryParamConverterTest {
@@ -26,7 +24,8 @@ public class QueryParamConverterTest {
       "formNotExplodedPrimitive",
       "formNotExplodedPrimitive=5",
       "formNotExplodedPrimitive=wrong",
-      ParamChecker::checkPrimitive);
+      ParamChecker::checkPrimitive,
+      ParamChecker::checkWrongPrimitive);
   }
 
   @Test
@@ -35,7 +34,8 @@ public class QueryParamConverterTest {
       "formExplodedPrimitive",
       "formExplodedPrimitive=5",
       "formExplodedPrimitive=wrong",
-      ParamChecker::checkPrimitive);
+      ParamChecker::checkPrimitive,
+      ParamChecker::checkWrongPrimitive);
   }
 
   @Test
@@ -44,7 +44,8 @@ public class QueryParamConverterTest {
       "formNotExplodedArray",
       "formNotExplodedArray=3,4,5",
       "formNotExplodedArray=wrong",
-      ParamChecker::checkArray);
+      ParamChecker::checkArray,
+      ParamChecker::checkWrongArray);
   }
 
   @Test
@@ -53,7 +54,8 @@ public class QueryParamConverterTest {
       "formExplodedArray",
       "formExplodedArray=3&formExplodedArray=4&formExplodedArray=5",
       "formExplodedArray=wrong",
-      ParamChecker::checkArray);
+      ParamChecker::checkArray,
+      ParamChecker::checkWrongArray);
   }
 
   @Test
@@ -61,8 +63,9 @@ public class QueryParamConverterTest {
     check(
       "formNotExplodedObject",
       "formNotExplodedObject=boolProp,true,stringProp,admin",
-      "formNotExplodedObject=wrong",
-      ParamChecker::checkObject);
+      "formNotExplodedObject=boolProp,wrong",
+      ParamChecker::checkObject,
+      ParamChecker::checkWrongObject);
   }
 
   @Test
@@ -70,8 +73,9 @@ public class QueryParamConverterTest {
     check(
       "formExplodedObject",
       "boolProp=true&stringProp=admin",
-      "wrong",
-      ParamChecker::checkObject);
+      "boolProp=wrong",
+      ParamChecker::checkObject,
+      ParamChecker::checkWrongObject);
   }
 
   // --------------- SPACE DELIMITED -------------------
@@ -82,7 +86,8 @@ public class QueryParamConverterTest {
       "spaceNotExplodedArray",
       "spaceNotExplodedArray=3%204%205",
       "spaceNotExplodedArray=wrong",
-      ParamChecker::checkArray);
+      ParamChecker::checkArray,
+      ParamChecker::checkWrongArray);
   }
 
   @Test
@@ -91,7 +96,8 @@ public class QueryParamConverterTest {
       "spaceExplodedArray",
       "spaceExplodedArray=3&spaceExplodedArray=4&spaceExplodedArray=5",
       "spaceExplodedArray=wrong",
-      ParamChecker::checkArray);
+      ParamChecker::checkArray,
+      ParamChecker::checkWrongArray);
   }
 
   // --------------- PIPE DELIMITED -------------------
@@ -102,7 +108,8 @@ public class QueryParamConverterTest {
       "pipeNotExplodedArray",
       "pipeNotExplodedArray=3|4|5",
       "pipeNotExplodedArray=wrong",
-      ParamChecker::checkArray);
+      ParamChecker::checkArray,
+      ParamChecker::checkWrongArray);
   }
 
   @Test
@@ -111,7 +118,8 @@ public class QueryParamConverterTest {
       "pipeExplodedArray",
       "pipeExplodedArray=3&pipeExplodedArray=4&pipeExplodedArray=5",
       "pipeExplodedArray=wrong",
-      ParamChecker::checkArray);
+      ParamChecker::checkArray,
+      ParamChecker::checkWrongArray);
   }
 
   // --------------- DEEP OBJECT -------------------
@@ -121,8 +129,9 @@ public class QueryParamConverterTest {
     check(
       "deepExplodedObject",
       "deepExplodedObject[boolProp]=true&deepExplodedObject[stringProp]=admin",
-      "wrong",
-      ParamChecker::checkObject);
+      "deepExplodedObject[boolProp]=wrong",
+      ParamChecker::checkObject,
+      ParamChecker::checkWrongObject);
   }
 
   @Test
@@ -130,14 +139,16 @@ public class QueryParamConverterTest {
     check(
       "content",
       "{\"boolProp\":true,\"stringProp\":\"admin\"}",
-      "wrong",
-      ParamChecker::checkObject);
+      "{\"boolProp\":\"wrong\"}",
+      ParamChecker::checkObject,
+      ParamChecker::checkWrongObject);
   }
 
   protected void check(String parameterName,
                        String validValue,
                        String invalidValue,
-                       BiFunction<Map<String, JsonNode>, String, Boolean> validChecker) throws Exception {
+                       BiConsumer<Map<String, JsonNode>, String> validChecker,
+                       BiConsumer<Map<String, JsonNode>, String> invalidChecker) throws Exception {
 
     OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/queryParameters.yaml");
 
@@ -145,24 +156,9 @@ public class QueryParamConverterTest {
     parameters.put(parameterName, api.getComponents().getParameters().get(parameterName));
 
     // Valid check
-    boolean isArray = validChecker.apply(mapToNodes(parameters, validValue), parameterName);
-
-    // Invalid checks
-
-    // wrong value
-    if (isArray) {
-      assertEquals(
-        JsonNodeFactory.instance.arrayNode().add((JsonNode) null),
-        mapToNodes(parameters, invalidValue).get(parameterName));
-    } else {
-      Map<String, JsonNode> nodes = mapToNodes(parameters, invalidValue);
-
-      if (nodes.get(parameterName) != null) {
-        assertEquals(
-          JsonNodeFactory.instance.nullNode(),
-          nodes.get(parameterName));
-      }
-    }
+    validChecker.accept(mapToNodes(parameters, validValue), parameterName);
+    // Invalid check
+    invalidChecker.accept(mapToNodes(parameters, invalidValue), parameterName);
 
     // null
     assertNull(mapToNodes(parameters, null).get(parameterName));

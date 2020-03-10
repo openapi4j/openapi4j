@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.function.BiConsumer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -27,7 +27,8 @@ public class HeaderParamConverterTest {
       "simpleNotExplodedPrimitive",
       Collections.singleton("5"),
       Collections.singleton("wrong"),
-      ParamChecker::checkPrimitive);
+      ParamChecker::checkPrimitive,
+      ParamChecker::checkWrongPrimitive);
   }
 
   @Test
@@ -36,7 +37,8 @@ public class HeaderParamConverterTest {
       "simpleExplodedPrimitive",
       Collections.singleton("5"),
       Collections.singleton("wrong"),
-      ParamChecker::checkPrimitive);
+      ParamChecker::checkPrimitive,
+      ParamChecker::checkWrongPrimitive);
   }
 
   @Test
@@ -45,7 +47,8 @@ public class HeaderParamConverterTest {
       "simpleNotExplodedArray",
       Arrays.asList("3", "4", "5"),
       Collections.singleton("wrong"),
-      ParamChecker::checkArray);
+      ParamChecker::checkArray,
+      ParamChecker::checkWrongArray);
   }
 
   @Test
@@ -54,7 +57,8 @@ public class HeaderParamConverterTest {
       "simpleExplodedArray",
       Arrays.asList("3", "4", "5"),
       Collections.singleton("wrong"),
-      ParamChecker::checkArray);
+      ParamChecker::checkArray,
+      ParamChecker::checkWrongArray);
   }
 
   @Test
@@ -62,8 +66,9 @@ public class HeaderParamConverterTest {
     check(
       "simpleNotExplodedObject",
       Arrays.asList("boolProp", "true", "stringProp", "admin"),
-      Collections.singleton("wrong"),
-      ParamChecker::checkObject);
+      Arrays.asList("boolProp", "wrong"),
+      ParamChecker::checkObject,
+      ParamChecker::checkWrongObject);
   }
 
   @Test
@@ -71,8 +76,9 @@ public class HeaderParamConverterTest {
     check(
       "simpleExplodedObject",
       Arrays.asList("boolProp=true", "stringProp=admin"),
-      Collections.singleton("wrong"),
-      ParamChecker::checkObject);
+      Collections.singleton("boolProp=wrong"),
+      ParamChecker::checkObject,
+      ParamChecker::checkWrongObject);
   }
 
   @Test
@@ -80,14 +86,16 @@ public class HeaderParamConverterTest {
     check(
       "content",
       Collections.singletonList("{\"boolProp\":true,\"stringProp\":\"admin\"}"),
-      Collections.singleton("wrong"),
-      ParamChecker::checkObject);
+      Collections.singleton("{\"boolProp\":\"wrong\"}"),
+      ParamChecker::checkObject,
+      ParamChecker::checkWrongObject);
   }
 
   protected void check(String parameterName,
                        Collection<String> validValue,
                        Collection<String> invalidValue,
-                       BiFunction<Map<String, JsonNode>, String, Boolean> validChecker) throws Exception {
+                       BiConsumer<Map<String, JsonNode>, String> validChecker,
+                       BiConsumer<Map<String, JsonNode>, String> invalidChecker) throws Exception {
 
     OpenApi3 api = OpenApi3Util.loadApi("/operation/parameter/headerParameters.yaml");
 
@@ -97,25 +105,10 @@ public class HeaderParamConverterTest {
     // Valid check
     Map<String, Collection<String>> values = new HashMap<>();
     values.put(parameterName, validValue);
-    boolean isArray = validChecker.apply(mapToNodes(parameters, values), parameterName);
-
-    // Invalid checks
-
-    // wrong value
+    validChecker.accept(mapToNodes(parameters, values), parameterName);
+    // Invalid check
     values.put(parameterName, invalidValue);
-    if (isArray) {
-      assertEquals(
-        JsonNodeFactory.instance.arrayNode().add(JsonNodeFactory.instance.nullNode()),
-        mapToNodes(parameters, values).get(parameterName));
-    } else {
-      Map<String, JsonNode> nodes = mapToNodes(parameters, values);
-
-      if (nodes.get(parameterName) != null) {
-        assertEquals(
-          JsonNodeFactory.instance.nullNode(),
-          nodes.get(parameterName));
-      }
-    }
+    invalidChecker.accept(mapToNodes(parameters, values), parameterName);
 
     // null value
     values.put(parameterName, null);

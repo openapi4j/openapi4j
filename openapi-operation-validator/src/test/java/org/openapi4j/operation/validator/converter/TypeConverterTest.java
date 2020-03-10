@@ -173,7 +173,7 @@ public class TypeConverterTest {
     // wrong value
     valueList.add("foo");
     assertEquals(
-      "[[1,2,null]]",
+      "[[1,2,\"foo\"]]",
       TypeConverter.instance().convertArray(schema, rootList).toString());
 
     // wrong sub list
@@ -198,11 +198,11 @@ public class TypeConverterTest {
       JsonNodeFactory.instance.nullNode(),
       TypeConverter.instance().convertPrimitive(schema, null));
 
-    // empty content
+    // wrong content
     schema.setType("integer");
     assertEquals(
-      JsonNodeFactory.instance.nullNode(),
-      TypeConverter.instance().convertPrimitive(schema, new Object()));
+      JsonNodeFactory.instance.textNode("wrong"),
+      TypeConverter.instance().convertPrimitive(schema, "wrong"));
   }
 
   @Test
@@ -249,7 +249,7 @@ public class TypeConverterTest {
       JsonNodeFactory.instance.booleanNode(false),
       TypeConverter.instance().convertPrimitive(schema, "fAlSe"));
     assertEquals(
-      JsonNodeFactory.instance.nullNode(),
+      JsonNodeFactory.instance.textNode("pofkpfosdkfsd"),
       TypeConverter.instance().convertPrimitive(schema, "pofkpfosdkfsd"));
   }
 }
