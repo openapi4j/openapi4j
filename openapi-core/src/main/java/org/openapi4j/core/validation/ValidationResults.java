@@ -1,5 +1,6 @@
 package org.openapi4j.core.validation;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,8 +11,9 @@ import java.util.List;
 /**
  * Representation of results from a validation process.
  */
-@SuppressWarnings("unused")
-public class ValidationResults {
+public class ValidationResults implements Serializable {
+  private static final long serialVersionUID = 1905122041950251284L;
+
   private static final String LINE_SEPARATOR = String.format("%n");
   private static final String ERROR_TITLE = "Validation error(s) :" + LINE_SEPARATOR;
   private static final String WARNING_TITLE = "Validation warning(s) :" + LINE_SEPARATOR;
@@ -161,22 +163,25 @@ public class ValidationResults {
   /**
    * Validation result with crumbs and values to format message.
    */
-  public static class ValidationItem extends ValidationResult {
+  public static class ValidationItem extends ValidationResult implements Serializable {
+    private static final long serialVersionUID = 7905122048950251207L;
+
     private static final String DOT = ".";
     private static final String SEMI_COLON = " : ";
 
     private final String crumbs;
-    private final Object[] msgArgs;
 
     ValidationItem(ValidationResult result, Collection<String> crumbs, Object... msgArgs) {
       this(result, crumbs, null, msgArgs);
     }
 
     ValidationItem(ValidationResult result, Collection<String> crumbs, String crumb, Object... msgArgs) {
-      super(result.severity(), result.code(), result.message());
+      super(
+        result.severity(),
+        result.code(),
+        (msgArgs != null) ? String.format(result.message(), msgArgs) : result.message());
 
       this.crumbs = joinCrumbs(crumbs, crumb);
-      this.msgArgs = msgArgs;
     }
 
     public String crumbs() {
@@ -191,12 +196,7 @@ public class ValidationResults {
         strBuilder.append(crumbs).append(SEMI_COLON);
       }
 
-      if (msgArgs != null) {
-        strBuilder.append(String.format(message(), msgArgs));
-      } else {
-        strBuilder.append(message());
-      }
-
+      strBuilder.append(message());
       strBuilder.append(" (code: ").append(code()).append(")");
 
       return strBuilder.toString();
