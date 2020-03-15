@@ -165,6 +165,6 @@ public class QueryParamConverterTest {
   }
 
   private Map<String, JsonNode> mapToNodes(Map<String, AbsParameter<Parameter>> parameters, String values) {
-    return ParameterConverter.queryToNode(parameters, values);
+    return ParameterConverter.formDataToNode(parameters, values);
   }
 }

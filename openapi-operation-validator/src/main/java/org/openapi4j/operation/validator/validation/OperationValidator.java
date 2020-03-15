@@ -197,7 +197,7 @@ public class OperationValidator {
   public Map<String, JsonNode> validateQuery(final Request request, final ValidationResults results) {
     if (specRequestQueryValidator == null) return null;
 
-    Map<String, JsonNode> mappedValues = ParameterConverter.queryToNode(
+    Map<String, JsonNode> mappedValues = ParameterConverter.formDataToNode(
       specRequestQueryValidator.getParameters(),
       request.getQuery());
 

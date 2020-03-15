@@ -3,6 +3,8 @@ package org.openapi4j.operation.validator.util.parameter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
+import org.openapi4j.core.util.MultiStringMap;
+import org.openapi4j.core.util.StringUtil;
 import org.openapi4j.operation.validator.util.ContentConverter;
 import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.AbsParameter;
@@ -10,10 +12,10 @@ import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.Parameter;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -131,21 +133,23 @@ public final class ParameterConverter {
   }
 
   /**
-   * Convert query parameters to nodes.
+   * Convert form data parameters to nodes.
    * The query string MUST BE in the appropriate form corresponding to the associated style.
    *
    * @param specParameters The spec query parameters.
    * @param rawValue       The raw query string.
    * @return A map with parameters names associated with the value as node.
    */
-  public static Map<String, JsonNode> queryToNode(final Map<String, AbsParameter<Parameter>> specParameters,
-                                                  final String rawValue) {
+  public static Map<String, JsonNode> formDataToNode(final Map<String, AbsParameter<Parameter>> specParameters,
+                                                     final String rawValue) {
 
     final Map<String, JsonNode> mappedValues = new HashMap<>();
 
     if (rawValue == null) {
       return mappedValues;
     }
+
+    MultiStringMap<String> parameters = getParameters(rawValue, "UTF-8");
 
     for (Map.Entry<String, AbsParameter<Parameter>> paramEntry : specParameters.entrySet()) {
       final String paramName = paramEntry.getKey();
@@ -156,9 +160,9 @@ public final class ParameterConverter {
         final String style = param.getStyle();
 
         if (SPACE_DELIMITED.equals(style)) {
-          convertedValue = SpaceDelimitedStyleConverter.instance().convert(param, paramName, rawValue);
+          convertedValue = SpaceDelimitedStyleConverter.instance().convert(param, paramName, parameters.get(paramName));
         } else if (PIPE_DELIMITED.equals(style)) {
-          convertedValue = PipeDelimitedStyleConverter.instance().convert(param, paramName, rawValue);
+          convertedValue = PipeDelimitedStyleConverter.instance().convert(param, paramName, parameters.get(paramName));
         } else if (DEEP_OBJECT.equals(style)) {
           convertedValue = DeepObjectStyleConverter.instance().convert(param, paramName, rawValue);
         } else { // form is the default
@@ -177,6 +181,36 @@ public final class ParameterConverter {
     }
 
     return mappedValues;
+  }
+
+  private static MultiStringMap<String> getParameters(String value, String encoding) {
+    List<String> pairs = StringUtil.tokenize(value, "&", true, true);
+    MultiStringMap<String> result = new MultiStringMap<>(true);
+
+    for (String pair : pairs) {
+      int idx = pair.indexOf('=');
+      if (idx == -1) {
+        result.put(decode(pair, encoding), null);
+      } else {
+        result.put(
+          decode(pair.substring(0, idx), encoding),
+          decode(pair.substring(idx + 1), encoding));
+      }
+    }
+
+    return result;
+  }
+
+  private static String decode(String value, String encoding) {
+    try {
+      return URLDecoder.decode(value, encoding);
+    } catch (UnsupportedEncodingException e) {
+      try {
+        return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
+      } catch (UnsupportedEncodingException ignored) {
+        return value; // Will never happen - value is coming from JDK
+      }
+    }
   }
 
   /**
