@@ -170,7 +170,7 @@ public final class ParameterConverter {
           if (param.getExplode() == null) { // explode true is default
             param.setExplode(true);
           }
-          convertedValue = FormStyleConverter.instance().convert(param, paramName, parameters.get(paramName));
+          convertedValue = FormStyleConverter.instance().convert(param, paramName, parameters);
         }
       } else {
         convertedValue = getValueFromContentType(param.getContentMediaTypes(), rawValue);
