@@ -40,22 +40,22 @@ public final class ContentConverter {
 
   private static JsonNode formUrlEncodedToNode(final MediaType mediaType, final String rawContentType, final InputStream content) throws IOException {
     String encoding = ContentType.getCharSet(rawContentType);
-    return FormUrlConverter.instance().formUrlEncodedToNode(mediaType, content, encoding);
+    return FormUrlConverter.instance().convert(mediaType, content, encoding);
   }
 
   private static JsonNode formUrlEncodedToNode(final MediaType mediaType, final String rawContentType, final String content) {
     String encoding = ContentType.getCharSet(rawContentType);
-    return FormUrlConverter.instance().formUrlEncodedToNode(mediaType, content, encoding);
+    return FormUrlConverter.instance().convert(mediaType, content, encoding);
   }
 
   private static JsonNode multipartToNode(final MediaType mediaType, final String rawContentType, InputStream content) throws IOException {
     String encoding = ContentType.getCharSet(rawContentType);
-    return MultipartConverter.instance().multipartToNode(mediaType, content, rawContentType, encoding);
+    return MultipartConverter.instance().convert(mediaType, content, rawContentType, encoding);
   }
 
   private static JsonNode multipartToNode(final MediaType mediaType, final String rawContentType, final String content) throws IOException {
     String encoding = ContentType.getCharSet(rawContentType);
-    return MultipartConverter.instance().multipartToNode(mediaType, content, rawContentType, encoding);
+    return MultipartConverter.instance().convert(mediaType, content, rawContentType, encoding);
   }
 
   private static JsonNode jsonToNode(InputStream content) throws IOException {
@@ -67,11 +67,11 @@ public final class ContentConverter {
   }
 
   private static JsonNode xmlToNode(final Schema schema, InputStream content) throws IOException {
-    return XmlConverter.instance().xmlToNode(schema, IOUtil.toString(content, StandardCharsets.UTF_8.name()));
+    return XmlConverter.instance().convert(schema, IOUtil.toString(content, StandardCharsets.UTF_8.name()));
   }
 
   private static JsonNode xmlToNode(final Schema schema, String content) {
-    return XmlConverter.instance().xmlToNode(schema, content);
+    return XmlConverter.instance().convert(schema, content);
   }
 
   private static JsonNode textToNode(InputStream content) throws IOException {

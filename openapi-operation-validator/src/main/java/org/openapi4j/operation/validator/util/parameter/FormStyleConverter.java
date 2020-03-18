@@ -67,10 +67,15 @@ public class FormStyleConverter {
     ObjectNode result = JsonNodeFactory.instance.objectNode();
 
     for (Map.Entry<String, Schema> propEntry : param.getSchema().getProperties().entrySet()) {
-      Collection<String> paramValues = values.get(propEntry.getKey());
+      String propName = propEntry.getKey();
+      Collection<String> paramValues = values.get(propName);
+
       if (paramValues != null) {
-        String value = paramValues.stream().findFirst().orElse(null);
-        result.set(propEntry.getKey(), TypeConverter.instance().convertPrimitive(propEntry.getValue(), value));
+        JsonNode value = TypeConverter.instance().convertPrimitive(
+          propEntry.getValue(),
+          paramValues.stream().findFirst().orElse(null));
+
+        result.set(propName, value);
       }
     }
 

@@ -41,7 +41,7 @@ class XmlConverter {
     return INSTANCE;
   }
 
-  JsonNode xmlToNode(final Schema schema, String body) {
+  JsonNode convert(final Schema schema, String body) {
     return convert(
       schema,
       XML.toJSONObject(nsPattern.matcher(body).replaceAll(nsReplace), XMLParserConfiguration.KEEP_STRINGS));

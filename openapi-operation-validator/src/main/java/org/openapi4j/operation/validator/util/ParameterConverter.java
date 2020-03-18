@@ -3,19 +3,19 @@ package org.openapi4j.operation.validator.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import org.openapi4j.core.util.MultiStringMap;
-import org.openapi4j.core.util.StringUtil;
-import org.openapi4j.operation.validator.util.parameter.*;
+import org.openapi4j.operation.validator.util.parameter.LabelStyleConverter;
+import org.openapi4j.operation.validator.util.parameter.MatrixStyleConverter;
+import org.openapi4j.operation.validator.util.parameter.SimpleStyleConverter;
 import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.Parameter;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,9 +78,6 @@ import java.util.regex.Pattern;
 public final class ParameterConverter {
   private static final String LABEL = "label";
   private static final String MATRIX = "matrix";
-  private static final String SPACE_DELIMITED = "spaceDelimited";
-  private static final String PIPE_DELIMITED = "pipeDelimited";
-  private static final String DEEP_OBJECT = "deepObject";
 
   private ParameterConverter() {
   }
@@ -144,76 +141,7 @@ public final class ParameterConverter {
                                                   final String rawValue,
                                                   final String encoding) {
 
-    final Map<String, JsonNode> mappedValues = new HashMap<>();
-
-    if (rawValue == null) {
-      return mappedValues;
-    }
-
-    MultiStringMap<String> parameters = getParameters(rawValue, encoding);
-
-    for (Map.Entry<String, AbsParameter<Parameter>> paramEntry : specParameters.entrySet()) {
-      final String paramName = paramEntry.getKey();
-      final AbsParameter<Parameter> param = paramEntry.getValue();
-      final JsonNode convertedValue;
-
-      if (param.getSchema() != null) {
-        final String style = param.getStyle();
-
-        if (SPACE_DELIMITED.equals(style)) {
-          convertedValue = SpaceDelimitedStyleConverter.instance().convert(param, paramName, parameters.get(paramName));
-        } else if (PIPE_DELIMITED.equals(style)) {
-          convertedValue = PipeDelimitedStyleConverter.instance().convert(param, paramName, parameters.get(paramName));
-        } else if (DEEP_OBJECT.equals(style)) {
-          convertedValue = DeepObjectStyleConverter.instance().convert(param, paramName, rawValue);
-        } else { // form is the default
-          if (param.getExplode() == null) { // explode true is default
-            param.setExplode(true);
-          }
-          convertedValue = FormStyleConverter.instance().convert(param, paramName, parameters);
-        }
-      } else {
-        convertedValue = getValueFromContentType(param.getContentMediaTypes(), rawValue);
-      }
-
-      if (convertedValue != null) {
-        mappedValues.put(paramName, convertedValue);
-      }
-    }
-
-    // TODO remove added values & add remaining ones
-
-    return mappedValues;
-  }
-
-  private static MultiStringMap<String> getParameters(String value, String encoding) {
-    List<String> pairs = StringUtil.tokenize(value, "&", true, true);
-    MultiStringMap<String> result = new MultiStringMap<>(true);
-
-    for (String pair : pairs) {
-      int idx = pair.indexOf('=');
-      if (idx == -1) {
-        result.put(decode(pair, encoding), null);
-      } else {
-        result.put(
-          decode(pair.substring(0, idx), encoding),
-          decode(pair.substring(idx + 1), encoding));
-      }
-    }
-
-    return result;
-  }
-
-  private static String decode(String value, String encoding) {
-    try {
-      return URLDecoder.decode(value, encoding);
-    } catch (UnsupportedEncodingException e) {
-      try {
-        return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
-      } catch (UnsupportedEncodingException ignored) {
-        return value; // Will never happen - value is coming from JDK
-      }
-    }
+    return FormUrlConverter.instance().convert(specParameters, rawValue, false, encoding);
   }
 
   /**
