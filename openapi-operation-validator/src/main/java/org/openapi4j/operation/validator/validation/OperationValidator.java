@@ -9,7 +9,7 @@ import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.model.impl.MediaTypeContainer;
 import org.openapi4j.operation.validator.util.PathResolver;
-import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
+import org.openapi4j.operation.validator.util.ParameterConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.Header;
 import org.openapi4j.parser.model.v3.MediaType;
@@ -197,9 +197,10 @@ public class OperationValidator {
   public Map<String, JsonNode> validateQuery(final Request request, final ValidationResults results) {
     if (specRequestQueryValidator == null) return null;
 
-    Map<String, JsonNode> mappedValues = ParameterConverter.formDataToNode(
+    Map<String, JsonNode> mappedValues = ParameterConverter.queryToNode(
       specRequestQueryValidator.getParameters(),
-      request.getQuery());
+      request.getQuery(),
+      "UTF-8");
 
     specRequestQueryValidator.validate(mappedValues, results);
 

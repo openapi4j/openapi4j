@@ -10,6 +10,7 @@ import org.apache.commons.fileupload.*;
 import org.openapi4j.core.util.IOUtil;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.operation.validator.model.impl.Body;
+import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.io.ByteArrayInputStream;
@@ -30,7 +31,7 @@ class MultipartConverter {
     return INSTANCE;
   }
 
-  JsonNode multipartToNode(final Schema schema, final InputStream body, final String rawContentType, final String encoding) throws IOException {
+  JsonNode multipartToNode(final MediaType mediaType, final InputStream body, final String rawContentType, final String encoding) throws IOException {
     UploadContext requestContext = UPLOAD_CONTEXT_INSTANCE.create(body, rawContentType, encoding);
 
     ObjectNode mappedBody = JsonNodeFactory.instance.objectNode();
@@ -42,7 +43,7 @@ class MultipartConverter {
         String name = item.getFieldName();
         if (item.isFormField()) {
           JsonNode value = mappedBody.get(name);
-          setValue(schema, mappedBody, item, name, value, encoding);
+          setValue(mediaType.getSchema(), mappedBody, item, name, value, encoding);
         } else {
           mappedBody.put(name, item.getName());
         }
@@ -54,16 +55,16 @@ class MultipartConverter {
     return mappedBody;
   }
 
-  JsonNode multipartToNode(final Schema schema, final String body, final String rawContentType, final String encoding) throws IOException {
+  JsonNode multipartToNode(final MediaType mediaType, final String body, final String rawContentType, final String encoding) throws IOException {
     InputStream is = new ByteArrayInputStream(body.getBytes(encoding));
-    return multipartToNode(schema, is, rawContentType, encoding);
+    return multipartToNode(mediaType, is, rawContentType, encoding);
   }
 
   // Add value as direct value or collection if multi is detected.
   private void setValue(Schema schema, ObjectNode mappedBody, FileItemStream item, String name, JsonNode value, String encoding) throws IOException {
     if (value == null) {
       if (item.getContentType() != null) {
-        mappedBody.set(name, Body.from(item.openStream()).getContentAsNode(schema.getProperty(name), item.getContentType()));
+        mappedBody.set(name, Body.from(item.openStream()).getContentAsNode(new MediaType().setSchema(schema.getProperty(name)), item.getContentType()));
       } else {
         mappedBody.set(name, convertType(schema.getProperty(name), item, encoding));
       }

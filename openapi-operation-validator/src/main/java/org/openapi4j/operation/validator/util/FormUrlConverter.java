@@ -1,23 +1,16 @@
 package org.openapi4j.operation.validator.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.util.IOUtil;
-import org.openapi4j.parser.model.v3.Schema;
+import org.openapi4j.core.util.TreeUtil;
+import org.openapi4j.parser.model.v3.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.Map;
 
 class FormUrlConverter {
-  // allows p1= a b &p2=1 &p3=
-  private static final Pattern QUERY_STRING_PATTERN = Pattern.compile("([^&=]+?)\\s*=([^&=]*)");
-
   private static final FormUrlConverter INSTANCE = new FormUrlConverter();
 
   private FormUrlConverter() {
@@ -27,42 +20,51 @@ class FormUrlConverter {
     return INSTANCE;
   }
 
-  JsonNode formUrlEncodedToNode(final Schema schema, final InputStream body, String encoding) throws IOException {
-    return formUrlEncodedToNode(schema, IOUtil.toString(body, encoding), encoding);
+  JsonNode formUrlEncodedToNode(final MediaType mediaType, final InputStream body, String encoding) throws IOException {
+    return formUrlEncodedToNode(mediaType, IOUtil.toString(body, encoding), encoding);
   }
 
-  @SuppressWarnings("unchecked")
-  JsonNode formUrlEncodedToNode(final Schema schema, final String body, final String encoding) {
-    String decodedBody;
-    try {
-      decodedBody = URLDecoder.decode(body, encoding);
-    } catch (UnsupportedEncodingException e) {
-      try {
-        decodedBody = URLDecoder.decode(body, StandardCharsets.UTF_8.name());
-      } catch (UnsupportedEncodingException ignored) {
-        decodedBody = body; // Will never happen - value is coming from JDK
+  JsonNode formUrlEncodedToNode(final MediaType mediaType, final String body, final String encoding) {
+    Map<String, EncodingProperty> encodings
+      = mediaType.getEncodings() != null
+      ? mediaType.getEncodings()
+      : new HashMap<>();
+
+    Map<String, AbsParameter<Parameter>> specParameters = new HashMap<>();
+
+    for (Map.Entry<String, Schema> propEntry : mediaType.getSchema().getProperties().entrySet()) {
+      String propName = propEntry.getKey();
+
+      specParameters.put(
+        propName,
+        fillParameter(encodings, propName, propEntry.getValue()));
+    }
+
+    Map<String, JsonNode> params = ParameterConverter.queryToNode(specParameters, body, encoding);
+
+    return TreeUtil.json.valueToTree(params);
+  }
+
+  private AbsParameter<Parameter> fillParameter(final Map<String, EncodingProperty> encodings,
+                                                final String propName,
+                                                final Schema schema) {
+
+    EncodingProperty encodingProperty = encodings.get(propName);
+
+    Parameter param = new Parameter().setName(propName);
+    param.setSchema(schema);
+
+    if (encodingProperty != null) {
+      param
+        .setStyle(encodingProperty.getStyle())
+        .setExplode(encodingProperty.getExplode());
+
+      if (encodingProperty.getContentType() != null) {
+        param.setContentMediaType(encodingProperty.getContentType(), new MediaType().setSchema(schema));
+        param.setSchema(null); // reset schema
       }
     }
 
-    Map<String, Object> params = new HashMap<>();
-    // Encoded form data is exactly the same as query string composition
-    Matcher matcher = QUERY_STRING_PATTERN.matcher(decodedBody);
-    while (matcher.find()) {
-      Object value = params.get(matcher.group(1));
-      if (value == null) {
-        params.put(matcher.group(1), matcher.group(2));
-      } else {
-        if (value instanceof List) {
-          ((List<Object>) value).add(matcher.group(2));
-        } else {
-          List<Object> values = new ArrayList<>();
-          values.add(value);
-          values.add(matcher.group(2));
-          params.put(matcher.group(1), values);
-        }
-      }
-    }
-
-    return ContentConverter.mapToNode(schema, params);
+    return param;
   }
 }

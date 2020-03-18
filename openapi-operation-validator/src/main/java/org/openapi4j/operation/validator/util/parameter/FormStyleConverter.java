@@ -1,25 +1,15 @@
 package org.openapi4j.operation.validator.util.parameter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
+import org.openapi4j.operation.validator.util.TypeConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
-import org.openapi4j.parser.model.v3.Schema;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 
-class FormStyleConverter extends FlatStyleConverter {
-  private static final Pattern REGEX = Pattern.compile("([^&]+)(?:=)([^&]*)");
-
+public class FormStyleConverter {
   private static final FormStyleConverter INSTANCE = new FormStyleConverter();
 
   private FormStyleConverter() {}
@@ -28,86 +18,20 @@ class FormStyleConverter extends FlatStyleConverter {
     return INSTANCE;
   }
 
-  @Override
-  public JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) {
-    if (rawValue == null) {
+  public JsonNode convert(AbsParameter<?> param, String paramName, Collection<String> paramValues) {
+    if (paramValues == null) {
       return null;
     }
 
     String type = param.getSchema().getSupposedType();
-    Map<String, Object> paramValues;
-
     if (TYPE_ARRAY.equals(type)) {
-      paramValues = getArrayValues(param, paramName, rawValue);
+      return TypeConverter.instance().convertArray(param.getSchema().getItemsSchema(), new ArrayList<>(paramValues));
     } else if (TYPE_OBJECT.equals(type)) {
-      paramValues = getObjectValues(param, paramName, rawValue);
+      Map<String, Object> values = new HashMap<>();
+      values.put(paramName, paramValues.stream().findFirst().orElse(null));
+      return TypeConverter.instance().convertObject(param.getSchema(), values);
     } else {
-      paramValues = getPrimitiveValue(paramName, rawValue);
+      return TypeConverter.instance().convertPrimitive(param.getSchema(), paramValues.stream().findFirst().orElse(null));
     }
-
-    return convert(param, paramName, paramValues);
-  }
-
-  private Map<String, Object> getArrayValues(AbsParameter<?> param, String paramName, String rawValue) {
-    Map<String, Object> paramValues = new HashMap<>();
-
-    Matcher matcher = REGEX.matcher(rawValue);
-    List<String> arrayValues = new ArrayList<>();
-
-    if (matcher.find()) {
-      do {
-        if (matcher.group(1).equals(paramName)) {
-          if (param.isExplode()) {
-            arrayValues.add(matcher.group(2));
-          } else {
-            arrayValues.addAll(Arrays.asList(matcher.group(2).split(",")));
-          }
-        }
-      } while (matcher.find());
-    }
-
-    if (!arrayValues.isEmpty()) { // Param found ?
-      paramValues.put(paramName, arrayValues);
-    }
-
-    return paramValues;
-  }
-
-  private Map<String, Object> getObjectValues(AbsParameter<?> param, String paramName, String rawValue) {
-    Schema paramSchema = param.getSchema();
-
-    if (param.isExplode()) {
-      Map<String, Object> paramValues = new HashMap<>();
-
-      Scanner scanner = new Scanner(rawValue);
-      scanner.useDelimiter("&");
-      while (scanner.hasNext()) {
-        String[] propEntry = scanner.next().split("=");
-        if (paramSchema.hasProperty(propEntry[0])) {
-          paramValues.put(propEntry[0], propEntry[1]);
-        }
-      }
-      scanner.close();
-      return paramValues;
-    } else {
-      Matcher matcher = REGEX.matcher(rawValue);
-      return (matcher.find())
-        ? getParameterValues(param, paramName, matcher.group(2), ",")
-        : null;
-    }
-  }
-
-  private Map<String, Object> getPrimitiveValue(String paramName, String rawValue) {
-    Map<String, Object> paramValues = new HashMap<>();
-
-    Matcher matcher = REGEX.matcher(rawValue);
-    while(matcher.find()) {
-      if (matcher.group(1).equals(paramName)) {
-        paramValues.put(paramName, matcher.group(2));
-        break;
-      }
-    }
-
-    return paramValues;
   }
 }

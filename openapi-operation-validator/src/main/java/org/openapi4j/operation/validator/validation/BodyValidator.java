@@ -51,7 +51,7 @@ class BodyValidator {
     }
 
     try {
-      JsonNode jsonBody = body.getContentAsNode(mediaType.getSchema(), rawContentType);
+      JsonNode jsonBody = body.getContentAsNode(mediaType, rawContentType);
       validator.validate(jsonBody, results);
     } catch (IOException ex) {
       results.add(BODY_CONTENT_ERR, rawContentType, ex);

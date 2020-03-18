@@ -5,7 +5,7 @@ import org.openapi4j.parser.model.v3.AbsParameter;
 
 import java.util.Collection;
 
-class PipeDelimitedStyleConverter extends DelimitedStyleConverter {
+public class PipeDelimitedStyleConverter extends DelimitedStyleConverter {
   private static final PipeDelimitedStyleConverter INSTANCE = new PipeDelimitedStyleConverter();
 
   private PipeDelimitedStyleConverter() {

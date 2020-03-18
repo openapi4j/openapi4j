@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.junit.Test;
 import org.openapi4j.operation.validator.OpenApi3Util;
-import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
+import org.openapi4j.operation.validator.util.ParameterConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Parameter;

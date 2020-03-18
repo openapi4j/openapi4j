@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.junit.Test;
 import org.openapi4j.core.util.TreeUtil;
+import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.io.ByteArrayInputStream;
@@ -53,6 +54,6 @@ public class BodyTest {
 
     assertEquals(
       values,
-      body.getContentAsNode(schema, "application/json"));
+      body.getContentAsNode(new MediaType().setSchema(schema), "application/json"));
   }
 }

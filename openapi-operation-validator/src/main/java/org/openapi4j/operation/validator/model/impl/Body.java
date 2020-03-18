@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.operation.validator.util.ContentConverter;
+import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.io.IOException;
@@ -100,14 +101,14 @@ public class Body {
     return new Body(body);
   }
 
-  public JsonNode getContentAsNode(final Schema schema,
+  public JsonNode getContentAsNode(final MediaType mediaType,
                                    final String rawContentType) throws IOException {
     if (bodyNode != null) {
       return bodyNode;
     } else if (bodyMap != null) {
       return TreeUtil.json.convertValue(bodyMap, JsonNode.class);
     } else {
-      return ContentConverter.convert(schema, rawContentType, bodyIs, bodyStr);
+      return ContentConverter.convert(mediaType, rawContentType, bodyIs, bodyStr);
     }
   }
 }

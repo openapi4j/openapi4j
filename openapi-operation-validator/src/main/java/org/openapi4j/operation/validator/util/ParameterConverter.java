@@ -1,11 +1,11 @@
-package org.openapi4j.operation.validator.util.parameter;
+
+package org.openapi4j.operation.validator.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-
 import org.openapi4j.core.util.MultiStringMap;
 import org.openapi4j.core.util.StringUtil;
-import org.openapi4j.operation.validator.util.ContentConverter;
+import org.openapi4j.operation.validator.util.parameter.*;
 import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.MediaType;
@@ -140,8 +140,9 @@ public final class ParameterConverter {
    * @param rawValue       The raw query string.
    * @return A map with parameters names associated with the value as node.
    */
-  public static Map<String, JsonNode> formDataToNode(final Map<String, AbsParameter<Parameter>> specParameters,
-                                                     final String rawValue) {
+  public static Map<String, JsonNode> queryToNode(final Map<String, AbsParameter<Parameter>> specParameters,
+                                                  final String rawValue,
+                                                  final String encoding) {
 
     final Map<String, JsonNode> mappedValues = new HashMap<>();
 
@@ -149,7 +150,7 @@ public final class ParameterConverter {
       return mappedValues;
     }
 
-    MultiStringMap<String> parameters = getParameters(rawValue, "UTF-8");
+    MultiStringMap<String> parameters = getParameters(rawValue, encoding);
 
     for (Map.Entry<String, AbsParameter<Parameter>> paramEntry : specParameters.entrySet()) {
       final String paramName = paramEntry.getKey();
@@ -169,7 +170,7 @@ public final class ParameterConverter {
           if (param.getExplode() == null) { // explode true is default
             param.setExplode(true);
           }
-          convertedValue = FormStyleConverter.instance().convert(param, paramName, rawValue);
+          convertedValue = FormStyleConverter.instance().convert(param, paramName, parameters.get(paramName));
         }
       } else {
         convertedValue = getValueFromContentType(param.getContentMediaTypes(), rawValue);
@@ -179,6 +180,8 @@ public final class ParameterConverter {
         mappedValues.put(paramName, convertedValue);
       }
     }
+
+    // TODO remove added values & add remaining ones
 
     return mappedValues;
   }
@@ -317,7 +320,7 @@ public final class ParameterConverter {
         Map.Entry<String, MediaType> mediaType = entry.get();
 
         try {
-          return ContentConverter.convert(mediaType.getValue().getSchema(), mediaType.getKey(), null, value);
+          return ContentConverter.convert(mediaType.getValue(), mediaType.getKey(), null, value);
         } catch (IOException e) {
           return null;
         }

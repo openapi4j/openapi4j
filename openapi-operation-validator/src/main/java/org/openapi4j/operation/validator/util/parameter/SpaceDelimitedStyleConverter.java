@@ -5,7 +5,7 @@ import org.openapi4j.parser.model.v3.AbsParameter;
 
 import java.util.Collection;
 
-class SpaceDelimitedStyleConverter extends DelimitedStyleConverter {
+public class SpaceDelimitedStyleConverter extends DelimitedStyleConverter {
   private static final SpaceDelimitedStyleConverter INSTANCE = new SpaceDelimitedStyleConverter();
 
   private SpaceDelimitedStyleConverter() {
