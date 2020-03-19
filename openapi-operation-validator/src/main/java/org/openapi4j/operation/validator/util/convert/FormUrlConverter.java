@@ -96,9 +96,13 @@ class FormUrlConverter {
     // add remaining & unknown properties as string to the result
     Schema defaultSchema = new Schema().setType(TYPE_STRING);
     for (Map.Entry<String, Collection<String>> valueEntry : paramPairs.entrySet()) {
-      mappedValues.put(
-        valueEntry.getKey(),
-        TypeConverter.instance().convertPrimitive(defaultSchema, valueEntry.getValue().stream().findFirst().orElse(null)));
+      Collection<String> values = valueEntry.getValue();
+
+      JsonNode value = TypeConverter.instance().convertPrimitive(
+        defaultSchema,
+        (values != null) ? values.iterator().next() : null);
+
+      mappedValues.put(valueEntry.getKey(), value);
     }
 
     return mappedValues;
@@ -134,10 +138,10 @@ class FormUrlConverter {
     }
   }
 
-  private static JsonNode getValueFromContentType(final Map<String, MediaType> mediaTypes,
-                                                  final String paramName,
-                                                  final MultiStringMap<String> paramPairs,
-                                                  final List<String> visitedParams) {
+  private JsonNode getValueFromContentType(final Map<String, MediaType> mediaTypes,
+                                           final String paramName,
+                                           final MultiStringMap<String> paramPairs,
+                                           final List<String> visitedParams) {
 
     Collection<String> propValues = paramPairs.get(paramName);
     if (propValues == null) {

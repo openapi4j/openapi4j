@@ -82,12 +82,12 @@ public class FormStyleConverter {
           paramValues.stream().findFirst().orElse(null));
 
         result.set(propName, value);
-      }
 
-      visitedParams.add(propName);
+        visitedParams.add(propName);
+      }
     }
 
-    return result;
+    return result.size() != 0 ? result : null;
   }
 
   private JsonNode getNotExplodedObjectValues(AbsParameter<?> param, String paramName, MultiStringMap<String> values, List<String> visitedParams) {

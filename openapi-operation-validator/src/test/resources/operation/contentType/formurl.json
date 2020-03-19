@@ -1,0 +1,44 @@
+[
+  {
+    "description": "multi missing object",
+    "schemaModel": "FooModel",
+    "input": "fieldInt=1&fieldString=value%202&fieldBool= true &fieldFloat=1.2&fieldArray=1&fieldArray=2",
+    "expected": {
+      "fieldInt": 1,
+      "fieldString": "value 2",
+      "fieldBool": true,
+      "fieldFloat": 1.2,
+      "fieldArray": [1, 2]
+    }
+  },
+  {
+    "description": "multi primitives",
+    "schemaModel": "FooModel",
+    "input": "fieldInt=1&fieldString=value%202&fieldBool= true &fieldFloat=1.2",
+    "expected": {
+      "fieldInt": 1,
+      "fieldString": "value 2",
+      "fieldBool": true,
+      "fieldFloat": 1.2
+    }
+  },
+  {
+    "description": "unknown fields should be kept",
+    "schemaModel": "FooModel",
+    "input": "unknown1=unknown&unknown2=2&unknown3=true",
+    "expected": {
+      "unknown1": "unknown",
+      "unknown2": "2",
+      "unknown3": "true"
+    }
+  },
+  {
+    "description": "field without value should be kept",
+    "schemaModel": "FooModel",
+    "input": "unknown1=&unknown2",
+    "expected": {
+      "unknown1": "",
+      "unknown2": null
+    }
+  }
+]
