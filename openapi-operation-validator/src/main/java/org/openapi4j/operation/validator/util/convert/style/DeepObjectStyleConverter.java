@@ -7,17 +7,16 @@ import org.openapi4j.core.util.MultiStringMap;
 import org.openapi4j.core.util.StringUtil;
 import org.openapi4j.operation.validator.util.convert.TypeConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
-import org.openapi4j.parser.model.v3.Schema;
 
-import java.util.*;
-
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class DeepObjectStyleConverter {
   private static final DeepObjectStyleConverter INSTANCE = new DeepObjectStyleConverter();
 
-  private DeepObjectStyleConverter() {}
+  private DeepObjectStyleConverter() {
+  }
 
   public static DeepObjectStyleConverter instance() {
     return INSTANCE;
@@ -30,34 +29,23 @@ public class DeepObjectStyleConverter {
       String propPath = valueEntry.getKey();
 
       if (propPath.startsWith(paramName + "[")) {
-        fillProperties(param.getSchema(), propPath, valueEntry.getValue(), result);
-        visitedParams.add(propPath);
+        // tokenize
+        List<String> properties = StringUtil.tokenize(propPath, "[]", true, true);
+        if (properties.size() == 2) {
+          String propName = properties.get(1);
+
+          // Convert value or get string representation
+          JsonNode value = TypeConverter.instance().convertPrimitive(
+            param.getSchema().getProperty(propName),
+            valueEntry.getValue().stream().findFirst().orElse(null));
+
+          result.set(propName, value);
+
+          visitedParams.add(propPath);
+        }
       }
     }
 
     return result;
-  }
-
-  private void fillProperties(Schema propSchema, String propPath, Collection<String> propValues, ObjectNode result) {
-    // tokenize
-    List<String> properties = StringUtil.tokenize(propPath, "[]", true, true);
-
-    for (int idx = 1; idx < properties.size(); ++idx) { // skip root param name
-      String propName = properties.get(idx);
-      result.set(propName, fillProperty(propSchema.getProperty(propName), propName, propValues));
-    }
-  }
-
-  private JsonNode fillProperty(Schema schema, String propName, Collection<String> propValues) {
-    String type = schema.getSupposedType();
-    if (TYPE_ARRAY.equals(type)) {
-      return TypeConverter.instance().convertArray(schema, new ArrayList<>(propValues));
-    } else if (TYPE_OBJECT.equals(type)) {
-      Map<String, Object> content = new HashMap<>();
-      content.put(propName, propValues.stream().findFirst().orElse(null));
-      return TypeConverter.instance().convertObject(schema, content);
-    } else {
-      return TypeConverter.instance().convertPrimitive(schema, propValues.stream().findFirst().orElse(null));
-    }
   }
 }

@@ -1,4 +1,4 @@
-package org.openapi4j.operation.validator.converter;
+package org.openapi4j.operation.validator.convert;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

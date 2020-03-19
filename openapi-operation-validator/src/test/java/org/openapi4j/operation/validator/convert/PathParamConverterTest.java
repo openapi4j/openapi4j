@@ -1,4 +1,4 @@
-package org.openapi4j.operation.validator.converter;
+package org.openapi4j.operation.validator.convert;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.openapi4j.operation.validator.converter.ParamChecker.checkArray;
-import static org.openapi4j.operation.validator.converter.ParamChecker.checkObject;
-import static org.openapi4j.operation.validator.converter.ParamChecker.checkPrimitive;
+import static org.openapi4j.operation.validator.convert.ParamChecker.checkArray;
+import static org.openapi4j.operation.validator.convert.ParamChecker.checkObject;
+import static org.openapi4j.operation.validator.convert.ParamChecker.checkPrimitive;
 
 public class PathParamConverterTest {
 
