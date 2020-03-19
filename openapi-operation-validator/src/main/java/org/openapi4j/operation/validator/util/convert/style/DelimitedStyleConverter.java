@@ -1,6 +1,7 @@
-package org.openapi4j.operation.validator.util.parameter;
+package org.openapi4j.operation.validator.util.convert.style;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.openapi4j.core.util.MultiStringMap;
 import org.openapi4j.core.util.StringUtil;
 import org.openapi4j.parser.model.v3.AbsParameter;
 
@@ -13,6 +14,18 @@ class DelimitedStyleConverter extends FlatStyleConverter {
 
   DelimitedStyleConverter(String delimiter) {
     this.delimiter = delimiter;
+  }
+
+  public JsonNode convert(AbsParameter<?> param, String paramName, MultiStringMap<String> paramPairs, List<String> visitedParams) {
+    Collection<String> paramValues = paramPairs.get(paramName);
+
+    if (paramPairs.get(paramName) == null) {
+      return null;
+    }
+
+    visitedParams.add(paramName);
+
+    return convert(param, paramName, String.join(delimiter, paramValues));
   }
 
   @Override

@@ -3,9 +3,8 @@ package org.openapi4j.operation.validator.model.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.util.TreeUtil;
-import org.openapi4j.operation.validator.util.ContentConverter;
+import org.openapi4j.operation.validator.util.convert.ContentConverter;
 import org.openapi4j.parser.model.v3.MediaType;
-import org.openapi4j.parser.model.v3.Schema;
 
 import java.io.IOException;
 import java.io.InputStream;

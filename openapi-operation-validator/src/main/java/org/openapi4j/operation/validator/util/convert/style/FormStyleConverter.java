@@ -1,11 +1,11 @@
-package org.openapi4j.operation.validator.util.parameter;
+package org.openapi4j.operation.validator.util.convert.style;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openapi4j.core.util.MultiStringMap;
 import org.openapi4j.core.util.StringUtil;
-import org.openapi4j.operation.validator.util.TypeConverter;
+import org.openapi4j.operation.validator.util.convert.TypeConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.Schema;
 
@@ -23,19 +23,25 @@ public class FormStyleConverter {
     return INSTANCE;
   }
 
-  public JsonNode convert(AbsParameter<?> param, String paramName, MultiStringMap<String> values) {
-    if (values == null) {
+  public JsonNode convert(AbsParameter<?> param, String paramName, MultiStringMap<String> paramPairs, List<String> visitedParams) {
+    if (paramPairs == null) {
       return null;
     }
 
+    JsonNode result;
+
     String type = param.getSchema().getSupposedType();
     if (TYPE_ARRAY.equals(type)) {
-      return getArrayValues(param, values.get(paramName));
+      result = getArrayValues(param, paramPairs.get(paramName));
+      visitedParams.add(paramName);
     } else if (TYPE_OBJECT.equals(type)) {
-      return getObjectValues(param, paramName, values);
+      result = getObjectValues(param, paramName, paramPairs, visitedParams);
     } else {
-      return getPrimitiveValue(param, values.get(paramName));
+      result = getPrimitiveValue(param, paramPairs.get(paramName));
+      visitedParams.add(paramName);
     }
+
+    return result;
   }
 
   private JsonNode getArrayValues(AbsParameter<?> param, Collection<String> paramValues) {
@@ -55,15 +61,15 @@ public class FormStyleConverter {
     return TypeConverter.instance().convertArray(param.getSchema().getItemsSchema(), values);
   }
 
-  private JsonNode getObjectValues(AbsParameter<?> param, String paramName, MultiStringMap<String> values) {
+  private JsonNode getObjectValues(AbsParameter<?> param, String paramName, MultiStringMap<String> values, List<String> visitedParams) {
     if (param.isExplode()) {
-      return getExplodedObjectValues(param, values);
+      return getExplodedObjectValues(param, values, visitedParams);
     } else {
-      return getNotExplodedObjectValues(param, paramName, values);
+      return getNotExplodedObjectValues(param, paramName, values, visitedParams);
     }
   }
 
-  private JsonNode getExplodedObjectValues(AbsParameter<?> param, MultiStringMap<String> values) {
+  private JsonNode getExplodedObjectValues(AbsParameter<?> param, MultiStringMap<String> values, List<String> visitedParams) {
     ObjectNode result = JsonNodeFactory.instance.objectNode();
 
     for (Map.Entry<String, Schema> propEntry : param.getSchema().getProperties().entrySet()) {
@@ -77,13 +83,17 @@ public class FormStyleConverter {
 
         result.set(propName, value);
       }
+
+      visitedParams.add(propName);
     }
 
     return result;
   }
 
-  private JsonNode getNotExplodedObjectValues(AbsParameter<?> param, String paramName, MultiStringMap<String> values) {
+  private JsonNode getNotExplodedObjectValues(AbsParameter<?> param, String paramName, MultiStringMap<String> values, List<String> visitedParams) {
     Collection<String> paramValues = values.get(paramName);
+    visitedParams.add(paramName);
+
     if (paramValues == null) {
       return null;
     }

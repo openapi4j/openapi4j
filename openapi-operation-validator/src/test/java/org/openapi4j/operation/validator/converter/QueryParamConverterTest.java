@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.junit.Test;
 import org.openapi4j.operation.validator.OpenApi3Util;
-import org.openapi4j.operation.validator.util.ParameterConverter;
+import org.openapi4j.operation.validator.util.convert.ParameterConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Parameter;
@@ -138,8 +138,8 @@ public class QueryParamConverterTest {
   public void queryContentObject() throws Exception {
     check(
       "content",
-      "{\"boolProp\":true,\"stringProp\":\"admin\"}",
-      "{\"boolProp\":\"wrong\"}",
+      "content=%7B%22boolProp%22%3Atrue%2C%22stringProp%22%3A%22admin%22%7D",
+      "content=%7B%22boolProp%22%3A%22wrong%22%7D",
       ParamChecker::checkObject,
       ParamChecker::checkWrongObject);
   }

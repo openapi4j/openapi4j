@@ -1,9 +1,10 @@
-package org.openapi4j.operation.validator.util;
+package org.openapi4j.operation.validator.util.convert;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.openapi4j.core.util.IOUtil;
 import org.openapi4j.core.util.TreeUtil;
+import org.openapi4j.operation.validator.util.ContentType;
 import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.Schema;
 

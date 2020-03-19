@@ -1,11 +1,11 @@
 
-package org.openapi4j.operation.validator.util;
+package org.openapi4j.operation.validator.util.convert;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import org.openapi4j.operation.validator.util.parameter.LabelStyleConverter;
-import org.openapi4j.operation.validator.util.parameter.MatrixStyleConverter;
-import org.openapi4j.operation.validator.util.parameter.SimpleStyleConverter;
+import org.openapi4j.operation.validator.util.convert.style.LabelStyleConverter;
+import org.openapi4j.operation.validator.util.convert.style.MatrixStyleConverter;
+import org.openapi4j.operation.validator.util.convert.style.SimpleStyleConverter;
 import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.MediaType;
