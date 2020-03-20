@@ -79,7 +79,7 @@ class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
             results.add(FLOWS, OAUTH_FLOW_REQUIRED);
           }
         } else if (OPENIDCONNECT.equals(s)) {
-          validateUrl(securityScheme.getOpenIdConnectUrl(), results, true, true, OPENIDCONNECTURL);
+          validateUrl(api, securityScheme.getOpenIdConnectUrl(), results, true, true, OPENIDCONNECTURL);
 
         }
       }

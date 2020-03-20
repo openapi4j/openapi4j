@@ -11,11 +11,17 @@ import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 import org.openapi4j.parser.validation.ValidatorBase;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.regex.Pattern;
+
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T> {
+  private static final ValidationResult INVALID_URL = new ValidationResult(ERROR, 108, "Invalid URL '%s'");
   protected static final ValidationResult REF_MISSING = new ValidationResult(ERROR, 109, "Missing $ref '%s'");
   protected static final ValidationResult REF_CONTENT_UNREADABLE = new ValidationResult(ERROR, 110, "Unable to read $ref content for '%s' pointer.");
+  private static final ValidationResult INVALID_RELATIVE_URL = new ValidationResult(ERROR, 145, "Invalid relative URL '%s', no server URL defined.");
 
   <F extends OpenApiSchema<F>> F getReferenceContent(final O api,
                                                      final AbsRefOpenApiSchema<F> schema,
@@ -49,6 +55,47 @@ abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T>
     F content = getReferenceContent(api, schema, results, crumb, clazz);
     if (content != null) {
       context.validate(api, content, validator, results);
+    }
+  }
+
+  protected void validateUrl(final O api,
+                             final String value,
+                             final ValidationResults results,
+                             final boolean required,
+                             final boolean allowRelative,
+                             final String crumb) {
+
+    validateString(value, results, required, (Pattern) null, crumb);
+    if (value != null) {
+      checkUrl(api, value, allowRelative, results, crumb);
+    }
+  }
+
+  private void checkUrl(final O api,
+                        final String urlSpec,
+                        final boolean allowRelative,
+                        final ValidationResults results,
+                        final String crumb) {
+    try {
+      new URL(urlSpec);
+    } catch (MalformedURLException e) {
+      if (!allowRelative) {
+        results.add(crumb, INVALID_URL, urlSpec);
+      } else if (!api.hasServers()) {
+        results.add(crumb, INVALID_RELATIVE_URL, urlSpec);
+      } else {
+        String serverUrl = api.getServers().get(0).getUrl();
+
+        if (serverUrl == null) {
+          results.add(crumb, INVALID_RELATIVE_URL, urlSpec);
+        } else {
+          try {
+            new URL(new URL(serverUrl), urlSpec);
+          } catch (MalformedURLException ignored) {
+            results.add(crumb, INVALID_URL, serverUrl + urlSpec);
+          }
+        }
+      }
     }
   }
 }

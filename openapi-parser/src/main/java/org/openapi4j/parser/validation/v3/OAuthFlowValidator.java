@@ -36,18 +36,18 @@ class OAuthFlowValidator extends Validator3Base<OpenApi3, OAuthFlow> {
     String conf = oauthFlow.getConfiguration();
 
     if (IMPLICIT.equals(conf) || AUTHORIZATIONCODE.equals(conf)) {
-      validateUrl(oauthFlow.getAuthorizationUrl(), results, true, true, AUTHORIZATIONURL);
+      validateUrl(api, oauthFlow.getAuthorizationUrl(), results, true, true, AUTHORIZATIONURL);
     } else if (oauthFlow.getAuthorizationUrl() != null) {
       results.add(AUTHORIZATIONURL, AUTH_URL_NOT_ALLOWED);
     }
 
     if (PASSWORD.equals(conf) || CLIENTCREDENTIALS.equals(conf) || AUTHORIZATIONCODE.equals(conf)) {
-      validateUrl(oauthFlow.getTokenUrl(), results, true, true, TOKENURL);
+      validateUrl(api, oauthFlow.getTokenUrl(), results, true, true, TOKENURL);
     } else if (oauthFlow.getTokenUrl() != null) {
       results.add(TOKENURL, TOKEN_URL_NOT_ALLOWED);
     }
 
-    validateUrl(oauthFlow.getRefreshUrl(), results, false, true, REFRESHURL);
+    validateUrl(api, oauthFlow.getRefreshUrl(), results, false, true, REFRESHURL);
     validateMap(context, api, oauthFlow.getScopes(), results, true, SCOPES, Regexes.NOEXT_REGEX, null);
     validateMap(context, api, oauthFlow.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
   }

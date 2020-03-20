@@ -24,6 +24,6 @@ class ExternalDocsValidator extends Validator3Base<OpenApi3, ExternalDocs> {
     // VALIDATION EXCLUSIONS :
     // description
     validateMap(context, api, externalDocs.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
-    validateUrl(externalDocs.getUrl(), results, true, true, EXTERNALDOCS);
+    validateUrl(api, externalDocs.getUrl(), results, true, true, EXTERNALDOCS);
   }
 }

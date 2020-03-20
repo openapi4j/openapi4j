@@ -45,4 +45,9 @@ public class CommonValidationTest extends Checker {
   public void operationNoResponsesInvalid() throws Exception {
     validate("/validation/v3/operation/invalid/operationNoResponses.yaml");
   }
+
+  @Test(expected = ValidationException.class)
+  public void xmlRelativeNamespace() throws Exception {
+    validate("/validation/v3/xml/invalid/xml.yaml");
+  }
 }

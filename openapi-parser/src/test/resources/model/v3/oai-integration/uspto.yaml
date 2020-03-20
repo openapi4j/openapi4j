@@ -1,13 +1,6 @@
 openapi: 3.0.1
 servers:
-  - url: '{scheme}://developer.uspto.gov/ds-api'
-    variables:
-      scheme:
-        description: 'The Data Set API is accessible via https and http'
-        enum:
-          - 'https'
-          - 'http'
-        default: 'https'
+  - url: 'https://developer.uspto.gov/ds-api'
 info:
   description: >-
     The Data Set API (DSAPI) allows the public users to discover and search
