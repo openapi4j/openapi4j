@@ -2,6 +2,7 @@
   {
     "description": "json",
     "schemaModel": "FooModel",
+    "contentType": "application/json",
     "input": "{\"fieldInt\": 1,\"fieldString\": \"pokfpokdf\",\"fieldBool\": false,\"fieldFloat\": 1.2,\"fieldArray\": [1, 2, 3],\"fieldObject\": {\"id\":\"myId\"}}",
     "expected": {
       "fieldInt": 1,

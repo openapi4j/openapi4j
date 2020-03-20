@@ -100,7 +100,7 @@ class FormUrlConverter {
 
       JsonNode value = TypeConverter.instance().convertPrimitive(
         defaultSchema,
-        (values != null) ? values.iterator().next() : null);
+        values.iterator().next());
 
       mappedValues.put(valueEntry.getKey(), value);
     }

@@ -41,6 +41,10 @@ components:
           properties:
             id:
               type: string
+            name:
+              type: string
+            age:
+              type: integer
     xmlFieldArray:
       type: array
       minItems: 2

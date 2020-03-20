@@ -2,6 +2,7 @@
   {
     "description": "multi with object & file",
     "schemaModel": "FooModel",
+    "contentType": "multipart/form-data;boundary=\"1234\"",
     "input": "--1234\r\nContent-Disposition: form-data; name=\"file\"; filename=\"foo.file\"\r\nContent-Type: text/whatever\r\n\r\nThis is the content of the file\\n\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldInt\"\r\n\r\n1\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldString\"\r\n\r\nvalue 2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\n\r\n1\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldBool\"\r\n\r\ntrue  \r\n--1234\r\nContent-Disposition: form-data; name=\"fieldFloat\"\r\n\r\n1.2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\n\r\n2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldObject\"\r\n\r\n{\"id\":\"myId\"}\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\n\r\n3\r\n--1234--\r\n",
     "expected": {
       "fieldInt": 1,
@@ -18,6 +19,7 @@
   {
     "description": "multi mixed",
     "schemaModel": "FooModel",
+    "contentType": "multipart/form-data;boundary=\"1234\"",
     "input": "--1234\r\nContent-Disposition: form-data; name=\"file\"; filename=\"foo.file\"\r\nContent-Type: text/plain\r\n\r\nThis is the content of the file\\n\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldInt\"\r\n\r\n1\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldString\"\r\n\r\nvalue 2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldBool\"\r\n\r\ntrue  \r\n--1234\r\nContent-Disposition: form-data; name=\"fieldFloat\"\r\n\r\n1.2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldObject\"\r\nContent-Type: application/json\r\n\r\n{\"id\":\"myId\"}\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\nContent-Type: application/json\r\n\r\n[1, 2, 3]\r\n--1234--\r\n",
     "expected": {
       "fieldInt": 1,

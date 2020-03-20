@@ -19,21 +19,23 @@ class DelimitedStyleConverter extends FlatStyleConverter {
   public JsonNode convert(AbsParameter<?> param, String paramName, MultiStringMap<String> paramPairs, List<String> visitedParams) {
     Collection<String> paramValues = paramPairs.get(paramName);
 
-    if (paramPairs.get(paramName) == null) {
+    if (paramValues == null) {
       return null;
     }
 
     visitedParams.add(paramName);
 
-    return convert(param, paramName, String.join(delimiter, paramValues));
+    // In case of single value is null
+    String paramValue
+      = paramValues.size() == 1
+      ? paramValues.iterator().next()
+      : String.join(delimiter, paramValues);
+
+    return convert(param, paramName, paramValue);
   }
 
   @Override
   public JsonNode convert(AbsParameter<?> param, String paramName, String paramValue) {
-    if (paramValue == null) {
-      return null;
-    }
-
     if (!TYPE_ARRAY.equals(param.getSchema().getSupposedType())) {
       // delimited parameter cannot be an object or primitive
       return null;
@@ -53,9 +55,7 @@ class DelimitedStyleConverter extends FlatStyleConverter {
 
     Map<String, Object> paramValues = new HashMap<>();
 
-    if (!arrayValues.isEmpty()) { // Param found ?
-      paramValues.put(paramName, arrayValues);
-    }
+    paramValues.put(paramName, arrayValues);
 
     return convert(param, paramName, paramValues);
   }

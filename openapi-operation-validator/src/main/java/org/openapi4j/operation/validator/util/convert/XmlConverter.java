@@ -69,6 +69,9 @@ class XmlConverter {
 
   private JsonNode processNode(final Schema schema, final JsonNode node) {
     JsonNode content = unwrap(schema, node, null);
+    if (content == null) {
+      return null;
+    }
 
     if (TYPE_ARRAY.equals(schema.getSupposedType())) {
       return parseArray(schema, content);
@@ -103,7 +106,11 @@ class XmlConverter {
       String entryKey = entry.getKey();
       Schema propSchema = entry.getValue();
 
-      resultNode.set(entryKey, processNode(propSchema, unwrap(schema, node, entryKey)));
+      JsonNode value = processNode(propSchema, unwrap(schema, node, entryKey));
+
+      if (value != null) {
+        resultNode.set(entryKey, value);
+      }
     }
 
     return resultNode;
