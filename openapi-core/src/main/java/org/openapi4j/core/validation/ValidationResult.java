@@ -5,6 +5,12 @@ public class ValidationResult {
   private final int code;
   private final String message;
 
+  public ValidationResult() {
+    this.severity = null;
+    this.code = 0;
+    this.message = null;
+  }
+
   public ValidationResult(ValidationSeverity severity, int code, String message) {
     this.severity = severity;
     this.code = code;

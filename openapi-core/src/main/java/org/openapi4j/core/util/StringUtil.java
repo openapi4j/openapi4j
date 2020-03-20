@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public final class StringUtil {
+  private StringUtil() {}
+
   /**
    * Tokenize the given {@code String} into a {@code String} list via a
    * {@link StringTokenizer}.
