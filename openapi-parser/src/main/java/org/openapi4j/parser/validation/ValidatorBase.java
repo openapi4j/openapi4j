@@ -5,6 +5,8 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
@@ -214,7 +216,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
                         final ValidationResults results,
                         final String crumb) {
     try {
-      new URL(urlSpec);
+      new URL(urlSpec.replace("{", "").replace("}", ""));
     } catch (MalformedURLException e) {
       if (!allowRelative) {
         results.add(crumb, INVALID_URL, urlSpec);
