@@ -1,11 +1,11 @@
-package org.openapi4j.operation.validator.converter;
+package org.openapi4j.operation.validator.convert;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.junit.Test;
 import org.openapi4j.operation.validator.OpenApi3Util;
 import org.openapi4j.operation.validator.util.PathResolver;
-import org.openapi4j.operation.validator.util.parameter.ParameterConverter;
+import org.openapi4j.operation.validator.util.convert.ParameterConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Parameter;
@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.openapi4j.operation.validator.converter.ParamChecker.checkArray;
-import static org.openapi4j.operation.validator.converter.ParamChecker.checkObject;
-import static org.openapi4j.operation.validator.converter.ParamChecker.checkPrimitive;
+import static org.openapi4j.operation.validator.convert.ParamChecker.checkArray;
+import static org.openapi4j.operation.validator.convert.ParamChecker.checkObject;
+import static org.openapi4j.operation.validator.convert.ParamChecker.checkPrimitive;
 
 public class PathParamConverterTest {
 

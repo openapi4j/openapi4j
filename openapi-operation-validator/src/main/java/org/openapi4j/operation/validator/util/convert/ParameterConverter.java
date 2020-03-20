@@ -1,9 +1,11 @@
-package org.openapi4j.operation.validator.util.parameter;
+
+package org.openapi4j.operation.validator.util.convert;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-
-import org.openapi4j.operation.validator.util.ContentConverter;
+import org.openapi4j.operation.validator.util.convert.style.LabelStyleConverter;
+import org.openapi4j.operation.validator.util.convert.style.MatrixStyleConverter;
+import org.openapi4j.operation.validator.util.convert.style.SimpleStyleConverter;
 import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.MediaType;
@@ -76,9 +78,6 @@ import java.util.regex.Pattern;
 public final class ParameterConverter {
   private static final String LABEL = "label";
   private static final String MATRIX = "matrix";
-  private static final String SPACE_DELIMITED = "spaceDelimited";
-  private static final String PIPE_DELIMITED = "pipeDelimited";
-  private static final String DEEP_OBJECT = "deepObject";
 
   private ParameterConverter() {
   }
@@ -131,7 +130,7 @@ public final class ParameterConverter {
   }
 
   /**
-   * Convert query parameters to nodes.
+   * Convert form data parameters to nodes.
    * The query string MUST BE in the appropriate form corresponding to the associated style.
    *
    * @param specParameters The spec query parameters.
@@ -139,44 +138,10 @@ public final class ParameterConverter {
    * @return A map with parameters names associated with the value as node.
    */
   public static Map<String, JsonNode> queryToNode(final Map<String, AbsParameter<Parameter>> specParameters,
-                                                  final String rawValue) {
+                                                  final String rawValue,
+                                                  final String encoding) {
 
-    final Map<String, JsonNode> mappedValues = new HashMap<>();
-
-    if (rawValue == null) {
-      return mappedValues;
-    }
-
-    for (Map.Entry<String, AbsParameter<Parameter>> paramEntry : specParameters.entrySet()) {
-      final String paramName = paramEntry.getKey();
-      final AbsParameter<Parameter> param = paramEntry.getValue();
-      final JsonNode convertedValue;
-
-      if (param.getSchema() != null) {
-        final String style = param.getStyle();
-
-        if (SPACE_DELIMITED.equals(style)) {
-          convertedValue = SpaceDelimitedStyleConverter.instance().convert(param, paramName, rawValue);
-        } else if (PIPE_DELIMITED.equals(style)) {
-          convertedValue = PipeDelimitedStyleConverter.instance().convert(param, paramName, rawValue);
-        } else if (DEEP_OBJECT.equals(style)) {
-          convertedValue = DeepObjectStyleConverter.instance().convert(param, paramName, rawValue);
-        } else { // form is the default
-          if (param.getExplode() == null) { // explode true is default
-            param.setExplode(true);
-          }
-          convertedValue = FormStyleConverter.instance().convert(param, paramName, rawValue);
-        }
-      } else {
-        convertedValue = getValueFromContentType(param.getContentMediaTypes(), rawValue);
-      }
-
-      if (convertedValue != null) {
-        mappedValues.put(paramName, convertedValue);
-      }
-    }
-
-    return mappedValues;
+    return FormUrlConverter.instance().convert(specParameters, rawValue, false, encoding);
   }
 
   /**
@@ -283,7 +248,7 @@ public final class ParameterConverter {
         Map.Entry<String, MediaType> mediaType = entry.get();
 
         try {
-          return ContentConverter.convert(mediaType.getValue().getSchema(), mediaType.getKey(), null, value);
+          return ContentConverter.convert(mediaType.getValue(), mediaType.getKey(), null, value);
         } catch (IOException e) {
           return null;
         }

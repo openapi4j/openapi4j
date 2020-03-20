@@ -1,10 +1,10 @@
-package org.openapi4j.operation.validator.util.parameter;
+package org.openapi4j.operation.validator.util.convert.style;
 
-class SpaceDelimitedStyleConverter extends DelimitedStyleConverter {
+public class SpaceDelimitedStyleConverter extends DelimitedStyleConverter {
   private static final SpaceDelimitedStyleConverter INSTANCE = new SpaceDelimitedStyleConverter();
 
   private SpaceDelimitedStyleConverter() {
-    super("%20");
+    super(" ");
   }
 
   public static SpaceDelimitedStyleConverter instance() {

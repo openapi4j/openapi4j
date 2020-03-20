@@ -1,4 +1,4 @@
-package org.openapi4j.operation.validator.util;
+package org.openapi4j.operation.validator.util.convert;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -41,7 +41,7 @@ class XmlConverter {
     return INSTANCE;
   }
 
-  JsonNode xmlToNode(final Schema schema, String body) {
+  JsonNode convert(final Schema schema, String body) {
     return convert(
       schema,
       XML.toJSONObject(nsPattern.matcher(body).replaceAll(nsReplace), XMLParserConfiguration.KEEP_STRINGS));
@@ -69,6 +69,9 @@ class XmlConverter {
 
   private JsonNode processNode(final Schema schema, final JsonNode node) {
     JsonNode content = unwrap(schema, node, null);
+    if (content == null) {
+      return null;
+    }
 
     if (TYPE_ARRAY.equals(schema.getSupposedType())) {
       return parseArray(schema, content);
@@ -103,7 +106,11 @@ class XmlConverter {
       String entryKey = entry.getKey();
       Schema propSchema = entry.getValue();
 
-      resultNode.set(entryKey, processNode(propSchema, unwrap(schema, node, entryKey)));
+      JsonNode value = processNode(propSchema, unwrap(schema, node, entryKey));
+
+      if (value != null) {
+        resultNode.set(entryKey, value);
+      }
     }
 
     return resultNode;

@@ -1,4 +1,4 @@
-package org.openapi4j.operation.validator.util.parameter;
+package org.openapi4j.operation.validator.util.convert.style;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -6,7 +6,7 @@ import org.openapi4j.parser.model.v3.AbsParameter;
 
 import java.util.Map;
 
-class LabelStyleConverter extends FlatStyleConverter {
+public class LabelStyleConverter extends FlatStyleConverter {
   private static final LabelStyleConverter INSTANCE = new LabelStyleConverter();
 
   private LabelStyleConverter() {}

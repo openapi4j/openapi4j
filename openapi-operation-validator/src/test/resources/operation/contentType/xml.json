@@ -1,0 +1,30 @@
+[
+  {
+    "description": "XML multi-simple",
+    "schemaModel": "FooModel",
+    "contentType": "application/xml",
+    "input": "<FooModel id=\"123\"><fieldInt>1</fieldInt><sample:fieldString xmlns:sample=\"http://example.com/schema/sample\">value 2</sample:fieldString><fieldBool>true</fieldBool><books><book>1</book><book>2</book></books><fieldFloat>1</fieldFloat><fieldArray>1</fieldArray><fieldArray>2</fieldArray><fieldArray>3</fieldArray><fieldObject><id>myId</id></fieldObject></FooModel>",
+    "expected": {
+      "fieldInt": 1,
+      "fieldString": "value 2",
+      "fieldBool": true,
+      "fieldFloat": 1.0,
+      "fieldArray": [1, 2, 3],
+      "fieldObject": {"id":"myId"}
+    }
+  },
+  {
+    "description": "XML array",
+    "schemaModel": "xmlFieldArray",
+    "contentType": "application/xml",
+    "input": "<i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i>",
+    "expected": [1, 2, 3, 4, 5, 6]
+  },
+  {
+    "description": "XML array wrapped",
+    "schemaModel": "xmlFieldArrayWrapped",
+    "contentType": "application/xml",
+    "input": "<items><items><id><id>1</id><id>2</id></id></items><items><id><id>3</id><id>4</id></id></items><items><id><id>5</id><id>6</id></id></items></items>",
+    "expected": [{"id":[1,2]},{"id":[3,4]},{"id":[5,6]}]
+  }
+]

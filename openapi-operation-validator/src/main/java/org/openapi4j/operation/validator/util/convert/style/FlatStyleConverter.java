@@ -1,4 +1,4 @@
-package org.openapi4j.operation.validator.util.parameter;
+package org.openapi4j.operation.validator.util.convert.style;
 
 import org.openapi4j.parser.model.v3.AbsParameter;
 

@@ -1,4 +1,4 @@
-package org.openapi4j.operation.validator.util.parameter;
+package org.openapi4j.operation.validator.util.convert.style;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 
-class MatrixStyleConverter extends FlatStyleConverter {
+public class MatrixStyleConverter extends FlatStyleConverter {
   private static final Pattern PREFIXED_SEMICOLON_NAME_REGEX = Pattern.compile("(?:;)([^;]+)(?:=)([^;]*)");
 
   private static final MatrixStyleConverter INSTANCE = new MatrixStyleConverter();

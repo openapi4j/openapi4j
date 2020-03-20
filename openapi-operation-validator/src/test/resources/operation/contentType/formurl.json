@@ -1,0 +1,265 @@
+[
+  {
+    "description": "multi missing object",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldInt=1&fieldString=value%202&fieldBool= true &fieldFloat=1.2&fieldArray=1&fieldArray=2",
+    "expected": {
+      "fieldInt": 1,
+      "fieldString": "value 2",
+      "fieldBool": true,
+      "fieldFloat": 1.2,
+      "fieldArray": [1, 2]
+    }
+  },
+  {
+    "description": "multi missing object - wrong charset",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=WRONG",
+    "input": "fieldInt=1&fieldString=value%202&fieldBool= true &fieldFloat=1.2&fieldArray=1&fieldArray=2",
+    "expected": {
+      "fieldInt": 1,
+      "fieldString": "value 2",
+      "fieldBool": true,
+      "fieldFloat": 1.2,
+      "fieldArray": [1, 2]
+    }
+  },
+  {
+    "description": "multi primitives",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldInt=1&fieldString=value%202&fieldBool= true &fieldFloat=1.2",
+    "expected": {
+      "fieldInt": 1,
+      "fieldString": "value 2",
+      "fieldBool": true,
+      "fieldFloat": 1.2
+    }
+  },
+  {
+    "description": "encoding - form/not exploded",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldInt=1&fieldString=value%202&fieldBool= true &fieldFloat=1.2&fieldArray=1,2",
+    "encodings": {
+      "fieldInt": { "explode": false },
+      "fieldString": { "explode": false },
+      "fieldArray": { "explode": false }
+    },
+    "expected": {
+      "fieldInt": 1,
+      "fieldString": "value 2",
+      "fieldBool": true,
+      "fieldFloat": 1.2,
+      "fieldArray": [1, 2]
+    }
+  },
+  {
+    "description": "encoding - form/spaceDelimited not exploded",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldInt=1&fieldArray=1%202",
+    "encodings": {
+      "fieldArray": { "style": "spaceDelimited" },
+      "fieldInt": { "style": "spaceDelimited" }
+    },
+    "expected": {
+      "fieldArray": [1, 2]
+    }
+  },
+  {
+    "description": "encoding - form/spaceDelimited exploded",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldInt=1&fieldArray=1&fieldArray=2",
+    "encodings": {
+      "fieldArray": { "style": "spaceDelimited", "explode": true },
+      "fieldInt": { "style": "spaceDelimited", "explode": true }
+    },
+    "expected": {
+      "fieldArray": [1, 2]
+    }
+  },
+  {
+    "description": "encoding - form/spaceDelimited no =",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldArray",
+    "encodings": {
+      "fieldArray": { "style": "spaceDelimited", "explode": true },
+      "fieldInt": { "style": "spaceDelimited", "explode": true }
+    },
+    "expected": {
+      "fieldArray": []
+    }
+  },
+  {
+    "description": "encoding - form/spaceDelimited with =",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldArray=",
+    "encodings": {
+      "fieldArray": { "style": "spaceDelimited", "explode": true },
+      "fieldInt": { "style": "spaceDelimited", "explode": true }
+    },
+    "expected": {
+      "fieldArray": []
+    }
+  },
+  {
+    "description": "encoding - form/pipeDelimited not exploded",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldInt=1&fieldArray=1%7C2",
+    "encodings": {
+      "fieldArray": { "style": "pipeDelimited" },
+      "fieldInt": { "style": "pipeDelimited" }
+    },
+    "expected": {
+      "fieldArray": [1, 2]
+    }
+  },
+  {
+    "description": "encoding - form/pipeDelimited exploded",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldInt=1&fieldArray=1&fieldArray=2",
+    "encodings": {
+      "fieldArray": { "style": "pipeDelimited", "explode": true },
+      "fieldInt": { "style": "pipeDelimited", "explode": true }
+    },
+    "expected": {
+      "fieldArray": [1, 2]
+    }
+  },
+  {
+    "description": "encoding - form/pipeDelimited no =",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldArray",
+    "encodings": {
+      "fieldArray": { "style": "pipeDelimited", "explode": true },
+      "fieldInt": { "style": "pipeDelimited", "explode": true }
+    },
+    "expected": {
+      "fieldArray": []
+    }
+  },
+  {
+    "description": "encoding - form/pipeDelimited with =",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldArray=",
+    "encodings": {
+      "fieldArray": { "style": "pipeDelimited", "explode": true },
+      "fieldInt": { "style": "pipeDelimited", "explode": true }
+    },
+    "expected": {
+      "fieldArray": []
+    }
+  },
+  {
+    "description": "encoding - form/deepObject",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldObject[id]=foo&fieldObject[name]=bar&fieldObject[age]=52",
+    "encodings": {
+      "fieldObject": { "style": "deepObject" }
+    },
+    "expected": {
+      "fieldObject": {"id":"foo","name": "bar", "age":  52}
+    }
+  },
+  {
+    "description": "encoding - form/deepObject exploded",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldObject[id]=foo&fieldObject[name]=bar&fieldObject[age]=52",
+    "encodings": {
+      "fieldObject": { "style": "deepObject", "explode": true }
+    },
+    "expected": {
+      "fieldObject": {"id":"foo","name": "bar", "age":  52}
+    }
+  },
+  {
+    "description": "encoding - form/pipeDelimited no =",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldObject",
+    "encodings": {
+      "fieldObject": { "style": "deepObject" }
+    },
+    "expected": {
+      "fieldObject": {}
+    }
+  },
+  {
+    "description": "encoding - form/deepObject with =",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldObject=",
+    "encodings": {
+      "fieldObject": { "style": "deepObject" }
+    },
+    "expected": {
+      "fieldObject": {}
+    }
+  },
+  {
+    "description": "encoding - form/deepObject with nested ignored",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldObject[id]=foo&fieldObject[id][second_level]=bar",
+    "encodings": {
+      "fieldObject": { "style": "deepObject" }
+    },
+    "expected": {
+      "fieldObject": {"id":"foo"},
+      "fieldObject[id][second_level]": "bar"
+    }
+  },
+  {
+    "description": "encoding - form/deepObject primitive",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "fieldInt=2&fieldObject=",
+    "encodings": {
+      "fieldInt": { "style": "deepObject" },
+      "fieldObject": { "style": "deepObject" }
+    },
+    "expected": {
+      "fieldInt": "2",
+      "fieldObject": {}
+    }
+  },
+  {
+    "description": "unknown fields should be kept",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "unknown1=unknown&unknown2=2&unknown3=true",
+    "expected": {
+      "unknown1": "unknown",
+      "unknown2": "2",
+      "unknown3": "true"
+    }
+  },
+  {
+    "description": "field without value should be kept",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": "unknown1=&unknown2",
+    "expected": {
+      "unknown1": "",
+      "unknown2": null
+    }
+  },
+  {
+    "description": "no input",
+    "schemaModel": "FooModel",
+    "contentType": "application/x-www-form-urlencoded; charset=UTF-8",
+    "input": null,
+    "expected": {}
+  }
+]

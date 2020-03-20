@@ -1,0 +1,71 @@
+openapi: 3.0.0
+info:
+  description: A description
+  version: 1.0.0
+  title: My API
+paths: {}
+components:
+  headers:
+    X-Rate-Limit:
+      description: a description
+      schema:
+        type: integer
+  schemas:
+    FooModel:
+      type: object
+      required:
+      - fieldInt
+      - fieldString
+      - fieldBool
+      - fieldFloat
+      - fieldArray
+      properties:
+        fieldInt:
+          type: integer
+          format: int32
+        fieldString:
+          type: string
+        fieldBool:
+          type: boolean
+        fieldFloat:
+          type: number
+          format: float
+        fieldArray:
+          type: array
+          minItems: 2
+          items:
+            type: integer
+            format: int32
+        fieldObject:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            age:
+              type: integer
+    xmlFieldArray:
+      type: array
+      minItems: 2
+      items:
+        type: integer
+        xml:
+          name: i
+      xml:
+        name: ignored
+    xmlFieldArrayWrapped:
+      type: array
+      minItems: 2
+      items:
+        type: object
+        properties:
+          id:
+            type: array
+            items:
+              type: integer
+            xml:
+              wrapped: true
+      xml:
+        wrapped: true
+        name: items

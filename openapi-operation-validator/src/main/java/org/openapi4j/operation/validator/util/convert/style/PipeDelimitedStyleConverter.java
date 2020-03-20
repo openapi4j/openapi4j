@@ -1,10 +1,10 @@
-package org.openapi4j.operation.validator.util.parameter;
+package org.openapi4j.operation.validator.util.convert.style;
 
-class PipeDelimitedStyleConverter extends DelimitedStyleConverter {
+public class PipeDelimitedStyleConverter extends DelimitedStyleConverter {
   private static final PipeDelimitedStyleConverter INSTANCE = new PipeDelimitedStyleConverter();
 
   private PipeDelimitedStyleConverter() {
-    super("\\|");
+    super("|");
   }
 
   public static PipeDelimitedStyleConverter instance() {

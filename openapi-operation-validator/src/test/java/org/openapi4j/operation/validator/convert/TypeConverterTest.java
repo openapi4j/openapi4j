@@ -1,10 +1,10 @@
-package org.openapi4j.operation.validator.converter;
+package org.openapi4j.operation.validator.convert;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.junit.Test;
-import org.openapi4j.operation.validator.util.TypeConverter;
+import org.openapi4j.operation.validator.util.convert.TypeConverter;
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.math.BigDecimal;
