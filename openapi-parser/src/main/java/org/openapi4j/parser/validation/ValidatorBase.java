@@ -4,8 +4,8 @@ import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -30,7 +30,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
   private static final ValidationResult MISSING_REQUIRED_FIELD = new ValidationResult(ERROR, 105, "Required field is missing '%s'");
   private static final ValidationResult PATTERN_NOT_MATCHED = new ValidationResult(ERROR, 106, "String value '%s' does not match required pattern '%s'");
   private static final ValidationResult INVALID_KEY = new ValidationResult(ERROR, 107, "Invalid key '%s' in map '%s'");
-  private static final ValidationResult INVALID_URL = new ValidationResult(ERROR, 108, "Invalid URL '%s'");
+  private static final ValidationResult INVALID_URI = new ValidationResult(ERROR, 144, "Invalid (or not absolute) URI '%s'");
 
   protected static final Pattern EMAIL_REGEX = Pattern.compile("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9]" +
     "(?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:" +
@@ -167,18 +167,6 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
     }
   }
 
-  protected void validateUrl(final String value,
-                             final ValidationResults results,
-                             final boolean required,
-                             final boolean allowRelative,
-                             final String crumb) {
-
-    validateString(value, results, required, (Pattern) null, crumb);
-    if (value != null) {
-      checkUrl(value, allowRelative, results, crumb);
-    }
-  }
-
   protected <V> void validateMap(final ValidationContext<O> context,
                                  final O api,
                                  final Map<String, ? extends V> value,
@@ -200,25 +188,31 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
     });
   }
 
+  protected void validateUri(final String value,
+                             final ValidationResults results,
+                             final boolean required,
+                             final boolean allowRelative,
+                             final String crumb) {
+
+    validateString(value, results, required, (Pattern) null, crumb);
+    if (value != null) {
+      try {
+        URI uri = new URI(value);
+        if (!allowRelative && !uri.isAbsolute()) {
+          results.add(crumb, INVALID_URI, value);
+        }
+      } catch (URISyntaxException e) {
+        results.add(crumb, INVALID_URI, value);
+      }
+    }
+  }
+
   private void checkKey(final String key,
                         final Pattern pattern,
                         final ValidationResults results) {
 
     if (pattern != null && !pattern.matcher(key).matches()) {
       results.add(INVALID_KEY, key, pattern);
-    }
-  }
-
-  private void checkUrl(final String urlSpec,
-                        final boolean allowRelative,
-                        final ValidationResults results,
-                        final String crumb) {
-    try {
-      new URL(urlSpec.replace("{", "").replace("}", ""));
-    } catch (MalformedURLException e) {
-      if (!allowRelative) {
-        results.add(crumb, INVALID_URL, urlSpec);
-      }
     }
   }
 }

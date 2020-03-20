@@ -30,7 +30,7 @@ class InfoValidator extends Validator3Base<OpenApi3, Info> {
     validateField(context, api, info.getContact(), results, false, CONTACT, ContactValidator.instance());
     validateMap(context, api, info.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
     validateField(context, api, info.getLicense(), results, false, LICENSE, LicenseValidator.instance());
-    validateUrl(info.getTermsOfService(), results, false, true, TERMSOFSERVICE);
+    validateUrl(api, info.getTermsOfService(), results, false, true, TERMSOFSERVICE);
     validateString(info.getTitle(), results, true, TITLE);
     validateString(info.getVersion(), results, true, VERSION);
   }

@@ -23,7 +23,7 @@ class XmlValidator extends Validator3Base<OpenApi3, Xml> {
   public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Xml xml, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // name, prefix, attribute, wrapped
-    validateUrl(xml.getNamespace(), results, false, false, NAMESPACE);
+    validateUri(xml.getNamespace(), results, false, false, NAMESPACE);
     validateMap(context, api, xml.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
   }
 }
