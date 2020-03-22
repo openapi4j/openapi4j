@@ -40,12 +40,12 @@ class PatternValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (pattern == null) {
       results.add(PATTERN, PATTERN_DEF_ERR, patternStr);
-      return;
+      return false;
     } else if (!valueNode.isTextual()) {
-      return;
+      return false;
     }
 
     String value = valueNode.textValue();
@@ -53,5 +53,7 @@ class PatternValidator extends BaseJsonValidator<OAI3> {
     if (!m.find()) {
       results.add(PATTERN, ERR, value, patternStr);
     }
+
+    return false;
   }
 }

@@ -45,13 +45,15 @@ class RequiredValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (fieldNames == null) return;
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+    if (fieldNames == null) return false;
 
     for (String fieldName : fieldNames) {
       if (null == valueNode.get(fieldName)) {
         results.add(REQUIRED, ERR, fieldName);
       }
     }
+
+    return false;
   }
 }

@@ -37,9 +37,9 @@ class UniqueItemsValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (!unique) {
-      return;
+      return false;
     }
 
     Set<JsonNode> set = new HashSet<>();
@@ -48,5 +48,7 @@ class UniqueItemsValidator extends BaseJsonValidator<OAI3> {
         results.add(UNIQUEITEMS, ERR, n.asText());
       }
     }
+
+    return false;
   }
 }

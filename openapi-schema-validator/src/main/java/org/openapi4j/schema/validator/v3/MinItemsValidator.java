@@ -37,13 +37,15 @@ class MinItemsValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (min == null || !valueNode.isArray()) {
-      return;
+      return false;
     }
 
     if (valueNode.size() < min) {
       results.add(MINITEMS, ERR, min, valueNode.size());
     }
+
+    return false;
   }
 }

@@ -37,13 +37,15 @@ class MaxPropertiesValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (max == null || !valueNode.isObject()) {
-      return;
+      return false;
     }
 
     if (valueNode.size() > max) {
       results.add(MAXPROPERTIES, ERR, max, valueNode.size());
     }
+
+    return false;
   }
 }

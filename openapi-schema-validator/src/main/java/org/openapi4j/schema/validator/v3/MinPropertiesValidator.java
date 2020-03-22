@@ -37,13 +37,15 @@ class MinPropertiesValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (min == null || !valueNode.isObject()) {
-      return;
+      return false;
     }
 
     if (valueNode.size() < min) {
       results.add(MINPROPERTIES, ERR, min, valueNode.size());
     }
+
+    return false;
   }
 }

@@ -45,9 +45,9 @@ class MultipleOfValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (multiple == null || !valueNode.isNumber()) {
-      return;
+      return false;
     }
 
     BigDecimal value = valueNode.decimalValue();
@@ -55,5 +55,7 @@ class MultipleOfValidator extends BaseJsonValidator<OAI3> {
     if (remainder.compareTo(DIVISIBLE) != 0) {
       results.add(MULTIPLEOF, ERR, value, multiple);
     }
+
+    return false;
   }
 }

@@ -45,18 +45,22 @@ public class MaximumToleranceValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (!valueNode.isNumber()) {
-      return;
+      return false;
     }
 
     final BigDecimal value = valueNode.decimalValue();
     final int compResult = value.compareTo(maximum);
     if (excludeEqual && compResult == 0) {
       results.add(MAXIMUM, EXCLUSIVE_ERR_MSG, value, maximum);
+      return false;
     } else if (compResult > 0) {
       results.add(MAXIMUM, ERR_MSG, value, maximum);
+      return false;
     }
+
+    return false;
   }
 
   public static JsonValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {

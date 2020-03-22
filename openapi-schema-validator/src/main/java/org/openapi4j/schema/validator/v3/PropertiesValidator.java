@@ -36,7 +36,7 @@ class PropertiesValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     validate(() -> {
       for (Map.Entry<String, SchemaValidator> entry : schemas.entrySet()) {
         SchemaValidator propertySchema = entry.getValue();
@@ -47,5 +47,7 @@ class PropertiesValidator extends BaseJsonValidator<OAI3> {
         }
       }
     });
+
+    return false;
   }
 }

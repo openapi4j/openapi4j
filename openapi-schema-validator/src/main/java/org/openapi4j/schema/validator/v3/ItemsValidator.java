@@ -30,9 +30,9 @@ class ItemsValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (!valueNode.isArray()) {
-      return;
+      return false;
     }
 
     validate(() -> {
@@ -40,5 +40,7 @@ class ItemsValidator extends BaseJsonValidator<OAI3> {
         schema.validateWithContext(itemNode, results);
       }
     });
+
+    return false;
   }
 }

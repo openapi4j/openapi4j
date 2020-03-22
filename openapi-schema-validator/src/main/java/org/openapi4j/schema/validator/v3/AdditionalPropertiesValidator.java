@@ -63,8 +63,8 @@ class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
-    if (Boolean.TRUE.equals(additionalPropertiesAllowed)) return;
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+    if (Boolean.TRUE.equals(additionalPropertiesAllowed)) return false;
 
     for (Iterator<String> it = valueNode.fieldNames(); it.hasNext(); ) {
       String fieldName = it.next();
@@ -77,6 +77,8 @@ class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
         }
       }
     }
+
+    return false;
   }
 
   private Set<String> setupAllowedProperties(JsonNode propertiesNode) {

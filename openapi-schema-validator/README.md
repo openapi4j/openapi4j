@@ -90,10 +90,19 @@ By implementing your own validation, you don't create a subset of the official O
 
 There's no overhead to use extensions, default validators are built directly with this process.
 
+### Chaining validators
+
+You can implicitly chain the validators for both extension types.
+
+`JsonValidator.validate` returns a boolean to allow breaking the chain if you need to: `false` to break, `true` to chain.
+Also, you can add multiple custom validators to the same keyword with the order you applied.
+
 ### Overriding a known keyword
 
 You can override a known keyword with your own validator.
 Look at the example to start linking a known keyword with your implementation.
+
+Note: default/core validators will always be the last validation entry if you've overridden the keyword.
 
 Feel free to contribute to those extensions if you think your implementation could help the community!
 There's no plan yet for releasing contributions on validation extensions, for now it's "only" for sharing.

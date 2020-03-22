@@ -2,7 +2,6 @@ package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3Context;
@@ -13,6 +12,7 @@ import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,7 +29,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   private static final JsonNode FALSE_NODE = JsonNodeFactory.instance.booleanNode(false);
 
   private final String propertyName;
-  private final Map<String, JsonValidator> validators;
+  private final Map<String, Collection<JsonValidator>> validators;
 
   /**
    * Create a new Schema Object validator.
@@ -103,12 +103,14 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
    * {@inheritDoc}
    */
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     try {
       validateWithContext(valueNode, results);
     } catch (ValidationException ignored) {
       // results are already populated
     }
+
+    return true;
   }
 
   final void validateWithContext(JsonNode valueNode, final ValidationResults results) throws ValidationException {
@@ -125,11 +127,17 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
 
   private void fastFailValidate(final JsonNode valueNode, final ValidationResults results) throws ValidationException {
     results.withCrumb(propertyName, () -> {
-      for (JsonValidator validator : validators.values()) {
-        validator.validate(valueNode, results);
+      for (Collection<JsonValidator> keywordValidators : validators.values()) {
+        for (JsonValidator validator : keywordValidators) {
+          boolean shouldChain = validator.validate(valueNode, results);
 
-        if (!results.isValid()) {
-          return;
+          if (!results.isValid()) {
+            return;
+          }
+
+          if (!shouldChain) {
+            break;
+          }
         }
       }
     });
@@ -141,8 +149,12 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
 
   private void defaultValidate(final JsonNode valueNode, final ValidationResults results) {
     results.withCrumb(propertyName, () -> {
-      for (JsonValidator validator : validators.values()) {
-        validator.validate(valueNode, results);
+      for (Collection<JsonValidator> keywordValidators : validators.values()) {
+        for (JsonValidator validator : keywordValidators) {
+          if (!validator.validate(valueNode, results)) {
+            break;
+          }
+        }
       }
     });
   }
@@ -150,17 +162,17 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   /**
    * Read the schema and create dedicated validators from keywords.
    */
-  private Map<String, JsonValidator> read(final ValidationContext<OAI3> context, final JsonNode schemaNode) {
-    Map<String, JsonValidator> validatorMap = new HashMap<>();
+  private Map<String, Collection<JsonValidator>> read(final ValidationContext<OAI3> context, final JsonNode schemaNode) {
+    Map<String, Collection<JsonValidator>> validatorMap = new HashMap<>();
 
     Iterator<String> fieldNames = schemaNode.fieldNames();
     while (fieldNames.hasNext()) {
       final String keyword = fieldNames.next();
       final JsonNode keywordSchemaNode = schemaNode.get(keyword);
 
-      JsonValidator validator = ValidatorsRegistry.instance().getValidator(context, keyword, keywordSchemaNode, schemaNode, this);
-      if (validator != null) {
-        validatorMap.put(keyword, validator);
+      Collection<JsonValidator> validators = ValidatorsRegistry.instance().getValidators(context, keyword, keywordSchemaNode, schemaNode, this);
+      if (validators != null) {
+        validatorMap.put(keyword, validators);
       }
     }
 
@@ -168,14 +180,14 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
     if (validatorMap.get(ADDITIONALPROPERTIES) == null && context.getOption(ADDITIONAL_PROPS_RESTRICT)) {
       validatorMap.put(
         ADDITIONALPROPERTIES,
-        ValidatorsRegistry.instance().getValidator(context, ADDITIONALPROPERTIES, FALSE_NODE, schemaNode, this));
+        ValidatorsRegistry.instance().getValidators(context, ADDITIONALPROPERTIES, FALSE_NODE, schemaNode, this));
     }
 
     // Setup default nullable schema to false
     // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaNullable
     validatorMap.computeIfAbsent(
       NULLABLE,
-      s -> ValidatorsRegistry.instance().getValidator(context, s, FALSE_NODE, schemaNode, this));
+      s -> ValidatorsRegistry.instance().getValidators(context, s, FALSE_NODE, schemaNode, this));
 
     return validatorMap;
   }
