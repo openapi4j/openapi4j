@@ -94,7 +94,8 @@ public class ValidationContext<O extends OAI> {
   }
 
   /**
-   * Add an additional validator as an override or a custom one.
+   * Add an additional validator as an override or a custom one for the given keyword.
+   * You can setup multiple validators for the same keyword (order matters).
    *
    * @param keyword                The keyword to match.
    * @param validatorInstantiation The instantiation to call when a validation should occur.
