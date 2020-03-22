@@ -37,9 +37,9 @@ class MaxLengthValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (maxLength == null || !valueNode.isTextual()) {
-      return;
+      return false;
     }
 
     String value = valueNode.textValue();
@@ -47,5 +47,7 @@ class MaxLengthValidator extends BaseJsonValidator<OAI3> {
     if (length > maxLength) {
       results.add(MAXLENGTH, ERR, maxLength, length);
     }
+
+    return false;
   }
 }

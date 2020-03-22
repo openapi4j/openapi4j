@@ -37,13 +37,15 @@ class MaxItemsValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (max == null || !valueNode.isArray()) {
-      return;
+      return false;
     }
 
     if (valueNode.size() > max) {
       results.add(MAXITEMS, ERR, max, valueNode.size());
     }
+
+    return false;
   }
 }

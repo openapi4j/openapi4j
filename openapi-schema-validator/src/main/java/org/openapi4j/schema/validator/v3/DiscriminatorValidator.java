@@ -53,7 +53,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (discriminatorNode != null) {
       if (ALLOF.equals(arrayType)) {
         validateAllOf(valueNode, results);
@@ -63,6 +63,8 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
     } else {
       validateWithoutDiscriminator(valueNode, results);
     }
+
+    return false;
   }
 
   private void validateAllOf(final JsonNode valueNode, final ValidationResults results) {

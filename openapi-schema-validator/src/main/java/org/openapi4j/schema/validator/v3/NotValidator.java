@@ -35,12 +35,14 @@ class NotValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     try {
       schema.validate(valueNode);
       results.add(NOT, ERR);
     } catch (ValidationException ex) {
       // Succeed case
     }
+
+    return false;
   }
 }

@@ -63,9 +63,9 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (format == null || valueNode.isNull()) {
-      return;
+      return false;
     }
 
     boolean validated;
@@ -122,5 +122,7 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
     if (!validated) {
       results.add(FORMAT, ERR, valueNode.asText(), format);
     }
+
+    return false;
   }
 }

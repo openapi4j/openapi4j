@@ -37,9 +37,9 @@ class MinLengthValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (minLength == null || !valueNode.isTextual()) {
-      return;
+      return false;
     }
 
     String value = valueNode.textValue();
@@ -47,5 +47,7 @@ class MinLengthValidator extends BaseJsonValidator<OAI3> {
     if (length < minLength) {
       results.add(MINLENGTH, ERR, minLength, length);
     }
+
+    return false;
   }
 }

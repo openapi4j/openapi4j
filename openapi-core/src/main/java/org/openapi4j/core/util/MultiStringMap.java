@@ -1,12 +1,6 @@
 package org.openapi4j.core.util;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Utility class to wrap a multivalued key.
@@ -17,11 +11,24 @@ import java.util.TreeMap;
 @SuppressWarnings("unused")
 public class MultiStringMap<V> {
   private final boolean caseSensitive;
+  private final boolean keepOrder;
   private final Map<String, Collection<V>> map;
 
   public MultiStringMap(boolean caseSensitive) {
+    this(caseSensitive, false);
+  }
+
+  public MultiStringMap(boolean caseSensitive, boolean keepOrder) {
     this.caseSensitive = caseSensitive;
-    map = caseSensitive ? new HashMap<>() : new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    this.keepOrder = keepOrder;
+
+    if (!caseSensitive) {
+      map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    } else if (keepOrder) {
+      map = new LinkedHashMap<>();
+    } else {
+      map = new HashMap<>();
+    }
   }
 
   /**
@@ -35,7 +42,7 @@ public class MultiStringMap<V> {
    * Add the given value with the given key in this map.
    */
   public void put(String key, V value) {
-    map.computeIfAbsent(key, k -> new HashSet<>()).add(value);
+    map.computeIfAbsent(key, k -> keepOrder ? new LinkedHashSet<>() : new HashSet<>()).add(value);
   }
 
   /**
@@ -51,7 +58,7 @@ public class MultiStringMap<V> {
    * Put all of the mappings from the given map to this map.
    */
   public void putAll(String key, Collection<V> values) {
-    map.computeIfAbsent(key, k -> new HashSet<>()).addAll(values);
+    map.computeIfAbsent(key, k -> keepOrder ? new LinkedHashSet<>() : new HashSet<>()).addAll(values);
   }
 
   /**

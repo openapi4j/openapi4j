@@ -64,7 +64,7 @@ class DependenciesValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     final Iterator<String> fieldNames = valueNode.fieldNames();
 
     validate(() -> {
@@ -79,6 +79,8 @@ class DependenciesValidator extends BaseJsonValidator<OAI3> {
         }
       }
     });
+
+    return false;
   }
 
   private void validateArray(final JsonNode valueNode,

@@ -42,19 +42,21 @@ class TypeValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     String valueType = getTypeFromValue(valueNode);
     if (!valueType.equals(type)) {
       if (TYPE_NUMBER.equals(type) && TYPE_INTEGER.equals(valueType)) {
         // number includes integer
         // https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11
-        return;
+        return false;
       }
 
       if (!TYPE_NULL.equals(valueType)) {
         results.add(TYPE, ERR, type, valueType);
       }
     }
+
+    return false;
   }
 
   private String getTypeFromValue(JsonNode valueNode) {

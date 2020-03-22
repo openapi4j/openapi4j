@@ -38,9 +38,9 @@ class PatternPropertiesValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (!valueNode.isObject()) {
-      return;
+      return false;
     }
 
     final Iterator<String> names = valueNode.fieldNames();
@@ -56,5 +56,7 @@ class PatternPropertiesValidator extends BaseJsonValidator<OAI3> {
         }
       }
     });
+
+    return false;
   }
 }

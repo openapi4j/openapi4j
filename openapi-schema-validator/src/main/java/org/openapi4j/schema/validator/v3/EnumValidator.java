@@ -38,16 +38,18 @@ class EnumValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (schemaNode.isArray()) {
       for (JsonNode enumNode : schemaNode) {
         if (enumNode.equals(NODE_COMPARATOR, valueNode)) {
-          return;
+          return false;
         }
       }
 
       results.add(ENUM, ERR, valueNode.asText());
     }
+
+    return false;
   }
 
   private static class NodeComparator implements Comparator<JsonNode> {

@@ -46,9 +46,9 @@ class MinimumValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (minimum == null || !valueNode.isNumber()) {
-      return;
+      return false;
     }
 
     final BigDecimal value = valueNode.decimalValue();
@@ -58,5 +58,7 @@ class MinimumValidator extends BaseJsonValidator<OAI3> {
     } else if (compResult < 0) {
       results.add(MINIMUM, ERR, minimum, value);
     }
+
+    return false;
   }
 }

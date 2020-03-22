@@ -18,10 +18,12 @@ public class MyEntityValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(JsonNode valueNode, ValidationResults results) {
+  public boolean validate(JsonNode valueNode, ValidationResults results) {
     if (!valueNode.isObject() || !valueNode.get("aString").equals(valueNode.get("bString"))) {
       results.add(ERR);
     }
+
+    return false;
   }
 
   public static JsonValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {

@@ -86,7 +86,9 @@ class ReferenceValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public void validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     schemaValidator.validate(valueNode, results);
+
+    return false;
   }
 }

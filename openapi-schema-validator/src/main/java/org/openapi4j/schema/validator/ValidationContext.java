@@ -2,6 +2,7 @@ package org.openapi4j.schema.validator;
 
 import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.model.OAIContext;
+import org.openapi4j.core.util.MultiStringMap;
 import org.openapi4j.schema.validator.v3.ValidatorInstance;
 
 import java.util.HashMap;
@@ -12,11 +13,12 @@ import java.util.Map;
  *
  * @param <O> The Open API version type.
  */
+@SuppressWarnings("UnusedReturnValue")
 public class ValidationContext<O extends OAI> {
   private final OAIContext context;
   private final Map<String, JsonValidator> visitedRefs = new HashMap<>();
   private final Map<Byte, Boolean> defaultOptions = new HashMap<>();
-  private final Map<String, ValidatorInstance> additionalValidators = new HashMap<>();
+  private final MultiStringMap<ValidatorInstance> additionalValidators = new MultiStringMap<>(true, true);
   private boolean isFastFail;
 
   public ValidationContext(OAIContext context) {
@@ -86,15 +88,14 @@ public class ValidationContext<O extends OAI> {
 
   /**
    * Get the additional validators associated to the context.
-   *
-   * @return this.
    */
-  public Map<String, ValidatorInstance> getValidators() {
+  public MultiStringMap<ValidatorInstance> getValidators() {
     return additionalValidators;
   }
 
   /**
-   * Add an additional validator as an override or a custom one.
+   * Add an additional validator as an override or a custom one for the given keyword.
+   * You can setup multiple validators for the same keyword (order matters).
    *
    * @param keyword                The keyword to match.
    * @param validatorInstantiation The instantiation to call when a validation should occur.
