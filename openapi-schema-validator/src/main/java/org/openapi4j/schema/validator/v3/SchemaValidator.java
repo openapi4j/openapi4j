@@ -170,9 +170,9 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
       final String keyword = fieldNames.next();
       final JsonNode keywordSchemaNode = schemaNode.get(keyword);
 
-      Collection<JsonValidator> validators = ValidatorsRegistry.instance().getValidators(context, keyword, keywordSchemaNode, schemaNode, this);
-      if (validators != null) {
-        validatorMap.put(keyword, validators);
+      Collection<JsonValidator> keywordValidators = ValidatorsRegistry.instance().getValidators(context, keyword, keywordSchemaNode, schemaNode, this);
+      if (keywordValidators != null) {
+        validatorMap.put(keyword, keywordValidators);
       }
     }
 
