@@ -1,14 +1,11 @@
 package org.openapi4j.core.validation;
 
-import org.graalvm.compiler.nodes.extended.ValueAnchorNode;
-
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.List;
 
 /**
