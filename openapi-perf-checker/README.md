@@ -55,6 +55,13 @@ Notes :
 | Swagger           | 2.0.18        | 325,65 ms     | 10            | excl.   |
 | OpenApi4j         | 0.7           | 461,44 ms     | 10            | excl.   |
 
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| Swagger           | 2.0.18        | 577,09 ms     | 1             | 1       |
+| OpenApi4j         | 0.8           | 280,38 ms     | 1             | 2,06    |
+| Swagger           | 2.0.18        | 352,14 ms     | 10            | excl.   |
+| OpenApi4j         | 0.8           | 515,18 ms     | 10            | excl.   |
+
 ## Schema reports
 
 Notes :
@@ -103,6 +110,13 @@ Notes :
 | Justify           | 1.1.0         | 1111,41 ms    | 1000          | 1       |
 | JsonTools         | 2.2.11        | 932,68 ms     | 100           | excl.   |
 
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| Networknt         | 1.0.29        | 566,10 ms     | 1000          | 2,82    |
+| OpenApi4j         | 0.8           | 243,39 ms     | 1000          | 6,56    |
+| Justify           | 1.1.0         | 1597,34 ms    | 1000          | 1       |
+| JsonTools         | 2.2.11        | 1515,00 ms    | 100           | excl.   |
+
 ## Operation reports
 * Replaying multiple times this process shows much shorter time values, but it's not the point here.
 We stick with the first showed values for version comparison.
@@ -146,6 +160,14 @@ We stick with the first showed values for version comparison.
 | form-data         | 0.7           | 1065,83 ms    | 10000         | excl.   |
 | multipart/mixed   | 0.7           | 629,08 ms     | 10000         | excl.   |
 | application/xml   | 0.7           | 636,69 ms     | 10000         | excl.   |
+
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| application/json  | 0.8           | 336,15 ms     | 10000         | excl.   |
+| form-urlencoded   | 0.8           | 445,58 ms     | 10000         | excl.   |
+| form-data         | 0.8           | 1409,93 ms    | 10000         | excl.   |
+| multipart/mixed   | 0.8           | 1047,05 ms    | 10000         | excl.   |
+| application/xml   | 0.8           | 909,57 ms     | 10000         | excl.   |
 
 ## Usage
 
