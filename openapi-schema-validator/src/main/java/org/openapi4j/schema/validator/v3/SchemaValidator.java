@@ -30,6 +30,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
 
   private final String propertyName;
   private final Map<String, Collection<JsonValidator>> validators;
+  private final boolean suppressCrumb;
 
   /**
    * Create a new Schema Object validator.
@@ -46,6 +47,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
     this.context = new ValidationContext<>(apiContext);
 
     this.propertyName = propertyName;
+    this.suppressCrumb = false;
     validators = read(this.context, schemaNode);
   }
 
@@ -62,7 +64,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
                          final String propertyName,
                          final JsonNode schemaNode) {
 
-    this(context, propertyName, schemaNode, null, null);
+    this(context, propertyName, schemaNode, null, null, false);
   }
 
   /**
@@ -80,11 +82,13 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
                          final String propertyName,
                          final JsonNode schemaNode,
                          final JsonNode schemaParentNode,
-                         final SchemaValidator parentSchema) {
+                         final SchemaValidator parentSchema,
+                         final boolean suppressCrumb) {
 
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     this.propertyName = propertyName;
+    this.suppressCrumb = suppressCrumb;
     validators = read(this.context, schemaNode);
   }
 
@@ -148,7 +152,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   }
 
   private void defaultValidate(final JsonNode valueNode, final ValidationResults results) {
-    results.withCrumb(propertyName, () -> {
+    results.withCrumb(suppressCrumb ? null : propertyName, () -> {
       for (Collection<JsonValidator> keywordValidators : validators.values()) {
         for (JsonValidator validator : keywordValidators) {
           if (!validator.validate(valueNode, results)) {

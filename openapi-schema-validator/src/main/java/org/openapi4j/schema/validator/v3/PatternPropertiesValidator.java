@@ -33,7 +33,7 @@ class PatternPropertiesValidator extends BaseJsonValidator<OAI3> {
     Iterator<String> names = schemaNode.fieldNames();
     while (names.hasNext()) {
       String name = names.next();
-      schemas.put(Pattern.compile(name), new SchemaValidator(context, name, schemaNode.get(name), schemaParentNode, parentSchema));
+      schemas.put(Pattern.compile(name), new SchemaValidator(context, name, schemaNode.get(name), schemaParentNode, parentSchema, false));
     }
   }
 

@@ -6,6 +6,7 @@ import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
+import org.openapi4j.core.validation.ValidationSeverity;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ONEOF;
@@ -38,12 +39,18 @@ class OneOfValidator extends DiscriminatorValidator {
   void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
     final int schemasSize = schemas.size();
     int nbSchemasOnError = 0;
+    // Copy crumbs from current result set
+    ValidationResults tmpResults = new ValidationResults(results, false, false);
 
     for (SchemaValidator schema : schemas) {
-      try {
-        schema.validate(valueNode);
-      } catch (ValidationException ex) {
+      schema.validate(valueNode, tmpResults);
+      if (!tmpResults.isValid()) {
         nbSchemasOnError++;
+        if ((schemasSize - nbSchemasOnError) > 1) {
+          results.add(ONEOF, MANY_VALID_SCHEMA_ERR);
+          // Early exit, no need to continue with others.
+          return;
+        }
       }
     }
 
@@ -51,6 +58,8 @@ class OneOfValidator extends DiscriminatorValidator {
       results.add(ONEOF, NO_VALID_SCHEMA_ERR);
     } else if ((schemasSize - nbSchemasOnError) > 1) {
       results.add(ONEOF, MANY_VALID_SCHEMA_ERR);
+    } else {
+      results.add(tmpResults);
     }
   }
 }

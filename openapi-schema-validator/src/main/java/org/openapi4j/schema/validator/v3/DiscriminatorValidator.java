@@ -158,7 +158,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
     // Add default schemas
     int size = schemaNode.size();
     for (int i = 0; i < size; i++) {
-      schemas.add(new SchemaValidator(context, arrayType, schemaNode.get(i), schemaParentNode, parentSchema));
+      schemas.add(new SchemaValidator(context, arrayType, schemaNode.get(i), schemaParentNode, parentSchema, true));
     }
   }
 
@@ -171,7 +171,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
 
     int size = schemaNode.size();
     for (int i = 0; i < size; i++) {
-      schemas.add(new SchemaValidator(context, arrayType, schemaNode.get(i), schemaParentNode, parentSchema));
+      schemas.add(new SchemaValidator(context, arrayType, schemaNode.get(i), schemaParentNode, parentSchema, true));
     }
   }
 
@@ -187,10 +187,10 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
       JsonNode refValueNode = node.get(OAI3SchemaKeywords.$REF);
       if (refNode.equals(refValueNode)) {
         // Add the parent schema
-        schemas.add(new SchemaValidator(context, reference.getRef(), reference.getContent(), schemaParentNode, parentSchema));
+        schemas.add(new SchemaValidator(context, reference.getRef(), reference.getContent(), schemaParentNode, parentSchema, true));
       } else {
         // Add the other items
-        schemas.add(new SchemaValidator(context, arrayType, node, schemaParentNode, parentSchema));
+        schemas.add(new SchemaValidator(context, arrayType, node, schemaParentNode, parentSchema, true));
       }
     }
   }

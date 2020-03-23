@@ -6,6 +6,7 @@ import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
+import org.openapi4j.core.validation.ValidationSeverity;
 import org.openapi4j.schema.validator.ValidationContext;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ANYOF;
@@ -31,12 +32,12 @@ class AnyOfValidator extends DiscriminatorValidator {
 
   @Override
   void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
+    ValidationResults tmpResults = new ValidationResults(results, false, false);
     for (SchemaValidator schema : schemas) {
-      try {
-        schema.validate(valueNode);
+      schema.validate(valueNode, tmpResults);
+      if (tmpResults.isValid()) {
+        results.add(tmpResults);
         return;
-      } catch (ValidationException ex) {
-        // Don't populate from sub validation
       }
     }
 

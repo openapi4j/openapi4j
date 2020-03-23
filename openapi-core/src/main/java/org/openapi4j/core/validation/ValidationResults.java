@@ -1,11 +1,14 @@
 package org.openapi4j.core.validation;
 
+import org.graalvm.compiler.nodes.extended.ValueAnchorNode;
+
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -20,11 +23,32 @@ public class ValidationResults implements Serializable {
   private static final String INFO_TITLE = "Validation info(s) :" + LINE_SEPARATOR;
 
   // The validation items
-  private final List<ValidationItem> items = new ArrayList<>();
+  private final List<ValidationItem> items;
   // The breadcrumb
-  private final Deque<String> crumbs = new ArrayDeque<>();
+  private final Deque<String> crumbs;
   // The current validation severity
-  private ValidationSeverity validationSeverity = ValidationSeverity.NONE;
+  private ValidationSeverity validationSeverity;
+
+  public ValidationResults() {
+    this.crumbs = new ArrayDeque<>();
+    this.items = new ArrayList<>();
+    this.validationSeverity = ValidationSeverity.NONE;
+  }
+
+  public ValidationResults(ValidationResults results,
+                           boolean itemsCopy, boolean severityCopy) {
+    this.crumbs = new ArrayDeque<>(results.crumbs);
+    if (itemsCopy) {
+      this.items = new ArrayList<>(results.items);
+    } else {
+      this.items = new ArrayList<>();
+    }
+    if (severityCopy) {
+      this.validationSeverity = results.validationSeverity;
+    } else {
+      this.validationSeverity = ValidationSeverity.NONE;
+    }
+  }
 
   /**
    * Add a result.

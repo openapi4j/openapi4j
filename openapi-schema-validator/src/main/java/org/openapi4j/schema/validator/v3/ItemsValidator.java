@@ -26,7 +26,7 @@ class ItemsValidator extends BaseJsonValidator<OAI3> {
   private ItemsValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    schema = new SchemaValidator(context, ITEMS, schemaNode, schemaParentNode, parentSchema);
+    schema = new SchemaValidator(context, ITEMS, schemaNode, schemaParentNode, parentSchema, false);
   }
 
   @Override
