@@ -32,8 +32,8 @@ class AnyOfValidator extends DiscriminatorValidator {
 
   @Override
   void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
-    ValidationResults tmpResults = new ValidationResults(results, false, false);
     for (SchemaValidator schema : schemas) {
+      ValidationResults tmpResults = new ValidationResults(results, false, false);
       schema.validate(valueNode, tmpResults);
       if (tmpResults.isValid()) {
         results.add(tmpResults);

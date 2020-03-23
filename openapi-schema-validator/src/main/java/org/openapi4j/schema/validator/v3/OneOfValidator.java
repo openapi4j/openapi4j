@@ -40,17 +40,21 @@ class OneOfValidator extends DiscriminatorValidator {
     final int schemasSize = schemas.size();
     int nbSchemasOnError = 0;
     // Copy crumbs from current result set
-    ValidationResults tmpResults = new ValidationResults(results, false, false);
+    ValidationResults validResults = null;
 
     for (SchemaValidator schema : schemas) {
+      ValidationResults tmpResults = new ValidationResults(results, false, false);
       schema.validate(valueNode, tmpResults);
       if (!tmpResults.isValid()) {
         nbSchemasOnError++;
-        if ((schemasSize - nbSchemasOnError) > 1) {
+      }
+      else {
+        if (validResults != null) {
+          // Encountered another valid schema - can early exit with error.
           results.add(ONEOF, MANY_VALID_SCHEMA_ERR);
-          // Early exit, no need to continue with others.
           return;
         }
+        validResults = tmpResults;
       }
     }
 
@@ -58,8 +62,8 @@ class OneOfValidator extends DiscriminatorValidator {
       results.add(ONEOF, NO_VALID_SCHEMA_ERR);
     } else if ((schemasSize - nbSchemasOnError) > 1) {
       results.add(ONEOF, MANY_VALID_SCHEMA_ERR);
-    } else {
-      results.add(tmpResults);
+    } else if (validResults != null){
+      results.add(validResults);
     }
   }
 }
