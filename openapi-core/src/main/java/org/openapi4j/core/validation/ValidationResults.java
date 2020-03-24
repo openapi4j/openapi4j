@@ -1,12 +1,7 @@
 package org.openapi4j.core.validation;
 
 import java.io.Serializable;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 /**
  * Representation of results from a validation process.
@@ -15,14 +10,20 @@ public class ValidationResults implements Serializable {
   private static final long serialVersionUID = 1905122041950251284L;
 
   private static final String LINE_SEPARATOR = String.format("%n");
+  private static final String CODE_START_LBL = " (code: ";
+  private static final String CODE_END_LBL = ")";
+  private static final String FROM = "From: ";
+
   private static final String ERROR_TITLE = "Validation error(s) :" + LINE_SEPARATOR;
   private static final String WARNING_TITLE = "Validation warning(s) :" + LINE_SEPARATOR;
   private static final String INFO_TITLE = "Validation info(s) :" + LINE_SEPARATOR;
 
   // The validation items
   private final List<ValidationItem> items = new ArrayList<>();
-  // The breadcrumb
-  private final Deque<String> crumbs = new ArrayDeque<>();
+  // The data breadcrumb
+  private final Deque<String> dataCrumbs = new ArrayDeque<>();
+  // The schema breadcrumb
+  private final Deque<String> schemaCrumbs = new ArrayDeque<>();
   // The current validation severity
   private ValidationSeverity validationSeverity = ValidationSeverity.NONE;
 
@@ -33,7 +34,7 @@ public class ValidationResults implements Serializable {
    * @param msgArgs          message arguments to get formatted message.
    */
   public void add(ValidationResult validationResult, Object... msgArgs) {
-    items.add(new ValidationItem(validationResult, crumbs, msgArgs));
+    items.add(new ValidationItem(validationResult, schemaCrumbs, dataCrumbs, msgArgs));
     if (validationResult.severity().getValue() > validationSeverity.getValue()) {
       validationSeverity = validationResult.severity();
     }
@@ -47,7 +48,7 @@ public class ValidationResults implements Serializable {
    * @param msgArgs          message arguments to get formatted message.
    */
   public void add(String crumb, ValidationResult validationResult, Object... msgArgs) {
-    items.add(new ValidationItem(validationResult, crumbs, crumb, msgArgs));
+    items.add(new ValidationItem(validationResult, schemaCrumbs, dataCrumbs, crumb, msgArgs));
     if (validationResult.severity().getValue() > validationSeverity.getValue()) {
       validationSeverity = validationResult.severity();
     }
@@ -86,14 +87,20 @@ public class ValidationResults implements Serializable {
   /**
    * Append a crumb to the current and trigger the runnable code with this new context.
    *
-   * @param crumb The crumb to append.
-   * @param code  The code to run with the appended crumb.
+   * @param crumb           The crumb to append.
+   * @param isSchemaKeyword Flag to know if this crumb should be appended to the current queue.
+   * @param code            The code to run with the appended crumb.
    */
-  public void withCrumb(String crumb, Runnable code) {
+  public void withCrumb(String crumb, boolean isSchemaKeyword, Runnable code) {
     boolean append = false;
 
     if (crumb != null) {
-      crumbs.addLast(crumb);
+      schemaCrumbs.addLast(crumb);
+
+      if (!isSchemaKeyword) {
+        dataCrumbs.addLast(crumb);
+      }
+
       append = true;
     }
 
@@ -101,7 +108,11 @@ public class ValidationResults implements Serializable {
       code.run();
     } finally {
       if (append) {
-        crumbs.pollLast();
+        schemaCrumbs.pollLast();
+
+        if (!isSchemaKeyword) {
+          dataCrumbs.pollLast();
+        }
       }
     }
   }
@@ -169,47 +180,69 @@ public class ValidationResults implements Serializable {
     private static final String DOT = ".";
     private static final String SEMI_COLON = " : ";
 
-    private final String crumbs;
+    private final String dataCrumbs;
+    private final String schemaCrumbs;
 
-    ValidationItem(ValidationResult result, Collection<String> crumbs, Object... msgArgs) {
-      this(result, crumbs, null, msgArgs);
+    ValidationItem(ValidationResult result, Collection<String> schemaCrumbs, Collection<String> dataCrumbs, Object... msgArgs) {
+      this(result, schemaCrumbs, dataCrumbs, null, msgArgs);
     }
 
-    ValidationItem(ValidationResult result, Collection<String> crumbs, String crumb, Object... msgArgs) {
+    ValidationItem(ValidationResult result, Collection<String> schemaCrumbs, Collection<String> dataCrumbs, String crumb, Object... msgArgs) {
       super(
         result.severity(),
         result.code(),
         (msgArgs != null) ? String.format(result.message(), msgArgs) : result.message());
 
-      this.crumbs = joinCrumbs(crumbs, crumb);
+      this.schemaCrumbs = joinCrumbs(schemaCrumbs, crumb);
+      this.dataCrumbs = joinCrumbs(dataCrumbs, null);
     }
 
-    public String crumbs() {
-      return crumbs;
+    /**
+     * Get data path.
+     * Note that array indexes are not part of this path.
+     *
+     * @return The data path.
+     */
+    public String dataCrumbs() {
+      return dataCrumbs;
+    }
+
+    /**
+     * Get schema path definition.
+     *
+     * @return The schema path.
+     */
+    public String schemaCrumbs() {
+      return schemaCrumbs;
     }
 
     @Override
     public String toString() {
       StringBuilder strBuilder = new StringBuilder();
 
-      if (!crumbs.isEmpty()) {
-        strBuilder.append(crumbs).append(SEMI_COLON);
+      if (!dataCrumbs().isEmpty()) {
+        strBuilder.append(dataCrumbs()).append(SEMI_COLON);
       }
 
       strBuilder.append(message());
-      strBuilder.append(" (code: ").append(code()).append(")");
+      strBuilder.append(CODE_START_LBL).append(code()).append(CODE_END_LBL);
+      strBuilder.append(LINE_SEPARATOR).append(FROM).append(schemaCrumbs());
 
       return strBuilder.toString();
     }
 
     private String joinCrumbs(Collection<String> crumbs, String additionalCrumb) {
-      String result = String.join(DOT, crumbs);
+      StringJoiner joiner = new StringJoiner(DOT);
 
-      if (additionalCrumb != null) {
-        return result.length() != 0 ? result + DOT + additionalCrumb : additionalCrumb;
+      for (String crumb : crumbs) {
+        joiner.add(crumb);
       }
 
-      return result;
+      if (additionalCrumb != null) {
+        joiner.add(additionalCrumb);
+      }
+
+      return joiner.toString();
     }
   }
 }

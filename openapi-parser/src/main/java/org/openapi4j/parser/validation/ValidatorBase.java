@@ -60,7 +60,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
                                    final String crumb,
                                    final Validator<O, V> validator) {
 
-    results.withCrumb(crumb, () -> {
+    results.withCrumb(crumb, false, () -> {
       if (validateRequired(value, results, required, crumb)) {
         validate(context, api, value, results, crumb, validator);
       }
@@ -75,7 +75,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
                                   final String crumb,
                                   final Validator<O, V> validator) {
 
-    results.withCrumb(crumb, () -> {
+    results.withCrumb(crumb, false, () -> {
       if (validateRequired(value, results, required, crumb)) {
         Set<? extends V> set = new HashSet<>(value);
         if (set.size() != value.size()) {
@@ -176,10 +176,10 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
                                  final Pattern pattern,
                                  final Validator<O, V> validator) {
 
-    results.withCrumb(crumb, () -> {
+    results.withCrumb(crumb, false, () -> {
       if (validateRequired(value, results, required, crumb)) {
         for (final Map.Entry<String, ? extends V> entry : value.entrySet()) {
-          results.withCrumb(entry.getKey(), () -> {
+          results.withCrumb(entry.getKey(), false, () -> {
             checkKey(entry.getKey(), pattern, results);
             validate(context, api, entry.getValue(), results, crumb, validator);
           });

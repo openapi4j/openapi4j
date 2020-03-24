@@ -74,6 +74,7 @@ class OperationValidator extends Validator3Base<OpenApi3, Operation> {
         for (Map.Entry<String, Link> entry : response.getLinks().entrySet()) {
           results.withCrumb(
             LINKS + "." + entry.getKey(),
+            false,
             () -> LinkValidator.instance().validateWithOperation(api, operation, entry.getValue(), results));
         }
       }

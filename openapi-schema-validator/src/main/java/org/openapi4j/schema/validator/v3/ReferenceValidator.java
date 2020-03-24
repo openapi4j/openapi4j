@@ -52,7 +52,7 @@ class ReferenceValidator extends BaseJsonValidator<OAI3> {
       JsonValidator validator = context.getReference(refValue);
       if (validator == null) {
         ReferenceValidator refValidator = new ReferenceValidator(context, refValue, schemaNode, schemaParentNode, parentSchema);
-        refValidator.setSchemaValidator(new SchemaValidator(context, refValue, reference.getContent(), schemaParentNode, parentSchema));
+        refValidator.setSchemaValidator(new SchemaValidator(context, refValue, reference.getContent(), schemaParentNode, parentSchema, true));
         schemaValidator = refValidator;
       } else {
         schemaValidator = validator;

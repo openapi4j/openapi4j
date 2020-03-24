@@ -62,12 +62,23 @@ Also, a code is assigned to each type of result to ease lookups.
 
 Here's few outputs of `ValidationResults` object :
 ```
-my_schema.#/components/schemas/Lizard.discriminator : Property name in content 'petType' is not set. (code: 1005)
-my_schema.foo.schema.additionalProperties : Additional property 'bar' is not allowed. (code: 1000)
-my_schema./#/definitions/c./#/definitions/b./#/definitions/a.type : Type expected 'integer', found 'string'. (code: 1027)
-my_schema.$ref.type : Type expected 'string', found 'integer'. (code: 1027)
-my_schema.maximum : Excluded maximum is '3.0', found '3.0'. (code: 1009)
-my_schema.uniqueItems : Uniqueness is not respected 'bar'. (code: 1028)
+foo: Additional property 'bar' is not allowed. (code: 1000)
+From: foo.additionalProperties
+
+foo : Type expected 'integer', found 'string'. (code: 1027)
+From: foo./#/definitions/c./#/definitions/b./#/definitions/a.type
+
+foo : Type expected 'string', found 'integer'. (code: 1027)
+From: allOf.foo.items.type
+
+foo: Excluded maximum is '3.0', found '3.0'. (code: 1009)
+From: foo.maximum
+
+Field 'foo' is required. (code: 1026)
+From: allOf.required
+
+foo : Value 'bar' is not defined in the schema. (code: 1006)
+From: allOf.foo.enum
 ```
 
 ## Extensions

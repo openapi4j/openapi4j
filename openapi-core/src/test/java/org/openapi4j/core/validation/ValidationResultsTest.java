@@ -32,12 +32,12 @@ public class ValidationResultsTest {
   public void withCrumb() throws Exception {
     ValidationResults results = new ValidationResults();
     CountDownLatch latch = new CountDownLatch(1);
-    results.withCrumb("crumb", latch::countDown);
+    results.withCrumb("crumb", false, latch::countDown);
     latch.await(2, TimeUnit.SECONDS);
     assertEquals(0, results.size());
 
     latch = new CountDownLatch(1);
-    results.withCrumb(null, latch::countDown);
+    results.withCrumb(null, false, latch::countDown);
     latch.await(2, TimeUnit.SECONDS);
   }
 
@@ -51,7 +51,7 @@ public class ValidationResultsTest {
 
     assertEquals("msg2", results.getItems().iterator().next().message());
     assertEquals(ValidationSeverity.WARNING, results.getItems().iterator().next().severity());
-    assertEquals("crumb", results.getItems().iterator().next().crumbs());
+    assertEquals("crumb", results.getItems().iterator().next().schemaCrumbs());
   }
 
   @Test

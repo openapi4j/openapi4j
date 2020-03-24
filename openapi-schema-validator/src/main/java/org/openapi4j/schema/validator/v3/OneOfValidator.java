@@ -1,9 +1,7 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
-import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -38,12 +36,16 @@ class OneOfValidator extends DiscriminatorValidator {
   void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
     final int schemasSize = schemas.size();
     int nbSchemasOnError = 0;
+    ValidationResults oneOfValidResults = null;
 
     for (SchemaValidator schema : schemas) {
-      try {
-        schema.validate(valueNode);
-      } catch (ValidationException ex) {
+      ValidationResults oneOfResults = new ValidationResults();
+      schema.validate(valueNode, oneOfResults);
+
+      if (!oneOfResults.isValid()) {
         nbSchemasOnError++;
+      } else {
+        oneOfValidResults = oneOfResults;
       }
     }
 
@@ -51,6 +53,9 @@ class OneOfValidator extends DiscriminatorValidator {
       results.add(ONEOF, NO_VALID_SCHEMA_ERR);
     } else if ((schemasSize - nbSchemasOnError) > 1) {
       results.add(ONEOF, MANY_VALID_SCHEMA_ERR);
+    } else if (oneOfValidResults != null) {
+      // Append potential results from sub validation (INFO / WARN)
+      results.add(oneOfValidResults);
     }
   }
 }

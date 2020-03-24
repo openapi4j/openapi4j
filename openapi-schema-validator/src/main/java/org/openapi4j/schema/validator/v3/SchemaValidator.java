@@ -30,6 +30,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
 
   private final String propertyName;
   private final Map<String, Collection<JsonValidator>> validators;
+  private final boolean isSchemaKeyword;
 
   /**
    * Create a new Schema Object validator.
@@ -42,7 +43,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   public SchemaValidator(final String propertyName, final JsonNode schemaNode) throws ResolutionException {
     this(
       new ValidationContext<>(new OAI3Context(URI.create("/"), schemaNode)),
-      propertyName, schemaNode, null, null);
+      propertyName, schemaNode, null, null, false);
   }
 
   /**
@@ -58,7 +59,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
                          final String propertyName,
                          final JsonNode schemaNode) {
 
-    this(context, propertyName, schemaNode, null, null);
+    this(context, propertyName, schemaNode, null, null, false);
   }
 
   /**
@@ -72,14 +73,16 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
    * @param schemaParentNode The tree node of the parent schema.
    * @param parentSchema     The parent schema model.
    */
-  public SchemaValidator(final ValidationContext<OAI3> context,
-                         final String propertyName,
-                         final JsonNode schemaNode,
-                         final JsonNode schemaParentNode,
-                         final SchemaValidator parentSchema) {
+  SchemaValidator(final ValidationContext<OAI3> context,
+                  final String propertyName,
+                  final JsonNode schemaNode,
+                  final JsonNode schemaParentNode,
+                  final SchemaValidator parentSchema,
+                  final boolean isSchemaKeyword) {
 
     super(context, schemaNode, schemaParentNode, parentSchema);
 
+    this.isSchemaKeyword = isSchemaKeyword;
     this.propertyName = propertyName;
     validators = read(this.context, schemaNode);
   }
@@ -122,7 +125,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   }
 
   private void fastFailValidate(final JsonNode valueNode, final ValidationResults results) throws ValidationException {
-    results.withCrumb(propertyName, () -> {
+    results.withCrumb(propertyName, isSchemaKeyword, () -> {
       for (Collection<JsonValidator> keywordValidators : validators.values()) {
         for (JsonValidator validator : keywordValidators) {
           boolean shouldChain = validator.validate(valueNode, results);
@@ -144,7 +147,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   }
 
   private void defaultValidate(final JsonNode valueNode, final ValidationResults results) {
-    results.withCrumb(propertyName, () -> {
+    results.withCrumb(propertyName, isSchemaKeyword, () -> {
       for (Collection<JsonValidator> keywordValidators : validators.values()) {
         for (JsonValidator validator : keywordValidators) {
           if (!validator.validate(valueNode, results)) {

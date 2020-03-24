@@ -46,7 +46,7 @@ class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
       additionalPropertiesSchema = null;
     } else /*if (schemaNode.isObject())*/ {
       additionalPropertiesAllowed = false;
-      additionalPropertiesSchema = new SchemaValidator(context, ADDITIONALPROPERTIES, schemaNode, schemaParentNode, parentSchema);
+      additionalPropertiesSchema = new SchemaValidator(context, ADDITIONALPROPERTIES, schemaNode, schemaParentNode, parentSchema, true);
     }
 
     if (Boolean.TRUE.equals(additionalPropertiesAllowed)) {

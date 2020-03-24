@@ -31,7 +31,7 @@ class PropertiesValidator extends BaseJsonValidator<OAI3> {
     schemas = new HashMap<>();
     for (Iterator<String> it = schemaNode.fieldNames(); it.hasNext(); ) {
       String pname = it.next();
-      schemas.put(pname, new SchemaValidator(context, pname, schemaNode.get(pname), schemaParentNode, parentSchema));
+      schemas.put(pname, new SchemaValidator(context, pname, schemaNode.get(pname), schemaParentNode, parentSchema, false));
     }
   }
 

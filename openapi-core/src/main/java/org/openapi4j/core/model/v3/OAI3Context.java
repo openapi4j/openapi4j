@@ -1,7 +1,6 @@
 package org.openapi4j.core.model.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.AuthOption;
 import org.openapi4j.core.model.OAIContext;
@@ -30,7 +29,7 @@ public class OAI3Context implements OAIContext {
    * Creates a context from the given uri.
    *
    * @param baseUri The given uri.
-   * @throws ResolutionException
+   * @throws ResolutionException In case of missing or wrong reference during discovery process.
    */
   public OAI3Context(URI baseUri) throws ResolutionException {
     this(baseUri, null, null);
@@ -41,7 +40,7 @@ public class OAI3Context implements OAIContext {
    *
    * @param baseUri     The given uri.
    * @param authOptions The authentication values.
-   * @throws ResolutionException
+   * @throws ResolutionException In case of missing or wrong reference during discovery process.
    */
   public OAI3Context(URI baseUri, List<AuthOption> authOptions) throws ResolutionException {
     this(baseUri, authOptions, null);
@@ -50,9 +49,9 @@ public class OAI3Context implements OAIContext {
   /**
    * Creates a context from the given uri.
    *
-   * @param baseUri The given uri.
+   * @param baseUri      The given uri.
    * @param baseDocument The tree node representing the Open API schema.
-   * @throws ResolutionException
+   * @throws ResolutionException In case of missing or wrong reference during discovery process.
    */
   public OAI3Context(URI baseUri, JsonNode baseDocument) throws ResolutionException {
     this(baseUri, null, baseDocument);
@@ -61,10 +60,10 @@ public class OAI3Context implements OAIContext {
   /**
    * Creates a context from the given uri.
    *
-   * @param baseUri     The given uri.
-   * @param authOptions The authentication values.
-   * @param baseDocument     The tree node representing the Open API schema.
-   * @throws ResolutionException
+   * @param baseUri      The given uri.
+   * @param authOptions  The authentication values.
+   * @param baseDocument The tree node representing the Open API schema.
+   * @throws ResolutionException In case of missing or wrong reference during discovery process.
    */
   public OAI3Context(URI baseUri, List<AuthOption> authOptions, JsonNode baseDocument) throws ResolutionException {
     this.baseUri = baseUri;
