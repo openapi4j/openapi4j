@@ -33,20 +33,16 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
 
   /**
    * Create a new Schema Object validator.
-   * A new context will be created.
+   * A new context will be created with '/' as base URI.
    *
    * @param propertyName The property or root name of the schema.
    * @param schemaNode   The schema specification.
    * @throws ResolutionException for wrong references.
    */
   public SchemaValidator(final String propertyName, final JsonNode schemaNode) throws ResolutionException {
-    super(null, schemaNode, null, null);
-
-    OAI3Context apiContext = new OAI3Context(URI.create("/"), schemaNode);
-    this.context = new ValidationContext<>(apiContext);
-
-    this.propertyName = propertyName;
-    validators = read(this.context, schemaNode);
+    this(
+      new ValidationContext<>(new OAI3Context(URI.create("/"), schemaNode)),
+      propertyName, schemaNode, null, null);
   }
 
   /**

@@ -17,7 +17,7 @@ public abstract class BaseJsonValidator<O extends OAI> implements JsonValidator 
   private final JsonNode schemaNode;
   private final JsonNode schemaParentNode;
   private final SchemaValidator parentSchema;
-  protected ValidationContext<O> context;
+  protected final ValidationContext<O> context;
 
   // Empty constructor to enforce the signature of validators
   public BaseJsonValidator(final ValidationContext<O> context,
