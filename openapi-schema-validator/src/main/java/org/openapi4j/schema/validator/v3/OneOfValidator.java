@@ -20,6 +20,8 @@ class OneOfValidator extends DiscriminatorValidator {
   private static final ValidationResult NO_VALID_SCHEMA_ERR = new ValidationResult(ERROR, 1022, "No valid schema.");
   private static final ValidationResult MANY_VALID_SCHEMA_ERR = new ValidationResult(ERROR, 1023, "More than 1 schema is valid.");
 
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ONEOF, true);
+
   static OneOfValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new OneOfValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
@@ -42,7 +44,7 @@ class OneOfValidator extends DiscriminatorValidator {
 
       if (oneOfResults.isValid()) {
         if (oneOfValidResults != null) {
-          results.add(ONEOF, MANY_VALID_SCHEMA_ERR);
+          results.add(CRUMB_INFO, MANY_VALID_SCHEMA_ERR);
           return;
         } else {
           oneOfValidResults = oneOfResults;
@@ -54,7 +56,7 @@ class OneOfValidator extends DiscriminatorValidator {
       // Append potential results from sub validation (INFO / WARN)
       results.add(oneOfValidResults);
     } else {
-      results.add(ONEOF, NO_VALID_SCHEMA_ERR);
+      results.add(CRUMB_INFO, NO_VALID_SCHEMA_ERR);
     }
   }
 }

@@ -28,9 +28,8 @@ import static org.openapi4j.schema.validator.v3.ValidationOptions.ADDITIONAL_PRO
 public class SchemaValidator extends BaseJsonValidator<OAI3> {
   private static final JsonNode FALSE_NODE = JsonNodeFactory.instance.booleanNode(false);
 
-  private final String propertyName;
+  private final ValidationResults.CrumbInfo crumbInfo;
   private final Map<String, Collection<JsonValidator>> validators;
-  private final boolean isSchemaKeyword;
 
   /**
    * Create a new Schema Object validator.
@@ -43,7 +42,8 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   public SchemaValidator(final String propertyName, final JsonNode schemaNode) throws ResolutionException {
     this(
       new ValidationContext<>(new OAI3Context(URI.create("/"), schemaNode)),
-      propertyName, schemaNode, null, null, false);
+      new ValidationResults.CrumbInfo(propertyName, false),
+      schemaNode, null, null);
   }
 
   /**
@@ -59,7 +59,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
                          final String propertyName,
                          final JsonNode schemaNode) {
 
-    this(context, propertyName, schemaNode, null, null, false);
+    this(context, new ValidationResults.CrumbInfo(propertyName, false), schemaNode, null, null);
   }
 
   /**
@@ -68,22 +68,20 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
    * as references are searched with absolute values.
    *
    * @param context          The context to use for validation.
-   * @param propertyName     The property or root name of the schema.
+   * @param crumbInfo        The property or root name of the schema.
    * @param schemaNode       The schema specification.
    * @param schemaParentNode The tree node of the parent schema.
    * @param parentSchema     The parent schema model.
    */
   SchemaValidator(final ValidationContext<OAI3> context,
-                  final String propertyName,
+                  final ValidationResults.CrumbInfo crumbInfo,
                   final JsonNode schemaNode,
                   final JsonNode schemaParentNode,
-                  final SchemaValidator parentSchema,
-                  final boolean isSchemaKeyword) {
+                  final SchemaValidator parentSchema) {
 
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    this.isSchemaKeyword = isSchemaKeyword;
-    this.propertyName = propertyName;
+    this.crumbInfo = crumbInfo;
     validators = read(this.context, schemaNode);
   }
 
@@ -125,7 +123,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   }
 
   private void fastFailValidate(final JsonNode valueNode, final ValidationResults results) throws ValidationException {
-    results.withCrumb(propertyName, isSchemaKeyword, () -> {
+    results.withCrumb(crumbInfo, () -> {
       for (Collection<JsonValidator> keywordValidators : validators.values()) {
         for (JsonValidator validator : keywordValidators) {
           boolean shouldChain = validator.validate(valueNode, results);
@@ -147,7 +145,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   }
 
   private void defaultValidate(final JsonNode valueNode, final ValidationResults results) {
-    results.withCrumb(propertyName, isSchemaKeyword, () -> {
+    results.withCrumb(crumbInfo, () -> {
       for (Collection<JsonValidator> keywordValidators : validators.values()) {
         for (JsonValidator validator : keywordValidators) {
           if (!validator.validate(valueNode, results)) {

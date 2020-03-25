@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -23,6 +22,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  */
 class RequiredValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1026, "Field '%s' is required.");
+
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(REQUIRED, true);
 
   private final List<String> fieldNames;
 
@@ -50,7 +51,7 @@ class RequiredValidator extends BaseJsonValidator<OAI3> {
 
     for (String fieldName : fieldNames) {
       if (null == valueNode.get(fieldName)) {
-        results.add(REQUIRED, ERR, fieldName);
+        results.add(CRUMB_INFO, ERR, fieldName);
       }
     }
 

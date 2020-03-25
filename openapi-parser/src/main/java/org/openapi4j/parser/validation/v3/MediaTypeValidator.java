@@ -13,9 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.ENCODING;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCHEMA;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class MediaTypeValidator extends Validator3Base<OpenApi3, MediaType> {
   private static final ValidationResult ENCODING_MISMATCH = new ValidationResult(ERROR, 119, "Encoding property '%s' is not a corresponding schema property");
@@ -33,9 +31,9 @@ class MediaTypeValidator extends Validator3Base<OpenApi3, MediaType> {
   public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, MediaType mediaType, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // example, examples
-    validateMap(context, api, mediaType.getEncodings(), results, false, ENCODING, Regexes.NOEXT_NAME_REGEX, EncodingPropertyValidator.instance());
-    validateMap(context, api, mediaType.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
-    validateField(context, api, mediaType.getSchema(), results, false, SCHEMA, SchemaValidator.instance());
+    validateMap(context, api, mediaType.getEncodings(), results, false, CRUMB_ENCODING, Regexes.NOEXT_NAME_REGEX, EncodingPropertyValidator.instance());
+    validateMap(context, api, mediaType.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
+    validateField(context, api, mediaType.getSchema(), results, false, CRUMB_SCHEMA, SchemaValidator.instance());
     checkEncodingProperties(mediaType, results);
   }
 
@@ -52,7 +50,7 @@ class MediaTypeValidator extends Validator3Base<OpenApi3, MediaType> {
       Set<String> propNames = schemaProps.keySet();
       for (String encodingPropertyName : mediaEncodings.keySet()) {
         if (!propNames.contains(encodingPropertyName)) {
-          results.add(encodingPropertyName, ENCODING_MISMATCH, encodingPropertyName);
+          results.add(CRUMB_ENCODING, ENCODING_MISMATCH, encodingPropertyName);
         }
       }
     }

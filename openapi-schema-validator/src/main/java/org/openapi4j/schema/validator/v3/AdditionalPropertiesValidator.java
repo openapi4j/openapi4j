@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
 import org.openapi4j.core.validation.ValidationResult;
@@ -29,6 +28,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1000, "Additional property '%s' is not allowed.");
 
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ADDITIONALPROPERTIES, true);
+
   private final Set<String> allowedProperties;
   private final Set<Pattern> allowedPatternProperties;
   private final Boolean additionalPropertiesAllowed;
@@ -46,7 +47,7 @@ class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
       additionalPropertiesSchema = null;
     } else /*if (schemaNode.isObject())*/ {
       additionalPropertiesAllowed = false;
-      additionalPropertiesSchema = new SchemaValidator(context, ADDITIONALPROPERTIES, schemaNode, schemaParentNode, parentSchema, true);
+      additionalPropertiesSchema = new SchemaValidator(context, CRUMB_INFO, schemaNode, schemaParentNode, parentSchema);
     }
 
     if (Boolean.TRUE.equals(additionalPropertiesAllowed)) {
@@ -73,7 +74,7 @@ class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
         if (additionalPropertiesSchema != null) {
           validate(() -> additionalPropertiesSchema.validateWithContext(valueNode.get(fieldName), results));
         } else {
-          results.add(ADDITIONALPROPERTIES, ERR, fieldName);
+          results.add(CRUMB_INFO, ERR, fieldName);
         }
       }
     }

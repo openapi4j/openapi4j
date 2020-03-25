@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
@@ -33,7 +32,7 @@ class PatternPropertiesValidator extends BaseJsonValidator<OAI3> {
     Iterator<String> names = schemaNode.fieldNames();
     while (names.hasNext()) {
       String name = names.next();
-      schemas.put(Pattern.compile(name), new SchemaValidator(context, name, schemaNode.get(name), schemaParentNode, parentSchema, false));
+      schemas.put(Pattern.compile(name), new SchemaValidator(context, new ValidationResults.CrumbInfo(name, false), schemaNode.get(name), schemaParentNode, parentSchema));
     }
   }
 

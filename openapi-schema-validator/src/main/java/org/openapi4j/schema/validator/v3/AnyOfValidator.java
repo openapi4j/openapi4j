@@ -19,6 +19,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 class AnyOfValidator extends DiscriminatorValidator {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1001, "No valid schema.");
 
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ANYOF, true);
+
   static AnyOfValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new AnyOfValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
@@ -40,6 +42,6 @@ class AnyOfValidator extends DiscriminatorValidator {
       }
     }
 
-    results.add(ANYOF, ERR);
+    results.add(CRUMB_INFO, ERR);
   }
 }

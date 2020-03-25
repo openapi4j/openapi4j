@@ -3,7 +3,6 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 import org.openapi4j.parser.model.OpenApiSchema;
 

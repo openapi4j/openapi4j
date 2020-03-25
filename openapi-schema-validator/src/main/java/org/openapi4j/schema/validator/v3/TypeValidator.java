@@ -1,20 +1,13 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_BOOLEAN;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
@@ -26,6 +19,9 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  */
 class TypeValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1027, "Type expected '%s', found '%s'.");
+
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(TYPE, true);
+
   // non-OAS type
   private static final String TYPE_NULL = "null";
 
@@ -52,7 +48,7 @@ class TypeValidator extends BaseJsonValidator<OAI3> {
       }
 
       if (!TYPE_NULL.equals(valueType)) {
-        results.add(TYPE, ERR, type, valueType);
+        results.add(CRUMB_INFO, ERR, type, valueType);
       }
     }
 

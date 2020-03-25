@@ -18,27 +18,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.COMPONENTS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTERNALDOCS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.IN;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.INFO;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.NAME;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPENAPI;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.PATH;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.PATHS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.REQUIRED;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SECURITY;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SERVERS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.TAGS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
   private static final ValidationResult REQUIRED_PATH_PARAM = new ValidationResult(ERROR, 122, "Parameter '%s' in path '%s' must have 'required' property set to true");
   private static final ValidationResult UNEXPECTED_PATH_PARAM = new ValidationResult(ERROR, 123, "Path parameter '%s' in path '%s' is unexpected");
   private static final ValidationResult MISMATCH_PATH_PARAM = new ValidationResult(ERROR, 124, "Path parameter '%s' in path '%s' is expected but undefined");
 
-  private static final Pattern PATTERN_PATH_PARAM = Pattern.compile("/\\{(\\w+)\\}");
+  private static final Pattern PATTERN_PATH_PARAM = Pattern.compile("/\\{(\\w+)}");
   private static final Pattern PATTERN_OAI3 = Pattern.compile("3\\.\\d+(\\.\\d+.*)?");
 
   private static final Validator<OpenApi3, OpenApi3> INSTANCE = new OpenApiValidator();
@@ -52,15 +39,15 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
 
   @Override
   public void validate(ValidationContext<OpenApi3> context, OpenApi3 root, OpenApi3 api, ValidationResults results) {
-    validateString(api.getOpenapi(), results, true, PATTERN_OAI3, OPENAPI);
-    validateField(context, api, api.getInfo(), results, true, INFO, InfoValidator.instance());
-    validateList(context, api, api.getServers(), results, false, SERVERS, ServerValidator.instance());
-    validateMap(context, api, api.getPaths(), results, true, PATHS, Regexes.PATH_REGEX, PathValidator.instance());
-    validateField(context, api, api.getComponents(), results, false, COMPONENTS, ComponentsValidator.instance());
-    validateList(context, api, api.getSecurityRequirements(), results, false, SECURITY, SecurityRequirementValidator.instance());
-    validateList(context, api, api.getTags(), results, false, TAGS, TagValidator.instance());
-    validateField(context, api, api.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
-    validateMap(context, api, api.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+    validateString(api.getOpenapi(), results, true, PATTERN_OAI3, CRUMB_OPENAPI);
+    validateField(context, api, api.getInfo(), results, true, CRUMB_INFO, InfoValidator.instance());
+    validateList(context, api, api.getServers(), results, false, CRUMB_SERVERS, ServerValidator.instance());
+    validateMap(context, api, api.getPaths(), results, true, CRUMB_PATHS, Regexes.PATH_REGEX, PathValidator.instance());
+    validateField(context, api, api.getComponents(), results, false, CRUMB_COMPONENTS, ComponentsValidator.instance());
+    validateList(context, api, api.getSecurityRequirements(), results, false, CRUMB_SECURITY, SecurityRequirementValidator.instance());
+    validateList(context, api, api.getTags(), results, false, CRUMB_TAGS, TagValidator.instance());
+    validateField(context, api, api.getExternalDocs(), results, false, CRUMB_EXTERNALDOCS, ExternalDocsValidator.instance());
+    validateMap(context, api, api.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
 
     checkOperationsParams(api, api.getPaths(), results);
   }
@@ -75,7 +62,7 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
       final List<String> pathParams = getPathParams(path);
 
       Path pathItem = pathEntry.getValue();
-      if (pathItem.isRef()) pathItem = getReferenceContent(api, pathItem, results, $REF, Path.class);
+      if (pathItem.isRef()) pathItem = getReferenceContent(api, pathItem, results, CRUMB_$REF, Path.class);
       for (Operation operation : pathItem.getOperations().values()) {
         discoverAndCheckParams(api, path, pathParams, operation.getParameters(), results);
       }
@@ -129,7 +116,7 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
     }
 
     if (!required) {
-      results.add(REQUIRED, REQUIRED_PATH_PARAM, name, path);
+      results.add(CRUMB_REQUIRED, REQUIRED_PATH_PARAM, name, path);
     }
 
     // Name is required but could be missing in spec definition
@@ -138,7 +125,7 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
     }
 
     if (!pathParams.contains(name)) {
-      results.add(NAME, UNEXPECTED_PATH_PARAM, name, path);
+      results.add(CRUMB_NAME, UNEXPECTED_PATH_PARAM, name, path);
     }
 
     return name;
@@ -158,7 +145,7 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
   private void validatePathParametersMatching(String path, List<String> refParams, List<String> discoveredParams, ValidationResults results) {
     for (String name : refParams) {
       if (!discoveredParams.contains(name)) {
-        results.add(NAME, MISMATCH_PATH_PARAM, name, path);
+        results.add(CRUMB_NAME, MISMATCH_PATH_PARAM, name, path);
       }
     }
   }

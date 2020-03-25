@@ -5,17 +5,14 @@ import org.junit.Test;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ValidationResultsTest {
   @Test
   public void add() {
     ValidationResults results = new ValidationResults();
     results.add(new ValidationResult(ValidationSeverity.INFO, 1, "info"));
-    results.add("crumb", new ValidationResult(ValidationSeverity.WARNING, 2, "warn"));
+    results.add(new ValidationResults.CrumbInfo("crumb", false), new ValidationResult(ValidationSeverity.WARNING, 2, "warn"));
 
     ValidationResults others = new ValidationResults();
     others.add(new ValidationResult(ValidationSeverity.ERROR, 3, "error"));
@@ -32,19 +29,19 @@ public class ValidationResultsTest {
   public void withCrumb() throws Exception {
     ValidationResults results = new ValidationResults();
     CountDownLatch latch = new CountDownLatch(1);
-    results.withCrumb("crumb", false, latch::countDown);
+    results.withCrumb(new ValidationResults.CrumbInfo("crumb", false), latch::countDown);
     latch.await(2, TimeUnit.SECONDS);
     assertEquals(0, results.size());
 
     latch = new CountDownLatch(1);
-    results.withCrumb(null, false, latch::countDown);
+    results.withCrumb(new ValidationResults.CrumbInfo(null, false), latch::countDown);
     latch.await(2, TimeUnit.SECONDS);
   }
 
   @Test
   public void provideString() {
     ValidationResults results = new ValidationResults();
-    results.add("crumb", new ValidationResult(ValidationSeverity.WARNING, 1, "msg2"));
+    results.add(new ValidationResults.CrumbInfo("crumb", false), new ValidationResult(ValidationSeverity.WARNING, 1, "msg2"));
     results.add(new ValidationResult(ValidationSeverity.ERROR, 2, "msg"));
     results.add(new ValidationResult(ValidationSeverity.INFO, 3, "msg"));
     assertNotNull(results.toString());

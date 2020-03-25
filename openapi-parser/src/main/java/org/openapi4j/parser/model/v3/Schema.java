@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 
@@ -12,24 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ADDITIONALPROPERTIES;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ALLOF;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ANYOF;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEFAULT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ENUM;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DOUBLE;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_FLOAT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT32;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT64;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ITEMS;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NOT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ONEOF;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.REQUIRED;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_INTEGER;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_NUMBER;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_STRING;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {

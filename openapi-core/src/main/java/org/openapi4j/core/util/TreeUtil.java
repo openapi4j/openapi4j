@@ -3,7 +3,6 @@ package org.openapi4j.core.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.AuthOption;

@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -20,6 +19,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  */
 class MinLengthValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1017, "Min length is '%s', found '%s'.");
+
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MINLENGTH, true);
 
   private final Integer minLength;
 
@@ -45,7 +46,7 @@ class MinLengthValidator extends BaseJsonValidator<OAI3> {
     String value = valueNode.textValue();
     int length = value.codePointCount(0, value.length());
     if (length < minLength) {
-      results.add(MINLENGTH, ERR, minLength, length);
+      results.add(CRUMB_INFO, ERR, minLength, length);
     }
 
     return false;

@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResult;
@@ -9,11 +8,7 @@ import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DEPENDENCIES;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
@@ -27,6 +22,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  */
 class DependenciesValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1002, "Missing dependency '%s' from '%s' definition.");
+
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(DEPENDENCIES, true);
 
   private final Map<String, Collection<String>> arrayDependencies = new HashMap<>();
   private final Map<String, SchemaValidator> objectDependencies = new HashMap<>();
@@ -52,7 +49,7 @@ class DependenciesValidator extends BaseJsonValidator<OAI3> {
       final JsonNode fieldSchemaVal = schemaNode.get(fieldName);
 
       if (fieldSchemaVal.isObject()) {
-        objectDependencies.put(fieldName, new SchemaValidator(context, fieldName, fieldSchemaVal, schemaParentNode, parentSchema, false));
+        objectDependencies.put(fieldName, new SchemaValidator(context, new ValidationResults.CrumbInfo(fieldName, false), fieldSchemaVal, schemaParentNode, parentSchema));
 
       } else if (fieldSchemaVal.isArray()) {
         Collection<String> values = arrayDependencies.computeIfAbsent(fieldName, k -> new ArrayList<>());
@@ -89,7 +86,7 @@ class DependenciesValidator extends BaseJsonValidator<OAI3> {
 
     for (String field : values) {
       if (valueNode.get(field) == null) {
-        results.add(DEPENDENCIES, ERR, field, arrayDependencies.toString());
+        results.add(CRUMB_INFO, ERR, field, arrayDependencies.toString());
       }
     }
   }

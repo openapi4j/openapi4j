@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.openapi4j.core.model.v3.OAI3;

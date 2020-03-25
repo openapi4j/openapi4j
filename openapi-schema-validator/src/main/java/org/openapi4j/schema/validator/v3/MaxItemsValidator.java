@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -20,6 +19,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  */
 class MaxItemsValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1011, "Max items is '%s', found '%s'.");
+
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MAXITEMS, true);
 
   private final Integer max;
 
@@ -43,7 +44,7 @@ class MaxItemsValidator extends BaseJsonValidator<OAI3> {
     }
 
     if (valueNode.size() > max) {
-      results.add(MAXITEMS, ERR, max, valueNode.size());
+      results.add(CRUMB_INFO, ERR, max, valueNode.size());
     }
 
     return false;

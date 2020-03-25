@@ -8,11 +8,7 @@ import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCHEMA;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.STYLE;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class HeaderValidator extends Validator3Base<OpenApi3, Header> {
   private static final ValidationResult CONTENT_ONY_ONE_ERR = new ValidationResult(ERROR, 113, "Content can only contain one media type.");
@@ -32,12 +28,12 @@ class HeaderValidator extends Validator3Base<OpenApi3, Header> {
     // VALIDATION EXCLUSIONS :
     // allowReserved, deprecated, description, example, examples, explode, required
     if (header.isRef()) {
-      validateReference(context, api, header, results, $REF, HeaderValidator.instance(), Header.class);
+      validateReference(context, api, header, results, CRUMB_$REF, HeaderValidator.instance(), Header.class);
     } else {
-      validateString(header.getStyle(), results, false, "simple", STYLE); // Only simple is allowed.
-      validateField(context, api, header.getSchema(), results, false, SCHEMA, SchemaValidator.instance());
-      validateMap(context, api, header.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
-      validateMap(context, api, header.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+      validateString(header.getStyle(), results, false, "simple", CRUMB_STYLE); // Only simple is allowed.
+      validateField(context, api, header.getSchema(), results, false, CRUMB_SCHEMA, SchemaValidator.instance());
+      validateMap(context, api, header.getContentMediaTypes(), results, false, CRUMB_CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
+      validateMap(context, api, header.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
 
       // Content or schema, not both
       if (header.getContentMediaTypes() != null && header.getSchema() != null) {

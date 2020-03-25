@@ -9,25 +9,7 @@ import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.core.validation.ValidationSeverity.WARNING;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.ALLOWRESERVED;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.COOKIE;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.DEEPOBJECT;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.FORM;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADER;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.IN;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.LABEL;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.MATRIX;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.NAME;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.PATH;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.PIPEDELIMITED;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.QUERY;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SCHEMA;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SIMPLE;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SPACEDELIMITED;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.STYLE;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
   private static final ValidationResult ALLOWED_RESERVED_IGNORED = new ValidationResult(WARNING, 125, "AllowReserved is ignored for non-query parameter '%s'");
@@ -53,16 +35,16 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
 
     // checks for path params are made with path validator
     if (parameter.isRef()) {
-      validateReference(context, api, parameter, results, $REF, ParameterValidator.instance(), Parameter.class);
+      validateReference(context, api, parameter, results, CRUMB_$REF, ParameterValidator.instance(), Parameter.class);
     } else {
-      validateString(parameter.getName(), results, true, NAME);
-      validateString(parameter.getIn(), results, true, Regexes.PARAM_IN_REGEX, IN);
-      validateString(parameter.getStyle(), results, false, Regexes.STYLE_REGEX, STYLE);
+      validateString(parameter.getName(), results, true, CRUMB_NAME);
+      validateString(parameter.getIn(), results, true, Regexes.PARAM_IN_REGEX, CRUMB_IN);
+      validateString(parameter.getStyle(), results, false, Regexes.STYLE_REGEX, CRUMB_STYLE);
       checkStyleValues(parameter, results);
       checkAllowReserved(parameter, results);
-      validateField(context, api, parameter.getSchema(), results, false, SCHEMA, SchemaValidator.instance());
-      validateMap(context, api, parameter.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
-      validateMap(context, api, parameter.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+      validateField(context, api, parameter.getSchema(), results, false, CRUMB_SCHEMA, SchemaValidator.instance());
+      validateMap(context, api, parameter.getContentMediaTypes(), results, false, CRUMB_CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
+      validateMap(context, api, parameter.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
 
       // Content or schema, not both
       if (parameter.getContentMediaTypes() != null && parameter.getSchema() != null) {
@@ -77,7 +59,7 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
 
   private void checkAllowReserved(Parameter parameter, ValidationResults results) {
     if (parameter.isAllowReserved() && !QUERY.equals(parameter.getIn())) {
-      results.add(ALLOWRESERVED, ALLOWED_RESERVED_IGNORED, parameter.getName());
+      results.add(CRUMB_ALLOWRESERVED, ALLOWED_RESERVED_IGNORED, parameter.getName());
     }
   }
 
@@ -94,28 +76,28 @@ class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
       case MATRIX:
       case LABEL:
         if (!PATH.equals(in)) {
-          results.add(STYLE, STYLE_ONLY_IN, style, PATH);
+          results.add(CRUMB_STYLE, STYLE_ONLY_IN, style, PATH);
         }
         break;
       case FORM:
         if (!QUERY.equals(in) && !COOKIE.equals(in)) {
-          results.add(STYLE, STYLE_ONLY_IN_AND, style, QUERY, COOKIE);
+          results.add(CRUMB_STYLE, STYLE_ONLY_IN_AND, style, QUERY, COOKIE);
         }
         break;
       case SIMPLE:
         if (!PATH.equals(in) && !HEADER.equals(in)) {
-          results.add(STYLE, STYLE_ONLY_IN_AND, style, PATH, HEADER);
+          results.add(CRUMB_STYLE, STYLE_ONLY_IN_AND, style, PATH, HEADER);
         }
         break;
       case SPACEDELIMITED:
       case PIPEDELIMITED:
       case DEEPOBJECT:
         if (!QUERY.equals(in)) {
-          results.add(STYLE, STYLE_ONLY_IN, style, QUERY);
+          results.add(CRUMB_STYLE, STYLE_ONLY_IN, style, QUERY);
         }
         break;
       default:
-        results.add(STYLE, STYLE_UNKNOWN, style);
+        results.add(CRUMB_STYLE, STYLE_UNKNOWN, style);
         break;
     }
   }

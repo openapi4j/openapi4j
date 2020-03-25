@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -10,23 +9,7 @@ import org.openapi4j.schema.validator.ValidationContext;
 
 import java.util.regex.Pattern;
 
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_BINARY;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_BYTE;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DATE;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DATE_TIME;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DOUBLE;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_EMAIL;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_FLOAT;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_HOSTNAME;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT32;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT64;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_IPV4;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_IPV6;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_PASSWORD;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URI;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URIREF;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URI_REFERENCE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.core.validation.ValidationSeverity.WARNING;
 
@@ -40,6 +23,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.WARNING;
 class FormatValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1007, "Value '%s' does not match format '%s'.");
   private static final ValidationResult UNKNOWN_WARN = new ValidationResult(WARNING, 1008, "Format '%s' is unknown, validation passes.");
+
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(FORMAT, true);
 
   private static final Pattern BASE64_PATTERN = Pattern.compile("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$");
   private static final Pattern DATE_PATTERN = Pattern.compile("^\\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(0?[1-9]|[12][0-9]|3[01])$");
@@ -114,13 +99,13 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
         validated = !valueNode.isTextual() || URI_PATTERN.matcher(valueNode.textValue()).matches();
         break;
       default:
-        results.add(FORMAT, UNKNOWN_WARN, format);
+        results.add(CRUMB_INFO, UNKNOWN_WARN, format);
         validated = true;
         break;
     }
 
     if (!validated) {
-      results.add(FORMAT, ERR, valueNode.asText(), format);
+      results.add(CRUMB_INFO, ERR, valueNode.asText(), format);
     }
 
     return false;

@@ -13,9 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.URL;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.VARIABLES;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class ServerValidator extends Validator3Base<OpenApi3, Server> {
   private static final ValidationResult VARIABLE_NOT_DEFINED = new ValidationResult(ERROR, 142, "Undefined variable '%s' for url '%s'");
@@ -35,14 +33,14 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
   @Override
   public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Server server, ValidationResults results) {
     checkUrlWithVariables(api, server, results);
-    validateMap(context, api, server.getVariables(), results, false, VARIABLES, Regexes.NAME_REGEX, ServerVariableValidator.instance());
-    validateMap(context, api, server.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+    validateMap(context, api, server.getVariables(), results, false, CRUMB_VARIABLES, Regexes.NAME_REGEX, ServerVariableValidator.instance());
+    validateMap(context, api, server.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
   }
 
   private void checkUrlWithVariables(OpenApi3 api, Server server, ValidationResults results) {
     String url = server.getUrl();
 
-    validateUrl(api, url, results, true, true, URL);
+    validateUrl(api, url, results, true, true, CRUMB_URL);
 
     // Find variables
     Matcher matcher = PATTERN_VARIABLES.matcher(url);
@@ -52,12 +50,12 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
     }
 
     if (!variables.isEmpty() && server.getVariables() == null) {
-      results.add(URL, VARIABLES_NOT_DEFINED, url);
+      results.add(CRUMB_URL, VARIABLES_NOT_DEFINED, url);
     } else if (server.getVariables() != null) {
       // Validate defined variables
       for (String variable : variables) {
         if (!server.getVariables().containsKey(variable)) {
-          results.add(URL, VARIABLE_NOT_DEFINED, variable, url);
+          results.add(CRUMB_URL, VARIABLE_NOT_DEFINED, variable, url);
         }
       }
     }

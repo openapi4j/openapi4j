@@ -1,7 +1,6 @@
 package org.openapi4j.core.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.json.JSONException;
 import org.junit.Test;
 import org.openapi4j.core.exception.DecodeException;
@@ -15,9 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class TreeUtilTest {
   @Test(expected = EncodeException.class)

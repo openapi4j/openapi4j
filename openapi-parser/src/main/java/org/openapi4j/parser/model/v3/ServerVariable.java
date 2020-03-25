@@ -1,7 +1,6 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.openapi4j.core.model.OAIContext;
 
 import java.util.List;

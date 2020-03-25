@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
@@ -14,10 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ALLOF;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.DISCRIMINATOR;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAPPING;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.PROPERTYNAME;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 /**
@@ -30,6 +26,8 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult INVALID_PROPERTY_ERR = new ValidationResult(ERROR, 1004, "Property name in schema is not set.");
   private static final ValidationResult INVALID_PROPERTY_CONTENT_ERR = new ValidationResult(ERROR, 1005, "Property name in content '%s' is not set.");
 
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(DISCRIMINATOR, true);
+
   private static final String SCHEMAS_PATH = "#/components/schemas/";
 
   final List<SchemaValidator> schemas = new ArrayList<>();
@@ -37,6 +35,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   private JsonNode discriminatorNode;
   private String discriminatorPropertyName;
   private JsonNode discriminatorMapping;
+  private final ValidationResults.CrumbInfo crumbInfo;
 
   DiscriminatorValidator(final ValidationContext<OAI3> context,
                          final JsonNode schemaNode,
@@ -47,6 +46,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     this.arrayType = arrayType;
+    crumbInfo = new ValidationResults.CrumbInfo(arrayType, true);
 
     // Setup discriminator behaviour for anyOf, oneOf or allOf
     setupDiscriminator(context, schemaNode, schemaParentNode, parentSchema);
@@ -70,7 +70,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   private void validateAllOf(final JsonNode valueNode, final ValidationResults results) {
     String discriminatorPropertyRefPath = getDiscriminatorPropertyRefPath(valueNode, results);
     if (discriminatorPropertyRefPath == null) {
-      results.add(DISCRIMINATOR, INVALID_SCHEMA_ERR, discriminatorPropertyName);
+      results.add(CRUMB_INFO, INVALID_SCHEMA_ERR, discriminatorPropertyName);
       return;
     }
 
@@ -84,7 +84,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   private void validateOneAnyOf(final JsonNode valueNode, final ValidationResults results) {
     String discriminatorPropertyRefPath = getDiscriminatorPropertyRefPath(valueNode, results);
     if (discriminatorPropertyRefPath == null) {
-      results.add(DISCRIMINATOR, INVALID_SCHEMA_ERR, discriminatorPropertyName);
+      results.add(CRUMB_INFO, INVALID_SCHEMA_ERR, discriminatorPropertyName);
       return;
     }
 
@@ -96,7 +96,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
       }
     }
 
-    results.add(DISCRIMINATOR, INVALID_SCHEMA_ERR, discriminatorPropertyName);
+    results.add(CRUMB_INFO, INVALID_SCHEMA_ERR, discriminatorPropertyName);
   }
 
   /**
@@ -158,7 +158,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
     // Add default schemas
     int size = schemaNode.size();
     for (int i = 0; i < size; i++) {
-      schemas.add(new SchemaValidator(context, arrayType, schemaNode.get(i), schemaParentNode, parentSchema, true));
+      schemas.add(new SchemaValidator(context, crumbInfo, schemaNode.get(i), schemaParentNode, parentSchema));
     }
   }
 
@@ -171,7 +171,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
 
     int size = schemaNode.size();
     for (int i = 0; i < size; i++) {
-      schemas.add(new SchemaValidator(context, arrayType, schemaNode.get(i), schemaParentNode, parentSchema, true));
+      schemas.add(new SchemaValidator(context, crumbInfo, schemaNode.get(i), schemaParentNode, parentSchema));
     }
   }
 
@@ -187,10 +187,10 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
       JsonNode refValueNode = node.get(OAI3SchemaKeywords.$REF);
       if (refNode.equals(refValueNode)) {
         // Add the parent schema
-        schemas.add(new SchemaValidator(context, reference.getRef(), reference.getContent(), schemaParentNode, parentSchema, true));
+        schemas.add(new SchemaValidator(context, new ValidationResults.CrumbInfo(reference.getRef(), true), reference.getContent(), schemaParentNode, parentSchema));
       } else {
         // Add the other items
-        schemas.add(new SchemaValidator(context, arrayType, node, schemaParentNode, parentSchema, true));
+        schemas.add(new SchemaValidator(context, crumbInfo, node, schemaParentNode, parentSchema));
       }
     }
   }
@@ -198,13 +198,13 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   private String getDiscriminatorPropertyRefPath(final JsonNode valueNode, final ValidationResults results) {
     // check discriminator definition
     if (discriminatorPropertyName == null) {
-      results.add(DISCRIMINATOR, INVALID_PROPERTY_ERR);
+      results.add(CRUMB_INFO, INVALID_PROPERTY_ERR);
       return null;
     }
     // check discriminator in content
     JsonNode discriminatorPropertyNameNode = valueNode.get(discriminatorPropertyName);
     if (discriminatorPropertyNameNode == null) {
-      results.add(DISCRIMINATOR, INVALID_PROPERTY_CONTENT_ERR, discriminatorPropertyName);
+      results.add(CRUMB_INFO, INVALID_PROPERTY_CONTENT_ERR, discriminatorPropertyName);
       return null;
     }
 

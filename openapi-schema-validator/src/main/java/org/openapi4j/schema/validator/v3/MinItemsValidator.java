@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -20,6 +19,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  */
 class MinItemsValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1016, "Min items is '%s', found '%s'.");
+
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MINITEMS, true);
 
   private final Integer min;
 
@@ -43,7 +44,7 @@ class MinItemsValidator extends BaseJsonValidator<OAI3> {
     }
 
     if (valueNode.size() < min) {
-      results.add(MINITEMS, ERR, min, valueNode.size());
+      results.add(CRUMB_INFO, ERR, min, valueNode.size());
     }
 
     return false;

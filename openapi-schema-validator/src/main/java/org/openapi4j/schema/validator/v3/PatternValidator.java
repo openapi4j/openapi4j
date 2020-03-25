@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -25,6 +24,8 @@ class PatternValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult PATTERN_DEF_ERR = new ValidationResult(ERROR, 1024, "Wrong pattern definition '%s'.");
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1025, "'%s' does not respect pattern '%s'.");
 
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(PATTERN, true);
+
   private final String patternStr;
   private final Pattern pattern;
 
@@ -42,7 +43,7 @@ class PatternValidator extends BaseJsonValidator<OAI3> {
   @Override
   public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     if (pattern == null) {
-      results.add(PATTERN, PATTERN_DEF_ERR, patternStr);
+      results.add(CRUMB_INFO, PATTERN_DEF_ERR, patternStr);
       return false;
     } else if (!valueNode.isTextual()) {
       return false;
@@ -51,7 +52,7 @@ class PatternValidator extends BaseJsonValidator<OAI3> {
     String value = valueNode.textValue();
     Matcher m = pattern.matcher(value);
     if (!m.find()) {
-      results.add(PATTERN, ERR, value, patternStr);
+      results.add(CRUMB_INFO, ERR, value, patternStr);
     }
 
     return false;

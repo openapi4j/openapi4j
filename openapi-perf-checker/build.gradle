@@ -6,7 +6,7 @@ plugins {
 description = "openapi4j performance viewer"
 
 application {
-  mainClassName = 'org.openapi4j.perf.GlobalRunner'
+  mainClassName = 'org.perf.check.GlobalRunner'
 }
 
 ext.JUSTIFY_VERSION = '1.1.0'
