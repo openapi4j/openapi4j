@@ -85,29 +85,25 @@ public class ValidationResults implements Serializable {
   }
 
   /**
-   * Append a crumb to the current and trigger the runnable code with this new context.
+   * Append a crumb and trigger the runnable code with this new context.
    *
    * @param crumb           The crumb to append.
-   * @param isSchemaKeyword Flag to know if this crumb should be appended to the current queue.
+   * @param isSchemaKeyword Flag to know if this crumb should be appended to the current data queue.
    * @param code            The code to run with the appended crumb.
    */
   public void withCrumb(String crumb, boolean isSchemaKeyword, Runnable code) {
-    boolean append = false;
-
     if (crumb != null) {
       schemaCrumbs.addLast(crumb);
 
       if (!isSchemaKeyword) {
         dataCrumbs.addLast(crumb);
       }
-
-      append = true;
     }
 
     try {
       code.run();
     } finally {
-      if (append) {
+      if (crumb != null) {
         schemaCrumbs.pollLast();
 
         if (!isSchemaKeyword) {
@@ -178,7 +174,7 @@ public class ValidationResults implements Serializable {
     private static final long serialVersionUID = 7905122048950251207L;
 
     private static final String DOT = ".";
-    private static final String SEMI_COLON = " : ";
+    private static final String SEMI_COLON = ": ";
 
     private final String dataCrumbs;
     private final String schemaCrumbs;
@@ -216,6 +212,20 @@ public class ValidationResults implements Serializable {
       return schemaCrumbs;
     }
 
+    private String joinCrumbs(Collection<String> crumbs, String additionalCrumb) {
+      StringJoiner joiner = new StringJoiner(DOT);
+
+      for (String crumb : crumbs) {
+        joiner.add(crumb);
+      }
+
+      if (additionalCrumb != null) {
+        joiner.add(additionalCrumb);
+      }
+
+      return joiner.toString();
+    }
+
     @Override
     public String toString() {
       StringBuilder strBuilder = new StringBuilder();
@@ -229,20 +239,6 @@ public class ValidationResults implements Serializable {
       strBuilder.append(LINE_SEPARATOR).append(FROM).append(schemaCrumbs());
 
       return strBuilder.toString();
-    }
-
-    private String joinCrumbs(Collection<String> crumbs, String additionalCrumb) {
-      StringJoiner joiner = new StringJoiner(DOT);
-
-      for (String crumb : crumbs) {
-        joiner.add(crumb);
-      }
-
-      if (additionalCrumb != null) {
-        joiner.add(additionalCrumb);
-      }
-
-      return joiner.toString();
     }
   }
 }
