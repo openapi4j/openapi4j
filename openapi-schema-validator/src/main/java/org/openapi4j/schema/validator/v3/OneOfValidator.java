@@ -34,28 +34,27 @@ class OneOfValidator extends DiscriminatorValidator {
 
   @Override
   void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
-    final int schemasSize = schemas.size();
-    int nbSchemasOnError = 0;
     ValidationResults oneOfValidResults = null;
 
     for (SchemaValidator schema : schemas) {
       ValidationResults oneOfResults = new ValidationResults();
       schema.validate(valueNode, oneOfResults);
 
-      if (!oneOfResults.isValid()) {
-        nbSchemasOnError++;
-      } else {
-        oneOfValidResults = oneOfResults;
+      if (oneOfResults.isValid()) {
+        if (oneOfValidResults != null) {
+          results.add(ONEOF, MANY_VALID_SCHEMA_ERR);
+          return;
+        } else {
+          oneOfValidResults = oneOfResults;
+        }
       }
     }
 
-    if (nbSchemasOnError == schemasSize) {
-      results.add(ONEOF, NO_VALID_SCHEMA_ERR);
-    } else if ((schemasSize - nbSchemasOnError) > 1) {
-      results.add(ONEOF, MANY_VALID_SCHEMA_ERR);
-    } else if (oneOfValidResults != null) {
+    if (oneOfValidResults != null) {
       // Append potential results from sub validation (INFO / WARN)
       results.add(oneOfValidResults);
+    } else {
+      results.add(ONEOF, NO_VALID_SCHEMA_ERR);
     }
   }
 }
