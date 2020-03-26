@@ -104,7 +104,7 @@
       "fieldInt": { "style": "spaceDelimited", "explode": true }
     },
     "expected": {
-      "fieldArray": []
+      "fieldArray": [""]
     }
   },
   {
@@ -156,7 +156,7 @@
       "fieldInt": { "style": "pipeDelimited", "explode": true }
     },
     "expected": {
-      "fieldArray": []
+      "fieldArray": [""]
     }
   },
   {

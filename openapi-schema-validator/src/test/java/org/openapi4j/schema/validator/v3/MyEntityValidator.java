@@ -10,7 +10,8 @@ import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
 public class MyEntityValidator extends BaseJsonValidator<OAI3> {
-  private static final ValidationResult ERR = new ValidationResult(ValidationSeverity.ERROR, 5, "You're wrong !");
+  private static final ValidationResult ERR = new ValidationResult(ValidationSeverity.ERROR, 5, "Strings are not equal!");
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo("x-myentity-val", true);
 
   private MyEntityValidator(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
@@ -19,10 +20,10 @@ public class MyEntityValidator extends BaseJsonValidator<OAI3> {
   @Override
   public boolean validate(JsonNode valueNode, ValidationResults results) {
     if (!valueNode.isObject() || !valueNode.get("aString").equals(valueNode.get("bString"))) {
-      results.add(ERR);
+      results.add(CRUMB_INFO, ERR);
     }
 
-    return false;
+    return true;
   }
 
   public static JsonValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {

@@ -185,7 +185,7 @@ public class ValidationResults implements Serializable {
       super(
         result.severity(),
         result.code(),
-        (msgArgs != null) ? String.format(result.message(), msgArgs) : result.message());
+        (msgArgs.length != 0) ? String.format(result.message(), msgArgs) : result.message());
 
       this.crumbs = new ArrayList<>(crumbs);
       if (crumbInfo != null) {

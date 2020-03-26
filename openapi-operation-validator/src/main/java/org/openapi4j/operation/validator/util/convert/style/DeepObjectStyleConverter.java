@@ -35,7 +35,7 @@ public class DeepObjectStyleConverter {
 
       if (propPath.startsWith(paramName + "[")) {
         // tokenize
-        List<String> properties = StringUtil.tokenize(propPath, "[]", true, true);
+        List<String> properties = StringUtil.tokenize(propPath, "\\[|\\]", true, true);
         if (properties.size() == 2) {
           String propName = properties.get(1);
 

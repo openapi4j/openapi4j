@@ -32,10 +32,8 @@ public final class StringUtil {
       return tokens;
     }
 
-    StringTokenizer st = new StringTokenizer(value, delimiters);
-    while (st.hasMoreTokens()) {
-      String token = st.nextToken();
-
+    String[] st = value.split(delimiters);
+    for (String token : st) {
       if (trimTokens) {
         token = token.trim();
       }
@@ -44,6 +42,7 @@ public final class StringUtil {
         tokens.add(token);
       }
     }
+
     return tokens;
   }
 }

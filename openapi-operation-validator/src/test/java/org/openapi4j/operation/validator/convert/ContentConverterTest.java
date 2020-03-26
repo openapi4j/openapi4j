@@ -18,8 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class ContentConverterTest {
   private static OpenApi3 api;
@@ -51,8 +50,11 @@ public class ContentConverterTest {
 
   @Test
   public void testDirect() {
-    assertFalse(ContentType.isMultipartFormData("foo"));
     assertEquals(StandardCharsets.UTF_8.name(), ContentType.getCharSet(null));
+    assertFalse(ContentType.isMultipartFormData("foo"));
+    assertTrue(ContentType.isMultipartFormData("multipart/mixed"));
+    assertNull(ContentType.getCharSetOrNull(null));
+    assertNull(ContentType.getCharSetOrNull("application/x-www-form-urlencoded; charset=foo"));
   }
 
   private void check(String testPath) throws Exception {

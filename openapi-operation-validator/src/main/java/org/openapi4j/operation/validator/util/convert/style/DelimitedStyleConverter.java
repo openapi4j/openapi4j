@@ -6,6 +6,7 @@ import org.openapi4j.core.util.StringUtil;
 import org.openapi4j.parser.model.v3.AbsParameter;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
 
@@ -41,7 +42,7 @@ class DelimitedStyleConverter extends FlatStyleConverter {
       return null;
     }
 
-    List<String> values = StringUtil.tokenize(paramValue, delimiter, false, false);
+    List<String> values = StringUtil.tokenize(paramValue, Pattern.quote(delimiter), false, false);
 
     List<String> arrayValues = new ArrayList<>();
 
@@ -49,7 +50,7 @@ class DelimitedStyleConverter extends FlatStyleConverter {
       if (param.isExplode()) {
         arrayValues.add(value);
       } else {
-        arrayValues.addAll(StringUtil.tokenize(value, delimiter, false, false));
+        arrayValues.addAll(StringUtil.tokenize(value, Pattern.quote(delimiter), false, false));
       }
     }
 

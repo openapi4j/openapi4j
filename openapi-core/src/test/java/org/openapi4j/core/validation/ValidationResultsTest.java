@@ -8,6 +8,15 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.*;
 
 public class ValidationResultsTest {
+
+  @Test
+  public void anonymousConstructor() {
+    ValidationResult result = new ValidationResult();
+    assertEquals(ValidationSeverity.NONE, result.severity());
+    assertEquals(0, result.code());
+    assertNull(result.message());
+  }
+
   @Test
   public void add() {
     ValidationResults results = new ValidationResults();
@@ -28,14 +37,19 @@ public class ValidationResultsTest {
   @Test
   public void withCrumb() throws Exception {
     ValidationResults results = new ValidationResults();
-    CountDownLatch latch = new CountDownLatch(1);
-    results.withCrumb(new ValidationResults.CrumbInfo("crumb", false), latch::countDown);
+    final CountDownLatch latch = new CountDownLatch(1);
+
+    results.withCrumb(new ValidationResults.CrumbInfo("crumb", false), () -> {
+      assertEquals(1, results.crumbs().size());
+      assertEquals("crumb", results.crumbs().iterator().next().crumb());
+      latch.countDown();
+    });
     latch.await(2, TimeUnit.SECONDS);
     assertEquals(0, results.size());
 
-    latch = new CountDownLatch(1);
-    results.withCrumb(new ValidationResults.CrumbInfo(null, false), latch::countDown);
-    latch.await(2, TimeUnit.SECONDS);
+    CountDownLatch latch2 = new CountDownLatch(1);
+    results.withCrumb(new ValidationResults.CrumbInfo(null, false), latch2::countDown);
+    latch2.await(2, TimeUnit.SECONDS);
   }
 
   @Test

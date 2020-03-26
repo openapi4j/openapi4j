@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.util;
 
 import org.openapi4j.core.model.OAIContext;
+import org.openapi4j.core.util.StringUtil;
 import org.openapi4j.parser.model.v3.Server;
 
 import java.net.MalformedURLException;
@@ -108,8 +109,8 @@ public class PathResolver {
         // Check if there's a defined file name in URL
         URL resource = context.getBaseUri().toURL();
         // trim query & anchor
-        String basePath = resource.toString().split("\\?")[0].split("#")[0];
-        // handle scheme://api.com
+        String basePath = StringUtil.tokenize(resource.toString(), "(?:\\?.*|#.*)", false, true).get(0);
+          // handle scheme://api.com
         String host = resource.getHost();
         if (host.length() > 0 && basePath.endsWith(host)) {
           return "/";

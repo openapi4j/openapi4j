@@ -72,15 +72,17 @@ class ValidationUtil {
         }
       }
 
-      if (isValidExpected != results.isValid()) {
-        String message = String.format(
-          "TEST FAILURE : %s - %s\nData : %s\n%s",
-          testDescription,
-          test.get("description"),
-          contentNode,
-          results.toString());
+      String message = String.format(
+        "TEST FAILURE : %s - %s\nData : %s\n%s",
+        testDescription,
+        test.get("description"),
+        contentNode,
+        results.toString());
 
-        System.out.println(message);
+      System.out.println(message);
+
+      if (isValidExpected != results.isValid()) {
+
         Assert.fail();
       }
     }

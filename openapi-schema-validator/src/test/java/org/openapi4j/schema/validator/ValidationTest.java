@@ -190,6 +190,8 @@ public class ValidationTest {
     Map<String, ValidatorInstance> validators = new HashMap<>();
     validators.put("x-myentity-val", MyEntityValidator::create);
     ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators, true);
+
+    ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators, false);
   }
 
   @Test(expected = RuntimeException.class)
