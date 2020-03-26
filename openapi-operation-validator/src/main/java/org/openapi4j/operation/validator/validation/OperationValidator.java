@@ -53,6 +53,7 @@ public class OperationValidator {
   private static final String IN_HEADER = "header";
   private static final String IN_COOKIE = "cookie";
   private static final String DEFAULT_RESPONSE_CODE = "default";
+  private static final ValidationResults.CrumbInfo CRUMB_PATH = new ValidationResults.CrumbInfo(IN_PATH, true);
   // Validators
   private final ParameterValidator<Parameter> specRequestPathValidator;
   private final ParameterValidator<Parameter> specRequestQueryValidator;
@@ -160,7 +161,7 @@ public class OperationValidator {
     // Check paths are matching before trying to map values
     Pattern pathPattern = PathResolver.instance().findPathPattern(pathPatterns, request.getPath());
     if (pathPattern == null) {
-      results.add(IN_PATH, PATH_NOT_FOUND_ERR, templatePath, request.getPath());
+      results.add(CRUMB_PATH, PATH_NOT_FOUND_ERR, templatePath, request.getPath());
       return null;
     }
 

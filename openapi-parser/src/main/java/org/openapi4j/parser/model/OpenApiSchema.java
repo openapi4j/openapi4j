@@ -1,7 +1,6 @@
 package org.openapi4j.parser.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.OAIContext;

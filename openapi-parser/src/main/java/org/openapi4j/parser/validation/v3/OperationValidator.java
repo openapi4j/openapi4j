@@ -1,26 +1,13 @@
 package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.validation.ValidationResults;
-import org.openapi4j.parser.model.v3.Callback;
-import org.openapi4j.parser.model.v3.Link;
-import org.openapi4j.parser.model.v3.OpenApi3;
-import org.openapi4j.parser.model.v3.Operation;
-import org.openapi4j.parser.model.v3.Response;
+import org.openapi4j.parser.model.v3.*;
 import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
 import java.util.Map;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.CALLBACKS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTERNALDOCS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.LINKS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPERATIONID;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.PARAMETERS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.REQUESTBODY;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.RESPONSES;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SECURITY;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SERVERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class OperationValidator extends Validator3Base<OpenApi3, Operation> {
   private static final Validator<OpenApi3, Operation> INSTANCE = new OperationValidator();
@@ -36,15 +23,15 @@ class OperationValidator extends Validator3Base<OpenApi3, Operation> {
   public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Operation operation, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // summary, description, deprecated, tags
-    validateField(context, api, operation.getExternalDocs(), results, false, EXTERNALDOCS, ExternalDocsValidator.instance());
-    validateString(operation.getOperationId(), results, false, OPERATIONID);
-    validateList(context, api, operation.getParameters(), results, false, PARAMETERS, ParameterValidator.instance());
-    validateField(context, api, operation.getRequestBody(), results, false, REQUESTBODY, RequestBodyValidator.instance());
-    validateMap(context, api, operation.getResponses(), results, true, RESPONSES, Regexes.RESPONSE_REGEX, ResponseValidator.instance());
-    validateMap(context, api, operation.getCallbacks(), results, false, CALLBACKS, Regexes.NOEXT_REGEX, CallbackValidator.instance());
-    validateList(context, api, operation.getSecurityRequirements(), results, false, SECURITY, SecurityRequirementValidator.instance());
-    validateList(context, api, operation.getServers(), results, false, SERVERS, ServerValidator.instance());
-    validateMap(context, api, operation.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+    validateField(context, api, operation.getExternalDocs(), results, false, CRUMB_EXTERNALDOCS, ExternalDocsValidator.instance());
+    validateString(operation.getOperationId(), results, false, CRUMB_OPERATIONID);
+    validateList(context, api, operation.getParameters(), results, false, CRUMB_PARAMETERS, ParameterValidator.instance());
+    validateField(context, api, operation.getRequestBody(), results, false, CRUMB_REQUESTBODY, RequestBodyValidator.instance());
+    validateMap(context, api, operation.getResponses(), results, true, CRUMB_RESPONSES, Regexes.RESPONSE_REGEX, ResponseValidator.instance());
+    validateMap(context, api, operation.getCallbacks(), results, false, CRUMB_CALLBACKS, Regexes.NOEXT_REGEX, CallbackValidator.instance());
+    validateList(context, api, operation.getSecurityRequirements(), results, false, CRUMB_SECURITY, SecurityRequirementValidator.instance());
+    validateList(context, api, operation.getServers(), results, false, CRUMB_SERVERS, ServerValidator.instance());
+    validateMap(context, api, operation.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
 
     validateCallbacks(api, operation, results);
     validateResponseLinks(api, operation, results);
@@ -55,7 +42,7 @@ class OperationValidator extends Validator3Base<OpenApi3, Operation> {
 
     for (Callback callback : operation.getCallbacks().values()) {
       if (callback.isRef()) {
-        callback = getReferenceContent(api, callback, results, CALLBACKS, Callback.class);
+        callback = getReferenceContent(api, callback, results, CRUMB_CALLBACKS, Callback.class);
       }
 
       if (callback.getCallbackPaths() != null) {
@@ -73,7 +60,7 @@ class OperationValidator extends Validator3Base<OpenApi3, Operation> {
       if (response.getLinks() != null) {
         for (Map.Entry<String, Link> entry : response.getLinks().entrySet()) {
           results.withCrumb(
-            LINKS + "." + entry.getKey(),
+            new ValidationResults.CrumbInfo(LINKS + "." + entry.getKey(), false),
             () -> LinkValidator.instance().validateWithOperation(api, operation, entry.getValue(), results));
         }
       }

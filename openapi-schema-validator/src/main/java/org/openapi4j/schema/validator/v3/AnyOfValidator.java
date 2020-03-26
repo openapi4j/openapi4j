@@ -1,9 +1,7 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
-import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.ValidationContext;
@@ -21,6 +19,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 class AnyOfValidator extends DiscriminatorValidator {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1001, "No valid schema.");
 
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ANYOF, true);
+
   static AnyOfValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
     return new AnyOfValidator(context, schemaNode, schemaParentNode, parentSchema);
   }
@@ -32,14 +32,16 @@ class AnyOfValidator extends DiscriminatorValidator {
   @Override
   void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
     for (SchemaValidator schema : schemas) {
-      try {
-        schema.validate(valueNode);
+      ValidationResults anyOfResults = new ValidationResults();
+      schema.validate(valueNode, anyOfResults);
+
+      if (anyOfResults.isValid()) {
+        // Append potential results from sub validation (INFO / WARN)
+        results.add(anyOfResults);
         return;
-      } catch (ValidationException ex) {
-        // Don't populate from sub validation
       }
     }
 
-    results.add(ANYOF, ERR);
+    results.add(CRUMB_INFO, ERR);
   }
 }

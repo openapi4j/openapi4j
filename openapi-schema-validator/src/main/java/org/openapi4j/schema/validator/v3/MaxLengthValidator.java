@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -20,6 +19,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  */
 class MaxLengthValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1012, "Max length is '%s', found '%s'.");
+
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MAXLENGTH, true);
 
   private final Integer maxLength;
 
@@ -45,7 +46,7 @@ class MaxLengthValidator extends BaseJsonValidator<OAI3> {
     String value = valueNode.textValue();
     int length = value.codePointCount(0, value.length());
     if (length > maxLength) {
-      results.add(MAXLENGTH, ERR, maxLength, length);
+      results.add(CRUMB_INFO, ERR, maxLength, length);
     }
 
     return false;

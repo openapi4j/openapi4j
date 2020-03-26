@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -24,6 +23,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 class MinimumValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult EXCLUSIVE_ERR = new ValidationResult(ERROR, 1014, "Excluded minimum is '%s', found '%s'.");
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1015, "Minimum is '%s', found '%s'.");
+
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MINIMUM, true);
 
   private final BigDecimal minimum;
   private final boolean excludeEqual;
@@ -54,9 +55,9 @@ class MinimumValidator extends BaseJsonValidator<OAI3> {
     final BigDecimal value = valueNode.decimalValue();
     final int compResult = value.compareTo(minimum);
     if (excludeEqual && compResult == 0) {
-      results.add(MINIMUM, EXCLUSIVE_ERR, minimum, value);
+      results.add(CRUMB_INFO, EXCLUSIVE_ERR, minimum, value);
     } else if (compResult < 0) {
-      results.add(MINIMUM, ERR, minimum, value);
+      results.add(CRUMB_INFO, ERR, minimum, value);
     }
 
     return false;

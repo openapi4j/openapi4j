@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -24,6 +23,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 class MaximumValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult EXCLUSIVE_ERR = new ValidationResult(ERROR, 1009, "Excluded maximum is '%s', found '%s'.");
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1010, "Maximum is '%s', found '%s'.");
+
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MAXIMUM, true);
 
   private final BigDecimal maximum;
   private final boolean excludeEqual;
@@ -54,9 +55,9 @@ class MaximumValidator extends BaseJsonValidator<OAI3> {
     final BigDecimal value = valueNode.decimalValue();
     final int compResult = value.compareTo(maximum);
     if (excludeEqual && compResult == 0) {
-      results.add(MAXIMUM, EXCLUSIVE_ERR, maximum, value);
+      results.add(CRUMB_INFO, EXCLUSIVE_ERR, maximum, value);
     } else if (compResult > 0) {
-      results.add(MAXIMUM, ERR, maximum, value);
+      results.add(CRUMB_INFO, ERR, maximum, value);
     }
 
     return false;

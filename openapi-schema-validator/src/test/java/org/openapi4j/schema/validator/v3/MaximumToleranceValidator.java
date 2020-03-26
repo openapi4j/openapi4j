@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -21,6 +20,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 public class MaximumToleranceValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult EXCLUSIVE_ERR_MSG = new ValidationResult(ERROR, 1, "'%s' must be lower than '%s'.");
   private static final ValidationResult ERR_MSG = new ValidationResult(ERROR, 2, "'%s' is greater than '%s'");
+
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MAXIMUM, true);
 
   private final BigDecimal maximum;
   private final boolean excludeEqual;
@@ -53,10 +54,10 @@ public class MaximumToleranceValidator extends BaseJsonValidator<OAI3> {
     final BigDecimal value = valueNode.decimalValue();
     final int compResult = value.compareTo(maximum);
     if (excludeEqual && compResult == 0) {
-      results.add(MAXIMUM, EXCLUSIVE_ERR_MSG, value, maximum);
+      results.add(CRUMB_INFO, EXCLUSIVE_ERR_MSG, value, maximum);
       return false;
     } else if (compResult > 0) {
-      results.add(MAXIMUM, ERR_MSG, value, maximum);
+      results.add(CRUMB_INFO, ERR_MSG, value, maximum);
       return false;
     }
 

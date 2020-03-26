@@ -26,18 +26,18 @@ abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T>
   <F extends OpenApiSchema<F>> F getReferenceContent(final O api,
                                                      final AbsRefOpenApiSchema<F> schema,
                                                      final ValidationResults results,
-                                                     final String crumb,
+                                                     final ValidationResults.CrumbInfo crumbInfo,
                                                      final Class<F> clazz) {
 
     Reference reference = schema.getReference(api.getContext());
 
     if (reference == null) {
-      results.add(crumb, REF_MISSING, schema.getRef());
+      results.add(crumbInfo, REF_MISSING, schema.getRef());
     } else {
       try {
         return reference.getMappedContent(clazz);
       } catch (DecodeException e) {
-        results.add(crumb, REF_CONTENT_UNREADABLE, schema.getRef());
+        results.add(crumbInfo, REF_CONTENT_UNREADABLE, schema.getRef());
       }
     }
 
@@ -48,26 +48,27 @@ abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T>
                                                       final O api,
                                                       final AbsRefOpenApiSchema<F> schema,
                                                       final ValidationResults results,
-                                                      final String crumb,
+                                                      final ValidationResults.CrumbInfo crumbInfo,
                                                       final Validator<OpenApi3, F> validator,
                                                       final Class<F> clazz) {
 
-    F content = getReferenceContent(api, schema, results, crumb, clazz);
+    F content = getReferenceContent(api, schema, results, crumbInfo, clazz);
     if (content != null) {
       context.validate(api, content, validator, results);
     }
   }
 
+  @SuppressWarnings("SameParameterValue")
   protected void validateUrl(final O api,
                              final String value,
                              final ValidationResults results,
                              final boolean required,
                              final boolean allowRelative,
-                             final String crumb) {
+                             final ValidationResults.CrumbInfo crumbInfo) {
 
-    validateString(value, results, required, (Pattern) null, crumb);
+    validateString(value, results, required, (Pattern) null, crumbInfo);
     if (value != null) {
-      checkUrl(api, value, allowRelative, results, crumb);
+      checkUrl(api, value, allowRelative, results, crumbInfo);
     }
   }
 
@@ -75,24 +76,24 @@ abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T>
                         final String urlSpec,
                         final boolean allowRelative,
                         final ValidationResults results,
-                        final String crumb) {
+                        final ValidationResults.CrumbInfo crumbInfo) {
     try {
       new URL(urlSpec);
     } catch (MalformedURLException e) {
       if (!allowRelative) {
-        results.add(crumb, INVALID_URL, urlSpec);
+        results.add(crumbInfo, INVALID_URL, urlSpec);
       } else if (!api.hasServers()) {
-        results.add(crumb, INVALID_RELATIVE_URL, urlSpec);
+        results.add(crumbInfo, INVALID_RELATIVE_URL, urlSpec);
       } else {
         String serverUrl = api.getServers().get(0).getUrl();
 
         if (serverUrl == null) {
-          results.add(crumb, INVALID_RELATIVE_URL, urlSpec);
+          results.add(crumbInfo, INVALID_RELATIVE_URL, urlSpec);
         } else {
           try {
             new URL(new URL(serverUrl), urlSpec);
           } catch (MalformedURLException ignored) {
-            results.add(crumb, INVALID_URL, serverUrl + urlSpec);
+            results.add(crumbInfo, INVALID_URL, serverUrl + urlSpec);
           }
         }
       }

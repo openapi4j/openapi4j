@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResult;
@@ -22,6 +21,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 class NotValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1020, "Schema should not be valid.");
 
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(NOT, true);
+
   private final SchemaValidator schema;
 
   static NotValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
@@ -31,14 +32,14 @@ class NotValidator extends BaseJsonValidator<OAI3> {
   private NotValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    schema = new SchemaValidator(context, NOT, schemaNode, schemaParentNode, parentSchema);
+    schema = new SchemaValidator(context, CRUMB_INFO, schemaNode, schemaParentNode, parentSchema);
   }
 
   @Override
   public boolean validate(final JsonNode valueNode, final ValidationResults results) {
     try {
       schema.validate(valueNode);
-      results.add(NOT, ERR);
+      results.add(CRUMB_INFO, ERR);
     } catch (ValidationException ex) {
       // Succeed case
     }

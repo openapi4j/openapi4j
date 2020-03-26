@@ -6,12 +6,7 @@ import org.openapi4j.parser.model.v3.Response;
 import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.DESCRIPTION;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADERS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.LINKS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class ResponseValidator extends Validator3Base<OpenApi3, Response> {
   private static final Validator<OpenApi3, Response> INSTANCE = new ResponseValidator();
@@ -26,13 +21,13 @@ class ResponseValidator extends Validator3Base<OpenApi3, Response> {
   @Override
   public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Response response, ValidationResults results) {
     if (response.isRef()) {
-      validateReference(context, api, response, results, $REF, ResponseValidator.instance(), Response.class);
+      validateReference(context, api, response, results, CRUMB_$REF, ResponseValidator.instance(), Response.class);
     } else {
-      validateRequired(response.getDescription(), results, true, DESCRIPTION);
-      validateMap(context, api, response.getHeaders(), results, false, HEADERS, null, HeaderValidator.instance());
-      validateMap(context, api, response.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
-      validateMap(context, api, response.getLinks(), results, false, LINKS, Regexes.NOEXT_NAME_REGEX, LinkValidator.instance());
-      validateMap(context, api, response.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+      validateRequired(response.getDescription(), results, true, CRUMB_DESCRIPTION);
+      validateMap(context, api, response.getHeaders(), results, false, CRUMB_HEADERS, null, HeaderValidator.instance());
+      validateMap(context, api, response.getContentMediaTypes(), results, false, CRUMB_CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
+      validateMap(context, api, response.getLinks(), results, false, CRUMB_LINKS, Regexes.NOEXT_NAME_REGEX, LinkValidator.instance());
+      validateMap(context, api, response.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
     }
   }
 }

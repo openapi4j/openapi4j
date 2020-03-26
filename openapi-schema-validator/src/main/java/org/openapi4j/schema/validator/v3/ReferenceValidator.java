@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResults;
@@ -52,7 +51,7 @@ class ReferenceValidator extends BaseJsonValidator<OAI3> {
       JsonValidator validator = context.getReference(refValue);
       if (validator == null) {
         ReferenceValidator refValidator = new ReferenceValidator(context, refValue, schemaNode, schemaParentNode, parentSchema);
-        refValidator.setSchemaValidator(new SchemaValidator(context, refValue, reference.getContent(), schemaParentNode, parentSchema));
+        refValidator.setSchemaValidator(new SchemaValidator(context, new ValidationResults.CrumbInfo(refValue, true), reference.getContent(), schemaParentNode, parentSchema));
         schemaValidator = refValidator;
       } else {
         schemaValidator = validator;

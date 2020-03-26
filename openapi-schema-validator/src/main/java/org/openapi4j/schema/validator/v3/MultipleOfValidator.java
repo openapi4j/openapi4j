@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -28,6 +27,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 class MultipleOfValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1019, "Value '%s' is not a multiple of '%s'.");
 
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MULTIPLEOF, true);
+
   private static final BigDecimal DIVISIBLE = BigDecimal.valueOf(0.0);
   private final BigDecimal multiple;
 
@@ -53,7 +54,7 @@ class MultipleOfValidator extends BaseJsonValidator<OAI3> {
     BigDecimal value = valueNode.decimalValue();
     BigDecimal remainder = value.remainder(multiple);
     if (remainder.compareTo(DIVISIBLE) != 0) {
-      results.add(MULTIPLEOF, ERR, value, multiple);
+      results.add(CRUMB_INFO, ERR, value, multiple);
     }
 
     return false;

@@ -11,11 +11,7 @@ import org.openapi4j.parser.model.v3.Parameter;
 import org.openapi4j.parser.validation.ValidationContext;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.HEADERS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.LINKS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.OPERATIONREF;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.SERVER;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class LinkValidator extends ExpressionValidator<Link> {
   private static final ValidationResult OP_FIELD_MISSING_ERR = new ValidationResult(ERROR, 115, "'operationRef', 'operationId' or '$ref' field missing.");
@@ -37,18 +33,18 @@ class LinkValidator extends ExpressionValidator<Link> {
     // VALIDATION EXCLUSIONS :
     // description
     if (link.isRef()) {
-      validateReference(context, api, link, results, LINKS, LinkValidator.instance(), Link.class);
+      validateReference(context, api, link, results, CRUMB_LINKS, LinkValidator.instance(), Link.class);
     } else {
-      validateMap(context, api, link.getHeaders(), results, false, HEADERS, Regexes.NOEXT_REGEX, HeaderValidator.instance());
-      validateMap(context, api, link.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
-      validateField(context, api, link.getServer(), results, false, SERVER, ServerValidator.instance());
+      validateMap(context, api, link.getHeaders(), results, false, CRUMB_HEADERS, Regexes.NOEXT_REGEX, HeaderValidator.instance());
+      validateMap(context, api, link.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
+      validateField(context, api, link.getServer(), results, false, CRUMB_SERVER, ServerValidator.instance());
     }
   }
 
   // This called from operation validator
   void validateWithOperation(OpenApi3 api, Operation srcOperation, Link link, ValidationResults results) {
     if (link.isRef()) {
-      link = getReferenceContent(api, link, results, LINKS, Link.class);
+      link = getReferenceContent(api, link, results, CRUMB_LINKS, Link.class);
     }
 
     String operationRef = link.getOperationRef();
@@ -82,7 +78,7 @@ class LinkValidator extends ExpressionValidator<Link> {
   private Operation findOperationById(OpenApi3 api, String operationId, ValidationResults results) {
     Operation operation = api.getOperationById(operationId);
     if (operation == null) {
-      results.add(OPERATIONREF, OP_NOT_FOUND_ERR, operationId);
+      results.add(CRUMB_OPERATIONREF, OP_NOT_FOUND_ERR, operationId);
     }
 
     return operation;
@@ -115,12 +111,12 @@ class LinkValidator extends ExpressionValidator<Link> {
     Reference reference = api.getContext().getReferenceRegistry().getRef(operationRef);
 
     if (reference == null) {
-      results.add(OPERATIONREF, REF_MISSING, operationRef);
+      results.add(CRUMB_OPERATIONREF, REF_MISSING, operationRef);
     } else {
       try {
         return reference.getMappedContent(Operation.class);
       } catch (DecodeException e) {
-        results.add(OPERATIONREF, REF_CONTENT_UNREADABLE, operationRef);
+        results.add(CRUMB_OPERATIONREF, REF_CONTENT_UNREADABLE, operationRef);
       }
     }
 

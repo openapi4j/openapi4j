@@ -6,12 +6,7 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTACT;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.LICENSE;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.TERMSOFSERVICE;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.TITLE;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.VERSION;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class InfoValidator extends Validator3Base<OpenApi3, Info> {
   private static final Validator<OpenApi3, Info> INSTANCE = new InfoValidator();
@@ -27,11 +22,11 @@ class InfoValidator extends Validator3Base<OpenApi3, Info> {
   public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Info info, ValidationResults results) {
     // VALIDATION EXCLUSIONS :
     // description
-    validateField(context, api, info.getContact(), results, false, CONTACT, ContactValidator.instance());
-    validateMap(context, api, info.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
-    validateField(context, api, info.getLicense(), results, false, LICENSE, LicenseValidator.instance());
-    validateUrl(api, info.getTermsOfService(), results, false, true, TERMSOFSERVICE);
-    validateString(info.getTitle(), results, true, TITLE);
-    validateString(info.getVersion(), results, true, VERSION);
+    validateField(context, api, info.getContact(), results, false, CRUMB_CONTACT, ContactValidator.instance());
+    validateMap(context, api, info.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
+    validateField(context, api, info.getLicense(), results, false, CRUMB_LICENSE, LicenseValidator.instance());
+    validateUrl(api, info.getTermsOfService(), results, false, true, CRUMB_TERMSOFSERVICE);
+    validateString(info.getTitle(), results, true, CRUMB_TITLE);
+    validateString(info.getVersion(), results, true, CRUMB_VERSION);
   }
 }

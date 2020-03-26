@@ -130,11 +130,15 @@
           "Animal": {
             "type": "object",
             "required": [
-              "animal_type"
+              "animal_type",
+              "age"
             ],
             "properties": {
               "animal_type": {
                 "type": "string"
+              },
+              "age": {
+                "type": "integer"
               }
             },
             "discriminator": {
@@ -184,16 +188,27 @@
         "data": {
           "animal_type": "Dog",
           "name": "Medor",
-          "bark": "foo"
+          "bark": "foo",
+          "age": 5
         },
         "valid": true
+      },
+      {
+        "description": "Validate parent schema, age missing",
+        "data": {
+          "animal_type": "Dog",
+          "name": "Medor",
+          "bark": "foo"
+        },
+        "valid": false
       },
       {
         "description": "something else is invalid",
         "data": {
           "animal_type": "foo",
           "name": "Medor",
-          "bark": "foo"
+          "bark": "foo",
+          "age": 5
         },
         "valid": false
       }

@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -19,6 +18,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 class NullableValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1021, "Null value is not allowed.");
 
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(NULLABLE, true);
+
   private final boolean nullable;
 
   static NullableValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
@@ -34,7 +35,7 @@ class NullableValidator extends BaseJsonValidator<OAI3> {
   @Override
   public boolean validate(JsonNode valueNode, ValidationResults results) {
     if (!nullable && valueNode.isNull()) {
-      results.add(NULLABLE, ERR);
+      results.add(CRUMB_INFO, ERR);
     }
 
     return false;

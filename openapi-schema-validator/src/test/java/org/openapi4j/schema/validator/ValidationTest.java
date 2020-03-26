@@ -1,7 +1,6 @@
 package org.openapi4j.schema.validator;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.openapi4j.core.model.v3.OAI3;
@@ -191,6 +190,8 @@ public class ValidationTest {
     Map<String, ValidatorInstance> validators = new HashMap<>();
     validators.put("x-myentity-val", MyEntityValidator::create);
     ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators, true);
+
+    ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators, false);
   }
 
   @Test(expected = RuntimeException.class)

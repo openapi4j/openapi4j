@@ -2,18 +2,12 @@ package org.openapi4j.core.model.reference;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.AuthOption;
 import org.openapi4j.core.util.TreeUtil;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
 

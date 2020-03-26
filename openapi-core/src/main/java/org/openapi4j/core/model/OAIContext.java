@@ -1,7 +1,6 @@
 package org.openapi4j.core.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.openapi4j.core.model.reference.ReferenceRegistry;
 
 import java.net.URI;

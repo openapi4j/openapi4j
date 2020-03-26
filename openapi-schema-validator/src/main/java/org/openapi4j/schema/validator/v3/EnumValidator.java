@@ -2,7 +2,6 @@ package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NumericNode;
-
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -23,6 +22,8 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  */
 class EnumValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1006, "Value '%s' is not defined in the schema.");
+
+  private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ENUM, true);
 
   private final JsonNode schemaNode;
   private static final NodeComparator NODE_COMPARATOR = new NodeComparator();
@@ -46,7 +47,7 @@ class EnumValidator extends BaseJsonValidator<OAI3> {
         }
       }
 
-      results.add(ENUM, ERR, valueNode.asText());
+      results.add(CRUMB_INFO, ERR, valueNode.asText());
     }
 
     return false;

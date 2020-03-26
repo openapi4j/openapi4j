@@ -1,7 +1,6 @@
 package org.openapi4j.core.model.reference;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.junit.Test;
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.ResolutionException;
@@ -13,10 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class ReferenceResolverTest {
   @Test(expected = ResolutionException.class)

@@ -6,9 +6,7 @@ import org.openapi4j.parser.model.v3.ServerVariable;
 import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.DEFAULT;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.DESCRIPTION;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.ENUM;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class ServerVariableValidator extends Validator3Base<OpenApi3, ServerVariable> {
   private static final Validator<OpenApi3, ServerVariable> INSTANCE = new ServerVariableValidator();
@@ -22,8 +20,8 @@ class ServerVariableValidator extends Validator3Base<OpenApi3, ServerVariable> {
 
   @Override
   public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, final ServerVariable variable, final ValidationResults results) {
-    validateList(context, api, variable.getEnums(), results, false, ENUM, null);
-    validateString(variable.getDefault(), results, true, DEFAULT);
-    validateString(variable.getDescription(), results, false, DESCRIPTION);
+    validateList(context, api, variable.getEnums(), results, false, CRUMB_ENUM, null);
+    validateString(variable.getDefault(), results, true, CRUMB_DEFAULT);
+    validateString(variable.getDescription(), results, false, CRUMB_DESCRIPTION);
   }
 }

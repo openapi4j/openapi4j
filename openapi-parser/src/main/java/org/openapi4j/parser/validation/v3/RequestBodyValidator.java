@@ -11,9 +11,7 @@ import org.openapi4j.parser.validation.Validator;
 import java.util.Map;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.$REF;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.CONTENT;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
 class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
   private static final ValidationResult ENCODING_MISMATCH = new ValidationResult(ERROR, 131, "The encoding object SHALL only apply to requestBody objects when the media type is multipart or application/x-www-form-urlencoded");
@@ -35,10 +33,10 @@ class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
     // VALIDATION EXCLUSIONS :
     // description, required
     if (requestBody.isRef()) {
-      validateReference(context, api, requestBody, results, $REF, RequestBodyValidator.instance(), RequestBody.class);
+      validateReference(context, api, requestBody, results, CRUMB_$REF, RequestBodyValidator.instance(), RequestBody.class);
     } else {
-      validateMap(context, api, requestBody.getContentMediaTypes(), results, false, CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
-      validateMap(context, api, requestBody.getExtensions(), results, false, EXTENSIONS, Regexes.EXT_REGEX, null);
+      validateMap(context, api, requestBody.getContentMediaTypes(), results, false, CRUMB_CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
+      validateMap(context, api, requestBody.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
       checkAllowedEncoding(requestBody, results);
     }
   }

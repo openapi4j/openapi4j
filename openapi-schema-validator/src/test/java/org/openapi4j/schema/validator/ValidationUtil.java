@@ -2,7 +2,6 @@ package org.openapi4j.schema.validator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-
 import org.junit.Assert;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3Context;
@@ -37,7 +36,7 @@ class ValidationUtil {
         validators.forEach(validationContext::addValidator);
       }
 
-      SchemaValidator schemaValidator = new SchemaValidator(validationContext, "schema", schemaNode);
+      SchemaValidator schemaValidator = new SchemaValidator(validationContext, null, schemaNode);
       doTests(schemaValidator, testCase, testCase.get("description").textValue());
     }
   }
@@ -49,7 +48,7 @@ class ValidationUtil {
       JsonNode testCase = testCases.get(index);
       JsonNode schemaNode = testCase.get("schema");
 
-      SchemaValidator schemaValidator = new SchemaValidator("schema", schemaNode);
+      SchemaValidator schemaValidator = new SchemaValidator(null, schemaNode);
       doTests(schemaValidator, testCase, testCase.get("description").textValue());
     }
   }
@@ -73,15 +72,17 @@ class ValidationUtil {
         }
       }
 
-      if (isValidExpected != results.isValid()) {
-        String message = String.format(
-          "TEST FAILURE : %s - %s\nData : %s\n%s",
-          testDescription,
-          test.get("description"),
-          contentNode,
-          results.toString());
+      String message = String.format(
+        "TEST FAILURE : %s - %s\nData : %s\n%s",
+        testDescription,
+        test.get("description"),
+        contentNode,
+        results.toString());
 
-        System.out.println(message);
+      System.out.println(message);
+
+      if (isValidExpected != results.isValid()) {
+
         Assert.fail();
       }
     }

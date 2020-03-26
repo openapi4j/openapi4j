@@ -6,7 +6,7 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.PROPERTYNAME;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_PROPERTYNAME;
 
 class DiscriminatorValidator extends Validator3Base<OpenApi3, Discriminator> {
   private static final Validator<OpenApi3, Discriminator> INSTANCE = new DiscriminatorValidator();
@@ -21,6 +21,6 @@ class DiscriminatorValidator extends Validator3Base<OpenApi3, Discriminator> {
   @Override
   public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, Discriminator discriminator, ValidationResults results) {
     // mapping references are checked in parsing phase.
-    validateString(discriminator.getPropertyName(), results, true, PROPERTYNAME);
+    validateString(discriminator.getPropertyName(), results, true, CRUMB_PROPERTYNAME);
   }
 }

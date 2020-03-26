@@ -1,12 +1,7 @@
 package org.openapi4j.core.validation;
 
 import java.io.Serializable;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 /**
  * Representation of results from a validation process.
@@ -15,14 +10,18 @@ public class ValidationResults implements Serializable {
   private static final long serialVersionUID = 1905122041950251284L;
 
   private static final String LINE_SEPARATOR = String.format("%n");
+  private static final String CODE_START_LBL = " (code: ";
+  private static final String CODE_END_LBL = ")";
+  private static final String FROM = "From: ";
+
   private static final String ERROR_TITLE = "Validation error(s) :" + LINE_SEPARATOR;
   private static final String WARNING_TITLE = "Validation warning(s) :" + LINE_SEPARATOR;
   private static final String INFO_TITLE = "Validation info(s) :" + LINE_SEPARATOR;
 
   // The validation items
   private final List<ValidationItem> items = new ArrayList<>();
-  // The breadcrumb
-  private final Deque<String> crumbs = new ArrayDeque<>();
+  // The schema breadcrumb
+  private final Deque<CrumbInfo> crumbs = new ArrayDeque<>();
   // The current validation severity
   private ValidationSeverity validationSeverity = ValidationSeverity.NONE;
 
@@ -34,7 +33,7 @@ public class ValidationResults implements Serializable {
    */
   public void add(ValidationResult validationResult, Object... msgArgs) {
     items.add(new ValidationItem(validationResult, crumbs, msgArgs));
-    if (validationResult.severity().getValue() > validationSeverity.getValue()) {
+    if (validationResult.severity().gt(validationSeverity)) {
       validationSeverity = validationResult.severity();
     }
   }
@@ -42,13 +41,13 @@ public class ValidationResults implements Serializable {
   /**
    * Add a result.
    *
-   * @param crumb            path item to add the result.
+   * @param crumbInfo        path item to add the result.
    * @param validationResult validation result to append.
    * @param msgArgs          message arguments to get formatted message.
    */
-  public void add(String crumb, ValidationResult validationResult, Object... msgArgs) {
-    items.add(new ValidationItem(validationResult, crumbs, crumb, msgArgs));
-    if (validationResult.severity().getValue() > validationSeverity.getValue()) {
+  public void add(CrumbInfo crumbInfo, ValidationResult validationResult, Object... msgArgs) {
+    items.add(new ValidationItem(validationResult, crumbs, crumbInfo, msgArgs));
+    if (validationResult.severity().gt(validationSeverity)) {
       validationSeverity = validationResult.severity();
     }
   }
@@ -59,18 +58,26 @@ public class ValidationResults implements Serializable {
    * @param results The stack to append.
    */
   public void add(ValidationResults results) {
-    for (ValidationItem item : results.items) {
-      items.add(item);
-      if (item.severity().getValue() > validationSeverity.getValue()) {
-        validationSeverity = item.severity();
-      }
+    items.addAll(results.items);
+
+    if (results.severity().gt(validationSeverity)) {
+      validationSeverity = results.severity();
     }
+  }
+
+  /**
+   * Get the current breadcrumb as read-only.
+   *
+   * @return The current breadcrumb.
+   */
+  public Collection<CrumbInfo> crumbs() {
+    return Collections.unmodifiableCollection(crumbs);
   }
 
   /**
    * Get the individual results as view.
    */
-  public List<ValidationItem> getItems() {
+  public List<ValidationItem> items() {
     return Collections.unmodifiableList(items);
   }
 
@@ -79,28 +86,25 @@ public class ValidationResults implements Serializable {
    *
    * @return {@code ValidationSeverity.NONE} to {@code ValidationSeverity.ERROR}
    */
-  public ValidationSeverity getSeverity() {
+  public ValidationSeverity severity() {
     return validationSeverity;
   }
 
   /**
-   * Append a crumb to the current and trigger the runnable code with this new context.
+   * Append a crumb and trigger the runnable code with this new context.
    *
-   * @param crumb The crumb to append.
-   * @param code  The code to run with the appended crumb.
+   * @param crumbInfo The crumb to append.
+   * @param code      The code to run with the appended crumb.
    */
-  public void withCrumb(String crumb, Runnable code) {
-    boolean append = false;
-
-    if (crumb != null) {
-      crumbs.addLast(crumb);
-      append = true;
+  public void withCrumb(CrumbInfo crumbInfo, Runnable code) {
+    if (crumbInfo != null) {
+      crumbs.addLast(crumbInfo);
     }
 
     try {
       code.run();
     } finally {
-      if (append) {
+      if (crumbInfo != null) {
         crumbs.pollLast();
       }
     }
@@ -166,50 +170,102 @@ public class ValidationResults implements Serializable {
   public static class ValidationItem extends ValidationResult implements Serializable {
     private static final long serialVersionUID = 7905122048950251207L;
 
+    private static final String SCHEMA_CRUMB_START = "<";
+    private static final String SCHEMA_CRUMB_END = ">";
     private static final String DOT = ".";
-    private static final String SEMI_COLON = " : ";
+    private static final String SEMI_COLON = ": ";
 
-    private final String crumbs;
+    private final Collection<CrumbInfo> crumbs;
 
-    ValidationItem(ValidationResult result, Collection<String> crumbs, Object... msgArgs) {
+    ValidationItem(ValidationResult result, Collection<CrumbInfo> crumbs, Object... msgArgs) {
       this(result, crumbs, null, msgArgs);
     }
 
-    ValidationItem(ValidationResult result, Collection<String> crumbs, String crumb, Object... msgArgs) {
+    ValidationItem(ValidationResult result, Collection<CrumbInfo> crumbs, CrumbInfo crumbInfo, Object... msgArgs) {
       super(
         result.severity(),
         result.code(),
-        (msgArgs != null) ? String.format(result.message(), msgArgs) : result.message());
+        (msgArgs.length != 0) ? String.format(result.message(), msgArgs) : result.message());
 
-      this.crumbs = joinCrumbs(crumbs, crumb);
+      this.crumbs = new ArrayList<>(crumbs);
+      if (crumbInfo != null) {
+        this.crumbs.add(crumbInfo);
+      }
     }
 
-    public String crumbs() {
-      return crumbs;
+    /**
+     * Compile and get data path.
+     * Warning, the compilation occurs at each call.
+     *
+     * @return The data path.
+     */
+    public String dataCrumbs() {
+      StringJoiner joiner = new StringJoiner(DOT);
+
+      for (CrumbInfo crumb : crumbs) {
+        if (crumb.crumb() == null) continue;
+
+        if (!crumb.isSchemaCrumb()) {
+          joiner.add(crumb.crumb());
+        }
+      }
+
+      return joiner.toString();
+    }
+
+    /**
+     * Compile and get schema path definition.
+     * Warning, the compilation occurs at each call.
+     *
+     * @return The schema path.
+     */
+    public String schemaCrumbs() {
+      StringJoiner joiner = new StringJoiner(DOT);
+
+      for (CrumbInfo crumb : crumbs) {
+        if (crumb.crumb() == null) continue;
+
+        if (crumb.isSchemaCrumb()) {
+          joiner.add(SCHEMA_CRUMB_START + crumb.crumb() + SCHEMA_CRUMB_END);
+        } else {
+          joiner.add(crumb.crumb());
+        }
+      }
+
+      return joiner.toString();
     }
 
     @Override
     public String toString() {
       StringBuilder strBuilder = new StringBuilder();
 
-      if (!crumbs.isEmpty()) {
-        strBuilder.append(crumbs).append(SEMI_COLON);
+      if (!dataCrumbs().isEmpty()) {
+        strBuilder.append(dataCrumbs()).append(SEMI_COLON);
       }
 
       strBuilder.append(message());
-      strBuilder.append(" (code: ").append(code()).append(")");
+      strBuilder.append(CODE_START_LBL).append(code()).append(CODE_END_LBL);
+      strBuilder.append(LINE_SEPARATOR).append(FROM).append(schemaCrumbs());
 
       return strBuilder.toString();
     }
+  }
 
-    private String joinCrumbs(Collection<String> crumbs, String additionalCrumb) {
-      String result = String.join(DOT, crumbs);
+  public static class CrumbInfo {
+    private final String crumb;
+    private final boolean isSchemaCrumb;
 
-      if (additionalCrumb != null) {
-        return result.length() != 0 ? result + DOT + additionalCrumb : additionalCrumb;
-      }
+    public CrumbInfo(String crumb, boolean isSchemaCrumb) {
+      this.crumb = crumb;
+      this.isSchemaCrumb = isSchemaCrumb;
+    }
 
-      return result;
+    public String crumb() {
+      return crumb;
+    }
+
+    public boolean isSchemaCrumb() {
+      return isSchemaCrumb;
     }
   }
 }

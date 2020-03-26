@@ -3,7 +3,6 @@ package org.openapi4j.core.util;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.AuthOption;
@@ -25,7 +24,7 @@ public final class TreeUtil {
   public static final String ENCODE_ERR_MSG = "Failed to encode: %s";
   private static final String DECODE_ERR_MSG = "Failed to decode: %s";
 
-  private static final Pattern FIRST_CHAR_PATTERN = Pattern.compile("(?:\\s*)(.)");
+  private static final Pattern JSON_CHAR_PATTERN = Pattern.compile("(?:^\\s*)[{\\[]");
 
   /**
    * The global JSON mapper.
@@ -90,7 +89,7 @@ public final class TreeUtil {
    * @param url   The url of the resource to load.
    * @param clazz The given class definition.
    * @return The content mapped.
-   * @throws DecodeException
+   * @throws DecodeException In case wrong URL or content resolution.
    */
   public static <T> T load(final URL url, Class<T> clazz) throws DecodeException {
     return load(url, null, clazz);
@@ -103,7 +102,7 @@ public final class TreeUtil {
    * @param authOptions The authentication values.
    * @param clazz       The given class definition.
    * @return The content mapped.
-   * @throws DecodeException
+   * @throws DecodeException In case wrong URL or content resolution.
    */
   public static <T> T load(final URL url, final List<AuthOption> authOptions, Class<T> clazz) throws DecodeException {
     requireNonNull(url, URL_REQUIRED_ERR_MSG);
@@ -111,9 +110,8 @@ public final class TreeUtil {
     try {
       InputStream in = UrlContentRetriever.instance().get(url, authOptions);
       String content = IOUtil.toString(in, StandardCharsets.UTF_8.name());
-      String firstChar = getFirstVisibleCharacter(content);
 
-      if ("{".equals(firstChar) || "[".equals(firstChar)) {
+      if (isJsonContent(content)) {
         return TreeUtil.json.readValue(content, clazz);
       } else {
         return TreeUtil.yaml.readValue(content, clazz);
@@ -128,7 +126,7 @@ public final class TreeUtil {
    *
    * @param url The url of the resource to load.
    * @return The content mapped.
-   * @throws DecodeException
+   * @throws DecodeException In case wrong URL or content resolution.
    */
   public static JsonNode load(final URL url) throws DecodeException {
     return load(url, (List<AuthOption>) null);
@@ -140,7 +138,7 @@ public final class TreeUtil {
    * @param url         The url of the resource to load.
    * @param authOptions The authentication values.
    * @return The content mapped.
-   * @throws DecodeException
+   * @throws DecodeException In case wrong URL or content resolution.
    */
   public static JsonNode load(final URL url, final List<AuthOption> authOptions) throws DecodeException {
     requireNonNull(url, URL_REQUIRED_ERR_MSG);
@@ -148,9 +146,8 @@ public final class TreeUtil {
     try {
       InputStream in = UrlContentRetriever.instance().get(url, authOptions);
       String content = IOUtil.toString(in, StandardCharsets.UTF_8.name());
-      String firstChar = getFirstVisibleCharacter(content);
 
-      if ("{".equals(firstChar) || "[".equals(firstChar)) {
+      if (isJsonContent(content)) {
         return TreeUtil.json.readTree(content);
       } else {
         return TreeUtil.yaml.readTree(content);
@@ -160,11 +157,8 @@ public final class TreeUtil {
     }
   }
 
-  private static String getFirstVisibleCharacter(String content) {
-    Matcher matcher = FIRST_CHAR_PATTERN.matcher(content);
-    if (matcher.find()) {
-      return matcher.group(1);
-    }
-    return null;
+  private static boolean isJsonContent(String content) {
+    Matcher matcher = JSON_CHAR_PATTERN.matcher(content);
+    return matcher.find();
   }
 }

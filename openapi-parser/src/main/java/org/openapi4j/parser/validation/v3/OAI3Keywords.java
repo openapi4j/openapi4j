@@ -1,5 +1,7 @@
 package org.openapi4j.parser.validation.v3;
 
+import org.openapi4j.core.validation.ValidationResults;
+
 class OAI3Keywords {
   private OAI3Keywords() {}
 
@@ -76,4 +78,78 @@ class OAI3Keywords {
   static final String VARIABLES = "variables";
   static final String VERSION = "version";
   static final String XML = "xml";
+
+  static final ValidationResults.CrumbInfo CRUMB_$REF = new ValidationResults.CrumbInfo($REF, false);
+  static final ValidationResults.CrumbInfo CRUMB_ALLOWRESERVED = new ValidationResults.CrumbInfo(ALLOWRESERVED, false);
+//  static final ValidationResults.CrumbInfo CRUMB_APIKEY = new ValidationResults.CrumbInfo(APIKEY, false);
+  static final ValidationResults.CrumbInfo CRUMB_AUTHORIZATIONCODE = new ValidationResults.CrumbInfo(AUTHORIZATIONCODE, false);
+  static final ValidationResults.CrumbInfo CRUMB_AUTHORIZATIONURL = new ValidationResults.CrumbInfo(AUTHORIZATIONURL, false);
+  static final ValidationResults.CrumbInfo CRUMB_CALLBACKS = new ValidationResults.CrumbInfo(CALLBACKS, false);
+  static final ValidationResults.CrumbInfo CRUMB_CLIENTCREDENTIALS = new ValidationResults.CrumbInfo(CLIENTCREDENTIALS, false);
+  static final ValidationResults.CrumbInfo CRUMB_COMPONENTS = new ValidationResults.CrumbInfo(COMPONENTS, false);
+  static final ValidationResults.CrumbInfo CRUMB_CONTACT = new ValidationResults.CrumbInfo(CONTACT, false);
+  static final ValidationResults.CrumbInfo CRUMB_CONTENT = new ValidationResults.CrumbInfo(CONTENT, false);
+  static final ValidationResults.CrumbInfo CRUMB_CONTENTTYPE = new ValidationResults.CrumbInfo(CONTENTTYPE, false);
+//  static final ValidationResults.CrumbInfo CRUMB_COOKIE = new ValidationResults.CrumbInfo(COOKIE, false);
+//  static final ValidationResults.CrumbInfo CRUMB_DEEPOBJECT = new ValidationResults.CrumbInfo(DEEPOBJECT, false);
+  static final ValidationResults.CrumbInfo CRUMB_DEFAULT = new ValidationResults.CrumbInfo(DEFAULT, false);
+  static final ValidationResults.CrumbInfo CRUMB_DESCRIPTION = new ValidationResults.CrumbInfo(DESCRIPTION, false);
+  static final ValidationResults.CrumbInfo CRUMB_EMAIL = new ValidationResults.CrumbInfo(EMAIL, false);
+  static final ValidationResults.CrumbInfo CRUMB_ENCODING = new ValidationResults.CrumbInfo(ENCODING, false);
+  static final ValidationResults.CrumbInfo CRUMB_ENUM = new ValidationResults.CrumbInfo(ENUM, false);
+  static final ValidationResults.CrumbInfo CRUMB_EXTENSIONS = new ValidationResults.CrumbInfo(EXTENSIONS, false);
+  static final ValidationResults.CrumbInfo CRUMB_EXTERNALDOCS = new ValidationResults.CrumbInfo(EXTERNALDOCS, false);
+  static final ValidationResults.CrumbInfo CRUMB_FLOWS = new ValidationResults.CrumbInfo(FLOWS, false);
+//  static final ValidationResults.CrumbInfo CRUMB_FORM = new ValidationResults.CrumbInfo(FORM, false);
+//  static final ValidationResults.CrumbInfo CRUMB_HEADER = new ValidationResults.CrumbInfo(HEADER, false);
+  static final ValidationResults.CrumbInfo CRUMB_HEADERS = new ValidationResults.CrumbInfo(HEADERS, false);
+//  static final ValidationResults.CrumbInfo CRUMB_HTTP = new ValidationResults.CrumbInfo(HTTP, false);
+  static final ValidationResults.CrumbInfo CRUMB_IMPLICIT = new ValidationResults.CrumbInfo(IMPLICIT, false);
+  static final ValidationResults.CrumbInfo CRUMB_IN = new ValidationResults.CrumbInfo(IN, false);
+  static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(INFO, false);
+//  static final ValidationResults.CrumbInfo CRUMB_LABEL = new ValidationResults.CrumbInfo(LABEL, false);
+  static final ValidationResults.CrumbInfo CRUMB_LICENSE = new ValidationResults.CrumbInfo(LICENSE, false);
+  static final ValidationResults.CrumbInfo CRUMB_LINKS = new ValidationResults.CrumbInfo(LINKS, false);
+//  static final ValidationResults.CrumbInfo CRUMB_MAPPING = new ValidationResults.CrumbInfo(MAPPING, false);
+//  static final ValidationResults.CrumbInfo CRUMB_MATRIX = new ValidationResults.CrumbInfo(MATRIX, false);
+  static final ValidationResults.CrumbInfo CRUMB_NAME = new ValidationResults.CrumbInfo(NAME, false);
+  static final ValidationResults.CrumbInfo CRUMB_NAMESPACE = new ValidationResults.CrumbInfo(NAMESPACE, false);
+//  static final ValidationResults.CrumbInfo CRUMB_OAUTH2 = new ValidationResults.CrumbInfo(OAUTH2, false);
+  static final ValidationResults.CrumbInfo CRUMB_OPENAPI = new ValidationResults.CrumbInfo(OPENAPI, false);
+//  static final ValidationResults.CrumbInfo CRUMB_OPENIDCONNECT = new ValidationResults.CrumbInfo(OPENIDCONNECT, false);
+  static final ValidationResults.CrumbInfo CRUMB_OPENIDCONNECTURL = new ValidationResults.CrumbInfo(OPENIDCONNECTURL, false);
+  static final ValidationResults.CrumbInfo CRUMB_OPERATIONID = new ValidationResults.CrumbInfo(OPERATIONID, false);
+  static final ValidationResults.CrumbInfo CRUMB_OPERATIONREF = new ValidationResults.CrumbInfo(OPERATIONREF, false);
+  static final ValidationResults.CrumbInfo CRUMB_PARAMETERS = new ValidationResults.CrumbInfo(PARAMETERS, false);
+  static final ValidationResults.CrumbInfo CRUMB_PASSWORD = new ValidationResults.CrumbInfo(PASSWORD, false);
+//  static final ValidationResults.CrumbInfo CRUMB_PATH = new ValidationResults.CrumbInfo(PATH, false);
+  static final ValidationResults.CrumbInfo CRUMB_PATHS = new ValidationResults.CrumbInfo(PATHS, false);
+//  static final ValidationResults.CrumbInfo CRUMB_PIPEDELIMITED = new ValidationResults.CrumbInfo(PIPEDELIMITED, false);
+//  static final ValidationResults.CrumbInfo CRUMB_QUERY = new ValidationResults.CrumbInfo(QUERY, false);
+  static final ValidationResults.CrumbInfo CRUMB_PROPERTYNAME = new ValidationResults.CrumbInfo(PROPERTYNAME, false);
+  static final ValidationResults.CrumbInfo CRUMB_REFRESHURL = new ValidationResults.CrumbInfo(REFRESHURL, false);
+  static final ValidationResults.CrumbInfo CRUMB_REQUESTBODY = new ValidationResults.CrumbInfo(REQUESTBODY, false);
+  static final ValidationResults.CrumbInfo CRUMB_REQUESTBODIES = new ValidationResults.CrumbInfo(REQUESTBODIES, false);
+  static final ValidationResults.CrumbInfo CRUMB_REQUIRED = new ValidationResults.CrumbInfo(REQUIRED, false);
+  static final ValidationResults.CrumbInfo CRUMB_RESPONSES = new ValidationResults.CrumbInfo(RESPONSES, false);
+  static final ValidationResults.CrumbInfo CRUMB_SCHEMA = new ValidationResults.CrumbInfo(SCHEMA, false);
+  static final ValidationResults.CrumbInfo CRUMB_SCHEMAS = new ValidationResults.CrumbInfo(SCHEMAS, false);
+  static final ValidationResults.CrumbInfo CRUMB_SCHEME = new ValidationResults.CrumbInfo(SCHEME, false);
+  static final ValidationResults.CrumbInfo CRUMB_SCOPES = new ValidationResults.CrumbInfo(SCOPES, false);
+  static final ValidationResults.CrumbInfo CRUMB_SECURITY = new ValidationResults.CrumbInfo(SECURITY, false);
+  static final ValidationResults.CrumbInfo CRUMB_SECURITYSCHEMES = new ValidationResults.CrumbInfo(SECURITYSCHEMES, false);
+  static final ValidationResults.CrumbInfo CRUMB_SERVER = new ValidationResults.CrumbInfo(SERVER, false);
+  static final ValidationResults.CrumbInfo CRUMB_SERVERS = new ValidationResults.CrumbInfo(SERVERS, false);
+//  static final ValidationResults.CrumbInfo CRUMB_SIMPLE = new ValidationResults.CrumbInfo(SIMPLE, false);
+//  static final ValidationResults.CrumbInfo CRUMB_SPACEDELIMITED = new ValidationResults.CrumbInfo(SPACEDELIMITED, false);
+  static final ValidationResults.CrumbInfo CRUMB_STYLE = new ValidationResults.CrumbInfo(STYLE, false);
+  static final ValidationResults.CrumbInfo CRUMB_TAGS = new ValidationResults.CrumbInfo(TAGS, false);
+  static final ValidationResults.CrumbInfo CRUMB_TERMSOFSERVICE = new ValidationResults.CrumbInfo(TERMSOFSERVICE, false);
+  static final ValidationResults.CrumbInfo CRUMB_TITLE = new ValidationResults.CrumbInfo(TITLE, false);
+  static final ValidationResults.CrumbInfo CRUMB_TOKENURL = new ValidationResults.CrumbInfo(TOKENURL, false);
+  static final ValidationResults.CrumbInfo CRUMB_TYPE = new ValidationResults.CrumbInfo(TYPE, false);
+  static final ValidationResults.CrumbInfo CRUMB_URL = new ValidationResults.CrumbInfo(URL, false);
+  static final ValidationResults.CrumbInfo CRUMB_VARIABLES = new ValidationResults.CrumbInfo(VARIABLES, false);
+  static final ValidationResults.CrumbInfo CRUMB_VERSION = new ValidationResults.CrumbInfo(VERSION, false);
+  static final ValidationResults.CrumbInfo CRUMB_XML = new ValidationResults.CrumbInfo(XML, false);
 }

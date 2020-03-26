@@ -6,13 +6,7 @@ import org.openapi4j.core.model.AuthOption;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +19,7 @@ import static org.openapi4j.core.model.AuthOption.Type.QUERY;
  */
 public final class UrlContentRetriever {
   private static final String ACCEPT_HEADER_VALUE = "application/json, application/yaml, */*";
-  private static final int MAX_REDIRECTS = 5;
+  private static final int MAX_REDIRECTIONS = 5;
 
   private static final UrlContentRetriever INSTANCE = new UrlContentRetriever();
 
@@ -131,9 +125,8 @@ public final class UrlContentRetriever {
       int statusCode = ((HttpURLConnection) conn).getResponseCode();
       String newLocation = conn.getHeaderField("Location");
       if ((statusCode == 301 || statusCode == 302) && newLocation != null) {
-        boolean loop = MAX_REDIRECTS > ++nbRedirects;
-        if (!loop) {
-          throw new ResolutionException("Too many redirects.");
+        if (++nbRedirects > MAX_REDIRECTIONS) {
+          throw new ResolutionException(String.format("Too many redirections (> %s).", MAX_REDIRECTIONS));
         }
         return new URL(cleanUrl(newLocation));
       }

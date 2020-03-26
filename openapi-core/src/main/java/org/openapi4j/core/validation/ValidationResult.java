@@ -5,8 +5,12 @@ public class ValidationResult {
   private final int code;
   private final String message;
 
+  /**
+   * Should never be used.
+   * Internal for serialization.
+   */
   public ValidationResult() {
-    this.severity = null;
+    this.severity = ValidationSeverity.NONE;
     this.code = 0;
     this.message = null;
   }

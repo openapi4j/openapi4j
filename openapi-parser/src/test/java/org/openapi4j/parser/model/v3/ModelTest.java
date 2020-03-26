@@ -2,7 +2,6 @@ package org.openapi4j.parser.model.v3;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.parser.Checker;
 import org.openapi4j.parser.OpenApi3Parser;

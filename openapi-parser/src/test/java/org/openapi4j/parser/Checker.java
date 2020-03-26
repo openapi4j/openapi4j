@@ -1,7 +1,6 @@
 package org.openapi4j.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import org.json.JSONException;
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.exception.EncodeException;

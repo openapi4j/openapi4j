@@ -2,7 +2,6 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.openapi4j.core.model.OAIContext;
 
 import java.util.List;
