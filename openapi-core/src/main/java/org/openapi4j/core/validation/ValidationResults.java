@@ -2,7 +2,6 @@ package org.openapi4j.core.validation;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Representation of results from a validation process.
