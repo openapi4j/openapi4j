@@ -193,7 +193,17 @@ public class ValidationResults implements Serializable {
      * @return The data path.
      */
     public String dataCrumbs() {
-      return joinCrumbs(crumbs, true);
+      StringJoiner joiner = new StringJoiner(DOT);
+
+      for (CrumbInfo crumb : crumbs) {
+        if (crumb.crumb() == null) continue;
+
+        if (!crumb.isSchemaCrumb()) {
+          joiner.add(crumb.crumb());
+        }
+      }
+
+      return joiner.toString();
     }
 
     /**
@@ -203,19 +213,8 @@ public class ValidationResults implements Serializable {
      * @return The schema path.
      */
     public String schemaCrumbs() {
-      return joinCrumbs(crumbs, false);
-    }
-
-    private String joinCrumbs(Collection<CrumbInfo> crumbs, boolean dataCrumbs) {
-      if (dataCrumbs) {
-        return crumbs
-          .stream()
-          .filter(crumbInfo -> !crumbInfo.isSchemaCrumb() && crumbInfo.crumb() != null)
-          .map(CrumbInfo::crumb)
-          .collect(Collectors.joining(DOT));
-      }
-
       StringJoiner joiner = new StringJoiner(DOT);
+
       for (CrumbInfo crumb : crumbs) {
         if (crumb.crumb() == null) continue;
 
