@@ -33,7 +33,7 @@ public class ValidationResults implements Serializable {
    */
   public void add(ValidationResult validationResult, Object... msgArgs) {
     items.add(new ValidationItem(validationResult, crumbs, msgArgs));
-    if (validationResult.severity().getValue() > validationSeverity.getValue()) {
+    if (validationResult.severity().gt(validationSeverity)) {
       validationSeverity = validationResult.severity();
     }
   }
@@ -47,7 +47,7 @@ public class ValidationResults implements Serializable {
    */
   public void add(CrumbInfo crumbInfo, ValidationResult validationResult, Object... msgArgs) {
     items.add(new ValidationItem(validationResult, crumbs, crumbInfo, msgArgs));
-    if (validationResult.severity().getValue() > validationSeverity.getValue()) {
+    if (validationResult.severity().gt(validationSeverity)) {
       validationSeverity = validationResult.severity();
     }
   }
@@ -58,18 +58,26 @@ public class ValidationResults implements Serializable {
    * @param results The stack to append.
    */
   public void add(ValidationResults results) {
-    for (ValidationItem item : results.items) {
-      items.add(item);
-      if (item.severity().getValue() > validationSeverity.getValue()) {
-        validationSeverity = item.severity();
-      }
+    items.addAll(results.items);
+
+    if (results.severity().gt(validationSeverity)) {
+      validationSeverity = results.severity();
     }
+  }
+
+  /**
+   * Get the current breadcrumb as read-only.
+   *
+   * @return The current breadcrumb.
+   */
+  public Collection<CrumbInfo> crumbs() {
+    return Collections.unmodifiableCollection(crumbs);
   }
 
   /**
    * Get the individual results as view.
    */
-  public List<ValidationItem> getItems() {
+  public List<ValidationItem> items() {
     return Collections.unmodifiableList(items);
   }
 
@@ -78,7 +86,7 @@ public class ValidationResults implements Serializable {
    *
    * @return {@code ValidationSeverity.NONE} to {@code ValidationSeverity.ERROR}
    */
-  public ValidationSeverity getSeverity() {
+  public ValidationSeverity severity() {
     return validationSeverity;
   }
 

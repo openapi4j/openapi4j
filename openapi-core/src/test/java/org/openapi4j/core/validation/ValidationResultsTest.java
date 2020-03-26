@@ -20,8 +20,8 @@ public class ValidationResultsTest {
     results.add(others);
 
     assertEquals(4, results.size());
-    assertEquals(4, results.getItems().size());
-    assertEquals(ValidationSeverity.ERROR, results.getSeverity());
+    assertEquals(4, results.items().size());
+    assertEquals(ValidationSeverity.ERROR, results.severity());
     assertFalse(results.isValid());
   }
 
@@ -46,9 +46,9 @@ public class ValidationResultsTest {
     results.add(new ValidationResult(ValidationSeverity.INFO, 3, "msg"));
     assertNotNull(results.toString());
 
-    assertEquals("msg2", results.getItems().iterator().next().message());
-    assertEquals(ValidationSeverity.WARNING, results.getItems().iterator().next().severity());
-    assertEquals("crumb", results.getItems().iterator().next().schemaCrumbs());
+    assertEquals("msg2", results.items().iterator().next().message());
+    assertEquals(ValidationSeverity.WARNING, results.items().iterator().next().severity());
+    assertEquals("crumb", results.items().iterator().next().schemaCrumbs());
   }
 
   @Test

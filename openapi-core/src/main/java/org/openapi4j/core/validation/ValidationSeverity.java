@@ -17,18 +17,18 @@ public enum ValidationSeverity {
   }
 
   public boolean lt(ValidationSeverity other) {
-    return compareTo(other) < 0;
+    return value < other.value;
   }
 
   public boolean le(ValidationSeverity other) {
-    return compareTo(other) <= 0;
+    return value <= other.value;
   }
 
   public boolean gt(ValidationSeverity other) {
-    return compareTo(other) > 0;
+    return value > other.value;
   }
 
   public boolean ge(ValidationSeverity other) {
-    return compareTo(other) >= 0;
+    return value >= other.value;
   }
 }

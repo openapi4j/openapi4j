@@ -40,7 +40,7 @@ public class ParameterTest extends Checker {
   @Test
   public void parameterAllowReservedInvalid() throws Exception {
     ValidationResults results = validate("/validation/v3/parameter/invalid/parameterAllowReserved.yaml");
-    assertEquals(ValidationSeverity.WARNING, results.getSeverity());
+    assertEquals(ValidationSeverity.WARNING, results.severity());
   }
 
   @Test(expected = ValidationException.class)

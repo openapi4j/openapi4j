@@ -24,7 +24,7 @@ public class OpenApi3Validator {
 
     context.validate(api, api, OpenApiValidator.instance(), results);
 
-    if (results.getSeverity() == ValidationSeverity.ERROR) {
+    if (results.severity() == ValidationSeverity.ERROR) {
       throw new ValidationException(VALIDATION_FAILURE, results);
     }
 
