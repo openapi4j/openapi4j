@@ -1,22 +1,22 @@
 package org.openapi4j.schema.validator;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.junit.Assert;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.Test;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
 import org.openapi4j.core.util.TreeUtil;
-import org.openapi4j.schema.validator.v3.MaximumToleranceValidator;
-import org.openapi4j.schema.validator.v3.MyEntityValidator;
-import org.openapi4j.schema.validator.v3.SchemaValidator;
-import org.openapi4j.schema.validator.v3.ValidatorInstance;
+import org.openapi4j.core.validation.ValidationResults;
+import org.openapi4j.core.validation.ValidationSeverity;
+import org.openapi4j.schema.validator.v3.*;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.openapi4j.schema.validator.v3.ValidationOptions.ADDITIONAL_PROPS_RESTRICT;
 
 public class ValidationTest {
@@ -182,6 +182,7 @@ public class ValidationTest {
     Map<String, ValidatorInstance> validators = new HashMap<>();
     validators.put(OAI3SchemaKeywords.MAXIMUM, MaximumToleranceValidator::create);
     validators.put("x-myentity-val", MyEntityValidator::create);
+
     ValidationUtil.validate("/schema/override/maximumTolerance.json", null, validators, true);
   }
 
@@ -189,9 +190,45 @@ public class ValidationTest {
   public void additionalValidation() throws Exception {
     Map<String, ValidatorInstance> validators = new HashMap<>();
     validators.put("x-myentity-val", MyEntityValidator::create);
-    ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators, true);
 
+    ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators, true);
     ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators, false);
+  }
+
+  @Test
+  public void infoInAnyOfValidation() throws Exception {
+    JsonNode schemaNode = TreeUtil.json.readTree("{\"anyOf\": [{ \"type\": \"integer\"}, { \"minimum\": 2 }]}");
+
+    OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
+    ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
+    validationContext.addValidator("type", TypeInfoValidator::create);
+
+    SchemaValidator validator = new SchemaValidator(validationContext, null, schemaNode);
+
+    ValidationResults results = new ValidationResults();
+    validator.validate(JsonNodeFactory.instance.numberNode(1), results);
+
+    assertEquals("", results.items().get(0).dataCrumbs());
+    assertEquals("<anyOf>.<type>", results.items().get(0).schemaCrumbs());
+    assertEquals(ValidationSeverity.INFO, results.items().get(0).severity());
+  }
+
+  @Test
+  public void infoInOneOfValidation() throws Exception {
+    JsonNode schemaNode = TreeUtil.json.readTree("{\"oneOf\": [{ \"type\": \"integer\"}, { \"minimum\": 2 }]}");
+
+    OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
+    ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
+    validationContext.addValidator("type", TypeInfoValidator::create);
+
+    SchemaValidator validator = new SchemaValidator(validationContext, null, schemaNode);
+
+    ValidationResults results = new ValidationResults();
+    validator.validate(JsonNodeFactory.instance.numberNode(1), results);
+
+    assertEquals("", results.items().get(0).dataCrumbs());
+    assertEquals("<oneOf>.<type>", results.items().get(0).schemaCrumbs());
+    assertEquals(ValidationSeverity.INFO, results.items().get(0).severity());
   }
 
   @Test(expected = RuntimeException.class)
@@ -210,6 +247,6 @@ public class ValidationTest {
     ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
     SchemaValidator validator = new SchemaValidator(validationContext, "my_schema", schemaNode);
 
-    Assert.assertEquals(validationContext, validator.getContext());
+    assertEquals(validationContext, validator.getContext());
   }
 }
