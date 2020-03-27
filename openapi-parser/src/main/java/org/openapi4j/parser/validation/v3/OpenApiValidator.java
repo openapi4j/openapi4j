@@ -41,11 +41,11 @@ class OpenApiValidator extends Validator3Base<OpenApi3, OpenApi3> {
   public void validate(ValidationContext<OpenApi3> context, OpenApi3 root, OpenApi3 api, ValidationResults results) {
     validateString(api.getOpenapi(), results, true, PATTERN_OAI3, CRUMB_OPENAPI);
     validateField(context, api, api.getInfo(), results, true, CRUMB_INFO, InfoValidator.instance());
-    validateList(context, api, api.getServers(), results, false, CRUMB_SERVERS, ServerValidator.instance());
+    validateList(context, api, api.getServers(), results, false, 0, CRUMB_SERVERS, ServerValidator.instance());
     validateMap(context, api, api.getPaths(), results, true, CRUMB_PATHS, Regexes.PATH_REGEX, PathValidator.instance());
     validateField(context, api, api.getComponents(), results, false, CRUMB_COMPONENTS, ComponentsValidator.instance());
-    validateList(context, api, api.getSecurityRequirements(), results, false, CRUMB_SECURITY, SecurityRequirementValidator.instance());
-    validateList(context, api, api.getTags(), results, false, CRUMB_TAGS, TagValidator.instance());
+    validateList(context, api, api.getSecurityRequirements(), results, false, 0, CRUMB_SECURITY, SecurityRequirementValidator.instance());
+    validateList(context, api, api.getTags(), results, false, 0, CRUMB_TAGS, TagValidator.instance());
     validateField(context, api, api.getExternalDocs(), results, false, CRUMB_EXTERNALDOCS, ExternalDocsValidator.instance());
     validateMap(context, api, api.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
 

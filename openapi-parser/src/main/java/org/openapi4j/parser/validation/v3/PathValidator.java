@@ -27,8 +27,8 @@ class PathValidator extends Validator3Base<OpenApi3, Path> {
       // description, summary
       validateMap(context, api, path.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
       validateMap(context, api, path.getOperations(), results, false, null, Regexes.METHOD_REGEX, OperationValidator.instance());
-      validateList(context, api, path.getParameters(), results, false, CRUMB_PARAMETERS, ParameterValidator.instance());
-      validateList(context, api, path.getServers(), results, false, CRUMB_SERVERS, ServerValidator.instance());
+      validateList(context, api, path.getParameters(), results, false, 0, CRUMB_PARAMETERS, ParameterValidator.instance());
+      validateList(context, api, path.getServers(), results, false, 0, CRUMB_SERVERS, ServerValidator.instance());
     }
   }
 }

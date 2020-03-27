@@ -20,7 +20,7 @@ class ServerVariableValidator extends Validator3Base<OpenApi3, ServerVariable> {
 
   @Override
   public void validate(ValidationContext<OpenApi3> context, OpenApi3 api, final ServerVariable variable, final ValidationResults results) {
-    validateList(context, api, variable.getEnums(), results, false, CRUMB_ENUM, null);
+    validateList(context, api, variable.getEnums(), results, false, 1, CRUMB_ENUM, null);
     validateString(variable.getDefault(), results, true, CRUMB_DEFAULT);
     validateString(variable.getDescription(), results, false, CRUMB_DESCRIPTION);
   }

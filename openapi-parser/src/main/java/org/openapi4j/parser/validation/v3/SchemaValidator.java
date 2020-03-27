@@ -68,7 +68,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
       validateField(context, api, schema.getDiscriminator(), results, false, CRUMB_DISCRIMINATOR, DiscriminatorValidator.instance());
       checkDiscriminator(api, schema, results);
       validateDefaultType(schema.getDefault(), schema.getType(), results);
-      validateList(context, api, schema.getEnums(), results, false, CRUMB_ENUM, null);
+      validateList(context, api, schema.getEnums(), results, false, 1, CRUMB_ENUM, null);
       validateMap(context, api, schema.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
       validateField(context, api, schema.getExternalDocs(), results, false, CRUMB_EXTERNALDOCS, ExternalDocsValidator.instance());
       validateFormat(schema.getFormat(), schema.getType(), results);
@@ -87,10 +87,10 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
       }
       validatePattern(schema.getPattern(), results, false, CRUMB_PATTERN);
       validateMap(context, api, schema.getProperties(), results, false, CRUMB_PROPERTIES, null, this);
-      validateList(context, api, schema.getRequiredFields(), results, false, CRUMB_REQUIRED, null);
-      validateList(context, api, schema.getAllOfSchemas(), results, false, CRUMB_ALLOF, this);
-      validateList(context, api, schema.getAnyOfSchemas(), results, false, CRUMB_ANYOF, this);
-      validateList(context, api, schema.getOneOfSchemas(), results, false, CRUMB_ONEOF, this);
+      validateList(context, api, schema.getRequiredFields(), results, false, 1, CRUMB_REQUIRED, null);
+      validateList(context, api, schema.getAllOfSchemas(), results, false, 1, CRUMB_ALLOF, this);
+      validateList(context, api, schema.getAnyOfSchemas(), results, false, 1, CRUMB_ANYOF, this);
+      validateList(context, api, schema.getOneOfSchemas(), results, false, 1, CRUMB_ONEOF, this);
       checkReadWrite(schema, results);
       validateString(schema.getType(), results, false, TYPE_REGEX, CRUMB_TYPE);
       validateField(context, api, schema.getXml(), results, false, CRUMB_XML, XmlValidator.instance());

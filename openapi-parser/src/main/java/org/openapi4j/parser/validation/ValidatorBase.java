@@ -22,15 +22,16 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * @param <T> The Open API sub-object.
  */
 public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T> {
-  private static final ValidationResult MALFORMED_SPEC = new ValidationResult(ERROR, 100, "Malformed spec around '%s'");
-  private static final ValidationResult DUPLICATED_VALUES = new ValidationResult(ERROR, 101, "Duplicated values in '%s'");
-  private static final ValidationResult INVALID_PATTERN = new ValidationResult(ERROR, 102, "Pattern '%s' is not valid");
-  private static final ValidationResult POSITIVE_STRICT_VALUE = new ValidationResult(ERROR, 103, "Value '%s' must be strictly positive");
-  private static final ValidationResult POSITIVE_VALUE = new ValidationResult(ERROR, 104, "Value '%s' must be positive or 0");
-  private static final ValidationResult MISSING_REQUIRED_FIELD = new ValidationResult(ERROR, 105, "Required field is missing '%s'");
-  private static final ValidationResult PATTERN_NOT_MATCHED = new ValidationResult(ERROR, 106, "String value '%s' does not match required pattern '%s'");
-  private static final ValidationResult INVALID_KEY = new ValidationResult(ERROR, 107, "Invalid key '%s' in map '%s'");
-  private static final ValidationResult INVALID_URI = new ValidationResult(ERROR, 144, "Invalid (or not absolute) URI '%s'");
+  private static final ValidationResult MALFORMED_SPEC = new ValidationResult(ERROR, 100, "Malformed spec around '%s'.");
+  private static final ValidationResult DUPLICATED_VALUES = new ValidationResult(ERROR, 101, "Duplicated values in '%s'.");
+  private static final ValidationResult MIN_SIZE_LIST = new ValidationResult(ERROR, 146, "List should have at least '%s' element(s) in '%s'.");
+  private static final ValidationResult INVALID_PATTERN = new ValidationResult(ERROR, 102, "Pattern '%s' is not valid.");
+  private static final ValidationResult POSITIVE_STRICT_VALUE = new ValidationResult(ERROR, 103, "Value '%s' must be strictly positive.");
+  private static final ValidationResult POSITIVE_VALUE = new ValidationResult(ERROR, 104, "Value '%s' must be positive or 0.");
+  private static final ValidationResult MISSING_REQUIRED_FIELD = new ValidationResult(ERROR, 105, "Required field is missing '%s'.");
+  private static final ValidationResult PATTERN_NOT_MATCHED = new ValidationResult(ERROR, 106, "String value '%s' does not match required pattern '%s'.");
+  private static final ValidationResult INVALID_KEY = new ValidationResult(ERROR, 107, "Invalid key '%s' in map '%s'.");
+  private static final ValidationResult INVALID_URI = new ValidationResult(ERROR, 144, "Invalid (or not absolute) URI '%s'.");
 
   protected static final Pattern EMAIL_REGEX = Pattern.compile("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9]" +
     "(?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:" +
@@ -73,6 +74,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
                                   final Collection<? extends V> value,
                                   final ValidationResults results,
                                   final boolean required,
+                                  final int minSize,
                                   final ValidationResults.CrumbInfo crumbInfo,
                                   final Validator<O, V> validator) {
 
@@ -81,6 +83,9 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
         Set<? extends V> set = new HashSet<>(value);
         if (set.size() != value.size()) {
           results.add(crumbInfo, DUPLICATED_VALUES, crumbInfo.crumb());
+        }
+        if (value.size() < minSize) {
+          results.add(crumbInfo, MIN_SIZE_LIST, minSize, crumbInfo.crumb());
         }
 
         if (validator != null) {

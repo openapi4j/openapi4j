@@ -25,12 +25,12 @@ class OperationValidator extends Validator3Base<OpenApi3, Operation> {
     // summary, description, deprecated, tags
     validateField(context, api, operation.getExternalDocs(), results, false, CRUMB_EXTERNALDOCS, ExternalDocsValidator.instance());
     validateString(operation.getOperationId(), results, false, CRUMB_OPERATIONID);
-    validateList(context, api, operation.getParameters(), results, false, CRUMB_PARAMETERS, ParameterValidator.instance());
+    validateList(context, api, operation.getParameters(), results, false, 0, CRUMB_PARAMETERS, ParameterValidator.instance());
     validateField(context, api, operation.getRequestBody(), results, false, CRUMB_REQUESTBODY, RequestBodyValidator.instance());
     validateMap(context, api, operation.getResponses(), results, true, CRUMB_RESPONSES, Regexes.RESPONSE_REGEX, ResponseValidator.instance());
     validateMap(context, api, operation.getCallbacks(), results, false, CRUMB_CALLBACKS, Regexes.NOEXT_REGEX, CallbackValidator.instance());
-    validateList(context, api, operation.getSecurityRequirements(), results, false, CRUMB_SECURITY, SecurityRequirementValidator.instance());
-    validateList(context, api, operation.getServers(), results, false, CRUMB_SERVERS, ServerValidator.instance());
+    validateList(context, api, operation.getSecurityRequirements(), results, false, 0, CRUMB_SECURITY, SecurityRequirementValidator.instance());
+    validateList(context, api, operation.getServers(), results, false, 0, CRUMB_SERVERS, ServerValidator.instance());
     validateMap(context, api, operation.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
 
     validateCallbacks(api, operation, results);
