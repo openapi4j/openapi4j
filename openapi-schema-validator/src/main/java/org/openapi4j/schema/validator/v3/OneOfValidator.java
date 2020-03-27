@@ -46,15 +46,15 @@ class OneOfValidator extends DiscriminatorValidator {
         if (oneOfValidResults != null) {
           results.add(CRUMB_INFO, MANY_VALID_SCHEMA_ERR);
           return;
-        } else {
-          oneOfValidResults = oneOfResults;
         }
+
+        oneOfValidResults = oneOfResults;
       }
     }
 
     if (oneOfValidResults != null) {
       // Append potential results from sub validation (INFO / WARN)
-      results.add(oneOfValidResults);
+      results.add(results.crumbs(), oneOfValidResults);
     } else {
       results.add(CRUMB_INFO, NO_VALID_SCHEMA_ERR);
     }

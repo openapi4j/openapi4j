@@ -197,7 +197,7 @@ public class ValidationTest {
 
   @Test
   public void infoInAnyOfValidation() throws Exception {
-    JsonNode schemaNode = TreeUtil.json.readTree("{\"anyOf\": [{ \"type\": \"integer\"}, { \"minimum\": 2 }]}");
+    JsonNode schemaNode = TreeUtil.json.readTree("{ \"properties\": { \"foo\": { \"anyOf\": [ { \"type\": \"integer\" }, { \"minimum\": 2 } ] } }}");
 
     OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
     ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
@@ -206,16 +206,16 @@ public class ValidationTest {
     SchemaValidator validator = new SchemaValidator(validationContext, null, schemaNode);
 
     ValidationResults results = new ValidationResults();
-    validator.validate(JsonNodeFactory.instance.numberNode(1), results);
+    validator.validate(JsonNodeFactory.instance.objectNode().set("foo", JsonNodeFactory.instance.numberNode(1)), results);
 
-    assertEquals("", results.items().get(0).dataCrumbs());
-    assertEquals("<anyOf>.<type>", results.items().get(0).schemaCrumbs());
+    assertEquals("foo", results.items().get(0).dataCrumbs());
+    assertEquals("foo.<anyOf>.<type>", results.items().get(0).schemaCrumbs());
     assertEquals(ValidationSeverity.INFO, results.items().get(0).severity());
   }
 
   @Test
   public void infoInOneOfValidation() throws Exception {
-    JsonNode schemaNode = TreeUtil.json.readTree("{\"oneOf\": [{ \"type\": \"integer\"}, { \"minimum\": 2 }]}");
+    JsonNode schemaNode = TreeUtil.json.readTree("{ \"properties\": { \"foo\": { \"oneOf\": [ { \"type\": \"integer\" }, { \"minimum\": 2 } ] } }}");
 
     OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
     ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
@@ -224,10 +224,10 @@ public class ValidationTest {
     SchemaValidator validator = new SchemaValidator(validationContext, null, schemaNode);
 
     ValidationResults results = new ValidationResults();
-    validator.validate(JsonNodeFactory.instance.numberNode(1), results);
+    validator.validate(JsonNodeFactory.instance.objectNode().set("foo", JsonNodeFactory.instance.numberNode(1)), results);
 
-    assertEquals("", results.items().get(0).dataCrumbs());
-    assertEquals("<oneOf>.<type>", results.items().get(0).schemaCrumbs());
+    assertEquals("foo", results.items().get(0).dataCrumbs());
+    assertEquals("foo.<oneOf>.<type>", results.items().get(0).schemaCrumbs());
     assertEquals(ValidationSeverity.INFO, results.items().get(0).severity());
   }
 

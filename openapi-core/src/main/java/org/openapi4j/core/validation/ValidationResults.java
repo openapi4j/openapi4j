@@ -55,7 +55,7 @@ public class ValidationResults implements Serializable {
   /**
    * Append other results to the current stack.
    *
-   * @param results The stack to append.
+   * @param results The stack to append. Must be non {@code null}.
    */
   public void add(ValidationResults results) {
     items.addAll(results.items);
@@ -63,6 +63,21 @@ public class ValidationResults implements Serializable {
     if (results.severity().gt(validationSeverity)) {
       validationSeverity = results.severity();
     }
+  }
+
+  /**
+   * Append other results to the current stack with given parent crumbs.
+   *
+   * @param parentCrumbs The given parent crumbs to insert. Must be non {@code null}.
+   * @param results      The stack to append. Must be non {@code null}.
+   */
+  public void add(Collection<CrumbInfo> parentCrumbs, ValidationResults results) {
+    // Add parent crumbs
+    for (ValidationItem item : results.items) {
+      item.crumbs.addAll(0, parentCrumbs);
+    }
+
+    add(results);
   }
 
   /**
@@ -175,7 +190,7 @@ public class ValidationResults implements Serializable {
     private static final String DOT = ".";
     private static final String SEMI_COLON = ": ";
 
-    private final Collection<CrumbInfo> crumbs;
+    private final List<CrumbInfo> crumbs;
 
     ValidationItem(ValidationResult result, Collection<CrumbInfo> crumbs, Object... msgArgs) {
       this(result, crumbs, null, msgArgs);

@@ -37,7 +37,7 @@ class AnyOfValidator extends DiscriminatorValidator {
 
       if (anyOfResults.isValid()) {
         // Append potential results from sub validation (INFO / WARN)
-        results.add(anyOfResults);
+        results.add(results.crumbs(), anyOfResults);
         return;
       }
     }
