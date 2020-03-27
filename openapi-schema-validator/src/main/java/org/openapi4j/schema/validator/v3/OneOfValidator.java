@@ -6,6 +6,9 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.ValidationContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ONEOF;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
@@ -17,7 +20,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
  */
 class OneOfValidator extends DiscriminatorValidator {
-  private static final ValidationResult NO_VALID_SCHEMA_ERR = new ValidationResult(ERROR, 1022, "No valid schema.");
+  private static final ValidationResult NO_VALID_SCHEMA_ERR = new ValidationResult(ERROR, 1022, "Schema description is erroneous. oneOf should have at least 1 element.");
   private static final ValidationResult MANY_VALID_SCHEMA_ERR = new ValidationResult(ERROR, 1023, "More than 1 schema is valid.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ONEOF, true);
@@ -36,27 +39,37 @@ class OneOfValidator extends DiscriminatorValidator {
 
   @Override
   void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
-    ValidationResults oneOfValidResults = null;
+    if (schemas.isEmpty()) {
+      results.add(CRUMB_INFO, NO_VALID_SCHEMA_ERR);
+      return;
+    }
+
+    List<ValidationResults> resultsOnError = new ArrayList<>();
+    ValidationResults validResults = null;
 
     for (SchemaValidator schema : schemas) {
-      ValidationResults oneOfResults = new ValidationResults();
-      schema.validate(valueNode, oneOfResults);
+      ValidationResults schemaResults = new ValidationResults();
+      schema.validate(valueNode, schemaResults);
 
-      if (oneOfResults.isValid()) {
-        if (oneOfValidResults != null) {
+      if (schemaResults.isValid()) {
+        if (validResults != null) {
           results.add(CRUMB_INFO, MANY_VALID_SCHEMA_ERR);
           return;
         }
 
-        oneOfValidResults = oneOfResults;
+        validResults = schemaResults;
+      }  else {
+        resultsOnError.add(schemaResults);
       }
     }
 
-    if (oneOfValidResults != null) {
+    if (validResults != null) {
       // Append potential results from sub validation (INFO / WARN)
-      results.add(results.crumbs(), oneOfValidResults);
+      results.add(results.crumbs(), validResults);
     } else {
-      results.add(CRUMB_INFO, NO_VALID_SCHEMA_ERR);
+      for (ValidationResults result : resultsOnError) {
+        results.add(results.crumbs(), result);
+      }
     }
   }
 }
