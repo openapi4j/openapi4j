@@ -2,7 +2,7 @@ package org.openapi4j.core.validation;
 
 public class ValidationResult {
   private final ValidationSeverity severity;
-  private final int code;
+  private final Integer code;
   private final String message;
 
   /**
@@ -11,11 +11,11 @@ public class ValidationResult {
    */
   public ValidationResult() {
     this.severity = ValidationSeverity.NONE;
-    this.code = 0;
+    this.code = null;
     this.message = null;
   }
 
-  public ValidationResult(ValidationSeverity severity, int code, String message) {
+  public ValidationResult(ValidationSeverity severity, Integer code, String message) {
     this.severity = severity;
     this.code = code;
     this.message = message;
@@ -25,7 +25,7 @@ public class ValidationResult {
     return severity;
   }
 
-  public int code() {
+  public Integer code() {
     return code;
   }
 

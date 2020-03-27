@@ -13,7 +13,7 @@ public class ValidationResultsTest {
   public void anonymousConstructor() {
     ValidationResult result = new ValidationResult();
     assertEquals(ValidationSeverity.NONE, result.severity());
-    assertEquals(0, result.code());
+    assertNull(result.code());
     assertNull(result.message());
   }
 

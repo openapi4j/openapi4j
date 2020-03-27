@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.util.TreeUtil;
-import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
 import org.openapi4j.schema.validator.v3.ValidatorInstance;
@@ -58,31 +57,24 @@ class ValidationUtil {
     for (int i = 0; i < testNodes.size(); i++) {
       JsonNode test = testNodes.get(i);
       JsonNode contentNode = test.get("data");
-      ValidationResults results = null;
-
       boolean isValidExpected = test.get("valid").asBoolean();
 
-      try {
-        schemaValidator.validate(contentNode);
-      } catch (ValidationException ex) {
-        results = ex.getResults();
-      } finally {
-        if (results == null) {
-          results = new ValidationResults();
-        }
-      }
-
-      String message = String.format(
-        "TEST FAILURE : %s - %s\nData : %s\n%s",
-        testDescription,
-        test.get("description"),
-        contentNode,
-        results.toString());
-
-      System.out.println(message);
+      ValidationResults results = new ValidationResults();
+      schemaValidator.validate(contentNode, results);
 
       if (isValidExpected != results.isValid()) {
+        String message = String.format(
+          "TEST FAILURE : %s - %s\nData : %s",
+          testDescription,
+          test.get("description"),
+          contentNode);
 
+        System.out.println(message);
+      }
+
+      System.out.println(results.toString());
+
+      if (isValidExpected != results.isValid()) {
         Assert.fail();
       }
     }
