@@ -85,7 +85,7 @@ public class MultiStringMap<V> {
 
   /**
    * Returns a Collection view of Collection of the values present in
-   * this multimap.
+   * this map.
    */
   public Collection<Collection<V>> values() {
     return map.values();
@@ -99,7 +99,7 @@ public class MultiStringMap<V> {
   }
 
   /**
-   * Removes the mapping for the specified key from this multimap if present
+   * Removes the mapping for the specified key from this map if present
    * and returns the Collection of previous values associated with key, or
    * null if there was no mapping for key.
    */
@@ -108,7 +108,7 @@ public class MultiStringMap<V> {
   }
 
   /**
-   * Returns the number of key-value mappings in this multimap.
+   * Returns the number of key-value mappings in this map.
    */
   public int size() {
     int size = 0;
@@ -119,7 +119,7 @@ public class MultiStringMap<V> {
   }
 
   /**
-   * Returns true if this multimap contains no key-value mappings.
+   * Returns true if this map contains no key-value mappings.
    */
   public boolean isEmpty() {
     return map.isEmpty();

@@ -6,6 +6,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import java.util.regex.Pattern;
 
@@ -20,7 +21,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.WARNING;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-13" />
  */
-class FormatValidator extends BaseJsonValidator<OAI3> {
+class FormatValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1007, "Value '%s' does not match format '%s'.");
   private static final ValidationResult UNKNOWN_WARN = new ValidationResult(WARNING, 1008, "Format '%s' is unknown, validation passes.");
 
@@ -37,18 +38,14 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
 
   private final String format;
 
-  static FormatValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new FormatValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private FormatValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  FormatValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     format = (schemaNode.isTextual()) ? schemaNode.textValue() : null;
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     if (format == null || valueNode.isNull()) {
       return false;
     }
@@ -99,13 +96,13 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
         validated = !valueNode.isTextual() || URI_PATTERN.matcher(valueNode.textValue()).matches();
         break;
       default:
-        results.add(CRUMB_INFO, UNKNOWN_WARN, format);
+        validation.add(CRUMB_INFO, UNKNOWN_WARN, format);
         validated = true;
         break;
     }
 
     if (!validated) {
-      results.add(CRUMB_INFO, ERR, valueNode.asText(), format);
+      validation.add(CRUMB_INFO, ERR, valueNode.asText(), format);
     }
 
     return false;

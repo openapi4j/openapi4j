@@ -6,10 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class ContentType {
-  // Those following regexes must capture only the content type value
+  // Those following reg expressions must capture only the content type value
   // WITHOUT any additional properties (;charset=... obviously)
-  private static final Pattern JSON_PATTERN = Pattern.compile("(?:application|text)\\/(?:.+\\+)?json");
-  private static final Pattern XML_PATTERN = Pattern.compile("(?:application|text)\\/(?:.+\\+)?xml");
+  private static final Pattern JSON_PATTERN = Pattern.compile("(?:application|text)/(?:.+\\+)?json");
+  private static final Pattern XML_PATTERN = Pattern.compile("(?:application|text)/(?:.+\\+)?xml");
   private static final Pattern CHARSET_PATTERN = Pattern.compile("(?:charset=)(.*)");
 
   private ContentType() {}

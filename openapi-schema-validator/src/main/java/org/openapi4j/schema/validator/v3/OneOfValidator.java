@@ -5,6 +5,7 @@ import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,56 +20,52 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
  */
-class OneOfValidator extends DiscriminatorValidator {
+class OneOfValidator<V> extends DiscriminatorValidator<V> {
   private static final ValidationResult NO_VALID_SCHEMA_ERR = new ValidationResult(ERROR, 1022, "Schema description is erroneous. oneOf should have at least 1 element.");
   private static final ValidationResult MANY_VALID_SCHEMA_ERR = new ValidationResult(ERROR, 1023, "More than 1 schema is valid.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ONEOF, true);
 
-  static OneOfValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new OneOfValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private OneOfValidator(final ValidationContext<OAI3> context,
+  OneOfValidator(final ValidationContext<OAI3, V> context,
                          final JsonNode schemaNode,
                          final JsonNode schemaParentNode,
-                         final SchemaValidator parentSchema) {
+                         final SchemaValidator<V> parentSchema) {
 
     super(context, schemaNode, schemaParentNode, parentSchema, ONEOF);
   }
 
   @Override
-  void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
+  void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationData<V> validation) {
     if (schemas.isEmpty()) {
-      results.add(CRUMB_INFO, NO_VALID_SCHEMA_ERR);
+      validation.add(CRUMB_INFO, NO_VALID_SCHEMA_ERR);
       return;
     }
 
     List<ValidationResults> resultsOnError = new ArrayList<>();
     ValidationResults validResults = null;
 
-    for (SchemaValidator schema : schemas) {
-      ValidationResults schemaResults = new ValidationResults();
-      schema.validate(valueNode, schemaResults);
+    for (SchemaValidator<V> schema : schemas) {
+      ValidationData<V> schemaValidation = new ValidationData<>(validation.delegate());
+      schema.validate(valueNode, schemaValidation);
 
-      if (schemaResults.isValid()) {
+      if (schemaValidation.isValid()) {
         if (validResults != null) {
-          results.add(CRUMB_INFO, MANY_VALID_SCHEMA_ERR);
+          validation.add(CRUMB_INFO, MANY_VALID_SCHEMA_ERR);
           return;
         }
 
-        validResults = schemaResults;
+        validResults = schemaValidation.results();
       }  else {
-        resultsOnError.add(schemaResults);
+        resultsOnError.add(schemaValidation.results());
       }
     }
 
     if (validResults != null) {
       // Append potential results from sub validation (INFO / WARN)
-      results.add(results.crumbs(), validResults);
+      validation.add(validation.results().crumbs(), validResults);
     } else {
       for (ValidationResults result : resultsOnError) {
-        results.add(results.crumbs(), result);
+        validation.add(validation.results().crumbs(), result);
       }
     }
   }

@@ -7,7 +7,6 @@ import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
 import org.openapi4j.core.util.TreeUtil;
-import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.core.validation.ValidationSeverity;
 import org.openapi4j.schema.validator.v3.*;
 
@@ -179,17 +178,17 @@ public class ValidationTest {
 
   @Test
   public void overriddenValidation() throws Exception {
-    Map<String, ValidatorInstance> validators = new HashMap<>();
-    validators.put(OAI3SchemaKeywords.MAXIMUM, MaximumToleranceValidator::create);
-    validators.put("x-myentity-val", MyEntityValidator::create);
+    Map<String, ValidatorInstance<Void>> validators = new HashMap<>();
+    validators.put(OAI3SchemaKeywords.MAXIMUM, MaximumToleranceValidator::new);
+    validators.put("x-myentity-val", MyEntityValidator::new);
 
     ValidationUtil.validate("/schema/override/maximumTolerance.json", null, validators, true);
   }
 
   @Test
   public void additionalValidation() throws Exception {
-    Map<String, ValidatorInstance> validators = new HashMap<>();
-    validators.put("x-myentity-val", MyEntityValidator::create);
+    Map<String, ValidatorInstance<Void>> validators = new HashMap<>();
+    validators.put("x-myentity-val", MyEntityValidator::new);
 
     ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators, true);
     ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators, false);
@@ -200,17 +199,17 @@ public class ValidationTest {
     JsonNode schemaNode = TreeUtil.json.readTree("{ \"properties\": { \"foo\": { \"anyOf\": [ { \"type\": \"integer\" }, { \"minimum\": 2 } ] } }}");
 
     OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
-    ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
-    validationContext.addValidator("type", TypeInfoValidator::create);
+    ValidationContext<OAI3, TypeInfoDelegate> validationContext = new ValidationContext<>(apiContext);
+    validationContext.addValidator("type", TypeInfoValidator::new);
 
-    SchemaValidator validator = new SchemaValidator(validationContext, null, schemaNode);
+    SchemaValidator<TypeInfoDelegate> validator = new SchemaValidator<>(validationContext, null, schemaNode);
 
-    ValidationResults results = new ValidationResults();
-    validator.validate(JsonNodeFactory.instance.objectNode().set("foo", JsonNodeFactory.instance.numberNode(1)), results);
+    ValidationData<TypeInfoDelegate> validation = new ValidationData<>();
+    validator.validate(JsonNodeFactory.instance.objectNode().set("foo", JsonNodeFactory.instance.numberNode(1)), validation);
 
-    assertEquals("foo", results.items().get(0).dataCrumbs());
-    assertEquals("foo.<anyOf>.<type>", results.items().get(0).schemaCrumbs());
-    assertEquals(ValidationSeverity.INFO, results.items().get(0).severity());
+    assertEquals("foo", validation.results().items().get(0).dataCrumbs());
+    assertEquals("foo.<anyOf>.<type>", validation.results().items().get(0).schemaCrumbs());
+    assertEquals(ValidationSeverity.INFO, validation.results().items().get(0).severity());
   }
 
   @Test
@@ -218,22 +217,42 @@ public class ValidationTest {
     JsonNode schemaNode = TreeUtil.json.readTree("{ \"properties\": { \"foo\": { \"oneOf\": [ { \"type\": \"integer\" }, { \"minimum\": 2 } ] } }}");
 
     OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
-    ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
-    validationContext.addValidator("type", TypeInfoValidator::create);
+    ValidationContext<OAI3, TypeInfoDelegate> validationContext = new ValidationContext<>(apiContext);
+    validationContext.addValidator("type", TypeInfoValidator::new);
 
-    SchemaValidator validator = new SchemaValidator(validationContext, null, schemaNode);
+    SchemaValidator<TypeInfoDelegate> validator = new SchemaValidator<>(validationContext, null, schemaNode);
 
-    ValidationResults results = new ValidationResults();
-    validator.validate(JsonNodeFactory.instance.objectNode().set("foo", JsonNodeFactory.instance.numberNode(1)), results);
+    ValidationData<TypeInfoDelegate> validation = new ValidationData<>();
+    validator.validate(JsonNodeFactory.instance.objectNode().set("foo", JsonNodeFactory.instance.numberNode(1)), validation);
 
-    assertEquals("foo", results.items().get(0).dataCrumbs());
-    assertEquals("foo.<oneOf>.<type>", results.items().get(0).schemaCrumbs());
-    assertEquals(ValidationSeverity.INFO, results.items().get(0).severity());
+    assertEquals("foo", validation.results().items().get(0).dataCrumbs());
+    assertEquals("foo.<oneOf>.<type>", validation.results().items().get(0).schemaCrumbs());
+    assertEquals(ValidationSeverity.INFO, validation.results().items().get(0).severity());
+  }
+
+  @Test
+  public void delegatedValidation() throws Exception {
+    JsonNode schemaNode = TreeUtil.json.readTree("{ \"properties\": { \"foo\": { \"oneOf\": [ { \"type\": \"integer\" }, { \"minimum\": 2 } ] } }}");
+
+    OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
+    ValidationContext<OAI3, TypeInfoDelegate> validationContext = new ValidationContext<>(apiContext);
+    validationContext.addValidator("type", TypeInfoValidator::new);
+
+    SchemaValidator<TypeInfoDelegate> validator = new SchemaValidator<>(validationContext, null, schemaNode);
+
+    ValidationData<TypeInfoDelegate> validation = new ValidationData<>(new TypeInfoDelegate(true));
+    validator.validate(JsonNodeFactory.instance.objectNode().set("foo", JsonNodeFactory.instance.numberNode(1)), validation);
+
+    assertEquals("foo", validation.results().items().get(0).dataCrumbs());
+    assertEquals("foo.<oneOf>.<type>", validation.results().items().get(0).schemaCrumbs());
+    assertEquals(ValidationSeverity.INFO, validation.results().items().get(0).severity());
+    assertEquals(ValidationSeverity.INFO, validation.results().items().get(1).severity());
+    assertEquals("true", validation.results().items().get(1).message());
   }
 
   @Test(expected = RuntimeException.class)
   public void schemaValidatorResolutionException() throws RuntimeException, IOException {
-    new SchemaValidator(
+    new SchemaValidator<>(
       null,
       "my_schema",
       TreeUtil.json.readTree(ValidationTest.class.getResource("/schema/reference.json")));
@@ -244,8 +263,8 @@ public class ValidationTest {
     JsonNode schemaNode = TreeUtil.json.readTree("{\"not\": {\"type\": \"integer\"} }");
 
     OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
-    ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
-    SchemaValidator validator = new SchemaValidator(validationContext, "my_schema", schemaNode);
+    ValidationContext<OAI3, Void> validationContext = new ValidationContext<>(apiContext);
+    SchemaValidator<Void> validator = new SchemaValidator<>(validationContext, "my_schema", schemaNode);
 
     assertEquals(validationContext, validator.getContext());
   }

@@ -6,6 +6,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,18 +21,14 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-9" />
  */
-class RequiredValidator extends BaseJsonValidator<OAI3> {
+class RequiredValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1026, "Field '%s' is required.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(REQUIRED, true);
 
   private final List<String> fieldNames;
 
-  static RequiredValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new RequiredValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private RequiredValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  RequiredValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     if (schemaNode.isArray()) {
@@ -46,12 +43,12 @@ class RequiredValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     if (fieldNames == null) return false;
 
     for (String fieldName : fieldNames) {
       if (null == valueNode.get(fieldName)) {
-        results.add(CRUMB_INFO, ERR, fieldName);
+        validation.add(CRUMB_INFO, ERR, fieldName);
       }
     }
 

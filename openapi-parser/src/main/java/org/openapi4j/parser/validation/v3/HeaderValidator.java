@@ -7,6 +7,8 @@ import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
+import java.util.regex.Pattern;
+
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
@@ -30,7 +32,7 @@ class HeaderValidator extends Validator3Base<OpenApi3, Header> {
     if (header.isRef()) {
       validateReference(context, api, header, results, CRUMB_$REF, HeaderValidator.instance(), Header.class);
     } else {
-      validateString(header.getStyle(), results, false, "simple", CRUMB_STYLE); // Only simple is allowed.
+      validateString(header.getStyle(), results, false, Pattern.compile("simple"), CRUMB_STYLE); // Only simple is allowed.
       validateField(context, api, header.getSchema(), results, false, CRUMB_SCHEMA, SchemaValidator.instance());
       validateMap(context, api, header.getContentMediaTypes(), results, false, CRUMB_CONTENT, Regexes.NOEXT_REGEX, MediaTypeValidator.instance());
       validateMap(context, api, header.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);

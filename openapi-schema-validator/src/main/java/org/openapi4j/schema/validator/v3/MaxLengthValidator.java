@@ -6,6 +6,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXLENGTH;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
@@ -17,18 +18,14 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-7" />
  */
-class MaxLengthValidator extends BaseJsonValidator<OAI3> {
+class MaxLengthValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1012, "Max length is '%s', found '%s'.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MAXLENGTH, true);
 
   private final Integer maxLength;
 
-  static MaxLengthValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new MaxLengthValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private MaxLengthValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  MaxLengthValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     maxLength
@@ -38,7 +35,7 @@ class MaxLengthValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     if (maxLength == null || !valueNode.isTextual()) {
       return false;
     }
@@ -46,7 +43,7 @@ class MaxLengthValidator extends BaseJsonValidator<OAI3> {
     String value = valueNode.textValue();
     int length = value.codePointCount(0, value.length());
     if (length > maxLength) {
-      results.add(CRUMB_INFO, ERR, maxLength, length);
+      validation.add(CRUMB_INFO, ERR, maxLength, length);
     }
 
     return false;

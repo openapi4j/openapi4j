@@ -7,6 +7,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NOT;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
@@ -18,28 +19,24 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-12" />
  */
-class NotValidator extends BaseJsonValidator<OAI3> {
+class NotValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1020, "Schema should not be valid.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(NOT, true);
 
-  private final SchemaValidator schema;
+  private final SchemaValidator<V> schema;
 
-  static NotValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new NotValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private NotValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  NotValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    schema = new SchemaValidator(context, CRUMB_INFO, schemaNode, schemaParentNode, parentSchema);
+    schema = new SchemaValidator<>(context, CRUMB_INFO, schemaNode, schemaParentNode, parentSchema);
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     try {
       schema.validate(valueNode);
-      results.add(CRUMB_INFO, ERR);
+      validation.add(CRUMB_INFO, ERR);
     } catch (ValidationException ex) {
       // Succeed case
     }

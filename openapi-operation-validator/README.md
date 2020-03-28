@@ -33,7 +33,7 @@ Standard:
 
 ```java
 // openAPI & operation objects are from openapi4j parser
-RequestValidator val = new RequestValidator(openAPI);
+RequestValidator<Void> val = new RequestValidator<>(openAPI);
 
 val.validate(request, operation); // throws ValidationException
 val.validate(response, operation); // throws ValidationException
@@ -42,8 +42,11 @@ val.validate(response, operation); // throws ValidationException
 Raw:
 
 ```java
-OperationValidator val = new OperationValidator(openAPI, operation);
-val.validate...(request, results); // ... stands for query, path, headers, ...
+OperationValidator<Void> val = new OperationValidator<>(openAPI, operation);
+val.validateQuery(request, validation);
+val.validateHeaders(request, validation);
+val.validateBody(request, validation);
+// ...
 ```
 
 Requests and responses are wrapped with the specific adapter.
@@ -51,6 +54,7 @@ Requests and responses are wrapped with the specific adapter.
 ```java
 // Pseudo
 Request request = [Adapter]Request.of([AdapterRequestObject] rq);
+Response response = [Adapter]Response.of([AdapterResponseObject] resp);
 
 // validate...
 ```

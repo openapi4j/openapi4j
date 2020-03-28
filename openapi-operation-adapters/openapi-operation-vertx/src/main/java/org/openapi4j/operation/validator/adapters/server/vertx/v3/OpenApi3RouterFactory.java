@@ -100,7 +100,7 @@ public interface OpenApi3RouterFactory {
    * without assigned handlers<br/>
    *
    * @return The built router.
-   * @throws ResolutionException
+   * @throws ResolutionException In case of missing security handler.
    */
   Router getRouter() throws ResolutionException;
 }

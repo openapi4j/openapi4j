@@ -102,7 +102,7 @@ public class Callback extends AbsRefOpenApiSchema<Callback> {
   }
 
   @Override
-  protected Callback copyReference(OAIContext context) {
+  protected Callback copyReference() {
     Callback copy = new Callback();
     copy.setRef(getRef());
     copy.setCanonicalRef(getCanonicalRef());

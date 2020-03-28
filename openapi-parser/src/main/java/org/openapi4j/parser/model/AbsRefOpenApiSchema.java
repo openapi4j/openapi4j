@@ -64,7 +64,7 @@ public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends Ab
           return copy.copy(context, true);
         }
       } else {
-        return copyReference(context);
+        return copyReference();
       }
     }
 
@@ -74,10 +74,9 @@ public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends Ab
   /**
    * Copy the reference object.
    *
-   * @param context The current context.
    * @return The copied reference object.
    */
-  protected abstract M copyReference(OAIContext context);
+  protected abstract M copyReference();
 
   /**
    * Copy the flat content of the current schema.

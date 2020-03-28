@@ -46,7 +46,7 @@ public class Report {
     return error;
   }
 
-  public boolean isExcluded() {
-    return excluded;
+  public boolean isIncluded() {
+    return !excluded;
   }
 }

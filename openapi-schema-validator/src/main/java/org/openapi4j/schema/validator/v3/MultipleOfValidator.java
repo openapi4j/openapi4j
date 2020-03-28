@@ -6,6 +6,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import java.math.BigDecimal;
 
@@ -24,7 +25,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * A numeric instance is only valid if division by this keyword's value
  * results in an integer.
  */
-class MultipleOfValidator extends BaseJsonValidator<OAI3> {
+class MultipleOfValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1019, "Value '%s' is not a multiple of '%s'.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MULTIPLEOF, true);
@@ -32,11 +33,7 @@ class MultipleOfValidator extends BaseJsonValidator<OAI3> {
   private static final BigDecimal DIVISIBLE = BigDecimal.valueOf(0.0);
   private final BigDecimal multiple;
 
-  static MultipleOfValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new MultipleOfValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private MultipleOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  MultipleOfValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     multiple
@@ -46,7 +43,7 @@ class MultipleOfValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     if (multiple == null || !valueNode.isNumber()) {
       return false;
     }
@@ -54,7 +51,7 @@ class MultipleOfValidator extends BaseJsonValidator<OAI3> {
     BigDecimal value = valueNode.decimalValue();
     BigDecimal remainder = value.remainder(multiple);
     if (remainder.compareTo(DIVISIBLE) != 0) {
-      results.add(CRUMB_INFO, ERR, value, multiple);
+      validation.add(CRUMB_INFO, ERR, value, multiple);
     }
 
     return false;

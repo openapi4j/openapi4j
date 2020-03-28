@@ -7,6 +7,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import java.util.*;
 
@@ -20,26 +21,18 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-10" />
  */
-class DependenciesValidator extends BaseJsonValidator<OAI3> {
+class DependenciesValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1002, "Missing dependency '%s' from '%s' definition.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(DEPENDENCIES, true);
 
   private final Map<String, Collection<String>> arrayDependencies = new HashMap<>();
-  private final Map<String, SchemaValidator> objectDependencies = new HashMap<>();
+  private final Map<String, SchemaValidator<V>> objectDependencies = new HashMap<>();
 
-  static DependenciesValidator create(final ValidationContext<OAI3> context,
-                                      final JsonNode schemaNode,
-                                      final JsonNode schemaParentNode,
-                                      final SchemaValidator parentSchema) {
-
-    return new DependenciesValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private DependenciesValidator(final ValidationContext<OAI3> context,
+  DependenciesValidator(final ValidationContext<OAI3, V> context,
                                 final JsonNode schemaNode,
                                 final JsonNode schemaParentNode,
-                                final SchemaValidator parentSchema) {
+                                final SchemaValidator<V> parentSchema) {
 
     super(context, schemaNode, schemaParentNode, parentSchema);
 
@@ -49,7 +42,7 @@ class DependenciesValidator extends BaseJsonValidator<OAI3> {
       final JsonNode fieldSchemaVal = schemaNode.get(fieldName);
 
       if (fieldSchemaVal.isObject()) {
-        objectDependencies.put(fieldName, new SchemaValidator(context, new ValidationResults.CrumbInfo(fieldName, false), fieldSchemaVal, schemaParentNode, parentSchema));
+        objectDependencies.put(fieldName, new SchemaValidator<>(context, new ValidationResults.CrumbInfo(fieldName, false), fieldSchemaVal, schemaParentNode, parentSchema));
 
       } else if (fieldSchemaVal.isArray()) {
         Collection<String> values = arrayDependencies.computeIfAbsent(fieldName, k -> new ArrayList<>());
@@ -61,7 +54,7 @@ class DependenciesValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     final Iterator<String> fieldNames = valueNode.fieldNames();
 
     validate(() -> {
@@ -70,9 +63,9 @@ class DependenciesValidator extends BaseJsonValidator<OAI3> {
 
         final Collection<String> values = arrayDependencies.get(fieldName);
         if (values != null) {
-          validateArray(valueNode, values, results);
+          validateArray(valueNode, values, validation);
         } else {
-          validateObject(valueNode, objectDependencies.get(fieldName), results);
+          validateObject(valueNode, objectDependencies.get(fieldName), validation);
         }
       }
     });
@@ -82,21 +75,21 @@ class DependenciesValidator extends BaseJsonValidator<OAI3> {
 
   private void validateArray(final JsonNode valueNode,
                              final Collection<String> values,
-                             final ValidationResults results) {
+                             final ValidationData<V> validation) {
 
     for (String field : values) {
       if (valueNode.get(field) == null) {
-        results.add(CRUMB_INFO, ERR, field, arrayDependencies.toString());
+        validation.add(CRUMB_INFO, ERR, field, arrayDependencies.toString());
       }
     }
   }
 
   private void validateObject(final JsonNode valueNode,
-                              final SchemaValidator schema,
-                              final ValidationResults results) throws ValidationException {
+                              final SchemaValidator<V> schema,
+                              final ValidationData<V> validation) throws ValidationException {
 
     if (schema != null) {
-      schema.validateWithContext(valueNode, results);
+      schema.validateWithContext(valueNode, validation);
     }
   }
 }

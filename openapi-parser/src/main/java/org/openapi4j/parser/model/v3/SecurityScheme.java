@@ -111,7 +111,7 @@ public class SecurityScheme extends AbsExtendedRefOpenApiSchema<SecurityScheme> 
   }
 
   @Override
-  protected SecurityScheme copyReference(OAIContext context) {
+  protected SecurityScheme copyReference() {
     SecurityScheme copy = new SecurityScheme();
     copy.setRef(getRef());
     copy.setCanonicalRef(getCanonicalRef());

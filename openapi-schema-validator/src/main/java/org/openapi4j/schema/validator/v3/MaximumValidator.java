@@ -6,6 +6,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import java.math.BigDecimal;
 
@@ -20,7 +21,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-6" />
  */
-class MaximumValidator extends BaseJsonValidator<OAI3> {
+class MaximumValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult EXCLUSIVE_ERR = new ValidationResult(ERROR, 1009, "Excluded maximum is '%s', found '%s'.");
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1010, "Maximum is '%s', found '%s'.");
 
@@ -29,11 +30,7 @@ class MaximumValidator extends BaseJsonValidator<OAI3> {
   private final BigDecimal maximum;
   private final boolean excludeEqual;
 
-  static MaximumValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new MaximumValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private MaximumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  MaximumValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     maximum = schemaNode.isNumber() ? schemaNode.decimalValue() : null;
@@ -47,7 +44,7 @@ class MaximumValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     if (maximum == null || !valueNode.isNumber()) {
       return false;
     }
@@ -55,9 +52,9 @@ class MaximumValidator extends BaseJsonValidator<OAI3> {
     final BigDecimal value = valueNode.decimalValue();
     final int compResult = value.compareTo(maximum);
     if (excludeEqual && compResult == 0) {
-      results.add(CRUMB_INFO, EXCLUSIVE_ERR, maximum, value);
+      validation.add(CRUMB_INFO, EXCLUSIVE_ERR, maximum, value);
     } else if (compResult > 0) {
-      results.add(CRUMB_INFO, ERR, maximum, value);
+      validation.add(CRUMB_INFO, ERR, maximum, value);
     }
 
     return false;

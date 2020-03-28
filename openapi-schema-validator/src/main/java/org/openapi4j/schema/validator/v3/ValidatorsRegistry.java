@@ -2,50 +2,24 @@ package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.v3.OAI3;
-import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
 import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
 
 /**
  * The registry of known keywords with associated validator.
  * <p>
- * Also, this class manages the replacement with additional validators if any.
+ * Also, this class manages additional validators if any.
  */
 class ValidatorsRegistry {
   private static final ValidatorsRegistry INSTANCE = new ValidatorsRegistry();
-  private final Map<String, ValidatorInstance> validators = new HashMap<>();
 
   private ValidatorsRegistry() {
-    // Keywords are not ported directly by validators
-    // to allow breadcrumb flexibility (i.e. validator extensions)
-    validators.put(OAI3SchemaKeywords.ADDITIONALPROPERTIES, AdditionalPropertiesValidator::create);
-    validators.put(OAI3SchemaKeywords.ALLOF, AllOfValidator::create);
-    validators.put(OAI3SchemaKeywords.ANYOF, AnyOfValidator::create);
-    validators.put(OAI3SchemaKeywords.DEPENDENCIES, DependenciesValidator::create);
-    validators.put(OAI3SchemaKeywords.ENUM, EnumValidator::create);
-    validators.put(OAI3SchemaKeywords.FORMAT, FormatValidator::create);
-    validators.put(OAI3SchemaKeywords.ITEMS, ItemsValidator::create);
-    validators.put(OAI3SchemaKeywords.MAXIMUM, MaximumValidator::create);
-    validators.put(OAI3SchemaKeywords.MAXITEMS, MaxItemsValidator::create);
-    validators.put(OAI3SchemaKeywords.MAXLENGTH, MaxLengthValidator::create);
-    validators.put(OAI3SchemaKeywords.MAXPROPERTIES, MaxPropertiesValidator::create);
-    validators.put(OAI3SchemaKeywords.MINIMUM, MinimumValidator::create);
-    validators.put(OAI3SchemaKeywords.MINITEMS, MinItemsValidator::create);
-    validators.put(OAI3SchemaKeywords.MINLENGTH, MinLengthValidator::create);
-    validators.put(OAI3SchemaKeywords.MINPROPERTIES, MinPropertiesValidator::create);
-    validators.put(OAI3SchemaKeywords.MULTIPLEOF, MultipleOfValidator::create);
-    validators.put(OAI3SchemaKeywords.NOT, NotValidator::create);
-    validators.put(OAI3SchemaKeywords.NULLABLE, NullableValidator::create);
-    validators.put(OAI3SchemaKeywords.ONEOF, OneOfValidator::create);
-    validators.put(OAI3SchemaKeywords.PATTERN, PatternValidator::create);
-    validators.put(OAI3SchemaKeywords.PATTERNPROPERTIES, PatternPropertiesValidator::create);
-    validators.put(OAI3SchemaKeywords.PROPERTIES, PropertiesValidator::create);
-    validators.put(OAI3SchemaKeywords.$REF, ReferenceValidator::create);
-    validators.put(OAI3SchemaKeywords.REQUIRED, RequiredValidator::create);
-    validators.put(OAI3SchemaKeywords.TYPE, TypeValidator::create);
-    validators.put(OAI3SchemaKeywords.UNIQUEITEMS, UniqueItemsValidator::create);
   }
 
   static ValidatorsRegistry instance() {
@@ -53,7 +27,8 @@ class ValidatorsRegistry {
   }
 
   /**
-   * Get the corresponding validator from the given keyword.
+   * Get the corresponding validators from the given keyword.
+   * Core validator is always last in queue.
    *
    * @param context          The current validation context.
    * @param keyword          The given keyword.
@@ -62,33 +37,66 @@ class ValidatorsRegistry {
    * @param parentSchema     The corresponding schema to validate against.
    * @return The corresponding validators instances.
    */
-  Collection<JsonValidator> getValidators(final ValidationContext<OAI3> context,
-                                                    final String keyword,
-                                                    final JsonNode schemaNode,
-                                                    final JsonNode schemaParentNode,
-                                                    final SchemaValidator parentSchema) {
+  <V> Collection<JsonValidator<V>> getValidators(final ValidationContext<OAI3, V> context,
+                                                 final String keyword,
+                                                 final JsonNode schemaNode,
+                                                 final JsonNode schemaParentNode,
+                                                 final SchemaValidator<V> parentSchema) {
 
-    List<JsonValidator> validatorInstances = null;
+    List<JsonValidator<V>> validatorInstances = null;
 
-    // Custom or override validators
-    Collection<ValidatorInstance> cvi = context.getValidators().get(keyword);
-    if (cvi != null) {
+    // Custom validators
+    Collection<ValidatorInstance<V>> additionalInstances = context.getValidators().get(keyword);
+    // Core validator
+    ValidatorInstance<V> coreInstance = getCoreValidator(keyword);
+
+    if (additionalInstances != null) {
       validatorInstances = new ArrayList<>();
 
-      for (ValidatorInstance validatorInstance : cvi) {
-        validatorInstances.add(validatorInstance.apply(context, schemaNode, schemaParentNode, parentSchema));
+      for (ValidatorInstance<V> additionalInstance : additionalInstances) {
+        validatorInstances.add(additionalInstance.apply(context, schemaNode, schemaParentNode, parentSchema));
       }
-    }
 
-    // Core validator
-    ValidatorInstance coreValidatorInstance = validators.get(keyword);
-    if (coreValidatorInstance != null) {
-      if (validatorInstances == null) {
-        validatorInstances = new ArrayList<>();
+      if (coreInstance != null) {
+        validatorInstances.add(coreInstance.apply(context, schemaNode, schemaParentNode, parentSchema));
       }
-      validatorInstances.add(coreValidatorInstance.apply(context, schemaNode, schemaParentNode, parentSchema));
+    } else if (coreInstance != null) {
+      validatorInstances = new ArrayList<>();
+      validatorInstances.add(coreInstance.apply(context, schemaNode, schemaParentNode, parentSchema));
     }
 
     return validatorInstances;
+  }
+
+  private <V> ValidatorInstance<V> getCoreValidator(final String keyword) {
+    switch (keyword) {
+      case ADDITIONALPROPERTIES: return AdditionalPropertiesValidator::new;
+      case ALLOF: return AllOfValidator::new;
+      case ANYOF: return AnyOfValidator::new;
+      case DEPENDENCIES: return DependenciesValidator::new;
+      case ENUM: return EnumValidator::new;
+      case FORMAT: return FormatValidator::new;
+      case ITEMS: return ItemsValidator::new;
+      case MAXIMUM: return MaximumValidator::new;
+      case MAXITEMS: return MaxItemsValidator::new;
+      case MAXLENGTH: return MaxLengthValidator::new;
+      case MAXPROPERTIES: return MaxPropertiesValidator::new;
+      case MINIMUM: return MinimumValidator::new;
+      case MINITEMS: return MinItemsValidator::new;
+      case MINLENGTH: return MinLengthValidator::new;
+      case MINPROPERTIES: return MinPropertiesValidator::new;
+      case MULTIPLEOF: return MultipleOfValidator::new;
+      case NOT: return NotValidator::new;
+      case NULLABLE: return NullableValidator::new;
+      case ONEOF: return OneOfValidator::new;
+      case PATTERN: return PatternValidator::new;
+      case PATTERNPROPERTIES: return PatternPropertiesValidator::new;
+      case PROPERTIES: return PropertiesValidator::new;
+      case $REF: return ReferenceValidator::new;
+      case REQUIRED: return RequiredValidator::new;
+      case TYPE: return TypeValidator::new;
+      case UNIQUEITEMS: return UniqueItemsValidator::new;
+      default: return null;
+    }
   }
 }

@@ -28,27 +28,27 @@ public class ValidationResults implements Serializable {
   /**
    * Add a result.
    *
-   * @param validationResult validation result to append.
-   * @param msgArgs          message arguments to get formatted message.
+   * @param result  validation result to append.
+   * @param msgArgs message arguments to get formatted message.
    */
-  public void add(ValidationResult validationResult, Object... msgArgs) {
-    items.add(new ValidationItem(validationResult, crumbs, msgArgs));
-    if (validationResult.severity().gt(validationSeverity)) {
-      validationSeverity = validationResult.severity();
+  public void add(ValidationResult result, Object... msgArgs) {
+    items.add(new ValidationItem(result, crumbs, msgArgs));
+    if (result.severity().gt(validationSeverity)) {
+      validationSeverity = result.severity();
     }
   }
 
   /**
    * Add a result.
    *
-   * @param crumbInfo        path item to add the result.
-   * @param validationResult validation result to append.
-   * @param msgArgs          message arguments to get formatted message.
+   * @param crumbInfo path item to add the result.
+   * @param result    validation result to append.
+   * @param msgArgs   message arguments to get formatted message.
    */
-  public void add(CrumbInfo crumbInfo, ValidationResult validationResult, Object... msgArgs) {
-    items.add(new ValidationItem(validationResult, crumbs, crumbInfo, msgArgs));
-    if (validationResult.severity().gt(validationSeverity)) {
-      validationSeverity = validationResult.severity();
+  public void add(CrumbInfo crumbInfo, ValidationResult result, Object... msgArgs) {
+    items.add(new ValidationItem(result, crumbs, crumbInfo, msgArgs));
+    if (result.severity().gt(validationSeverity)) {
+      validationSeverity = result.severity();
     }
   }
 

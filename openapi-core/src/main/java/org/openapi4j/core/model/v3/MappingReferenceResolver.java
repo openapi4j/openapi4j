@@ -10,14 +10,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAPPING;
 
 /**
  * The JSON reference resolver for discriminator mapping.
  */
 class MappingReferenceResolver extends AbstractReferenceResolver {
-  MappingReferenceResolver(URI baseUri, List<AuthOption> authOptions, JsonNode apiNode, String refKeyword, ReferenceRegistry referenceRegistry) {
-    super(baseUri, authOptions, apiNode, refKeyword, referenceRegistry);
+  MappingReferenceResolver(URI baseUri, List<AuthOption> authOptions, JsonNode apiNode, ReferenceRegistry referenceRegistry) {
+    super(baseUri, authOptions, apiNode, $REF, referenceRegistry);
   }
 
   @Override

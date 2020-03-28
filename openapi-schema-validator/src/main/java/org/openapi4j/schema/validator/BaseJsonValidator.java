@@ -4,25 +4,24 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.OAI;
 import org.openapi4j.core.validation.ValidationCode;
 import org.openapi4j.core.validation.ValidationException;
-import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
 
 /**
  * The base class of all validators.
  */
-public abstract class BaseJsonValidator<O extends OAI> implements JsonValidator {
+public abstract class BaseJsonValidator<O extends OAI, V> implements JsonValidator<V> {
   private static final String VALIDATION_ERR_MSG = "Schema validation failed";
 
   private final JsonNode schemaNode;
   private final JsonNode schemaParentNode;
-  private final SchemaValidator parentSchema;
-  protected final ValidationContext<O> context;
+  private final SchemaValidator<V> parentSchema;
+  protected final ValidationContext<O, V> context;
 
-  // Empty constructor to enforce the signature of validators
-  public BaseJsonValidator(final ValidationContext<O> context,
-                           final JsonNode schemaNode,
-                           final JsonNode schemaParentNode,
-                           final SchemaValidator parentSchema) {
+  // Enforce the signature of validators
+  protected BaseJsonValidator(final ValidationContext<O, V> context,
+                              final JsonNode schemaNode,
+                              final JsonNode schemaParentNode,
+                              final SchemaValidator<V> parentSchema) {
 
     this.context = context;
     this.schemaNode = schemaNode;
@@ -32,12 +31,12 @@ public abstract class BaseJsonValidator<O extends OAI> implements JsonValidator 
 
   @Override
   public void validate(final JsonNode valueNode) throws ValidationException {
-    final ValidationResults results = new ValidationResults();
+    final ValidationData<V> validation = new ValidationData<>();
 
-    validate(valueNode, results);
+    validate(valueNode, validation);
 
-    if (!results.isValid()) {
-      throw new ValidationException(VALIDATION_ERR_MSG, results);
+    if (!validation.isValid()) {
+      throw new ValidationException(VALIDATION_ERR_MSG, validation.results());
     }
   }
 
@@ -57,7 +56,7 @@ public abstract class BaseJsonValidator<O extends OAI> implements JsonValidator 
     return schemaParentNode;
   }
 
-  public SchemaValidator getParentSchema() {
+  public SchemaValidator<V> getParentSchema() {
     return parentSchema;
   }
 }

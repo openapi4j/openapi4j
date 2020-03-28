@@ -12,11 +12,11 @@ import io.vertx.ext.web.RoutingContext;
 class OperationValidationHandler implements Handler<RoutingContext> {
   private static final String RQ_PARAMETERS = "rqParameters";
 
-  private final RequestValidator requestValidator;
+  private final RequestValidator<Void> requestValidator;
   private final Path path;
   private final Operation operation;
 
-  OperationValidationHandler(RequestValidator requestValidator, Path path, Operation operation) {
+  OperationValidationHandler(RequestValidator<Void> requestValidator, Path path, Operation operation) {
     this.requestValidator = requestValidator;
     this.path = path;
     this.operation = operation;

@@ -6,6 +6,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,25 +21,21 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-8" />
  */
-class UniqueItemsValidator extends BaseJsonValidator<OAI3> {
+class UniqueItemsValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1028, "Uniqueness is not respected '%s'.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(UNIQUEITEMS, true);
 
   private final boolean unique;
 
-  static UniqueItemsValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new UniqueItemsValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private UniqueItemsValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  UniqueItemsValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     unique = schemaNode.isBoolean() && schemaNode.booleanValue();
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     if (!unique) {
       return false;
     }
@@ -46,7 +43,7 @@ class UniqueItemsValidator extends BaseJsonValidator<OAI3> {
     Set<JsonNode> set = new HashSet<>();
     for (JsonNode n : valueNode) {
       if (!set.add(n)) {
-        results.add(CRUMB_INFO, ERR, n.asText());
+        validation.add(CRUMB_INFO, ERR, n.asText());
       }
     }
 

@@ -7,6 +7,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import java.util.Comparator;
 
@@ -20,7 +21,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-10" />
  */
-class EnumValidator extends BaseJsonValidator<OAI3> {
+class EnumValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1006, "Value '%s' is not defined in the schema.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ENUM, true);
@@ -28,18 +29,14 @@ class EnumValidator extends BaseJsonValidator<OAI3> {
   private final JsonNode schemaNode;
   private static final NodeComparator NODE_COMPARATOR = new NodeComparator();
 
-  static EnumValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new EnumValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private EnumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  EnumValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     this.schemaNode = schemaNode;
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     if (schemaNode.isArray()) {
       for (JsonNode enumNode : schemaNode) {
         if (enumNode.equals(NODE_COMPARATOR, valueNode)) {
@@ -47,7 +44,7 @@ class EnumValidator extends BaseJsonValidator<OAI3> {
         }
       }
 
-      results.add(CRUMB_INFO, ERR, valueNode.asText());
+      validation.add(CRUMB_INFO, ERR, valueNode.asText());
     }
 
     return false;

@@ -76,7 +76,7 @@ public class Body {
    * Constructs a body from the given string.
    * This is a convenient method to build a body wrapper.
    * Also, you should definitely at look at {@link Body#from(JsonNode)} or
-   * {@link Body#from(Map<String, Object>)} for performance.
+   * {@link Body#from(Map)} for performance.
    *
    * @param body The given body string.
    * @return The constructed body.
