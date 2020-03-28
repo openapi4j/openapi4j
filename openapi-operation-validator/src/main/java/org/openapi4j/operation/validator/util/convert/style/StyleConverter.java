@@ -15,7 +15,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 
 interface StyleConverter {
-  JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) throws ResolutionException;
+  JsonNode convert(AbsParameter<?> param, String paramName, String rawValue);
 
   @SuppressWarnings("unchecked")
   default JsonNode convert(AbsParameter<?> param, String paramName, Map<String, Object> paramValues) {

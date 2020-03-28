@@ -6,6 +6,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MAXPROPERTIES;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
@@ -17,18 +18,14 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-9" />
  */
-class MaxPropertiesValidator extends BaseJsonValidator<OAI3> {
+class MaxPropertiesValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1013, "Maximum is '%s', found '%s'.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MAXPROPERTIES, true);
 
   private final Integer max;
 
-  static MaxPropertiesValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new MaxPropertiesValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private MaxPropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  MaxPropertiesValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     max
@@ -38,13 +35,13 @@ class MaxPropertiesValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     if (max == null || !valueNode.isObject()) {
       return false;
     }
 
     if (valueNode.size() > max) {
-      results.add(CRUMB_INFO, ERR, max, valueNode.size());
+      validation.add(CRUMB_INFO, ERR, max, valueNode.size());
     }
 
     return false;

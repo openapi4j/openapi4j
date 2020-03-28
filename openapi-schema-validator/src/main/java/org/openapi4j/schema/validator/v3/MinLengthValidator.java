@@ -6,6 +6,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.MINLENGTH;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
@@ -17,18 +18,14 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-7" />
  */
-class MinLengthValidator extends BaseJsonValidator<OAI3> {
+class MinLengthValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1017, "Min length is '%s', found '%s'.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MINLENGTH, true);
 
   private final Integer minLength;
 
-  static MinLengthValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new MinLengthValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private MinLengthValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  MinLengthValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     minLength
@@ -38,7 +35,7 @@ class MinLengthValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     if (minLength == null || !valueNode.isTextual()) {
       return false;
     }
@@ -46,7 +43,7 @@ class MinLengthValidator extends BaseJsonValidator<OAI3> {
     String value = valueNode.textValue();
     int length = value.codePointCount(0, value.length());
     if (length < minLength) {
-      results.add(CRUMB_INFO, ERR, minLength, length);
+      validation.add(CRUMB_INFO, ERR, minLength, length);
     }
 
     return false;

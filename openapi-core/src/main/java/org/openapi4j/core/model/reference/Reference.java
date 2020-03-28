@@ -27,11 +27,11 @@ public class Reference {
   // The mapped content of the targeted reference expression
   private Object mappedContent;
 
-  Reference(URI baseUri, String canonicalRef, String ref, JsonNode content) {
+  Reference(URI baseUri, String canonicalRef, String ref) {
     this.baseUri = baseUri;
     this.canonicalRef = canonicalRef;
     this.ref = ref;
-    this.content = content;
+    this.content = null;
   }
 
   /**

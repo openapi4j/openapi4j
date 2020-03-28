@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Implementation-Title: openapi-operation-adapters
+Build-date: Sat Mar 28 17:46:10 CET 2020
+Implementation-Version: 0.9-SNAPSHOT
+

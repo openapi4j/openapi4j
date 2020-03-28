@@ -210,7 +210,7 @@ public class Path extends AbsExtendedRefOpenApiSchema<Path> {
   }
 
   @Override
-  protected Path copyReference(OAIContext context) {
+  protected Path copyReference() {
     Path copy = new Path();
     copy.setRef(getRef());
     copy.setCanonicalRef(getCanonicalRef());

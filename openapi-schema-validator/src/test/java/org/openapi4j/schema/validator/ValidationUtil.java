@@ -16,7 +16,7 @@ import java.util.Map;
 class ValidationUtil {
   static void validate(String testPath,
                        Map<Byte, Boolean> options,
-                       Map<String, ValidatorInstance> validators,
+                       Map<String, ValidatorInstance<Void>> validators,
                        boolean isFastFail) throws Exception {
     ArrayNode testCases = (ArrayNode) TreeUtil.json.readTree(ValidationUtil.class.getResource(testPath));
 
@@ -25,7 +25,7 @@ class ValidationUtil {
       JsonNode schemaNode = testCase.get("schema");
 
       OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
-      ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
+      ValidationContext<OAI3, Void> validationContext = new ValidationContext<>(apiContext);
       validationContext.setFastFail(isFastFail);
 
       if (options != null) {
@@ -35,7 +35,7 @@ class ValidationUtil {
         validators.forEach(validationContext::addValidator);
       }
 
-      SchemaValidator schemaValidator = new SchemaValidator(validationContext, null, schemaNode);
+      SchemaValidator<Void> schemaValidator = new SchemaValidator<>(validationContext, null, schemaNode);
       doTests(schemaValidator, testCase, testCase.get("description").textValue());
     }
   }
@@ -47,22 +47,22 @@ class ValidationUtil {
       JsonNode testCase = testCases.get(index);
       JsonNode schemaNode = testCase.get("schema");
 
-      SchemaValidator schemaValidator = new SchemaValidator(null, schemaNode);
+      SchemaValidator<Void> schemaValidator = new SchemaValidator<>(null, schemaNode);
       doTests(schemaValidator, testCase, testCase.get("description").textValue());
     }
   }
 
-  private static void doTests(SchemaValidator schemaValidator, JsonNode testCase, String testDescription) {
+  private static void doTests(SchemaValidator<Void> schemaValidator, JsonNode testCase, String testDescription) {
     ArrayNode testNodes = (ArrayNode) testCase.get("tests");
     for (int i = 0; i < testNodes.size(); i++) {
       JsonNode test = testNodes.get(i);
       JsonNode contentNode = test.get("data");
       boolean isValidExpected = test.get("valid").asBoolean();
 
-      ValidationResults results = new ValidationResults();
-      schemaValidator.validate(contentNode, results);
+      ValidationData<Void> validation = new ValidationData<>();
+      schemaValidator.validate(contentNode, validation);
 
-      if (isValidExpected != results.isValid()) {
+      if (isValidExpected != validation.isValid()) {
         String message = String.format(
           "TEST FAILURE : %s - %s\nData : %s",
           testDescription,
@@ -72,9 +72,9 @@ class ValidationUtil {
         System.out.println(message);
       }
 
-      System.out.println(results.toString());
+      System.out.println(validation.results().toString());
 
-      if (isValidExpected != results.isValid()) {
+      if (isValidExpected != validation.results().isValid()) {
         Assert.fail();
       }
     }

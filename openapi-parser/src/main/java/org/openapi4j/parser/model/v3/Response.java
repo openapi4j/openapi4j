@@ -118,7 +118,7 @@ public class Response extends AbsExtendedRefOpenApiSchema<Response> {
   }
 
   @Override
-  protected Response copyReference(OAIContext context) {
+  protected Response copyReference() {
     Response copy = new Response();
     copy.setRef(getRef());
     copy.setCanonicalRef(getCanonicalRef());

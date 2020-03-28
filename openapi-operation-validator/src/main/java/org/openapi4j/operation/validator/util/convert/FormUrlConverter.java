@@ -34,7 +34,7 @@ class FormUrlConverter {
   private FormUrlConverter() {
   }
 
-  private Map<MediaType, Map<String, AbsParameter<Parameter>>> mediaTypesCache = new HashMap<>();
+  private final Map<MediaType, Map<String, AbsParameter<Parameter>>> mediaTypesCache = new HashMap<>();
 
   JsonNode convert(final MediaType mediaType, final InputStream body, String encoding) throws IOException {
     return convert(mediaType, IOUtil.toString(body, encoding), encoding);

@@ -27,7 +27,7 @@ public class ReferenceRegistry {
   public Reference addRef(URI uri, String refValue) {
     String canonicalRefValue = buildCanonicalRef(uri, refValue);
 
-    Reference reference = new Reference(uri, canonicalRefValue, refValue, null);
+    Reference reference = new Reference(uri, canonicalRefValue, refValue);
     references.put(canonicalRefValue, reference);
 
     return reference;

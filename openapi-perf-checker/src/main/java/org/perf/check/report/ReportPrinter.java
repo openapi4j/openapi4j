@@ -12,7 +12,7 @@ public class ReportPrinter {
 
     double max = 0;
     for (Report report : reports) {
-      if (!report.isExcluded() && max < report.getTimeMs()) {
+      if (report.isIncluded() && max < report.getTimeMs()) {
         max = report.getTimeMs();
       }
     }
@@ -32,7 +32,7 @@ public class ReportPrinter {
         rightpad(report.getVersion(), 14),
         rightpad(String.format("%.2f ms", report.getTimeMs()), 14),
         rightpad(String.valueOf(report.getIterations()), 14),
-        !report.isExcluded() ? rightpad(gain, 8) : rightpad("excl.", 8));
+        report.isIncluded() ? rightpad(gain, 8) : rightpad("excl.", 8));
     } else {
       return String.format(
         "| %s | %s | Error : %s |",

@@ -23,7 +23,7 @@ public class ValidationException extends Exception {
 
   /**
    * Get associated results from the validation.
-   * @return
+   * @return The validation results.
    */
   public ValidationResults getResults() {
     return results;

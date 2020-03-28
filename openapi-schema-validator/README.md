@@ -32,7 +32,7 @@ Add the following to your `pom.xml`:
 ```java
 JsonNode schemaNode = // your schema tree node.
 JsonNode contentNode = // your data.
-SchemaValidator schemaValidator = new SchemaValidator("my_schema", schemaNode);
+SchemaValidator<Void> schemaValidator = new SchemaValidator<>("my_schema", schemaNode);
 
 // Validation with exception
 try {
@@ -42,10 +42,10 @@ try {
 }
 
 // or validation without exception
-ValidationResults results = new ValidationResults();
-schemaValidator.validate(contentNode, results);
-if (!results.isValid()) {
-    System.out.println(results);
+ValidationData<Void> validation = new ValidationData<>();
+schemaValidator.validate(contentNode, validation);
+if (!validation.isValid()) {
+    System.out.println(validation.results());
 }
 ```
 
@@ -63,22 +63,22 @@ Also, a code is assigned to each type of result to ease lookups.
 Here's few outputs of `ValidationResults` object :
 ```
 foo: Additional property 'bar' is not allowed. (code: 1000)
-From: foo.additionalProperties
+From: foo.<additionalProperties>
 
 foo : Type expected 'integer', found 'string'. (code: 1027)
-From: foo./#/definitions/c./#/definitions/b./#/definitions/a.type
+From: foo.</#/definitions/c>.</#/definitions/b>.>/#/definitions/a>.<type>
 
 foo : Type expected 'string', found 'integer'. (code: 1027)
-From: allOf.foo.items.type
+From: <allOf>.foo.<items>.<type>
 
 foo: Excluded maximum is '3.0', found '3.0'. (code: 1009)
-From: foo.maximum
+From: foo.<maximum>
 
 Field 'foo' is required. (code: 1026)
-From: allOf.required
+From: <allOf>.<required>
 
 foo : Value 'bar' is not defined in the schema. (code: 1006)
-From: allOf.foo.enum
+From: <allOf>.foo.<enum>
 ```
 
 ## Extensions
@@ -142,8 +142,9 @@ properties:
       foo:
         type: string
     x-sub-object-val:  # it's up to you to place the trigger where your validation should occur.
-      fooParam: 0.2 # You need parameters?
-x-myentity-val: null # Just trigger on full object!
+      fooParam: 0.2 # You need variables?
+      barParam: true
+x-myentity-val: null (or a variable) # Just trigger on full object!
 ```
 or
 ```json
@@ -157,16 +158,14 @@ Instantiation:
 
 ```java
 // Declare your instantiation function, this will be called as much as needed.
-// This avoids reflection and lets you define any additional variables.
 evi = new ExtValidatorInstance() {
     @Override
-    public JsonValidator<OAI3> apply(ValidationContext context,
+    public JsonValidator<OAI3, Void> apply(ValidationContext context,
                                      JsonNode schemaNode,
                                      JsonNode schemaParentNode,
-                                     SchemaValidator parentSchema) {
-        // Call your specific constructor with additionnal argument if needed (i.e. "foo" in this example).
-        // MyValidator extends BaseJsonValidator<OAI3>
-        return new MyValidator(context, schemaNode, schemaParentNode, parentSchema, "foo");
+                                     SchemaValidator<Void> parentSchema) {
+        // MyValidator extends BaseJsonValidator<OAI3, Void>
+        return new MyValidator(context, schemaNode, schemaParentNode, parentSchema);
     }
 };
 
@@ -176,8 +175,19 @@ apiContext = new OAI3Context(URI.create("/"), schemaNode);
 validationContext = new ValidationContext<>(apiContext);
 // Link trigger 'x-myentity-val' (or known keyword such as maximum, format, ...) with MyValidator.
 validationContext.addValidator("x-myentity-val", evi);
-schemaValidator = new SchemaValidator(validationContext, "entity_schema", schemaNode);
+schemaValidator = new SchemaValidator<>(validationContext, "entity_schema", schemaNode);
 ```
+
+### Custom data and delegation:
+You can setup some custom data when calling `validate` method.
+Also, this allows you to delegate when your validator is triggered.
+
+```java
+ValidationData<MyDataDelegate> validation = new ValidationData<>();
+schemaValidator.validate(contentNode, validation);
+```
+
+See [TypeInfoValidator](https://github.com/openapi4j/openapi4j/blob/master/openapi-schema-validator/src/test/java/org/openapi4j/schema/validator/v3/TypeInfoValidator.java) for a sample usage.
 
 ## Limitations
 

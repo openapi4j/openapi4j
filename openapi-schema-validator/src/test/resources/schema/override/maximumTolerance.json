@@ -2,7 +2,8 @@
   {
     "description": "maximum override validation tolerance 0.1",
     "schema": {
-      "maximum": 3.0
+      "maximum": 3.0,
+      "x-tolerance": 0.1
     },
     "tests": [
       {
@@ -31,7 +32,8 @@
     "description": "exclusiveMaximum validation",
     "schema": {
       "maximum": 3.0,
-      "exclusiveMaximum": true
+      "exclusiveMaximum": true,
+      "x-tolerance": 0.1
     },
     "tests": [
       {

@@ -4,7 +4,7 @@ import org.openapi4j.core.model.OAIContext;
 
 public class Header extends AbsParameter<Header> {
   @Override
-  protected Header copyReference(OAIContext context) {
+  protected Header copyReference() {
     Header copy = new Header();
 
     super.copyReference(copy);

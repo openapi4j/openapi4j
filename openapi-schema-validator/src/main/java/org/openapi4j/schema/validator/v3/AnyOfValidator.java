@@ -5,6 +5,7 @@ import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,42 +20,38 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
  */
-class AnyOfValidator extends DiscriminatorValidator {
+class AnyOfValidator<V> extends DiscriminatorValidator<V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1001, "Schema description is erroneous. anyOf should have at least 1 element.");
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ANYOF, true);
 
-  static AnyOfValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new AnyOfValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private AnyOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  AnyOfValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema, ANYOF);
   }
 
   @Override
-  void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
+  void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationData<V> validation) {
     if (schemas.isEmpty()) {
-      results.add(CRUMB_INFO, ERR);
+      validation.add(CRUMB_INFO, ERR);
       return;
     }
 
     List<ValidationResults> resultsOnError = new ArrayList<>();
 
-    for (SchemaValidator schema : schemas) {
-      ValidationResults schemaResults = new ValidationResults();
-      schema.validate(valueNode, schemaResults);
+    for (SchemaValidator<V> schema : schemas) {
+      ValidationData<V> schemaValidation = new ValidationData<>(validation.delegate());
+      schema.validate(valueNode, schemaValidation);
 
-      if (schemaResults.isValid()) {
+      if (schemaValidation.isValid()) {
         // Append potential results from sub validation (INFO / WARN)
-        results.add(results.crumbs(), schemaResults);
+        validation.add(validation.results().crumbs(), schemaValidation.results());
         return;
       } else {
-        resultsOnError.add(schemaResults);
+        resultsOnError.add(schemaValidation.results());
       }
     }
 
     for (ValidationResults result : resultsOnError) {
-      results.add(results.crumbs(), result);
+      validation.add(validation.results().crumbs(), result);
     }
   }
 }

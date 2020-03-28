@@ -2,11 +2,9 @@ package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openapi4j.core.util.TreeUtil;
-import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.Response;
 import org.openapi4j.operation.validator.model.impl.Body;
@@ -16,6 +14,7 @@ import org.openapi4j.parser.OpenApi3Parser;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
+import org.openapi4j.schema.validator.ValidationData;
 
 import java.io.IOException;
 import java.net.URL;
@@ -37,7 +36,7 @@ public class OperationValidatorTest {
 
   @Test
   public void pathCheck() {
-    OperationValidator val = loadOperationValidator("paramCheck");
+    OperationValidator<Void> val = loadOperationValidator("paramCheck");
 
     // String can be also a number
     check(
@@ -86,7 +85,7 @@ public class OperationValidatorTest {
 
   @Test
   public void queryCheck() {
-    OperationValidator val = loadOperationValidator("paramCheck");
+    OperationValidator<Void> val = loadOperationValidator("paramCheck");
 
     check(
       new DefaultRequest.Builder("/foo", GET).query("boolQueryParam=true").build(),
@@ -118,7 +117,7 @@ public class OperationValidatorTest {
 
   @Test
   public void headerCheck() {
-    OperationValidator val = loadOperationValidator("paramCheck");
+    OperationValidator<Void> val = loadOperationValidator("paramCheck");
 
     check(
       new DefaultRequest.Builder("/foo", GET).header("pathStringHeaderParam", "foo").header("floatHeaderParam", "0.1").build(),
@@ -150,7 +149,7 @@ public class OperationValidatorTest {
 
   @Test
   public void cookieCheck() {
-    OperationValidator val = loadOperationValidator("paramCheck");
+    OperationValidator<Void> val = loadOperationValidator("paramCheck");
 
     check(
       new DefaultRequest.Builder("/foo", GET).cookie("dtCookieParam", "1996-12-19T16:39:57-08:00").build(),
@@ -172,7 +171,7 @@ public class OperationValidatorTest {
 
   @Test
   public void requestBodyCheck() {
-    OperationValidator val = loadOperationValidator("rqBodyCheck");
+    OperationValidator<Void> val = loadOperationValidator("rqBodyCheck");
 
     JsonNode bodyInteger = JsonNodeFactory.instance.objectNode().set(
       "paramInteger",
@@ -245,7 +244,7 @@ public class OperationValidatorTest {
 
   @Test
   public void discriminatorCheck() throws IOException {
-    OperationValidator val = loadOperationValidator("discriminator");
+    OperationValidator<Void> val = loadOperationValidator("discriminator");
 
     JsonNode body = TreeUtil.json.readTree("{\"pet_type\": \"Cat\", \"age\": 3}");
     check(
@@ -280,7 +279,7 @@ public class OperationValidatorTest {
 
   @Test
   public void mergePathToOperationParametersTest() {
-    OperationValidator val = loadOperationValidator("merge_parameters");
+    OperationValidator<Void> val = loadOperationValidator("merge_parameters");
 
     check(
       new DefaultRequest.Builder("/merge_parameters", GET).build(),
@@ -295,7 +294,7 @@ public class OperationValidatorTest {
 
   @Test
   public void wrongDefinitionForBodyResponseTest() {
-    OperationValidator val = loadOperationValidator("wrong_definition_for_body_response");
+    OperationValidator<Void> val = loadOperationValidator("wrong_definition_for_body_response");
 
     check(
       new DefaultRequest.Builder("/wrong_definition_for_body_response", POST).build(),
@@ -317,7 +316,7 @@ public class OperationValidatorTest {
 
   @Test
   public void responseCheck() {
-    OperationValidator val = loadOperationValidator("rqBodyCheck");
+    OperationValidator<Void> val = loadOperationValidator("rqBodyCheck");
 
     check(
       new DefaultResponse.Builder(500).header("Content-Type", "application/json").build(),
@@ -355,40 +354,40 @@ public class OperationValidatorTest {
       false);
   }
 
-  private OperationValidator loadOperationValidator(String opId) {
+  private OperationValidator<Void> loadOperationValidator(String opId) {
     Path path = api.getPathItemByOperationId(opId);
     Operation op = api.getOperationById(opId);
 
-    return new OperationValidator(api, path, op);
+    return new OperationValidator<>(api, path, op);
   }
 
   private void check(Request rq,
-                     BiConsumer<Request, ValidationResults> func,
+                     BiConsumer<Request, ValidationData<Void>> func,
                      boolean shouldBeValid) {
 
-    ValidationResults results = new ValidationResults();
-    func.accept(rq, results);
+    ValidationData<Void> validation = new ValidationData<>();
+    func.accept(rq, validation);
 
-    System.out.println(results);
+    System.out.println(validation.results());
 
     if (shouldBeValid) {
-      assertTrue(results.toString(), results.isValid());
+      assertTrue(validation.results().toString(), validation.isValid());
     } else {
-      assertFalse(results.toString(), results.isValid());
+      assertFalse(validation.results().toString(), validation.isValid());
     }
   }
 
   private void check(Response resp,
-                     BiConsumer<Response, ValidationResults> func,
+                     BiConsumer<Response, ValidationData<Void>> func,
                      boolean shouldBeValid) {
 
-    ValidationResults results = new ValidationResults();
-    func.accept(resp, results);
+    ValidationData<Void> validation = new ValidationData<>();
+    func.accept(resp, validation);
 
     if (shouldBeValid) {
-      assertTrue(results.toString(), results.isValid());
+      assertTrue(validation.results().toString(), validation.isValid());
     } else {
-      assertFalse(results.toString(), results.isValid());
+      assertFalse(validation.results().toString(), validation.isValid());
     }
   }
 }

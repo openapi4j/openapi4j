@@ -30,7 +30,7 @@ public class Parameter extends AbsParameter<Parameter> {
   }
 
   @Override
-  protected Parameter copyReference(OAIContext context) {
+  protected Parameter copyReference() {
     Parameter copy = new Parameter();
     super.copyReference(copy);
     return copy;

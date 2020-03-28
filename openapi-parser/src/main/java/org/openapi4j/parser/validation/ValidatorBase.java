@@ -153,16 +153,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
                                 final boolean required,
                                 final ValidationResults.CrumbInfo crumbInfo) {
 
-    validateString(value, results, required, (Pattern) null, crumbInfo);
-  }
-
-  protected void validateString(final String value,
-                                final ValidationResults results,
-                                final boolean required,
-                                final String pattern,
-                                final ValidationResults.CrumbInfo crumbInfo) {
-
-    validateString(value, results, required, Pattern.compile(pattern), crumbInfo);
+    validateString(value, results, required, null, crumbInfo);
   }
 
   protected void validateString(final String value,
@@ -204,7 +195,7 @@ public abstract class ValidatorBase<O extends OAI, T> implements Validator<O, T>
                              final boolean allowRelative,
                              final ValidationResults.CrumbInfo crumbInfo) {
 
-    validateString(value, results, required, (Pattern) null, crumbInfo);
+    validateString(value, results, required, null, crumbInfo);
     if (value != null) {
       try {
         URI uri = new URI(value);

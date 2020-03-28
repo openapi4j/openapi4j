@@ -6,6 +6,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import java.math.BigDecimal;
 
@@ -20,7 +21,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-6" />
  */
-class MinimumValidator extends BaseJsonValidator<OAI3> {
+class MinimumValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult EXCLUSIVE_ERR = new ValidationResult(ERROR, 1014, "Excluded minimum is '%s', found '%s'.");
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1015, "Minimum is '%s', found '%s'.");
 
@@ -29,11 +30,7 @@ class MinimumValidator extends BaseJsonValidator<OAI3> {
   private final BigDecimal minimum;
   private final boolean excludeEqual;
 
-  static MinimumValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new MinimumValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private MinimumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  MinimumValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     minimum = schemaNode.isNumber() ? schemaNode.decimalValue() : null;
@@ -47,7 +44,7 @@ class MinimumValidator extends BaseJsonValidator<OAI3> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     if (minimum == null || !valueNode.isNumber()) {
       return false;
     }
@@ -55,9 +52,9 @@ class MinimumValidator extends BaseJsonValidator<OAI3> {
     final BigDecimal value = valueNode.decimalValue();
     final int compResult = value.compareTo(minimum);
     if (excludeEqual && compResult == 0) {
-      results.add(CRUMB_INFO, EXCLUSIVE_ERR, minimum, value);
+      validation.add(CRUMB_INFO, EXCLUSIVE_ERR, minimum, value);
     } else if (compResult < 0) {
-      results.add(CRUMB_INFO, ERR, minimum, value);
+      validation.add(CRUMB_INFO, ERR, minimum, value);
     }
 
     return false;

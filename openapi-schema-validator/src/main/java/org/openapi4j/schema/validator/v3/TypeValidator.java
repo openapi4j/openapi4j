@@ -6,6 +6,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
@@ -17,7 +18,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
  */
-class TypeValidator extends BaseJsonValidator<OAI3> {
+class TypeValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1027, "Type expected '%s', found '%s'.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(TYPE, true);
@@ -27,18 +28,14 @@ class TypeValidator extends BaseJsonValidator<OAI3> {
 
   private final String type;
 
-  static TypeValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new TypeValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
-
-  private TypeValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  TypeValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     type = schemaNode.textValue();
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationResults results) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
     String valueType = getTypeFromValue(valueNode);
     if (!valueType.equals(type)) {
       if (TYPE_NUMBER.equals(type) && TYPE_INTEGER.equals(valueType)) {
@@ -48,7 +45,7 @@ class TypeValidator extends BaseJsonValidator<OAI3> {
       }
 
       if (!TYPE_NULL.equals(valueType)) {
-        results.add(CRUMB_INFO, ERR, type, valueType);
+        validation.add(CRUMB_INFO, ERR, type, valueType);
       }
     }
 

@@ -5,6 +5,7 @@ import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.ValidationData;
 
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ALLOF;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
@@ -16,28 +17,25 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
  */
-class AllOfValidator extends DiscriminatorValidator {
+class AllOfValidator<V> extends DiscriminatorValidator<V> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1001, "Schema description is erroneous. allOf should have at least 1 element.");
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ALLOF, true);
 
-  static AllOfValidator create(ValidationContext<OAI3> context, JsonNode schemaNode, JsonNode schemaParentNode, SchemaValidator parentSchema) {
-    return new AllOfValidator(context, schemaNode, schemaParentNode, parentSchema);
-  }
 
-  private AllOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
+  AllOfValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema, ALLOF);
   }
 
   @Override
-  public void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationResults results) {
+  public void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationData<V> validation) {
     if (schemas.isEmpty()) {
-      results.add(CRUMB_INFO, ERR);
+      validation.add(CRUMB_INFO, ERR);
       return;
     }
 
     validate(() -> {
-      for (SchemaValidator schema : schemas) {
-        schema.validateWithContext(valueNode, results);
+      for (SchemaValidator<V> schema : schemas) {
+        schema.validateWithContext(valueNode, validation);
       }
     });
   }
