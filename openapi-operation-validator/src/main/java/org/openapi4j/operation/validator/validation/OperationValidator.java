@@ -25,7 +25,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * Validator for OpenAPI Operation.
  * It validates all aspects of interaction between request and response for a given Operation.
  */
-public class OperationValidator<V> {
+public class OperationValidator {
   // Error messages
   private static final String VALIDATION_CTX_REQUIRED_ERR_MSG = "Validation context is required.";
   private static final String OAI_REQUIRED_ERR_MSG = "OpenAPI is required.";
@@ -44,17 +44,17 @@ public class OperationValidator<V> {
   private static final String DEFAULT_RESPONSE_CODE = "default";
   private static final ValidationResults.CrumbInfo CRUMB_PATH = new ValidationResults.CrumbInfo(IN_PATH, true);
   // Validators
-  private final ParameterValidator<Parameter, V> specRequestPathValidator;
-  private final ParameterValidator<Parameter, V> specRequestQueryValidator;
-  private final ParameterValidator<Parameter, V> specRequestHeaderValidator;
-  private final ParameterValidator<Parameter, V> specRequestCookieValidator;
+  private final ParameterValidator<Parameter> specRequestPathValidator;
+  private final ParameterValidator<Parameter> specRequestQueryValidator;
+  private final ParameterValidator<Parameter> specRequestHeaderValidator;
+  private final ParameterValidator<Parameter> specRequestCookieValidator;
   // Map<content type, validator>
-  private final Map<MediaTypeContainer, BodyValidator<V>> specRequestBodyValidators;
+  private final Map<MediaTypeContainer, BodyValidator> specRequestBodyValidators;
   // Map<status code, Map<content type, validator>>
-  private final Map<String, Map<MediaTypeContainer, BodyValidator<V>>> specResponseBodyValidators;
+  private final Map<String, Map<MediaTypeContainer, BodyValidator>> specResponseBodyValidators;
   // Map<status code, validator>
-  private final Map<String, ParameterValidator<Header, V>> specResponseHeaderValidators;
-  private final ValidationContext<OAI3, V> context;
+  private final Map<String, ParameterValidator<Header>> specResponseHeaderValidators;
+  private final ValidationContext<OAI3> context;
   private final OpenApi3 openApi;
   private final Operation operation;
   private final String templatePath;
@@ -80,7 +80,7 @@ public class OperationValidator<V> {
    * @param operation The Operation to validate.
    */
   @SuppressWarnings("WeakerAccess")
-  public OperationValidator(final ValidationContext<OAI3, V> context,
+  public OperationValidator(final ValidationContext<OAI3> context,
                             final OpenApi3 openApi,
                             final Path path,
                             final Operation operation) {
@@ -96,7 +96,7 @@ public class OperationValidator<V> {
    * @param path         The Path of the Operation.
    * @param operation    The Operation to validate.
    */
-  OperationValidator(final ValidationContext<OAI3, V> context,
+  OperationValidator(final ValidationContext<OAI3> context,
                      final List<Pattern> pathPatterns,
                      final OpenApi3 openApi,
                      final Path path,
@@ -146,7 +146,7 @@ public class OperationValidator<V> {
    * @param validation The validation data delegate and results.
    * @return The mapped parameters with their values.
    */
-  public Map<String, JsonNode> validatePath(final Request request, final ValidationData<V> validation) {
+  public Map<String, JsonNode> validatePath(final Request request, final ValidationData<?> validation) {
     // Check paths are matching before trying to map values
     Pattern pathPattern = PathResolver.instance().findPathPattern(pathPatterns, request.getPath());
     if (pathPattern == null) {
@@ -164,7 +164,7 @@ public class OperationValidator<V> {
    * @param validation The validation data delegate and results.
    * @return The mapped parameters with their values.
    */
-  Map<String, JsonNode> validatePath(final Request request, Pattern pathPattern, final ValidationData<V> validation) {
+  Map<String, JsonNode> validatePath(final Request request, Pattern pathPattern, final ValidationData<?> validation) {
     if (specRequestPathValidator == null) return null;
 
     Map<String, JsonNode> mappedValues = ParameterConverter.pathToNode(
@@ -184,7 +184,7 @@ public class OperationValidator<V> {
    * @param validation The validation data delegate and results.
    * @return The mapped parameters with their values.
    */
-  public Map<String, JsonNode> validateQuery(final Request request, final ValidationData<V> validation) {
+  public Map<String, JsonNode> validateQuery(final Request request, final ValidationData<?> validation) {
     if (specRequestQueryValidator == null) return null;
 
     Map<String, JsonNode> mappedValues = ParameterConverter.queryToNode(
@@ -204,7 +204,7 @@ public class OperationValidator<V> {
    * @param validation The validation data delegate and results.
    * @return The mapped parameters with their values.
    */
-  public Map<String, JsonNode> validateHeaders(final Request request, final ValidationData<V> validation) {
+  public Map<String, JsonNode> validateHeaders(final Request request, final ValidationData<?> validation) {
     if (specRequestHeaderValidator == null) return null;
 
     Map<String, JsonNode> mappedValues = ParameterConverter.headersToNode(
@@ -223,7 +223,7 @@ public class OperationValidator<V> {
    * @param validation The validation data delegate and results.
    * @return The mapped parameters with their values.
    */
-  public Map<String, JsonNode> validateCookies(final Request request, final ValidationData<V> validation) {
+  public Map<String, JsonNode> validateCookies(final Request request, final ValidationData<?> validation) {
     if (specRequestCookieValidator == null) return null;
 
     final Map<String, JsonNode> mappedValues = ParameterConverter.cookiesToNode(
@@ -241,7 +241,7 @@ public class OperationValidator<V> {
    * @param request    The request to validate.
    * @param validation The validation data delegate and results.
    */
-  public void validateBody(final Request request, final ValidationData<V> validation) {
+  public void validateBody(final Request request, final ValidationData<?> validation) {
     if (specRequestBodyValidators == null) return;
 
     validateBody(
@@ -259,9 +259,9 @@ public class OperationValidator<V> {
    * @param validation The validation data delegate and results.
    */
   public void validateBody(final org.openapi4j.operation.validator.model.Response response,
-                           final ValidationData<V> validation) {
+                           final ValidationData<?> validation) {
 
-    Map<MediaTypeContainer, BodyValidator<V>> validators = getResponseValidator(specResponseBodyValidators, response, validation);
+    Map<MediaTypeContainer, BodyValidator> validators = getResponseValidator(specResponseBodyValidators, response, validation);
 
     if (validators == null) return;
 
@@ -273,11 +273,11 @@ public class OperationValidator<V> {
       validation);
   }
 
-  private void validateBody(final Map<MediaTypeContainer, BodyValidator<V>> validators,
+  private void validateBody(final Map<MediaTypeContainer, BodyValidator> validators,
                             final String rawContentType,
                             final Body body,
                             final boolean isRequired,
-                            final ValidationData<V> validation) {
+                            final ValidationData<?> validation) {
 
     final MediaTypeContainer contentType = MediaTypeContainer.create(rawContentType);
 
@@ -286,8 +286,8 @@ public class OperationValidator<V> {
       return;
     }
 
-    BodyValidator<V> validator = null;
-    for (Map.Entry<MediaTypeContainer, BodyValidator<V>> mediaType : validators.entrySet()) {
+    BodyValidator validator = null;
+    for (Map.Entry<MediaTypeContainer, BodyValidator> mediaType : validators.entrySet()) {
       if (mediaType.getKey().match(contentType)) {
         validator = mediaType.getValue();
         break;
@@ -311,9 +311,9 @@ public class OperationValidator<V> {
    * @param validation The validation data delegate and results.
    */
   public void validateHeaders(final org.openapi4j.operation.validator.model.Response response,
-                              final ValidationData<V> validation) {
+                              final ValidationData<?> validation) {
 
-    ParameterValidator<Header, V> validator = getResponseValidator(specResponseHeaderValidators, response, validation);
+    ParameterValidator<Header> validator = getResponseValidator(specResponseHeaderValidators, response, validation);
 
     if (validator == null) return;
 
@@ -324,7 +324,7 @@ public class OperationValidator<V> {
     validator.validate(mappedValues, validation);
   }
 
-  private ParameterValidator<Parameter, V> createParameterValidator(final String in) {
+  private ParameterValidator<Parameter> createParameterValidator(final String in) {
     List<Parameter> specParameters = operation.getParametersIn(in);
 
     Map<String, AbsParameter<Parameter>> parameters = specParameters
@@ -337,7 +337,7 @@ public class OperationValidator<V> {
         : null;
   }
 
-  private Map<MediaTypeContainer, BodyValidator<V>> createRequestBodyValidators() {
+  private Map<MediaTypeContainer, BodyValidator> createRequestBodyValidators() {
     if (operation.getRequestBody() == null) {
       return null;
     }
@@ -345,12 +345,12 @@ public class OperationValidator<V> {
     return createBodyValidators(operation.getRequestBody().getContentMediaTypes());
   }
 
-  private Map<String, Map<MediaTypeContainer, BodyValidator<V>>> createResponseBodyValidators() {
+  private Map<String, Map<MediaTypeContainer, BodyValidator>> createResponseBodyValidators() {
     if (operation.getResponses() == null) {
       return null;
     }
 
-    final Map<String, Map<MediaTypeContainer, BodyValidator<V>>> validators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    final Map<String, Map<MediaTypeContainer, BodyValidator>> validators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     final Map<String, Response> responses = operation.getResponses();
 
@@ -364,22 +364,22 @@ public class OperationValidator<V> {
     return validators;
   }
 
-  private Map<MediaTypeContainer, BodyValidator<V>> createBodyValidators(final Map<String, MediaType> mediaTypes) {
+  private Map<MediaTypeContainer, BodyValidator> createBodyValidators(final Map<String, MediaType> mediaTypes) {
     if (mediaTypes == null) {
       return null;
     }
 
-    final Map<MediaTypeContainer, BodyValidator<V>> validators = new HashMap<>();
+    final Map<MediaTypeContainer, BodyValidator> validators = new HashMap<>();
 
     for (Map.Entry<String, MediaType> entry : mediaTypes.entrySet()) {
-      validators.put(MediaTypeContainer.create(entry.getKey()), new BodyValidator<>(context, openApi, entry.getValue()));
+      validators.put(MediaTypeContainer.create(entry.getKey()), new BodyValidator(context, openApi, entry.getValue()));
     }
 
     return validators;
   }
 
-  private Map<String, ParameterValidator<Header, V>> createResponseHeaderValidators() {
-    final Map<String, ParameterValidator<Header, V>> validators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+  private Map<String, ParameterValidator<Header>> createResponseHeaderValidators() {
+    final Map<String, ParameterValidator<Header>> validators = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     final Map<String, Response> responses = operation.getResponses();
 
@@ -401,7 +401,7 @@ public class OperationValidator<V> {
 
   private <T> T getResponseValidator(final Map<String, T> validators,
                                      final org.openapi4j.operation.validator.model.Response response,
-                                     final ValidationData<V> validation) {
+                                     final ValidationData<?> validation) {
 
     if (validators == null) return null;
 

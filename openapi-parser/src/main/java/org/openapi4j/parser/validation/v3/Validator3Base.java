@@ -66,7 +66,7 @@ abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T>
                              final boolean allowRelative,
                              final ValidationResults.CrumbInfo crumbInfo) {
 
-    validateString(value, results, required, (Pattern) null, crumbInfo);
+    validateString(value, results, required, null, crumbInfo);
     if (value != null) {
       checkUrl(api, value, allowRelative, results, crumbInfo);
     }

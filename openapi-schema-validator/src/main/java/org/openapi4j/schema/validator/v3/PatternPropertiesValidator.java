@@ -20,21 +20,21 @@ import java.util.regex.Pattern;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-9" />
  */
-class PatternPropertiesValidator<V> extends BaseJsonValidator<OAI3, V> {
-  private final Map<Pattern, SchemaValidator<V>> schemas = new IdentityHashMap<>();
+class PatternPropertiesValidator extends BaseJsonValidator<OAI3> {
+  private final Map<Pattern, SchemaValidator> schemas = new IdentityHashMap<>();
 
-  PatternPropertiesValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
+  PatternPropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     Iterator<String> names = schemaNode.fieldNames();
     while (names.hasNext()) {
       String name = names.next();
-      schemas.put(Pattern.compile(name), new SchemaValidator<>(context, new ValidationResults.CrumbInfo(name, false), schemaNode.get(name), schemaParentNode, parentSchema));
+      schemas.put(Pattern.compile(name), new SchemaValidator(context, new ValidationResults.CrumbInfo(name, false), schemaNode.get(name), schemaParentNode, parentSchema));
     }
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     if (!valueNode.isObject()) {
       return false;
     }
@@ -44,7 +44,7 @@ class PatternPropertiesValidator<V> extends BaseJsonValidator<OAI3, V> {
     validate(() -> {
       while (names.hasNext()) {
         String name = names.next();
-        for (Map.Entry<Pattern, SchemaValidator<V>> entry : schemas.entrySet()) {
+        for (Map.Entry<Pattern, SchemaValidator> entry : schemas.entrySet()) {
           Matcher m = entry.getKey().matcher(name);
           if (m.matches()) {
             entry.getValue().validateWithContext(valueNode.get(name), validation);

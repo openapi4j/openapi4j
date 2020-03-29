@@ -25,7 +25,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-10" />
  */
-class AdditionalPropertiesValidator<V> extends BaseJsonValidator<OAI3, V> {
+class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1000, "Additional property '%s' is not allowed.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ADDITIONALPROPERTIES, true);
@@ -33,9 +33,9 @@ class AdditionalPropertiesValidator<V> extends BaseJsonValidator<OAI3, V> {
   private final Set<String> allowedProperties;
   private final Set<Pattern> allowedPatternProperties;
   private final Boolean additionalPropertiesAllowed;
-  private final SchemaValidator<V> additionalPropertiesSchema;
+  private final SchemaValidator additionalPropertiesSchema;
 
-  AdditionalPropertiesValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
+  AdditionalPropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     if (schemaNode.isBoolean()) {
@@ -43,7 +43,7 @@ class AdditionalPropertiesValidator<V> extends BaseJsonValidator<OAI3, V> {
       additionalPropertiesSchema = null;
     } else /*if (schemaNode.isObject())*/ {
       additionalPropertiesAllowed = false;
-      additionalPropertiesSchema = new SchemaValidator<>(context, CRUMB_INFO, schemaNode, schemaParentNode, parentSchema);
+      additionalPropertiesSchema = new SchemaValidator(context, CRUMB_INFO, schemaNode, schemaParentNode, parentSchema);
     }
 
     if (Boolean.TRUE.equals(additionalPropertiesAllowed)) {
@@ -60,7 +60,7 @@ class AdditionalPropertiesValidator<V> extends BaseJsonValidator<OAI3, V> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     if (Boolean.TRUE.equals(additionalPropertiesAllowed)) return false;
 
     for (Iterator<String> it = valueNode.fieldNames(); it.hasNext(); ) {

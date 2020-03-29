@@ -17,15 +17,15 @@ import java.util.Map;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
-class ParameterValidator<M extends OpenApiSchema<M>, V> {
+class ParameterValidator<M extends OpenApiSchema<M>> {
   private static final ValidationResult PARAM_REQUIRED_ERR = new ValidationResult(ERROR, 206, "Parameter '%s' is required.");
 
-  private final ValidationContext<OAI3, V> context;
+  private final ValidationContext<OAI3> context;
   private final OpenApi3 openApi;
-  private final Map<String, JsonValidator<V>> specValidators;
+  private final Map<String, JsonValidator> specValidators;
   private final Map<String, AbsParameter<M>> specParameters;
 
-  ParameterValidator(ValidationContext<OAI3, V> context, OpenApi3 openApi, Map<String, AbsParameter<M>> specParameters) {
+  ParameterValidator(ValidationContext<OAI3> context, OpenApi3 openApi, Map<String, AbsParameter<M>> specParameters) {
     this.context = context;
     this.openApi = openApi;
     this.specParameters = specParameters;
@@ -37,11 +37,11 @@ class ParameterValidator<M extends OpenApiSchema<M>, V> {
   }
 
   void validate(final Map<String, JsonNode> values,
-                final ValidationData<V> validation) {
+                final ValidationData<?> validation) {
 
     if (specValidators == null) return;
 
-    for (Map.Entry<String, JsonValidator<V>> entry : specValidators.entrySet()) {
+    for (Map.Entry<String, JsonValidator> entry : specValidators.entrySet()) {
       String paramName = entry.getKey();
 
       if (checkRequired(paramName, specParameters.get(paramName), values, validation)) {
@@ -51,12 +51,12 @@ class ParameterValidator<M extends OpenApiSchema<M>, V> {
     }
   }
 
-  private Map<String, JsonValidator<V>> initValidators(Map<String, AbsParameter<M>> specParameters) {
+  private Map<String, JsonValidator> initValidators(Map<String, AbsParameter<M>> specParameters) {
     if (specParameters == null || specParameters.isEmpty()) {
       return null;
     }
 
-    Map<String, JsonValidator<V>> validators = new HashMap<>();
+    Map<String, JsonValidator> validators = new HashMap<>();
 
     for (Map.Entry<String, AbsParameter<M>> paramEntry : specParameters.entrySet()) {
       String paramName = paramEntry.getKey();
@@ -64,7 +64,7 @@ class ParameterValidator<M extends OpenApiSchema<M>, V> {
 
       if (parameter.getSchema() != null) { // Schema in not mandatory
         try {
-          SchemaValidator<V> validator = new SchemaValidator<>(
+          SchemaValidator validator = new SchemaValidator(
             context,
             paramName,
             parameter.getSchema().toNode(openApi.getContext(), true));
@@ -82,7 +82,7 @@ class ParameterValidator<M extends OpenApiSchema<M>, V> {
   private boolean checkRequired(final String paramName,
                                 final AbsParameter<?> parameter,
                                 final Map<String, JsonNode> paramValues,
-                                final ValidationData<V> validation) {
+                                final ValidationData<?> validation) {
 
     if (!paramValues.containsKey(paramName)) {
       if (parameter.isRequired()) {

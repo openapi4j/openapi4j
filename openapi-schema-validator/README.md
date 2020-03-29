@@ -32,7 +32,7 @@ Add the following to your `pom.xml`:
 ```java
 JsonNode schemaNode = // your schema tree node.
 JsonNode contentNode = // your data.
-SchemaValidator<Void> schemaValidator = new SchemaValidator<>("my_schema", schemaNode);
+SchemaValidator schemaValidator = new SchemaValidator("my_schema", schemaNode);
 
 // Validation with exception
 try {
@@ -160,10 +160,10 @@ Instantiation:
 // Declare your instantiation function, this will be called as much as needed.
 evi = new ExtValidatorInstance() {
     @Override
-    public JsonValidator<OAI3, Void> apply(ValidationContext context,
-                                     JsonNode schemaNode,
-                                     JsonNode schemaParentNode,
-                                     SchemaValidator<Void> parentSchema) {
+    public JsonValidator apply(ValidationContext context,
+                               JsonNode schemaNode,
+                               JsonNode schemaParentNode,
+                               SchemaValidator parentSchema) {
         // MyValidator extends BaseJsonValidator<OAI3, Void>
         return new MyValidator(context, schemaNode, schemaParentNode, parentSchema);
     }
@@ -175,7 +175,7 @@ apiContext = new OAI3Context(URI.create("/"), schemaNode);
 validationContext = new ValidationContext<>(apiContext);
 // Link trigger 'x-myentity-val' (or known keyword such as maximum, format, ...) with MyValidator.
 validationContext.addValidator("x-myentity-val", evi);
-schemaValidator = new SchemaValidator<>(validationContext, "entity_schema", schemaNode);
+schemaValidator = new SchemaValidator(validationContext, "entity_schema", schemaNode);
 ```
 
 ### Custom data and delegation:
@@ -183,11 +183,21 @@ You can setup some custom data when calling `validate` method.
 Also, this allows you to delegate when your validator is triggered.
 
 ```java
-ValidationData<MyDataDelegate> validation = new ValidationData<>();
+ValidationData<TypeInfoDelegate> validation = new ValidationData<>();
 schemaValidator.validate(contentNode, validation);
-```
 
-See [TypeInfoValidator](https://github.com/openapi4j/openapi4j/blob/master/openapi-schema-validator/src/test/java/org/openapi4j/schema/validator/v3/TypeInfoValidator.java) for a sample usage.
+@Override
+public boolean validate(JsonNode valueNode, ValidationData<?> validation) {
+  if (validation.delegate() instanceof TypeInfoDelegate) {
+    TypeInfoDelegate delegate = (TypeInfoDelegate) validation.delegate();
+
+    if (delegate.isRequest) {
+      delegate.log(validation, true);
+    }
+  }
+  return true;
+}
+```
 
 ## Limitations
 

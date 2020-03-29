@@ -178,7 +178,7 @@ public class ValidationTest {
 
   @Test
   public void overriddenValidation() throws Exception {
-    Map<String, ValidatorInstance<Void>> validators = new HashMap<>();
+    Map<String, ValidatorInstance> validators = new HashMap<>();
     validators.put(OAI3SchemaKeywords.MAXIMUM, MaximumToleranceValidator::new);
     validators.put("x-myentity-val", MyEntityValidator::new);
 
@@ -187,7 +187,7 @@ public class ValidationTest {
 
   @Test
   public void additionalValidation() throws Exception {
-    Map<String, ValidatorInstance<Void>> validators = new HashMap<>();
+    Map<String, ValidatorInstance> validators = new HashMap<>();
     validators.put("x-myentity-val", MyEntityValidator::new);
 
     ValidationUtil.validate("/schema/override/myEntityValidation.json", null, validators, true);
@@ -199,10 +199,10 @@ public class ValidationTest {
     JsonNode schemaNode = TreeUtil.json.readTree("{ \"properties\": { \"foo\": { \"anyOf\": [ { \"type\": \"integer\" }, { \"minimum\": 2 } ] } }}");
 
     OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
-    ValidationContext<OAI3, TypeInfoDelegate> validationContext = new ValidationContext<>(apiContext);
+    ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
     validationContext.addValidator("type", TypeInfoValidator::new);
 
-    SchemaValidator<TypeInfoDelegate> validator = new SchemaValidator<>(validationContext, null, schemaNode);
+    SchemaValidator validator = new SchemaValidator(validationContext, null, schemaNode);
 
     ValidationData<TypeInfoDelegate> validation = new ValidationData<>();
     validator.validate(JsonNodeFactory.instance.objectNode().set("foo", JsonNodeFactory.instance.numberNode(1)), validation);
@@ -217,10 +217,10 @@ public class ValidationTest {
     JsonNode schemaNode = TreeUtil.json.readTree("{ \"properties\": { \"foo\": { \"oneOf\": [ { \"type\": \"integer\" }, { \"minimum\": 2 } ] } }}");
 
     OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
-    ValidationContext<OAI3, TypeInfoDelegate> validationContext = new ValidationContext<>(apiContext);
+    ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
     validationContext.addValidator("type", TypeInfoValidator::new);
 
-    SchemaValidator<TypeInfoDelegate> validator = new SchemaValidator<>(validationContext, null, schemaNode);
+    SchemaValidator validator = new SchemaValidator(validationContext, null, schemaNode);
 
     ValidationData<TypeInfoDelegate> validation = new ValidationData<>();
     validator.validate(JsonNodeFactory.instance.objectNode().set("foo", JsonNodeFactory.instance.numberNode(1)), validation);
@@ -235,10 +235,10 @@ public class ValidationTest {
     JsonNode schemaNode = TreeUtil.json.readTree("{ \"properties\": { \"foo\": { \"oneOf\": [ { \"type\": \"integer\" }, { \"minimum\": 2 } ] } }}");
 
     OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
-    ValidationContext<OAI3, TypeInfoDelegate> validationContext = new ValidationContext<>(apiContext);
+    ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
     validationContext.addValidator("type", TypeInfoValidator::new);
 
-    SchemaValidator<TypeInfoDelegate> validator = new SchemaValidator<>(validationContext, null, schemaNode);
+    SchemaValidator validator = new SchemaValidator(validationContext, null, schemaNode);
 
     ValidationData<TypeInfoDelegate> validation = new ValidationData<>(new TypeInfoDelegate(true));
     validator.validate(JsonNodeFactory.instance.objectNode().set("foo", JsonNodeFactory.instance.numberNode(1)), validation);
@@ -252,7 +252,7 @@ public class ValidationTest {
 
   @Test(expected = RuntimeException.class)
   public void schemaValidatorResolutionException() throws RuntimeException, IOException {
-    new SchemaValidator<>(
+    new SchemaValidator(
       null,
       "my_schema",
       TreeUtil.json.readTree(ValidationTest.class.getResource("/schema/reference.json")));
@@ -263,8 +263,8 @@ public class ValidationTest {
     JsonNode schemaNode = TreeUtil.json.readTree("{\"not\": {\"type\": \"integer\"} }");
 
     OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
-    ValidationContext<OAI3, Void> validationContext = new ValidationContext<>(apiContext);
-    SchemaValidator<Void> validator = new SchemaValidator<>(validationContext, "my_schema", schemaNode);
+    ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
+    SchemaValidator validator = new SchemaValidator(validationContext, "my_schema", schemaNode);
 
     assertEquals(validationContext, validator.getContext());
   }

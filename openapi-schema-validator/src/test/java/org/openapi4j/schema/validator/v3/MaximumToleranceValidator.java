@@ -17,7 +17,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 /**
  * Foo maximum keyword override for testing purpose.
  */
-public class MaximumToleranceValidator<V> extends BaseJsonValidator<OAI3, V> {
+public class MaximumToleranceValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult EXCLUSIVE_ERR_MSG = new ValidationResult(ERROR, 1, "'%s' must be lower than '%s'.");
   private static final ValidationResult ERR_MSG = new ValidationResult(ERROR, 2, "'%s' is greater than '%s'");
 
@@ -28,10 +28,10 @@ public class MaximumToleranceValidator<V> extends BaseJsonValidator<OAI3, V> {
   private final BigDecimal maximum;
   private final boolean excludeEqual;
 
-  public MaximumToleranceValidator(final ValidationContext<OAI3, V> context,
+  public MaximumToleranceValidator(final ValidationContext<OAI3> context,
                                    final JsonNode schemaNode,
                                    final JsonNode schemaParentNode,
-                                   final SchemaValidator<V> parentSchema) {
+                                   final SchemaValidator parentSchema) {
 
     super(context, schemaNode, schemaParentNode, parentSchema);
 
@@ -49,7 +49,7 @@ public class MaximumToleranceValidator<V> extends BaseJsonValidator<OAI3, V> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     if (valueNode.isNumber()) {
       final BigDecimal value = valueNode.decimalValue();
       final int compResult = value.compareTo(maximum);

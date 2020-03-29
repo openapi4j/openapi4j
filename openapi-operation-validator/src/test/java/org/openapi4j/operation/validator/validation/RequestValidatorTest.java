@@ -19,7 +19,7 @@ public class RequestValidatorTest {
   public void withoutServerPathFindOperationCheck() throws ResolutionException, ValidationException {
     URL specPath = RequestValidatorTest.class.getResource("/request/requestValidator.yaml");
     OpenApi3 api = new OpenApi3Parser().parse(specPath, false);
-    RequestValidator<Void> requestValidator = new RequestValidator<>(api);
+    RequestValidator requestValidator = new RequestValidator(api);
 
     check(
       requestValidator,
@@ -48,7 +48,7 @@ public class RequestValidatorTest {
   public void withServerPathFindOperationCheck() throws ResolutionException, ValidationException {
     URL specPath = RequestValidatorTest.class.getResource("/request/requestValidator-with-servers.yaml");
     OpenApi3 api = new OpenApi3Parser().parse(specPath, false);
-    RequestValidator<Void> requestValidator = new RequestValidator<>(api);
+    RequestValidator requestValidator = new RequestValidator(api);
 
     // absolute url
     check(
@@ -82,7 +82,7 @@ public class RequestValidatorTest {
       true);
   }
 
-  private void check(RequestValidator<Void> requestValidator, Request rq, boolean shouldBeValid) {
+  private void check(RequestValidator requestValidator, Request rq, boolean shouldBeValid) {
     try {
       requestValidator.validate(rq);
     } catch (ValidationException e) {

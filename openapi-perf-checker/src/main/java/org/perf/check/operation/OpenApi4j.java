@@ -17,14 +17,14 @@ import java.net.URL;
 class OpenApi4j {
   private final Path path;
   private final Operation operation;
-  private final RequestValidator<Void> requestValidator;
+  private final RequestValidator requestValidator;
 
   OpenApi4j(String schemaFile) throws ValidationException, ResolutionException {
     URL specPath = getClass().getClassLoader().getResource(schemaFile);
     OpenApi3 api = new OpenApi3Parser().parse(specPath, true);
     operation = api.getOperationById("test");
     path = api.getPathItemByOperationId("test");
-    requestValidator = new RequestValidator<>(api);
+    requestValidator = new RequestValidator(api);
   }
 
   String validateFormUrlEncoded() {

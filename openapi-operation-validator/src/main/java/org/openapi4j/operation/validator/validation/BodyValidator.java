@@ -16,18 +16,18 @@ import java.io.IOException;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
-class BodyValidator<V> {
+class BodyValidator {
   private static final ValidationResult BODY_REQUIRED_ERR = new ValidationResult(ERROR, 200, "Body is required but none provided.");
   private static final ValidationResult BODY_CONTENT_ERR = new ValidationResult(ERROR, 201, "An error occurred when getting the body content from type '%s'.%n%s");
 
   private static final String BODY = "body";
 
-  private final ValidationContext<OAI3, V> context;
+  private final ValidationContext<OAI3> context;
   private final OpenApi3 openApi;
   private final MediaType mediaType;
-  private final JsonValidator<V> validator;
+  private final JsonValidator validator;
 
-  BodyValidator(ValidationContext<OAI3, V> context, OpenApi3 openApi, MediaType mediaType) {
+  BodyValidator(ValidationContext<OAI3> context, OpenApi3 openApi, MediaType mediaType) {
     this.context = context;
     this.openApi = openApi;
     this.mediaType = mediaType;
@@ -38,7 +38,7 @@ class BodyValidator<V> {
   void validate(final Body body,
                 final String rawContentType,
                 final boolean isBodyRequired,
-                final ValidationData<V> validation) {
+                final ValidationData<?> validation) {
 
     if (validator == null) {
       return; // No schema specified for body
@@ -57,13 +57,13 @@ class BodyValidator<V> {
     }
   }
 
-  private JsonValidator<V> initValidator() {
+  private JsonValidator initValidator() {
     if (mediaType == null || mediaType.getSchema() == null) {
       return null;
     }
 
     try {
-      return new SchemaValidator<>(
+      return new SchemaValidator(
         context,
         BODY,
         mediaType.getSchema().toNode(openApi.getContext(), true));

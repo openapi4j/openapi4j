@@ -17,7 +17,7 @@ public class TypeInfoDelegate {
     this.isRequest = isRequest;
   }
 
-  public void log(ValidationData<TypeInfoDelegate> validation, boolean value) {
+  public void log(ValidationData<?> validation, boolean value) {
     validation.add(CRUMB_INFO, INFO, value);
   }
 }

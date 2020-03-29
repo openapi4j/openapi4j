@@ -18,24 +18,24 @@ import java.util.Map;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-9" />
  */
-class PropertiesValidator<V> extends BaseJsonValidator<OAI3, V> {
-  private final Map<String, SchemaValidator<V>> schemas;
+class PropertiesValidator extends BaseJsonValidator<OAI3> {
+  private final Map<String, SchemaValidator> schemas;
 
-  PropertiesValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
+  PropertiesValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     schemas = new HashMap<>();
     for (Iterator<String> it = schemaNode.fieldNames(); it.hasNext(); ) {
       String pname = it.next();
-      schemas.put(pname, new SchemaValidator<>(context, new ValidationResults.CrumbInfo(pname, false), schemaNode.get(pname), schemaParentNode, parentSchema));
+      schemas.put(pname, new SchemaValidator(context, new ValidationResults.CrumbInfo(pname, false), schemaNode.get(pname), schemaParentNode, parentSchema));
     }
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     validate(() -> {
-      for (Map.Entry<String, SchemaValidator<V>> entry : schemas.entrySet()) {
-        SchemaValidator<V> propertySchema = entry.getValue();
+      for (Map.Entry<String, SchemaValidator> entry : schemas.entrySet()) {
+        SchemaValidator propertySchema = entry.getValue();
         JsonNode propertyNode = valueNode.get(entry.getKey());
 
         if (propertyNode != null) {

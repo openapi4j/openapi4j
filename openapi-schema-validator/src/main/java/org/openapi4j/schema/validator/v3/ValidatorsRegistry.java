@@ -37,23 +37,23 @@ class ValidatorsRegistry {
    * @param parentSchema     The corresponding schema to validate against.
    * @return The corresponding validators instances.
    */
-  <V> Collection<JsonValidator<V>> getValidators(final ValidationContext<OAI3, V> context,
-                                                 final String keyword,
-                                                 final JsonNode schemaNode,
-                                                 final JsonNode schemaParentNode,
-                                                 final SchemaValidator<V> parentSchema) {
+  Collection<JsonValidator> getValidators(final ValidationContext<OAI3> context,
+                                          final String keyword,
+                                          final JsonNode schemaNode,
+                                          final JsonNode schemaParentNode,
+                                          final SchemaValidator parentSchema) {
 
-    List<JsonValidator<V>> validatorInstances = null;
+    List<JsonValidator> validatorInstances = null;
 
     // Custom validators
-    Collection<ValidatorInstance<V>> additionalInstances = context.getValidators().get(keyword);
+    Collection<ValidatorInstance> additionalInstances = context.getValidators().get(keyword);
     // Core validator
-    ValidatorInstance<V> coreInstance = getCoreValidator(keyword);
+    ValidatorInstance coreInstance = getCoreValidator(keyword);
 
     if (additionalInstances != null) {
       validatorInstances = new ArrayList<>();
 
-      for (ValidatorInstance<V> additionalInstance : additionalInstances) {
+      for (ValidatorInstance additionalInstance : additionalInstances) {
         validatorInstances.add(additionalInstance.apply(context, schemaNode, schemaParentNode, parentSchema));
       }
 
@@ -68,35 +68,62 @@ class ValidatorsRegistry {
     return validatorInstances;
   }
 
-  private <V> ValidatorInstance<V> getCoreValidator(final String keyword) {
+  private ValidatorInstance getCoreValidator(final String keyword) {
     switch (keyword) {
-      case ADDITIONALPROPERTIES: return AdditionalPropertiesValidator::new;
-      case ALLOF: return AllOfValidator::new;
-      case ANYOF: return AnyOfValidator::new;
-      case DEPENDENCIES: return DependenciesValidator::new;
-      case ENUM: return EnumValidator::new;
-      case FORMAT: return FormatValidator::new;
-      case ITEMS: return ItemsValidator::new;
-      case MAXIMUM: return MaximumValidator::new;
-      case MAXITEMS: return MaxItemsValidator::new;
-      case MAXLENGTH: return MaxLengthValidator::new;
-      case MAXPROPERTIES: return MaxPropertiesValidator::new;
-      case MINIMUM: return MinimumValidator::new;
-      case MINITEMS: return MinItemsValidator::new;
-      case MINLENGTH: return MinLengthValidator::new;
-      case MINPROPERTIES: return MinPropertiesValidator::new;
-      case MULTIPLEOF: return MultipleOfValidator::new;
-      case NOT: return NotValidator::new;
-      case NULLABLE: return NullableValidator::new;
-      case ONEOF: return OneOfValidator::new;
-      case PATTERN: return PatternValidator::new;
-      case PATTERNPROPERTIES: return PatternPropertiesValidator::new;
-      case PROPERTIES: return PropertiesValidator::new;
-      case $REF: return ReferenceValidator::new;
-      case REQUIRED: return RequiredValidator::new;
-      case TYPE: return TypeValidator::new;
-      case UNIQUEITEMS: return UniqueItemsValidator::new;
-      default: return null;
+      case ADDITIONALPROPERTIES:
+        return AdditionalPropertiesValidator::new;
+      case ALLOF:
+        return AllOfValidator::new;
+      case ANYOF:
+        return AnyOfValidator::new;
+      case DEPENDENCIES:
+        return DependenciesValidator::new;
+      case ENUM:
+        return EnumValidator::new;
+      case FORMAT:
+        return FormatValidator::new;
+      case ITEMS:
+        return ItemsValidator::new;
+      case MAXIMUM:
+        return MaximumValidator::new;
+      case MAXITEMS:
+        return MaxItemsValidator::new;
+      case MAXLENGTH:
+        return MaxLengthValidator::new;
+      case MAXPROPERTIES:
+        return MaxPropertiesValidator::new;
+      case MINIMUM:
+        return MinimumValidator::new;
+      case MINITEMS:
+        return MinItemsValidator::new;
+      case MINLENGTH:
+        return MinLengthValidator::new;
+      case MINPROPERTIES:
+        return MinPropertiesValidator::new;
+      case MULTIPLEOF:
+        return MultipleOfValidator::new;
+      case NOT:
+        return NotValidator::new;
+      case NULLABLE:
+        return NullableValidator::new;
+      case ONEOF:
+        return OneOfValidator::new;
+      case PATTERN:
+        return PatternValidator::new;
+      case PATTERNPROPERTIES:
+        return PatternPropertiesValidator::new;
+      case PROPERTIES:
+        return PropertiesValidator::new;
+      case $REF:
+        return ReferenceValidator::new;
+      case REQUIRED:
+        return RequiredValidator::new;
+      case TYPE:
+        return TypeValidator::new;
+      case UNIQUEITEMS:
+        return UniqueItemsValidator::new;
+      default:
+        return null;
     }
   }
 }

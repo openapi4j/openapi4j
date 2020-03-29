@@ -21,7 +21,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-7" />
  */
-class PatternValidator<V> extends BaseJsonValidator<OAI3, V> {
+class PatternValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult PATTERN_DEF_ERR = new ValidationResult(ERROR, 1024, "Wrong pattern definition '%s'.");
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1025, "'%s' does not respect pattern '%s'.");
 
@@ -30,7 +30,7 @@ class PatternValidator<V> extends BaseJsonValidator<OAI3, V> {
   private final String patternStr;
   private final Pattern pattern;
 
-  PatternValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
+  PatternValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     patternStr = schemaNode.asText();
@@ -38,7 +38,7 @@ class PatternValidator<V> extends BaseJsonValidator<OAI3, V> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     if (pattern == null) {
       validation.add(CRUMB_INFO, PATTERN_DEF_ERR, patternStr);
       return false;

@@ -35,7 +35,7 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
   private static final String OP_ID_NOT_FOUND_ERR_MSG = "Operation with id '%s' not found.";
 
   private final Vertx vertx;
-  private final RequestValidator<Void> rqValidator;
+  private final RequestValidator rqValidator;
   private final Map<String, OperationSpec> operationSpecs;
   private final SecurityRequirementHelper securityHelper;
 
@@ -44,11 +44,11 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
   }
 
   @SuppressWarnings("WeakerAccess")
-  public OpenApi3RouterFactoryImpl(Vertx vertx, ValidationContext<OAI3, Void> context, OpenApi3 openApi) {
+  public OpenApi3RouterFactoryImpl(Vertx vertx, ValidationContext<OAI3> context, OpenApi3 openApi) {
     this.vertx = vertx;
     this.operationSpecs = new LinkedHashMap<>();
     securityHelper = new SecurityRequirementHelper();
-    rqValidator = new RequestValidator<>(context, openApi);
+    rqValidator = new RequestValidator(context, openApi);
 
     setupOperations(openApi);
   }
@@ -89,7 +89,7 @@ public class OpenApi3RouterFactoryImpl implements OpenApi3RouterFactory {
     for (OperationSpec operationSpec : operationSpecs.values()) {
       // Pre-compile validators from the operation spec.
       // This flatten the operation and combine path & operation parameters
-      OperationValidator<Void> opValidator = rqValidator.getValidator(operationSpec.pathModel, operationSpec.operation);
+      OperationValidator opValidator = rqValidator.getValidator(operationSpec.pathModel, operationSpec.operation);
       // Create route with regex path if needed
       Route route = createRoute(router, operationSpec);
       // Set produces/consumes

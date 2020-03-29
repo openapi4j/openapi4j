@@ -21,7 +21,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-10" />
  */
-class EnumValidator<V> extends BaseJsonValidator<OAI3, V> {
+class EnumValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1006, "Value '%s' is not defined in the schema.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ENUM, true);
@@ -29,14 +29,14 @@ class EnumValidator<V> extends BaseJsonValidator<OAI3, V> {
   private final JsonNode schemaNode;
   private static final NodeComparator NODE_COMPARATOR = new NodeComparator();
 
-  EnumValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
+  EnumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     this.schemaNode = schemaNode;
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     if (schemaNode.isArray()) {
       for (JsonNode enumNode : schemaNode) {
         if (enumNode.equals(NODE_COMPARATOR, valueNode)) {
