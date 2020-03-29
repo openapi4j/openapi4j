@@ -13,7 +13,6 @@ import org.openapi4j.parser.validation.ValidatorBase;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.regex.Pattern;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
