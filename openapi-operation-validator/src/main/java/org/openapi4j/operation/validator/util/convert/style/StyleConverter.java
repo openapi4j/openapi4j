@@ -2,8 +2,6 @@ package org.openapi4j.operation.validator.util.convert.style;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-
-import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.operation.validator.util.convert.TypeConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.Schema;
