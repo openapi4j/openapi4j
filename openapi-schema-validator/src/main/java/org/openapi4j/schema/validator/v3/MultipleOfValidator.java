@@ -25,7 +25,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * A numeric instance is only valid if division by this keyword's value
  * results in an integer.
  */
-class MultipleOfValidator<V> extends BaseJsonValidator<OAI3, V> {
+class MultipleOfValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1019, "Value '%s' is not a multiple of '%s'.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MULTIPLEOF, true);
@@ -33,7 +33,7 @@ class MultipleOfValidator<V> extends BaseJsonValidator<OAI3, V> {
   private static final BigDecimal DIVISIBLE = BigDecimal.valueOf(0.0);
   private final BigDecimal multiple;
 
-  MultipleOfValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
+  MultipleOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     multiple
@@ -43,7 +43,7 @@ class MultipleOfValidator<V> extends BaseJsonValidator<OAI3, V> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     if (multiple == null || !valueNode.isNumber()) {
       return false;
     }

@@ -8,10 +8,10 @@ import org.openapi4j.schema.validator.ValidationData;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
 
 class OpenApi4j implements JsonValidator {
-  private final SchemaValidator<Void> schemaValidator;
+  private final SchemaValidator schemaValidator;
 
   OpenApi4j(JsonNode schema) throws ResolutionException {
-    schemaValidator = new SchemaValidator<>("schemas", schema);
+    schemaValidator = new SchemaValidator("schemas", schema);
   }
 
   @Override

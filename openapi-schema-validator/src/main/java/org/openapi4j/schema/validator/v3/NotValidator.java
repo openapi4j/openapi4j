@@ -19,21 +19,21 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-12" />
  */
-class NotValidator<V> extends BaseJsonValidator<OAI3, V> {
+class NotValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1020, "Schema should not be valid.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(NOT, true);
 
-  private final SchemaValidator<V> schema;
+  private final SchemaValidator schema;
 
-  NotValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
+  NotValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
-    schema = new SchemaValidator<>(context, CRUMB_INFO, schemaNode, schemaParentNode, parentSchema);
+    schema = new SchemaValidator(context, CRUMB_INFO, schemaNode, schemaParentNode, parentSchema);
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     try {
       schema.validate(valueNode);
       validation.add(CRUMB_INFO, ERR);

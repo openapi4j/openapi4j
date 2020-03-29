@@ -9,10 +9,10 @@ import org.openapi4j.schema.validator.ValidationContext;
  * Represents a function that creates a new instance of validator.
  */
 @FunctionalInterface
-public interface ValidatorInstance<V> {
-  JsonValidator<V> apply(
-    final ValidationContext<OAI3, V> context,
+public interface ValidatorInstance {
+  JsonValidator apply(
+    final ValidationContext<OAI3> context,
     final JsonNode schemaNode,
     final JsonNode schemaParentNode,
-    final SchemaValidator<V> parentSchema);
+    final SchemaValidator parentSchema);
 }

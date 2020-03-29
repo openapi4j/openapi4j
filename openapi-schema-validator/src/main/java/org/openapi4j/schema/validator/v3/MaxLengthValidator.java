@@ -18,14 +18,14 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-7" />
  */
-class MaxLengthValidator<V> extends BaseJsonValidator<OAI3, V> {
+class MaxLengthValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1012, "Max length is '%s', found '%s'.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(MAXLENGTH, true);
 
   private final Integer maxLength;
 
-  MaxLengthValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
+  MaxLengthValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     maxLength
@@ -35,7 +35,7 @@ class MaxLengthValidator<V> extends BaseJsonValidator<OAI3, V> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     if (maxLength == null || !valueNode.isTextual()) {
       return false;
     }

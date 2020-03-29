@@ -6,7 +6,7 @@ import org.openapi4j.core.validation.ValidationException;
 /**
  * Representation of a validator.
  */
-public interface JsonValidator<V> {
+public interface JsonValidator {
   /**
    * Validate the given value from the validation setup.
    *
@@ -14,7 +14,7 @@ public interface JsonValidator<V> {
    * @param validation   The result stack to append any additional info from the validation.
    * @return {@code true} if chain should continue for the current keyword, {@code false} otherwise.
    */
-  boolean validate(final JsonNode valueNode, final ValidationData<V> validation);
+  boolean validate(final JsonNode valueNode, final ValidationData<?> validation);
 
   /**
    * Validate the given value from the validation setup.

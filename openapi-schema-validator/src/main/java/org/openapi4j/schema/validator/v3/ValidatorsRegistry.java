@@ -37,23 +37,23 @@ class ValidatorsRegistry {
    * @param parentSchema     The corresponding schema to validate against.
    * @return The corresponding validators instances.
    */
-  <V> Collection<JsonValidator<V>> getValidators(final ValidationContext<OAI3, V> context,
-                                                 final String keyword,
-                                                 final JsonNode schemaNode,
-                                                 final JsonNode schemaParentNode,
-                                                 final SchemaValidator<V> parentSchema) {
+  Collection<JsonValidator> getValidators(final ValidationContext<OAI3> context,
+                                          final String keyword,
+                                          final JsonNode schemaNode,
+                                          final JsonNode schemaParentNode,
+                                          final SchemaValidator parentSchema) {
 
-    List<JsonValidator<V>> validatorInstances = null;
+    List<JsonValidator> validatorInstances = null;
 
     // Custom validators
-    Collection<ValidatorInstance<V>> additionalInstances = context.getValidators().get(keyword);
+    Collection<ValidatorInstance> additionalInstances = context.getValidators().get(keyword);
     // Core validator
-    ValidatorInstance<V> coreInstance = getCoreValidator(keyword);
+    ValidatorInstance coreInstance = getCoreValidator(keyword);
 
     if (additionalInstances != null) {
       validatorInstances = new ArrayList<>();
 
-      for (ValidatorInstance<V> additionalInstance : additionalInstances) {
+      for (ValidatorInstance additionalInstance : additionalInstances) {
         validatorInstances.add(additionalInstance.apply(context, schemaNode, schemaParentNode, parentSchema));
       }
 
@@ -68,7 +68,7 @@ class ValidatorsRegistry {
     return validatorInstances;
   }
 
-  private <V> ValidatorInstance<V> getCoreValidator(final String keyword) {
+  private ValidatorInstance getCoreValidator(final String keyword) {
     switch (keyword) {
       case ADDITIONALPROPERTIES: return AdditionalPropertiesValidator::new;
       case ALLOF: return AllOfValidator::new;

@@ -26,11 +26,11 @@ import static org.openapi4j.schema.validator.v3.ValidationOptions.ADDITIONAL_PRO
  * Schema validation implementation.
  * This is the entry point of all validators.
  */
-public class SchemaValidator<V> extends BaseJsonValidator<OAI3, V> {
+public class SchemaValidator extends BaseJsonValidator<OAI3> {
   private static final JsonNode FALSE_NODE = JsonNodeFactory.instance.booleanNode(false);
 
   private final ValidationResults.CrumbInfo crumbInfo;
-  private final Map<String, Collection<JsonValidator<V>>> validators;
+  private final Map<String, Collection<JsonValidator>> validators;
 
   /**
    * Create a new Schema Object validator.
@@ -56,7 +56,7 @@ public class SchemaValidator<V> extends BaseJsonValidator<OAI3, V> {
    * @param propertyName The property or root name of the schema.
    * @param schemaNode   The schema specification.
    */
-  public SchemaValidator(final ValidationContext<OAI3, V> context,
+  public SchemaValidator(final ValidationContext<OAI3> context,
                          final String propertyName,
                          final JsonNode schemaNode) {
 
@@ -74,11 +74,11 @@ public class SchemaValidator<V> extends BaseJsonValidator<OAI3, V> {
    * @param schemaParentNode The tree node of the parent schema.
    * @param parentSchema     The parent schema model.
    */
-  SchemaValidator(final ValidationContext<OAI3, V> context,
+  SchemaValidator(final ValidationContext<OAI3> context,
                   final ValidationResults.CrumbInfo crumbInfo,
                   final JsonNode schemaNode,
                   final JsonNode schemaParentNode,
-                  final SchemaValidator<V> parentSchema) {
+                  final SchemaValidator parentSchema) {
 
     super(context, schemaNode, schemaParentNode, parentSchema);
 
@@ -87,21 +87,10 @@ public class SchemaValidator<V> extends BaseJsonValidator<OAI3, V> {
   }
 
   /**
-   * Get the context of validation.
-   */
-  public ValidationContext<OAI3, V> getContext() {
-    return context;
-  }
-
-  SchemaValidator<V> findParent() {
-    return (getParentSchema() != null) ? getParentSchema().findParent() : this;
-  }
-
-  /**
    * {@inheritDoc}
    */
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     try {
       validateWithContext(valueNode, validation);
     } catch (ValidationException ignored) {
@@ -111,7 +100,18 @@ public class SchemaValidator<V> extends BaseJsonValidator<OAI3, V> {
     return true;
   }
 
-  final void validateWithContext(JsonNode valueNode, final ValidationData<V> validation) throws ValidationException {
+  /**
+   * Get the context of validation.
+   */
+  public ValidationContext<OAI3> getContext() {
+    return context;
+  }
+
+  SchemaValidator findParent() {
+    return (getParentSchema() != null) ? getParentSchema().findParent() : this;
+  }
+
+  final void validateWithContext(JsonNode valueNode, final ValidationData<?> validation) throws ValidationException {
     if (valueNode == null) {
       valueNode = JsonNodeFactory.instance.nullNode();
     }
@@ -123,10 +123,10 @@ public class SchemaValidator<V> extends BaseJsonValidator<OAI3, V> {
     }
   }
 
-  private void fastFailValidate(final JsonNode valueNode, final ValidationData<V> validation) throws ValidationException {
+  private void fastFailValidate(final JsonNode valueNode, final ValidationData<?> validation) throws ValidationException {
     validation.results().withCrumb(crumbInfo, () -> {
-      for (Collection<JsonValidator<V>> keywordValidators : validators.values()) {
-        for (JsonValidator<V> validator : keywordValidators) {
+      for (Collection<JsonValidator> keywordValidators : validators.values()) {
+        for (JsonValidator validator : keywordValidators) {
           boolean shouldChain = validator.validate(valueNode, validation);
 
           if (!validation.isValid()) {
@@ -145,10 +145,10 @@ public class SchemaValidator<V> extends BaseJsonValidator<OAI3, V> {
     }
   }
 
-  private void defaultValidate(final JsonNode valueNode, final ValidationData<V> validation) {
+  private void defaultValidate(final JsonNode valueNode, final ValidationData<?> validation) {
     validation.results().withCrumb(crumbInfo, () -> {
-      for (Collection<JsonValidator<V>> keywordValidators : validators.values()) {
-        for (JsonValidator<V> validator : keywordValidators) {
+      for (Collection<JsonValidator> keywordValidators : validators.values()) {
+        for (JsonValidator validator : keywordValidators) {
           if (!validator.validate(valueNode, validation)) {
             break;
           }
@@ -160,15 +160,15 @@ public class SchemaValidator<V> extends BaseJsonValidator<OAI3, V> {
   /**
    * Read the schema and create dedicated validators from keywords.
    */
-  private Map<String, Collection<JsonValidator<V>>> read(final ValidationContext<OAI3, V> context, final JsonNode schemaNode) {
-    Map<String, Collection<JsonValidator<V>>> validatorMap = new HashMap<>();
+  private Map<String, Collection<JsonValidator>> read(final ValidationContext<OAI3> context, final JsonNode schemaNode) {
+    Map<String, Collection<JsonValidator>> validatorMap = new HashMap<>();
 
     Iterator<String> fieldNames = schemaNode.fieldNames();
     while (fieldNames.hasNext()) {
       final String keyword = fieldNames.next();
       final JsonNode keywordSchemaNode = schemaNode.get(keyword);
 
-      Collection<JsonValidator<V>> keywordValidators = ValidatorsRegistry.instance().getValidators(context, keyword, keywordSchemaNode, schemaNode, this);
+      Collection<JsonValidator> keywordValidators = ValidatorsRegistry.instance().getValidators(context, keyword, keywordSchemaNode, schemaNode, this);
       if (keywordValidators != null) {
         validatorMap.put(keyword, keywordValidators);
       }

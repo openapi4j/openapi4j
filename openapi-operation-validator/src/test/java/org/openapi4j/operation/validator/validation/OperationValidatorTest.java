@@ -36,7 +36,7 @@ public class OperationValidatorTest {
 
   @Test
   public void pathCheck() {
-    OperationValidator<Void> val = loadOperationValidator("paramCheck");
+    OperationValidator val = loadOperationValidator("paramCheck");
 
     // String can be also a number
     check(
@@ -85,7 +85,7 @@ public class OperationValidatorTest {
 
   @Test
   public void queryCheck() {
-    OperationValidator<Void> val = loadOperationValidator("paramCheck");
+    OperationValidator val = loadOperationValidator("paramCheck");
 
     check(
       new DefaultRequest.Builder("/foo", GET).query("boolQueryParam=true").build(),
@@ -117,7 +117,7 @@ public class OperationValidatorTest {
 
   @Test
   public void headerCheck() {
-    OperationValidator<Void> val = loadOperationValidator("paramCheck");
+    OperationValidator val = loadOperationValidator("paramCheck");
 
     check(
       new DefaultRequest.Builder("/foo", GET).header("pathStringHeaderParam", "foo").header("floatHeaderParam", "0.1").build(),
@@ -149,7 +149,7 @@ public class OperationValidatorTest {
 
   @Test
   public void cookieCheck() {
-    OperationValidator<Void> val = loadOperationValidator("paramCheck");
+    OperationValidator val = loadOperationValidator("paramCheck");
 
     check(
       new DefaultRequest.Builder("/foo", GET).cookie("dtCookieParam", "1996-12-19T16:39:57-08:00").build(),
@@ -171,7 +171,7 @@ public class OperationValidatorTest {
 
   @Test
   public void requestBodyCheck() {
-    OperationValidator<Void> val = loadOperationValidator("rqBodyCheck");
+    OperationValidator val = loadOperationValidator("rqBodyCheck");
 
     JsonNode bodyInteger = JsonNodeFactory.instance.objectNode().set(
       "paramInteger",
@@ -244,7 +244,7 @@ public class OperationValidatorTest {
 
   @Test
   public void discriminatorCheck() throws IOException {
-    OperationValidator<Void> val = loadOperationValidator("discriminator");
+    OperationValidator val = loadOperationValidator("discriminator");
 
     JsonNode body = TreeUtil.json.readTree("{\"pet_type\": \"Cat\", \"age\": 3}");
     check(
@@ -279,7 +279,7 @@ public class OperationValidatorTest {
 
   @Test
   public void mergePathToOperationParametersTest() {
-    OperationValidator<Void> val = loadOperationValidator("merge_parameters");
+    OperationValidator val = loadOperationValidator("merge_parameters");
 
     check(
       new DefaultRequest.Builder("/merge_parameters", GET).build(),
@@ -294,7 +294,7 @@ public class OperationValidatorTest {
 
   @Test
   public void wrongDefinitionForBodyResponseTest() {
-    OperationValidator<Void> val = loadOperationValidator("wrong_definition_for_body_response");
+    OperationValidator val = loadOperationValidator("wrong_definition_for_body_response");
 
     check(
       new DefaultRequest.Builder("/wrong_definition_for_body_response", POST).build(),
@@ -316,7 +316,7 @@ public class OperationValidatorTest {
 
   @Test
   public void responseCheck() {
-    OperationValidator<Void> val = loadOperationValidator("rqBodyCheck");
+    OperationValidator val = loadOperationValidator("rqBodyCheck");
 
     check(
       new DefaultResponse.Builder(500).header("Content-Type", "application/json").build(),
@@ -354,11 +354,11 @@ public class OperationValidatorTest {
       false);
   }
 
-  private OperationValidator<Void> loadOperationValidator(String opId) {
+  private OperationValidator loadOperationValidator(String opId) {
     Path path = api.getPathItemByOperationId(opId);
     Operation op = api.getOperationById(opId);
 
-    return new OperationValidator<>(api, path, op);
+    return new OperationValidator(api, path, op);
   }
 
   private void check(Request rq,

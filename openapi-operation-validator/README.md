@@ -33,7 +33,7 @@ Standard:
 
 ```java
 // openAPI & operation objects are from openapi4j parser
-RequestValidator<Void> val = new RequestValidator<>(openAPI);
+RequestValidator val = new RequestValidator(openAPI);
 
 val.validate(request, operation); // throws ValidationException
 val.validate(response, operation); // throws ValidationException
@@ -42,7 +42,7 @@ val.validate(response, operation); // throws ValidationException
 Raw:
 
 ```java
-OperationValidator<Void> val = new OperationValidator<>(openAPI, operation);
+OperationValidator val = new OperationValidator(openAPI, operation);
 val.validateQuery(request, validation);
 val.validateHeaders(request, validation);
 val.validateBody(request, validation);

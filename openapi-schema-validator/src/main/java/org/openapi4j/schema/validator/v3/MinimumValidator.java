@@ -21,7 +21,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-6" />
  */
-class MinimumValidator<V> extends BaseJsonValidator<OAI3, V> {
+class MinimumValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult EXCLUSIVE_ERR = new ValidationResult(ERROR, 1014, "Excluded minimum is '%s', found '%s'.");
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1015, "Minimum is '%s', found '%s'.");
 
@@ -30,7 +30,7 @@ class MinimumValidator<V> extends BaseJsonValidator<OAI3, V> {
   private final BigDecimal minimum;
   private final boolean excludeEqual;
 
-  MinimumValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
+  MinimumValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     minimum = schemaNode.isNumber() ? schemaNode.decimalValue() : null;
@@ -44,7 +44,7 @@ class MinimumValidator<V> extends BaseJsonValidator<OAI3, V> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     if (minimum == null || !valueNode.isNumber()) {
       return false;
     }

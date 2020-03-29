@@ -14,11 +14,11 @@ import java.util.Map;
  * @param <O> The Open API version type.
  */
 @SuppressWarnings("UnusedReturnValue")
-public class ValidationContext<O extends OAI, V> {
+public class ValidationContext<O extends OAI> {
   private final OAIContext context;
-  private final Map<String, JsonValidator<V>> visitedRefs = new HashMap<>();
+  private final Map<String, JsonValidator> visitedRefs = new HashMap<>();
   private final Map<Byte, Boolean> defaultOptions = new HashMap<>();
-  private final MultiStringMap<ValidatorInstance<V>> additionalValidators = new MultiStringMap<>(true, true);
+  private final MultiStringMap<ValidatorInstance> additionalValidators = new MultiStringMap<>(true, true);
   private boolean isFastFail;
 
   public ValidationContext(OAIContext context) {
@@ -43,7 +43,7 @@ public class ValidationContext<O extends OAI, V> {
    *
    * @param fastFail {@code true} for fast failing.
    */
-  public ValidationContext<O, V> setFastFail(boolean fastFail) {
+  public ValidationContext<O> setFastFail(boolean fastFail) {
     isFastFail = fastFail;
     return this;
   }
@@ -55,7 +55,7 @@ public class ValidationContext<O extends OAI, V> {
    * @param ref       The reference expression.
    * @param validator The associated validator.
    */
-  public ValidationContext<O, V> addReference(String ref, JsonValidator<V> validator) {
+  public ValidationContext<O> addReference(String ref, JsonValidator validator) {
     visitedRefs.put(ref, validator);
     return this;
   }
@@ -67,11 +67,11 @@ public class ValidationContext<O extends OAI, V> {
    * @param ref The reference expression.
    * @return The associated validator.
    */
-  public JsonValidator<V> getReference(String ref) {
+  public JsonValidator getReference(String ref) {
     return visitedRefs.get(ref);
   }
 
-  public ValidationContext<O, V> setOption(byte option, boolean value) {
+  public ValidationContext<O> setOption(byte option, boolean value) {
     defaultOptions.put(option, value);
     return this;
   }
@@ -89,7 +89,7 @@ public class ValidationContext<O extends OAI, V> {
   /**
    * Get the additional validators associated to the context.
    */
-  public MultiStringMap<ValidatorInstance<V>> getValidators() {
+  public MultiStringMap<ValidatorInstance> getValidators() {
     return additionalValidators;
   }
 
@@ -101,7 +101,7 @@ public class ValidationContext<O extends OAI, V> {
    * @param validatorInstantiation The instantiation to call when a validation should occur.
    * @return this.
    */
-  public ValidationContext<O, V> addValidator(String keyword, ValidatorInstance<V> validatorInstantiation) {
+  public ValidationContext<O> addValidator(String keyword, ValidatorInstance validatorInstantiation) {
     additionalValidators.put(keyword, validatorInstantiation);
     return this;
   }

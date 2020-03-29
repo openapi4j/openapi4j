@@ -18,7 +18,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
  */
-class TypeValidator<V> extends BaseJsonValidator<OAI3, V> {
+class TypeValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1027, "Type expected '%s', found '%s'.");
 
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(TYPE, true);
@@ -28,14 +28,14 @@ class TypeValidator<V> extends BaseJsonValidator<OAI3, V> {
 
   private final String type;
 
-  TypeValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
+  TypeValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     type = schemaNode.textValue();
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     String valueType = getTypeFromValue(valueNode);
     if (!valueType.equals(type)) {
       if (TYPE_NUMBER.equals(type) && TYPE_INTEGER.equals(valueType)) {

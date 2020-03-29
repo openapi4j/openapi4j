@@ -23,7 +23,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#discriminatorObject" />
  */
-abstract class DiscriminatorValidator<V> extends BaseJsonValidator<OAI3, V> {
+abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult INVALID_SCHEMA_ERR = new ValidationResult(ERROR, 1003, "Schema selection can't be made for discriminator '%s'.");
   private static final ValidationResult INVALID_PROPERTY_ERR = new ValidationResult(ERROR, 1004, "Property name in schema is not set.");
   private static final ValidationResult INVALID_PROPERTY_CONTENT_ERR = new ValidationResult(ERROR, 1005, "Property name in content '%s' is not set.");
@@ -32,17 +32,17 @@ abstract class DiscriminatorValidator<V> extends BaseJsonValidator<OAI3, V> {
 
   private static final String SCHEMAS_PATH = "#/components/schemas/";
 
-  final List<SchemaValidator<V>> schemas = new ArrayList<>();
+  final List<SchemaValidator> schemas = new ArrayList<>();
   private final String arrayType;
   private JsonNode discriminatorNode;
   private String discriminatorPropertyName;
   private JsonNode discriminatorMapping;
   private final ValidationResults.CrumbInfo crumbInfo;
 
-  DiscriminatorValidator(final ValidationContext<OAI3, V> context,
+  DiscriminatorValidator(final ValidationContext<OAI3> context,
                          final JsonNode schemaNode,
                          final JsonNode schemaParentNode,
-                         final SchemaValidator<V> parentSchema,
+                         final SchemaValidator parentSchema,
                          final String arrayType) {
 
     super(context, schemaNode, schemaParentNode, parentSchema);
@@ -55,7 +55,7 @@ abstract class DiscriminatorValidator<V> extends BaseJsonValidator<OAI3, V> {
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     if (discriminatorNode != null) {
       String discriminatorPropertyRefPath = getDiscriminatorPropertyRefPath(valueNode, validation);
       if (discriminatorPropertyRefPath == null) {
@@ -75,16 +75,16 @@ abstract class DiscriminatorValidator<V> extends BaseJsonValidator<OAI3, V> {
     return false;
   }
 
-  private void validateAllOf(final JsonNode valueNode, final ValidationData<V> validation) {
+  private void validateAllOf(final JsonNode valueNode, final ValidationData<?> validation) {
     validate(() -> {
-      for (SchemaValidator<V> schema : schemas) {
+      for (SchemaValidator schema : schemas) {
         schema.validateWithContext(valueNode, validation);
       }
     });
   }
 
-  private void validateOneAnyOf(final JsonNode valueNode, final String discriminatorPropertyRefPath, final ValidationData<V> validation) {
-    for (SchemaValidator<V> schema : schemas) {
+  private void validateOneAnyOf(final JsonNode valueNode, final String discriminatorPropertyRefPath, final ValidationData<?> validation) {
+    for (SchemaValidator schema : schemas) {
       JsonNode refNode = schema.getSchemaNode().get(OAI3SchemaKeywords.$REF);
       if (discriminatorPropertyRefPath.equals(refNode.textValue())) {
         validate(() -> schema.validateWithContext(valueNode, validation));
@@ -101,12 +101,12 @@ abstract class DiscriminatorValidator<V> extends BaseJsonValidator<OAI3, V> {
    * @param valueNode  The current value node.
    * @param validation The validation results.
    */
-  abstract void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationData<V> validation);
+  abstract void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationData<?> validation);
 
-  private void setupDiscriminator(final ValidationContext<OAI3, V> context,
+  private void setupDiscriminator(final ValidationContext<OAI3> context,
                                   final JsonNode schemaNode,
                                   final JsonNode schemaParentNode,
-                                  final SchemaValidator<V> parentSchema) {
+                                  final SchemaValidator parentSchema) {
 
     if (ALLOF.equals(arrayType)) {
       setupAllOfDiscriminatorSchemas(context, schemaNode, schemaParentNode, parentSchema);
@@ -126,10 +126,10 @@ abstract class DiscriminatorValidator<V> extends BaseJsonValidator<OAI3, V> {
     }
   }
 
-  private void setupAllOfDiscriminatorSchemas(final ValidationContext<OAI3, V> context,
+  private void setupAllOfDiscriminatorSchemas(final ValidationContext<OAI3> context,
                                               final JsonNode schemaNode,
                                               final JsonNode schemaParentNode,
-                                              final SchemaValidator<V> parentSchema) {
+                                              final SchemaValidator parentSchema) {
 
     JsonNode allOfNode = getParentSchemaNode().get(ALLOF);
     ReferenceRegistry refRegistry = context.getContext().getReferenceRegistry();
@@ -149,19 +149,19 @@ abstract class DiscriminatorValidator<V> extends BaseJsonValidator<OAI3, V> {
 
     // Add default schemas
     for (JsonNode node : schemaNode) {
-      schemas.add(new SchemaValidator<>(context, crumbInfo, node, schemaParentNode, parentSchema));
+      schemas.add(new SchemaValidator(context, crumbInfo, node, schemaParentNode, parentSchema));
     }
   }
 
-  private void setupAnyOneOfDiscriminatorSchemas(final ValidationContext<OAI3, V> context,
+  private void setupAnyOneOfDiscriminatorSchemas(final ValidationContext<OAI3> context,
                                                  final JsonNode schemaNode,
                                                  final JsonNode schemaParentNode,
-                                                 final SchemaValidator<V> parentSchema) {
+                                                 final SchemaValidator parentSchema) {
 
     discriminatorNode = getParentSchemaNode().get(DISCRIMINATOR);
 
     for (JsonNode node : schemaNode) {
-      schemas.add(new SchemaValidator<>(context, crumbInfo, node, schemaParentNode, parentSchema));
+      schemas.add(new SchemaValidator(context, crumbInfo, node, schemaParentNode, parentSchema));
     }
   }
 
@@ -169,16 +169,16 @@ abstract class DiscriminatorValidator<V> extends BaseJsonValidator<OAI3, V> {
                                               final JsonNode refNode,
                                               final Reference reference,
                                               final JsonNode schemaParentNode,
-                                              final SchemaValidator<V> parentSchema) {
+                                              final SchemaValidator parentSchema) {
 
     for (JsonNode node : schemaNode) {
       JsonNode refValueNode = getReference(node);
 
       if (refNode.equals(refValueNode)) { // Add the parent schema
         ValidationResults.CrumbInfo refCrumbInfo = new ValidationResults.CrumbInfo(reference.getRef(), true);
-        schemas.add(new SchemaValidator<>(context, refCrumbInfo, reference.getContent(), schemaParentNode, parentSchema));
+        schemas.add(new SchemaValidator(context, refCrumbInfo, reference.getContent(), schemaParentNode, parentSchema));
       } else { // Add the other items
-        schemas.add(new SchemaValidator<>(context, crumbInfo, node, schemaParentNode, parentSchema));
+        schemas.add(new SchemaValidator(context, crumbInfo, node, schemaParentNode, parentSchema));
       }
     }
   }
@@ -203,7 +203,7 @@ abstract class DiscriminatorValidator<V> extends BaseJsonValidator<OAI3, V> {
     return refNode;
   }
 
-  private String getDiscriminatorPropertyRefPath(final JsonNode valueNode, final ValidationData<V> validation) {
+  private String getDiscriminatorPropertyRefPath(final JsonNode valueNode, final ValidationData<?> validation) {
     // check discriminator definition
     if (discriminatorPropertyName == null) {
       validation.add(CRUMB_INFO, INVALID_PROPERTY_ERR);

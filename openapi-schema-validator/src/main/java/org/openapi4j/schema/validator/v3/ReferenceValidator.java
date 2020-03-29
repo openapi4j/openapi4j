@@ -19,16 +19,16 @@ import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
  * Reaching a validator is guaranteed by the
  * JSON reference registry of the context which is our guard for correct definitions.
  */
-class ReferenceValidator<V> extends BaseJsonValidator<OAI3, V> {
+class ReferenceValidator extends BaseJsonValidator<OAI3> {
   private static final String HASH = "#";
 
   private final String refValue;
-  private JsonValidator<V> schemaValidator;
+  private JsonValidator schemaValidator;
 
-  ReferenceValidator(final ValidationContext<OAI3, V> context,
+  ReferenceValidator(final ValidationContext<OAI3> context,
                              final JsonNode schemaNode,
                              final JsonNode schemaParentNode,
-                             final SchemaValidator<V> parentSchema) {
+                             final SchemaValidator parentSchema) {
 
     super(context, schemaNode, schemaParentNode, parentSchema);
 
@@ -41,10 +41,10 @@ class ReferenceValidator<V> extends BaseJsonValidator<OAI3, V> {
       refValue = refNode.textValue();
       Reference reference = context.getContext().getReferenceRegistry().getRef(refValue);
       // Check visited references to break infinite looping
-      JsonValidator<V> validator = context.getReference(refValue);
+      JsonValidator validator = context.getReference(refValue);
       if (validator == null) {
-        ReferenceValidator<V> refValidator = new ReferenceValidator<>(context, refValue, schemaNode, schemaParentNode, parentSchema);
-        refValidator.setSchemaValidator(new SchemaValidator<>(context, new ValidationResults.CrumbInfo(refValue, true), reference.getContent(), schemaParentNode, parentSchema));
+        ReferenceValidator refValidator = new ReferenceValidator(context, refValue, schemaNode, schemaParentNode, parentSchema);
+        refValidator.setSchemaValidator(new SchemaValidator(context, new ValidationResults.CrumbInfo(refValue, true), reference.getContent(), schemaParentNode, parentSchema));
         schemaValidator = refValidator;
       } else {
         schemaValidator = validator;
@@ -61,11 +61,11 @@ class ReferenceValidator<V> extends BaseJsonValidator<OAI3, V> {
    * @param schemaParentNode The parent Schema Object node
    * @param parentSchema     The parent Schema Object
    */
-  private ReferenceValidator(final ValidationContext<OAI3, V> context,
+  private ReferenceValidator(final ValidationContext<OAI3> context,
                              final String refValue,
                              final JsonNode schemaNode,
                              final JsonNode schemaParentNode,
-                             final SchemaValidator<V> parentSchema) {
+                             final SchemaValidator parentSchema) {
 
     super(context, schemaNode, schemaParentNode, parentSchema);
 
@@ -73,12 +73,12 @@ class ReferenceValidator<V> extends BaseJsonValidator<OAI3, V> {
     context.addReference(refValue, this);
   }
 
-  private void setSchemaValidator(JsonValidator<V> schemaValidator) {
+  private void setSchemaValidator(JsonValidator schemaValidator) {
     this.schemaValidator = schemaValidator;
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     schemaValidator.validate(valueNode, validation);
 
     return false;

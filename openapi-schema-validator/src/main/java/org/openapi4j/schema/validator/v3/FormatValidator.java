@@ -21,7 +21,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.WARNING;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-13" />
  */
-class FormatValidator<V> extends BaseJsonValidator<OAI3, V> {
+class FormatValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1007, "Value '%s' does not match format '%s'.");
   private static final ValidationResult UNKNOWN_WARN = new ValidationResult(WARNING, 1008, "Format '%s' is unknown, validation passes.");
 
@@ -38,14 +38,14 @@ class FormatValidator<V> extends BaseJsonValidator<OAI3, V> {
 
   private final String format;
 
-  FormatValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
+  FormatValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema);
 
     format = (schemaNode.isTextual()) ? schemaNode.textValue() : null;
   }
 
   @Override
-  public boolean validate(final JsonNode valueNode, final ValidationData<V> validation) {
+  public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     if (format == null || valueNode.isNull()) {
       return false;
     }

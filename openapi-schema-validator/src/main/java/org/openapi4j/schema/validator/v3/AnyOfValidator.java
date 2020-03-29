@@ -20,16 +20,16 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <p/>
  * <a href="https://tools.ietf.org/html/draft-wright-json-schema-validation-00#page-11" />
  */
-class AnyOfValidator<V> extends DiscriminatorValidator<V> {
+class AnyOfValidator extends DiscriminatorValidator {
   private static final ValidationResult ERR = new ValidationResult(ERROR, 1001, "Schema description is erroneous. anyOf should have at least 1 element.");
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ANYOF, true);
 
-  AnyOfValidator(final ValidationContext<OAI3, V> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator<V> parentSchema) {
+  AnyOfValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
     super(context, schemaNode, schemaParentNode, parentSchema, ANYOF);
   }
 
   @Override
-  void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationData<V> validation) {
+  void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationData<?> validation) {
     if (schemas.isEmpty()) {
       validation.add(CRUMB_INFO, ERR);
       return;
@@ -37,8 +37,8 @@ class AnyOfValidator<V> extends DiscriminatorValidator<V> {
 
     List<ValidationResults> resultsOnError = new ArrayList<>();
 
-    for (SchemaValidator<V> schema : schemas) {
-      ValidationData<V> schemaValidation = new ValidationData<>(validation.delegate());
+    for (SchemaValidator schema : schemas) {
+      ValidationData<?> schemaValidation = new ValidationData<>(validation.delegate());
       schema.validate(valueNode, schemaValidation);
 
       if (schemaValidation.isValid()) {
