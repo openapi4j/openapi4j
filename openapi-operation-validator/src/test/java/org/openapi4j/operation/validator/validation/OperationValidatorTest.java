@@ -346,12 +346,12 @@ public class OperationValidatorTest {
     check(
       new DefaultResponse.Builder(500).build(),
       val::validateBody,
-      false);
+      true);
 
     check(
       new DefaultResponse.Builder(500).header("X-Rate-Limit", "1").build(),
       val::validateHeaders,
-      false);
+      true);
   }
 
   private OperationValidator loadOperationValidator(String opId) {

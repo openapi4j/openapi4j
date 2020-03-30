@@ -33,7 +33,6 @@ public class OperationValidator {
   private static final String OPERATION_REQUIRED_ERR_MSG = "Operation is required.";
   private static final ValidationResult BODY_CONTENT_TYPE_ERR = new ValidationResult(ERROR, 202, "Body content type cannot be determined. No 'Content-Type' header available.");
   private static final ValidationResult BODY_WRONG_CONTENT_TYPE_ERR = new ValidationResult(ERROR, 203, "Content type '%s' is not allowed for body content.");
-  private static final ValidationResult RESPONSE_STATUS_NOT_FOUND_ERR = new ValidationResult(ERROR, 204, "Response status '%s', ranged or default has not been found.");
   private static final ValidationResult PATH_NOT_FOUND_ERR = new ValidationResult(ERROR, 205, "Path template '%s' has not been found from value '%s'.");
 
   // Parameter specifics
@@ -261,7 +260,7 @@ public class OperationValidator {
   public void validateBody(final org.openapi4j.operation.validator.model.Response response,
                            final ValidationData<?> validation) {
 
-    Map<MediaTypeContainer, BodyValidator> validators = getResponseValidator(specResponseBodyValidators, response, validation);
+    Map<MediaTypeContainer, BodyValidator> validators = getResponseValidator(specResponseBodyValidators, response);
 
     if (validators == null) return;
 
@@ -313,7 +312,7 @@ public class OperationValidator {
   public void validateHeaders(final org.openapi4j.operation.validator.model.Response response,
                               final ValidationData<?> validation) {
 
-    ParameterValidator<Header> validator = getResponseValidator(specResponseHeaderValidators, response, validation);
+    ParameterValidator<Header> validator = getResponseValidator(specResponseHeaderValidators, response);
 
     if (validator == null) return;
 
@@ -400,8 +399,7 @@ public class OperationValidator {
   }
 
   private <T> T getResponseValidator(final Map<String, T> validators,
-                                     final org.openapi4j.operation.validator.model.Response response,
-                                     final ValidationData<?> validation) {
+                                     final org.openapi4j.operation.validator.model.Response response) {
 
     if (validators == null) return null;
 
@@ -418,9 +416,6 @@ public class OperationValidator {
       validator = validators.get(DEFAULT_RESPONSE_CODE);
     }
     // Well, we tried...
-    if (validator == null) {
-      validation.add(RESPONSE_STATUS_NOT_FOUND_ERR, response.getStatus());
-    }
 
     return validator;
   }
