@@ -8,6 +8,7 @@ import org.openapi4j.parser.model.v3.MediaType;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -15,34 +16,34 @@ import static java.util.Objects.requireNonNull;
 public class Body {
   private static final String BODY_REQUIRED_ERR_MSG = "Body content is required.";
 
-  private final Map<String, Object> bodyMap;
+  private final Object bodyObject;
   private final JsonNode bodyNode;
   private final String bodyStr;
   private final InputStream bodyIs;
 
-  private Body(Map<String, Object> body) {
-    this.bodyMap = body;
+  private Body(Object body) {
+    this.bodyObject = body;
     this.bodyNode = null;
     this.bodyStr = null;
     this.bodyIs = null;
   }
 
   private Body(JsonNode bodyNode) {
-    this.bodyMap = null;
+    this.bodyObject = null;
     this.bodyNode = bodyNode;
     this.bodyStr = null;
     this.bodyIs = null;
   }
 
   private Body(String body) {
-    this.bodyMap = null;
+    this.bodyObject = null;
     this.bodyNode = null;
     this.bodyStr = body;
     this.bodyIs = null;
   }
 
   private Body(InputStream bodyIs) {
-    this.bodyMap = null;
+    this.bodyObject = null;
     this.bodyNode = null;
     this.bodyStr = null;
     this.bodyIs = bodyIs;
@@ -61,13 +62,13 @@ public class Body {
   }
 
   /**
-   * Constructs a body from the given map tree model.
+   * Constructs a body from the given Java Object.
    * This is the preferred way to build a body wrapper.
    *
    * @param body the given map tree model (JSON, XML, ...)
    * @return The constructed body.
    */
-  public static Body from(Map<String, Object> body) {
+  public static Body from(Object body) {
     requireNonNull(body, BODY_REQUIRED_ERR_MSG);
     return new Body(body);
   }
@@ -104,8 +105,8 @@ public class Body {
                                    final String rawContentType) throws IOException {
     if (bodyNode != null) {
       return bodyNode;
-    } else if (bodyMap != null) {
-      return TreeUtil.json.convertValue(bodyMap, JsonNode.class);
+    } else if (bodyObject != null) {
+      return TreeUtil.json.convertValue(bodyObject, JsonNode.class);
     } else {
       return ContentConverter.convert(mediaType, rawContentType, bodyIs, bodyStr);
     }
