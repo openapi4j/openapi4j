@@ -8,7 +8,6 @@ import org.openapi4j.parser.model.v3.MediaType;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
@@ -76,7 +75,7 @@ public class Body {
    * Constructs a body from the given string.
    * This is a convenient method to build a body wrapper.
    * Also, you should definitely at look at {@link Body#from(JsonNode)} or
-   * {@link Body#from(Map)} for performance.
+   * {@link Body#from(Object)} for performance.
    *
    * @param body The given body string.
    * @return The constructed body.
@@ -90,7 +89,7 @@ public class Body {
    * Constructs a body from the given stream.
    * This is a convenient method to build a body wrapper.
    * Also, you should definitely at look at {@link Body#from(JsonNode)} or
-   * {@link Body#from(Map)} for performance.
+   * {@link Body#from(Object)} for performance.
    *
    * @param body The given body stream
    * @return The constructed body.
