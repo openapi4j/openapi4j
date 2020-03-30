@@ -8,7 +8,6 @@ import org.openapi4j.parser.model.v3.MediaType;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -65,7 +64,7 @@ public class Body {
    * Constructs a body from the given Java Object.
    * This is the preferred way to build a body wrapper.
    *
-   * @param body the given map tree model (JSON, XML, ...)
+   * @param body the given model as a Java Object (JSON, XML, ...)
    * @return The constructed body.
    */
   public static Body from(Object body) {
