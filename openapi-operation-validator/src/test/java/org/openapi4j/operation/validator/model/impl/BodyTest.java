@@ -9,7 +9,9 @@ import org.openapi4j.parser.model.v3.Schema;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -22,6 +24,24 @@ public class BodyTest {
     Body body = Body.from(values);
 
     checkBody(body, TreeUtil.toJsonNode(values));
+  }
+
+  @Test
+  public void fromList() throws Exception {
+    List<Object> values = new ArrayList<>();
+    values.add(0, "value0");
+    values.add(1, "value1");
+    Body body = Body.from(values);
+
+    checkBody(body, TreeUtil.toJsonNode(values));
+  }
+
+  @Test
+  public void fromBoolean() throws Exception {
+    Boolean value = Boolean.TRUE;
+    Body body = Body.from(value);
+
+    checkBody(body, TreeUtil.toJsonNode(value));
   }
 
   @Test
