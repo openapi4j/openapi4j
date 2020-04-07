@@ -13,7 +13,7 @@ import org.openapi4j.schema.validator.ValidationData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 
 import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
@@ -258,11 +258,11 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   }
 
   private SchemaValidator getOneAnyOfValidator(final String value,
-                                               final BiFunction<String, String, Boolean> checker) {
+                                               final BiPredicate<String, String> checker) {
 
     for (SchemaValidator validator : validators) {
       JsonNode refNode = validator.getSchemaNode().get($REF);
-      if (refNode != null && checker.apply(refNode.textValue(), value)) {
+      if (refNode != null && checker.test(refNode.textValue(), value)) {
         return validator;
       }
     }
