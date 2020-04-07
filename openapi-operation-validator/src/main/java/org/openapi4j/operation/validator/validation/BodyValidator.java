@@ -3,8 +3,10 @@ package org.openapi4j.operation.validator.validation;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.operation.validator.model.impl.Body;
+import org.openapi4j.parser.model.AbsOpenApiSchema;
 import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.schema.validator.JsonValidator;
@@ -62,14 +64,9 @@ class BodyValidator {
       return null;
     }
 
-    try {
-      return new SchemaValidator(
-        context,
-        BODY,
-        mediaType.getSchema().toNode(openApi.getContext(), true));
-    } catch (EncodeException ex) {
-      // Will never happen
-      return null;
-    }
+    return new SchemaValidator(
+      context,
+      BODY,
+      TreeUtil.json.convertValue(mediaType.getSchema().copy(openApi.getContext(), true), JsonNode.class));
   }
 }
