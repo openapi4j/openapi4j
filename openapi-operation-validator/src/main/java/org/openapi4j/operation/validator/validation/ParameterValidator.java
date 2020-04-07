@@ -1,8 +1,8 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openapi4j.core.exception.EncodeException;
 import org.openapi4j.core.model.v3.OAI3;
+import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.AbsParameter;
@@ -62,17 +62,13 @@ class ParameterValidator<M extends OpenApiSchema<M>> {
       String paramName = paramEntry.getKey();
       AbsParameter<M> parameter = paramEntry.getValue();
 
-      if (parameter.getSchema() != null) { // Schema in not mandatory
-        try {
-          SchemaValidator validator = new SchemaValidator(
-            context,
-            paramName,
-            parameter.getSchema().toNode(openApi.getContext(), true));
+      if (parameter.getSchema() != null) { // Schema is not mandatory
+        SchemaValidator validator = new SchemaValidator(
+          context,
+          paramName,
+          TreeUtil.json.convertValue(parameter.getSchema().copy(openApi.getContext(), true), JsonNode.class));
 
-          validators.put(paramName, validator);
-        } catch (EncodeException ex) {
-          // Will never happen
-        }
+        validators.put(paramName, validator);
       }
     }
 
