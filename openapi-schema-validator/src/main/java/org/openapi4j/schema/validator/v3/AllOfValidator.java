@@ -28,14 +28,14 @@ class AllOfValidator extends DiscriminatorValidator {
 
   @Override
   void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationData<?> validation) {
-    if (schemas.isEmpty()) {
+    if (validators.isEmpty()) {
       validation.add(CRUMB_INFO, ERR);
       return;
     }
 
     validate(() -> {
-      for (SchemaValidator schema : schemas) {
-        schema.validateWithContext(valueNode, validation);
+      for (SchemaValidator validator : validators) {
+        validator.validateWithContext(valueNode, validation);
       }
     });
   }

@@ -36,7 +36,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
    * Create a new Schema Object validator.
    * A new context will be created with '/' as base URI.
    *
-   * @param propertyName The property or root name of the schema.
+   * @param propertyName The property or root name of the schema. Can be {@code null}.
    * @param schemaNode   The schema specification.
    * @throws ResolutionException for wrong references.
    */
@@ -49,11 +49,11 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
 
   /**
    * Create a new Schema Object validator with the given context.
-   * {@code schemaNode} should be populated from {@code context} if you have JSON-references
-   * as references are searched with absolute values.
+   * Warning: {@code schemaNode} must be associated with {@code context} via
+   * {@code new OAI3Context(uri, schemaNode)} in case of JSON-references.
    *
    * @param context      The context to use for validation.
-   * @param propertyName The property or root name of the schema.
+   * @param propertyName The property or root name of the schema. Can be {@code null}.
    * @param schemaNode   The schema specification.
    */
   public SchemaValidator(final ValidationContext<OAI3> context,
@@ -65,8 +65,6 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
 
   /**
    * Create a new Schema Object validator with the given context.
-   * {@code schemaNode} should be populated from {@code context} if you have JSON-references
-   * as references are searched with absolute values.
    *
    * @param context          The context to use for validation.
    * @param crumbInfo        The property or root name of the schema.

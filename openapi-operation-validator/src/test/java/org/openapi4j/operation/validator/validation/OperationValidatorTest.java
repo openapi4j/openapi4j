@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.operation.validator.model.Request;
 import org.openapi4j.operation.validator.model.Response;
@@ -351,6 +352,19 @@ public class OperationValidatorTest {
     check(
       new DefaultResponse.Builder(500).header("X-Rate-Limit", "1").build(),
       val::validateHeaders,
+      true);
+  }
+
+  @Test
+  public void checkReferences() throws DecodeException {
+    Path path = api.getPath("/refPath").getReference(api.getContext()).getMappedContent(Path.class);
+    Operation op = path.getOperation("post");
+
+    OperationValidator val = new OperationValidator(api, path, op);
+
+    check(
+      new DefaultResponse.Builder(200).header("Content-Type", "application/json").body(Body.from("{\"objectType\": \"string\",\"value\": \"foo\"}")).build(),
+      val::validateBody,
       true);
   }
 
