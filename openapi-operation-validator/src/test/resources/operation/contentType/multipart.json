@@ -1,6 +1,6 @@
 [
   {
-    "description": "multi with object & file",
+    "description": "object with default Content-Type (json) & array as multiple fields",
     "schemaModel": "FooModel",
     "contentType": "multipart/form-data;boundary=\"1234\"",
     "input": "--1234\r\nContent-Disposition: form-data; name=\"file\"; filename=\"foo.file\"\r\nContent-Type: text/whatever\r\n\r\nThis is the content of the file\\n\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldInt\"\r\n\r\n1\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldString\"\r\n\r\nvalue 2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\n\r\n1\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldBool\"\r\n\r\ntrue  \r\n--1234\r\nContent-Disposition: form-data; name=\"fieldFloat\"\r\n\r\n1.2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\n\r\n2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldObject\"\r\n\r\n{\"id\":\"myId\"}\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\n\r\n3\r\n--1234--\r\n",
@@ -17,16 +17,67 @@
     }
   },
   {
-    "description": "multi mixed",
+    "description": "object with Content-Type: application/json & array as multiple fields",
     "schemaModel": "FooModel",
     "contentType": "multipart/form-data;boundary=\"1234\"",
-    "input": "--1234\r\nContent-Disposition: form-data; name=\"file\"; filename=\"foo.file\"\r\nContent-Type: text/plain\r\n\r\nThis is the content of the file\\n\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldInt\"\r\n\r\n1\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldString\"\r\n\r\nvalue 2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldBool\"\r\n\r\ntrue  \r\n--1234\r\nContent-Disposition: form-data; name=\"fieldFloat\"\r\n\r\n1.2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldObject\"\r\nContent-Type: application/json\r\n\r\n{\"id\":\"myId\"}\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\nContent-Type: application/json\r\n\r\n[1, 2, 3]\r\n--1234--\r\n",
+    "input": "--1234\r\nContent-Disposition: form-data; name=\"file\"; filename=\"foo.file\"\r\nContent-Type: text/whatever\r\n\r\nThis is the content of the file\\r\n\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldInt\"\r\n\r\n1\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldString\"\r\n\r\nvalue 2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\n\r\n1\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldBool\"\r\n\r\ntrue  \r\n--1234\r\nContent-Disposition: form-data; name=\"fieldFloat\"\r\n\r\n1.2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\n\r\n2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldObject\"\r\nContent-Type: application/json\r\n\r\n{\"id\":\"myId\"}\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\n\r\n3\r\n--1234--\r\n",
     "expected": {
       "fieldInt": 1,
       "fieldString": "value 2",
       "fieldBool": true,
       "fieldFloat": 1.2,
       "fieldArray": [1, 2, 3],
+      "fieldObject": {
+        "id": "myId"
+      },
+      "file": "foo.file"
+    }
+  },
+  {
+    "description": "array is string",
+    "schemaModel": "FooModel",
+    "contentType": "multipart/form-data;boundary=\"1234\"",
+    "input": "--1234\r\nContent-Disposition: form-data; name=\"file\"; filename=\"foo.file\"\r\nContent-Type: text/plain\r\n\r\nThis is the content of the file\\r\n\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldInt\"\r\n\r\n1\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldString\"\r\n\r\nvalue 2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldBool\"\r\n\r\ntrue  \r\n--1234\r\nContent-Disposition: form-data; name=\"fieldFloat\"\r\n\r\n1.2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldObject\"\r\nContent-Type: application/json\r\n\r\n{\"id\":\"myId\"}\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\n\r\nfoo\r\n--1234--\r\n",
+    "expected": {
+      "fieldInt": 1,
+      "fieldString": "value 2",
+      "fieldBool": true,
+      "fieldFloat": 1.2,
+      "fieldArray": ["foo"],
+      "fieldObject": {
+        "id": "myId"
+      },
+      "file": "foo.file"
+    }
+  },
+  {
+    "description": "array with single element",
+    "schemaModel": "FooModel",
+    "contentType": "multipart/form-data;boundary=\"1234\"",
+    "input": "--1234\r\nContent-Disposition: form-data; name=\"file\"; filename=\"foo.file\"\r\nContent-Type: text/plain\r\n\r\nThis is the content of the file\\r\n\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldInt\"\r\n\r\n1\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldString\"\r\n\r\nvalue 2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldBool\"\r\n\r\ntrue  \r\n--1234\r\nContent-Disposition: form-data; name=\"fieldFloat\"\r\n\r\n1.2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldObject\"\r\nContent-Type: application/json\r\n\r\n{\"id\":\"myId\"}\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\n\r\n1\r\n--1234--\r\n",
+    "expected": {
+      "fieldInt": 1,
+      "fieldString": "value 2",
+      "fieldBool": true,
+      "fieldFloat": 1.2,
+      "fieldArray": [1],
+      "fieldObject": {
+        "id": "myId"
+      },
+      "file": "foo.file"
+    }
+  },
+  {
+    "description": "array with Content-Type: text/plain",
+    "schemaModel": "FooModel",
+    "contentType": "multipart/form-data;boundary=\"1234\"",
+    "input": "--1234\r\nContent-Disposition: form-data; name=\"file\"; filename=\"foo.file\"\r\nContent-Type: text/plain\r\n\r\nThis is the content of the file\\r\r\n\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldInt\"\r\n\r\n1\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldString\"\r\n\r\nvalue 2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldBool\"\r\n\r\ntrue  \r\n--1234\r\nContent-Disposition: form-data; name=\"fieldFloat\"\r\n\r\n1.2\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldObject\"\r\nContent-Type: application/json\r\n\r\n{\"id\":\"myId\"}\r\n--1234\r\nContent-Disposition: form-data; name=\"fieldArray\"\r\nContent-Type: text/plain\r\n\r\n1\r\n--1234--\r\n",
+    "expected": {
+      "fieldInt": 1,
+      "fieldString": "value 2",
+      "fieldBool": true,
+      "fieldFloat": 1.2,
+      "fieldArray": [1],
       "fieldObject": {
         "id": "myId"
       },
