@@ -30,16 +30,16 @@ class AnyOfValidator extends DiscriminatorValidator {
 
   @Override
   void validateWithoutDiscriminator(final JsonNode valueNode, final ValidationData<?> validation) {
-    if (schemas.isEmpty()) {
+    if (validators.isEmpty()) {
       validation.add(CRUMB_INFO, ERR);
       return;
     }
 
     List<ValidationResults> resultsOnError = new ArrayList<>();
 
-    for (SchemaValidator schema : schemas) {
+    for (SchemaValidator validator : validators) {
       ValidationData<?> schemaValidation = new ValidationData<>(validation.delegate());
-      schema.validate(valueNode, schemaValidation);
+      validator.validate(valueNode, schemaValidation);
 
       if (schemaValidation.isValid()) {
         // Append potential results from sub validation (INFO / WARN)

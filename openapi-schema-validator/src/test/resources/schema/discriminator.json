@@ -142,7 +142,10 @@
               }
             },
             "discriminator": {
-              "propertyName": "animal_type"
+              "propertyName": "animal_type",
+              "mapping": {
+                "dog": "#/components/schemas/Dog"
+              }
             }
           },
           "Pet": {
@@ -183,6 +186,16 @@
       "$ref": "#/components/schemas/Dog"
     },
     "tests": [
+      {
+        "description": "mapped schema name is valid",
+        "data": {
+          "animal_type": "dog",
+          "name": "Medor",
+          "bark": "foo",
+          "age": 5
+        },
+        "valid": true
+      },
       {
         "description": "Direct schema name is valid",
         "data": {

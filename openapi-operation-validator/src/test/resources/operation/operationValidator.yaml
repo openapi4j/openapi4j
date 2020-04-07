@@ -4,6 +4,8 @@ info:
   version: 1.0.0
   title: API
 paths:
+  /refPath:
+    $ref: 'operationValidator_refs.yaml#/paths/~1refPath'
   /fixed/{intPathParam}/fixed/{stringPathParam}/fixed/:
     parameters:
       # Not required at this stage but overridden by operation

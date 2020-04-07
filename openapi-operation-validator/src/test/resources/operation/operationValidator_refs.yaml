@@ -1,0 +1,51 @@
+paths:
+  /refPath:
+    post:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/StringObjType'
+                  - $ref: '#/components/schemas/DoubleObjType'
+                discriminator:
+                  propertyName: objectType
+                  mapping:
+                    string: '#/components/schemas/StringObjType'
+                    double: '#/components/schemas/DoubleObjType'
+          description: response
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestType'
+        description: request
+components:
+  schemas:
+    RequestType:
+      properties:
+        type:
+          type: string
+      required:
+        - type
+      type: object
+    StringObjType:
+      properties:
+        value:
+          type: string
+        objectType:
+          type: string
+      required:
+        - objectType
+      type: object
+    DoubleObjType:
+      properties:
+        value:
+          type: number
+          format: double
+        objectType:
+          type: string
+      required:
+        - objectType
+      type: object

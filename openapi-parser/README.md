@@ -46,7 +46,7 @@ OpenApi3 api = new OpenApi3Parser().parse(specPath, authOptions, true);
 
 ## Limitations
 
-* Reference : content is setup when built.
+* Discriminator: Since Schema Object can be outside of `components/schemas`, mapping with schema name is not supported, you must use JSON reference.
 
 ## Supported versions
 

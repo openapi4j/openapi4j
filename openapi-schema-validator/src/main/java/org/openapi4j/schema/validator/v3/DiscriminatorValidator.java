@@ -13,6 +13,7 @@ import org.openapi4j.schema.validator.ValidationData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
@@ -32,7 +33,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
 
   private static final String SCHEMAS_PATH = "#/components/schemas/";
 
-  final List<SchemaValidator> schemas = new ArrayList<>();
+  final List<SchemaValidator> validators = new ArrayList<>();
   private final String arrayType;
   private JsonNode discriminatorNode;
   private String discriminatorPropertyName;
@@ -57,16 +58,13 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   @Override
   public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     if (discriminatorNode != null) {
-      String discriminatorPropertyRefPath = getDiscriminatorPropertyRefPath(valueNode, validation);
-      if (discriminatorPropertyRefPath == null) {
-        validation.add(CRUMB_INFO, INVALID_SCHEMA_ERR, discriminatorPropertyName);
-        return false;
-      }
-
-      if (ALLOF.equals(arrayType)) {
-        validateAllOf(valueNode, validation);
-      } else {
-        validateOneAnyOf(valueNode, discriminatorPropertyRefPath, validation);
+      String discriminatorValue = getDiscriminatorValue(valueNode, validation);
+      if (discriminatorValue != null) {
+        if (ALLOF.equals(arrayType)) {
+          validateAllOf(valueNode, discriminatorValue, validation);
+        } else {
+          validateOneAnyOf(valueNode, discriminatorValue, validation);
+        }
       }
     } else {
       validateWithoutDiscriminator(valueNode, validation);
@@ -75,24 +73,27 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
     return false;
   }
 
-  private void validateAllOf(final JsonNode valueNode, final ValidationData<?> validation) {
+  private void validateAllOf(final JsonNode valueNode, final String discriminatorValue, final ValidationData<?> validation) {
+    if (!checkAllOfValidator(discriminatorValue)) {
+      validation.add(CRUMB_INFO, INVALID_SCHEMA_ERR, discriminatorPropertyName);
+      return;
+    }
+
     validate(() -> {
-      for (SchemaValidator schema : schemas) {
-        schema.validateWithContext(valueNode, validation);
+      for (SchemaValidator validator : validators) {
+        validator.validateWithContext(valueNode, validation);
       }
     });
   }
 
-  private void validateOneAnyOf(final JsonNode valueNode, final String discriminatorPropertyRefPath, final ValidationData<?> validation) {
-    for (SchemaValidator schema : schemas) {
-      JsonNode refNode = schema.getSchemaNode().get(OAI3SchemaKeywords.$REF);
-      if (discriminatorPropertyRefPath.equals(refNode.textValue())) {
-        validate(() -> schema.validateWithContext(valueNode, validation));
-        return;
-      }
+  private void validateOneAnyOf(final JsonNode valueNode, final String discriminatorValue, final ValidationData<?> validation) {
+    SchemaValidator validator = getOneAnyOfValidator(discriminatorValue);
+    if (validator == null) {
+      validation.add(CRUMB_INFO, INVALID_SCHEMA_ERR, discriminatorPropertyName);
+      return;
     }
 
-    validation.add(CRUMB_INFO, INVALID_SCHEMA_ERR, discriminatorPropertyName);
+    validate(() -> validator.validateWithContext(valueNode, validation));
   }
 
   /**
@@ -149,7 +150,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
 
     // Add default schemas
     for (JsonNode node : schemaNode) {
-      schemas.add(new SchemaValidator(context, crumbInfo, node, schemaParentNode, parentSchema));
+      validators.add(new SchemaValidator(context, crumbInfo, node, schemaParentNode, parentSchema));
     }
   }
 
@@ -161,7 +162,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
     discriminatorNode = getParentSchemaNode().get(DISCRIMINATOR);
 
     for (JsonNode node : schemaNode) {
-      schemas.add(new SchemaValidator(context, crumbInfo, node, schemaParentNode, parentSchema));
+      validators.add(new SchemaValidator(context, crumbInfo, node, schemaParentNode, parentSchema));
     }
   }
 
@@ -176,9 +177,9 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
 
       if (refNode.equals(refValueNode)) { // Add the parent schema
         ValidationResults.CrumbInfo refCrumbInfo = new ValidationResults.CrumbInfo(reference.getRef(), true);
-        schemas.add(new SchemaValidator(context, refCrumbInfo, reference.getContent(), schemaParentNode, parentSchema));
+        validators.add(new SchemaValidator(context, refCrumbInfo, reference.getContent(), schemaParentNode, parentSchema));
       } else { // Add the other items
-        schemas.add(new SchemaValidator(context, crumbInfo, node, schemaParentNode, parentSchema));
+        validators.add(new SchemaValidator(context, crumbInfo, node, schemaParentNode, parentSchema));
       }
     }
   }
@@ -203,7 +204,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
     return refNode;
   }
 
-  private String getDiscriminatorPropertyRefPath(final JsonNode valueNode, final ValidationData<?> validation) {
+  private String getDiscriminatorValue(final JsonNode valueNode, final ValidationData<?> validation) {
     // check discriminator definition
     if (discriminatorPropertyName == null) {
       validation.add(CRUMB_INFO, INVALID_PROPERTY_ERR);
@@ -216,19 +217,56 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
       return null;
     }
 
-    String discriminatorPropertyValue = discriminatorPropertyNameNode.textValue();
-    // "Shortcut / implicit" case, the value must match exactly one of the schemas name
-    String ref = SCHEMAS_PATH + discriminatorPropertyValue;
+    return discriminatorPropertyNameNode.textValue();
+  }
 
+  private boolean checkAllOfValidator(final String discriminatorValue) {
+    String ref = null;
+
+    // Explicit case with mapping
     if (discriminatorMapping != null) {
-      // "Mapping / explicit" case, find the corresponding reference
-      JsonNode mappingNode = discriminatorMapping.get(discriminatorPropertyValue);
+      JsonNode mappingNode = discriminatorMapping.get(discriminatorValue);
       if (mappingNode != null) {
         ref = mappingNode.textValue();
       }
     }
 
+    // Implicit case, the value must match exactly one schema in "#/components/schemas/"
+    if (ref == null) {
+      ref = SCHEMAS_PATH + discriminatorValue;
+    }
+
     // Check if Schema Object exists
-    return (context.getContext().getReferenceRegistry().getRef(ref) != null) ? ref : null;
+    return context.getContext().getReferenceRegistry().getRef(ref) != null;
+  }
+
+  private SchemaValidator getOneAnyOfValidator(final String discriminatorValue) {
+    // Explicit case with mapping
+    if (discriminatorMapping != null) {
+      JsonNode mappingNode = discriminatorMapping.get(discriminatorValue);
+      if (mappingNode != null) {
+        String ref = mappingNode.textValue();
+        SchemaValidator validator = getOneAnyOfValidator(ref, String::equals);
+        if (validator != null) {
+          return validator;
+        }
+      }
+    }
+
+    // Implicit case, the value must match exactly one of the schemas name regardless path
+    return getOneAnyOfValidator(discriminatorValue, String::endsWith);
+  }
+
+  private SchemaValidator getOneAnyOfValidator(final String value,
+                                               final BiFunction<String, String, Boolean> checker) {
+
+    for (SchemaValidator validator : validators) {
+      JsonNode refNode = validator.getSchemaNode().get($REF);
+      if (refNode != null && checker.apply(refNode.textValue(), value)) {
+        return validator;
+      }
+    }
+
+    return null;
   }
 }
