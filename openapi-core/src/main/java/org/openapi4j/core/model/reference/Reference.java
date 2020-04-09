@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.util.TreeUtil;
 
-import java.net.URI;
+import java.net.URL;
 
 /**
  * The reference model.
@@ -16,8 +16,8 @@ public class Reference {
   private static final String CLASS_MISMATCH_ERR_MSG = "Unable to map reference '%s' from class '%s' with class '%s'.";
   private static final String ERR_MSG = "Unable to map reference '%s' content with class '%s'.";
 
-  // The URI from where the reference expression applies
-  private final URI baseUri;
+  // The URL from where the reference expression applies
+  private final URL baseUrl;
   // The reference canonical expression
   private final String canonicalRef;
   // The reference expression
@@ -27,18 +27,18 @@ public class Reference {
   // The mapped content of the targeted reference expression
   private Object mappedContent;
 
-  Reference(URI baseUri, String canonicalRef, String ref) {
-    this.baseUri = baseUri;
+  Reference(URL baseUrl, String canonicalRef, String ref) {
+    this.baseUrl = baseUrl;
     this.canonicalRef = canonicalRef;
     this.ref = ref;
     this.content = null;
   }
 
   /**
-   * Get the base URI for external reference document.
+   * Get the base URL for external reference document.
    */
-  URI getBaseUri() {
-    return baseUri;
+  URL getBaseUrl() {
+    return baseUrl;
   }
 
   /**

@@ -8,7 +8,6 @@ import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.validation.v3.OpenApi3Validator;
 
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
@@ -31,10 +30,10 @@ public class OpenApi3Parser extends OpenApiParser<OpenApi3> {
     OpenApi3 api;
 
     try {
-      OAI3Context context = new OAI3Context(url.toURI(), authOptions);
+      OAI3Context context = new OAI3Context(url, authOptions);
       api = TreeUtil.json.convertValue(context.getBaseDocument(), OpenApi3.class);
       api.setContext(context);
-    } catch (IllegalArgumentException | URISyntaxException e) {
+    } catch (IllegalArgumentException e) {
       throw new ResolutionException(String.format(INVALID_SPEC, url.toString()), e);
     }
 

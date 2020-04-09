@@ -12,7 +12,8 @@ import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 import org.openapi4j.schema.validator.ValidationData;
 
-import java.net.URI;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,7 +35,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
 
   /**
    * Create a new Schema Object validator.
-   * A new context will be created with '/' as base URI.
+   * A new context will be created with 'file:/' as base URL.
    *
    * @param propertyName The property or root name of the schema. Can be {@code null}.
    * @param schemaNode   The schema specification.
@@ -42,7 +43,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
    */
   public SchemaValidator(final String propertyName, final JsonNode schemaNode) throws ResolutionException {
     this(
-      new ValidationContext<>(new OAI3Context(URI.create("/"), schemaNode)),
+      new ValidationContext<>(new OAI3Context(getDefaultBaseUrl(), schemaNode)),
       new ValidationResults.CrumbInfo(propertyName, false),
       schemaNode, null, null);
   }
@@ -50,7 +51,7 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
   /**
    * Create a new Schema Object validator with the given context.
    * Warning: {@code schemaNode} must be associated with {@code context} via
-   * {@code new OAI3Context(uri, schemaNode)} in case of JSON-references.
+   * {@code new OAI3Context(URL, schemaNode)} in case of JSON-references.
    *
    * @param context      The context to use for validation.
    * @param propertyName The property or root name of the schema. Can be {@code null}.
@@ -186,5 +187,19 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
       s -> ValidatorsRegistry.instance().getValidators(context, s, FALSE_NODE, schemaNode, this));
 
     return validatorMap;
+  }
+
+  /**
+   * Make quietly a default base URL for context.
+   *
+   * @return default base URL for context.
+   */
+  private static URL getDefaultBaseUrl() {
+    try {
+      return new URL("file:/");
+    } catch (MalformedURLException ignored) {
+      // Will never happen
+      return null;
+    }
   }
 }

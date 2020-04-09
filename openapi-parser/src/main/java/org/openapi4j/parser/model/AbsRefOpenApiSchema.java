@@ -6,7 +6,7 @@ import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.reference.Reference;
 import org.openapi4j.core.util.TreeUtil;
 
-import java.net.URI;
+import java.net.URL;
 
 import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.$REF;
@@ -46,8 +46,8 @@ public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends Ab
     return context.getReferenceRegistry().getRef(canonicalRef != null ? canonicalRef : ref);
   }
 
-  public Reference setReference(OAIContext context, URI uri, String ref) {
-    Reference reference = context.getReferenceRegistry().addRef(uri, ref);
+  public Reference setReference(OAIContext context, URL url, String ref) {
+    Reference reference = context.getReferenceRegistry().addRef(url, ref);
     setRef(reference.getRef());
     setCanonicalRef(reference.getCanonicalRef());
 

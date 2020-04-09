@@ -169,8 +169,8 @@ evi = new ExtValidatorInstance() {
     }
 };
 
-// Load an API context with the base URI for JSON references
-apiContext = new OAI3Context(URI.create("/"), schemaNode);
+// Load an API context with the base URL for JSON references
+apiContext = new OAI3Context(new URL("file:/"), schemaNode);
 // Setup a validation context
 validationContext = new ValidationContext<>(apiContext);
 // Link trigger 'x-myentity-val' (or known keyword such as maximum, format, ...) with MyValidator.

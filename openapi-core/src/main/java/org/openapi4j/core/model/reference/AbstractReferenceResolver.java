@@ -6,7 +6,7 @@ import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.AuthOption;
 import org.openapi4j.core.util.TreeUtil;
 
-import java.net.URI;
+import java.net.URL;
 import java.util.*;
 
 import static org.openapi4j.core.model.reference.Reference.ABS_REF_FIELD;
@@ -21,15 +21,15 @@ public abstract class AbstractReferenceResolver {
   private static final String MISSING_REF_ERR_MSG = "Reference '%s' is unreachable in '%s.";
   private static final String HASH = "#";
 
-  private final URI baseUri;
+  private final URL baseUrl;
   private final List<AuthOption> authOptions;
   private JsonNode baseDocument;
-  private final Map<URI, JsonNode> documentRegistry = new HashMap<>();
+  private final Map<URL, JsonNode> documentRegistry = new HashMap<>();
   private final ReferenceRegistry referenceRegistry;
   final String refKeyword;
 
-  protected AbstractReferenceResolver(URI baseUri, List<AuthOption> authOptions, JsonNode baseDocument, String refKeyword, ReferenceRegistry referenceRegistry) {
-    this.baseUri = baseUri;
+  protected AbstractReferenceResolver(URL baseUrl, List<AuthOption> authOptions, JsonNode baseDocument, String refKeyword, ReferenceRegistry referenceRegistry) {
+    this.baseUrl = baseUrl;
     this.authOptions = authOptions;
     this.baseDocument = baseDocument;
     this.refKeyword = refKeyword;
@@ -40,11 +40,11 @@ public abstract class AbstractReferenceResolver {
     // Register base resolution document
     baseDocument
       = baseDocument != null
-      ? registerDocument(baseUri, baseDocument)
-      : registerDocument(baseUri);
+      ? registerDocument(baseUrl, baseDocument)
+      : registerDocument(baseUrl);
 
     // Find all external documents from references
-    findReferences(baseUri, baseDocument);
+    findReferences(baseUrl, baseDocument);
 
     // Resolves all references
     resolveReferences();
@@ -56,7 +56,7 @@ public abstract class AbstractReferenceResolver {
 
   protected abstract Collection<JsonNode> getReferencePaths(JsonNode document);
 
-  private void findReferences(URI uri, JsonNode document) throws ResolutionException {
+  private void findReferences(URL url, JsonNode document) throws ResolutionException {
     Collection<JsonNode> referencePaths = getReferencePaths(document);
     List<JsonNode> refParents = document.findParents(refKeyword);
 
@@ -66,33 +66,34 @@ public abstract class AbstractReferenceResolver {
         continue;
       }
 
-      if (refValue.startsWith(HASH)) {
+      final int hashIndex = refValue.indexOf(HASH);
+      if (hashIndex == 0) {
         // internal content of current resource (i.e. #/pointer)
-        addRef(uri, refParents, refValue);
+        addRef(url, refParents, refValue);
       } else {
-        final URI subUri;
+        final URL subUrl;
 
-        if (!refValue.contains(HASH)) {
+        if (hashIndex == -1) {
           // direct content from external resource (i.e. external.yaml)
-          subUri = ReferenceUri.resolve(uri, refValue);
+          subUrl = ReferenceUrl.resolve(url, refValue);
         } else {
           // or relative content from external resource (i.e. external.yaml#/pointer or /base/external.yaml#/pointer)
-          subUri = ReferenceUri.resolve(uri, refValue.substring(0, refValue.indexOf(HASH)));
+          subUrl = ReferenceUrl.resolve(url, refValue.substring(0, hashIndex));
         }
 
-        addRef(subUri, refParents, refValue);
+        addRef(subUrl, refParents, refValue);
 
-        if (!documentRegistry.containsKey(subUri)) {
-          JsonNode subDocument = registerDocument(subUri);
-          findReferences(subUri, subDocument);
+        if (!documentRegistry.containsKey(subUrl)) {
+          JsonNode subDocument = registerDocument(subUrl);
+          findReferences(subUrl, subDocument);
         }
       }
     }
   }
 
-  private void addRef(URI uri, List<JsonNode> refParents, String refValue) {
+  private void addRef(URL url, List<JsonNode> refParents, String refValue) {
     // Add the reference to the registry
-    Reference reference = referenceRegistry.addRef(uri, refValue);
+    Reference reference = referenceRegistry.addRef(url, refValue);
 
     // Inject the canonical value to the document
     // to auto-setup the value when mapping from parser.
@@ -103,18 +104,18 @@ public abstract class AbstractReferenceResolver {
     }
   }
 
-  private JsonNode registerDocument(URI uri) throws ResolutionException {
+  private JsonNode registerDocument(URL url) throws ResolutionException {
     try {
-      JsonNode document = TreeUtil.load(uri.toURL(), authOptions);
-      documentRegistry.put(uri, document);
+      JsonNode document = TreeUtil.load(url, authOptions);
+      documentRegistry.put(url, document);
       return document;
     } catch (Exception e) {
-      throw new ResolutionException(String.format(LOAD_DOC_ERR_MSG, uri), e);
+      throw new ResolutionException(String.format(LOAD_DOC_ERR_MSG, url), e);
     }
   }
 
-  private JsonNode registerDocument(URI uri, JsonNode node) {
-    documentRegistry.put(uri, node);
+  private JsonNode registerDocument(URL url, JsonNode node) {
+    documentRegistry.put(url, node);
     return node;
   }
 
@@ -134,7 +135,7 @@ public abstract class AbstractReferenceResolver {
       throw new ResolutionException(String.format(CYCLING_REF_ERR_MSG, stringBuilder.toString()));
     }
 
-    JsonNode document = documentRegistry.get(ref.getBaseUri());
+    JsonNode document = documentRegistry.get(ref.getBaseUrl());
     String jsonPointer = getJsonPointer(ref.getRef());
 
     final JsonNode valueNode;
@@ -143,14 +144,15 @@ public abstract class AbstractReferenceResolver {
     } else {
       valueNode = document.at(jsonPointer);
       if (valueNode.isMissingNode()) {
-        throw new ResolutionException(String.format(MISSING_REF_ERR_MSG, ref.getRef(), ref.getBaseUri()));
+        throw new ResolutionException(String.format(MISSING_REF_ERR_MSG, ref.getRef(), ref.getBaseUrl()));
       }
     }
 
     JsonNode subRefNode = valueNode.get(refKeyword);
     if (subRefNode != null) {
-      String refValue = subRefNode.textValue();
-      String canonicalRefValue = ReferenceUri.resolveAsString(ref.getBaseUri(), refValue);
+      String canonicalRefValue = ReferenceUrl.resolveAsString(
+        ref.getBaseUrl(),
+        subRefNode.textValue());
 
       resolveReference(referenceRegistry.getRef(canonicalRefValue), visitedRefs);
     }
