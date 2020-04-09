@@ -3,7 +3,7 @@ package org.openapi4j.core.model;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.model.reference.ReferenceRegistry;
 
-import java.net.URI;
+import java.net.URL;
 
 public interface OAIContext {
   /**
@@ -14,10 +14,10 @@ public interface OAIContext {
   ReferenceRegistry getReferenceRegistry();
 
   /**
-   * The base URI of the context.
-   * @return The base URI of the context.
+   * The base URL of the context.
+   * @return The base URL of the context.
    */
-  URI getBaseUri();
+  URL getBaseUrl();
 
   /**
    * Get the base document of API description.

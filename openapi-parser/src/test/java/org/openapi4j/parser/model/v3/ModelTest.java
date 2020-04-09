@@ -423,7 +423,7 @@ public class ModelTest extends Checker {
     OpenApi3 api = new OpenApi3Parser().parse(getClass().getResource("/model/v3/oai-integration/uspto.yaml"), true);
 
     Parameter parameter = new Parameter();
-    parameter.setReference(api.getContext(), api.getContext().getBaseUri(), "#/wrong");
+    parameter.setReference(api.getContext(), api.getContext().getBaseUrl(), "#/wrong");
     api.setPath("/foo", new Path().setGet(new Operation().addParameter(parameter)));
     OpenApi3Validator.instance().validate(api);
   }
@@ -434,7 +434,7 @@ public class ModelTest extends Checker {
 
     api.setComponents(new Components().setParameter("foo", null));
     Parameter parameter = new Parameter();
-    parameter.setReference(api.getContext(), api.getContext().getBaseUri(), "#/components/parameters/foo");
+    parameter.setReference(api.getContext(), api.getContext().getBaseUrl(), "#/components/parameters/foo");
 
     api.setPath("/foo", new Path().setGet(new Operation().addParameter(parameter)));
     OpenApi3Validator.instance().validate(api);

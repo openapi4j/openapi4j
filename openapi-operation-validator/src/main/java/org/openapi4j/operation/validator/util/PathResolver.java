@@ -107,7 +107,7 @@ public class PathResolver {
         return new URL(url).getPath();
       } else {
         // Check if there's a defined file name in URL
-        URL resource = context.getBaseUri().toURL();
+        URL resource = context.getBaseUrl();
         // trim query & anchor
         String basePath = StringUtil.tokenize(resource.toString(), "(?:\\?.*|#.*)", false, true).get(0);
           // handle scheme://api.com

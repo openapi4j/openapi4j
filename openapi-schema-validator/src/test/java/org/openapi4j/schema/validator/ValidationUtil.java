@@ -9,7 +9,7 @@ import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.schema.validator.v3.SchemaValidator;
 import org.openapi4j.schema.validator.v3.ValidatorInstance;
 
-import java.net.URI;
+import java.net.URL;
 import java.util.Map;
 
 class ValidationUtil {
@@ -23,7 +23,7 @@ class ValidationUtil {
       JsonNode testCase = testCases.get(index);
       JsonNode schemaNode = testCase.get("schema");
 
-      OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
+      OAI3Context apiContext = new OAI3Context(new URL("file:/"), schemaNode);
       ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
       validationContext.setFastFail(isFastFail);
 

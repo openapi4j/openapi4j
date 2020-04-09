@@ -11,7 +11,7 @@ import org.openapi4j.core.validation.ValidationSeverity;
 import org.openapi4j.schema.validator.v3.*;
 
 import java.io.IOException;
-import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -198,7 +198,7 @@ public class ValidationTest {
   public void infoInAnyOfValidation() throws Exception {
     JsonNode schemaNode = TreeUtil.json.readTree("{ \"properties\": { \"foo\": { \"anyOf\": [ { \"type\": \"integer\" }, { \"minimum\": 2 } ] } }}");
 
-    OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
+    OAI3Context apiContext = new OAI3Context(new URL("file:/"), schemaNode);
     ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
     validationContext.addValidator("type", TypeInfoValidator::new);
 
@@ -216,7 +216,7 @@ public class ValidationTest {
   public void infoInOneOfValidation() throws Exception {
     JsonNode schemaNode = TreeUtil.json.readTree("{ \"properties\": { \"foo\": { \"oneOf\": [ { \"type\": \"integer\" }, { \"minimum\": 2 } ] } }}");
 
-    OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
+    OAI3Context apiContext = new OAI3Context(new URL("file:/"), schemaNode);
     ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
     validationContext.addValidator("type", TypeInfoValidator::new);
 
@@ -234,7 +234,7 @@ public class ValidationTest {
   public void delegatedValidation() throws Exception {
     JsonNode schemaNode = TreeUtil.json.readTree("{ \"properties\": { \"foo\": { \"oneOf\": [ { \"type\": \"integer\" }, { \"minimum\": 2 } ] } }}");
 
-    OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
+    OAI3Context apiContext = new OAI3Context(new URL("file:/"), schemaNode);
     ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
     validationContext.addValidator("type", TypeInfoValidator::new);
 
@@ -262,7 +262,7 @@ public class ValidationTest {
   public void doNotChangeContextIfGiven() throws Exception {
     JsonNode schemaNode = TreeUtil.json.readTree("{\"not\": {\"type\": \"integer\"} }");
 
-    OAI3Context apiContext = new OAI3Context(new URI("/"), schemaNode);
+    OAI3Context apiContext = new OAI3Context(new URL("file:/"), schemaNode);
     ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
     SchemaValidator validator = new SchemaValidator(validationContext, "my_schema", schemaNode);
 
