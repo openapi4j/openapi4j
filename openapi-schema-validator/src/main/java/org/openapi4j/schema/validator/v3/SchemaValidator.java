@@ -19,8 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ADDITIONALPROPERTIES;
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.NULLABLE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
 import static org.openapi4j.schema.validator.v3.ValidationOptions.ADDITIONAL_PROPS_RESTRICT;
 
 /**
@@ -173,6 +172,19 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
       }
     }
 
+    applyAdditionalValidators(validatorMap, schemaNode);
+
+    return validatorMap;
+  }
+
+  private void applyAdditionalValidators(final Map<String, Collection<JsonValidator>> validatorMap,
+                                         final JsonNode schemaNode) {
+
+    // Apply additional validators if not JSON-Reference
+    if (validatorMap.containsKey($REF)) {
+      return;
+    }
+
     // Setup optional restriction for additional properties
     if (validatorMap.get(ADDITIONALPROPERTIES) == null && context.getOption(ADDITIONAL_PROPS_RESTRICT)) {
       validatorMap.put(
@@ -185,8 +197,6 @@ public class SchemaValidator extends BaseJsonValidator<OAI3> {
     validatorMap.computeIfAbsent(
       NULLABLE,
       s -> ValidatorsRegistry.instance().getValidators(context, s, FALSE_NODE, schemaNode, this));
-
-    return validatorMap;
   }
 
   /**

@@ -1,56 +1,23 @@
 [
   {
-    "description": "not nullable, not filled",
+    "description": "relative pointer ref to nullable object",
     "schema": {
-      "type": "integer"
-    },
-    "tests": [
-      {
-        "description": "disallowed",
-        "data": null,
-        "valid": false
+      "properties": {
+        "foo": {
+          "type": "integer",
+          "nullable": true
+        },
+        "bar": {
+          "$ref": "#/properties/foo"
+        }
       }
-    ]
-  },
-  {
-    "description": "not nullable, filled",
-    "schema": {
-      "nullable": false,
-      "type": "integer"
     },
     "tests": [
       {
-        "description": "disallowed",
-        "data": null,
-        "valid": false
-      }
-    ]
-  },
-  {
-    "description": "not nullable, wrong type",
-    "schema": {
-      "nullable": "false",
-      "type": "integer"
-    },
-    "tests": [
-      {
-        "description": "disallowed",
-        "data": null,
-        "valid": false
-      }
-    ]
-  },
-  {
-    "description": "nullable",
-    "schema": {
-      "nullable": true,
-      "type": "number",
-      "format": "double"
-    },
-    "tests": [
-      {
-        "description": "allowed",
-        "data": null,
+        "description": "match",
+        "data": {
+          "bar": null
+        },
         "valid": true
       }
     ]
