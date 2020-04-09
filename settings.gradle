@@ -7,4 +7,3 @@ include("openapi-perf-checker")
 include("openapi-operation-adapters:openapi-operation-servlet")
 include("openapi-operation-adapters:openapi-operation-undertow")
 include("openapi-operation-adapters:openapi-operation-vertx")
-
