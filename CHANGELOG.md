@@ -1,6 +1,27 @@
 # Changelog
 
-## [0.8](https://github.com/openapi4j/openapi4j/tree/0.7) (2020-03-23)
+## [0.9](https://github.com/openapi4j/openapi4j/tree/0.9) (2020-04-09)
+
+[Full Changelog](https://github.com/openapi4j/openapi4j/compare/0.8...0.9)
+
+**Implemented enhancements:**
+
+- Schema validator: oneOf/anyOf should report errors of sub-validations [\#83](https://github.com/openapi4j/openapi4j/issues/83)
+- Parser: check minimum list size on various keywords [\#82](https://github.com/openapi4j/openapi4j/issues/82)
+- Per call context object available to custom validators. [\#81](https://github.com/openapi4j/openapi4j/issues/81)
+- Add data along schema crumbs in ValidationResults [\#79](https://github.com/openapi4j/openapi4j/issues/79)
+- Rework 'multipart/\*' content type conversion [\#69](https://github.com/openapi4j/openapi4j/issues/69)
+
+**Fixed bugs:**
+
+- Schema validator: Don't apply additional validators when schema is JSON-Reference [\#98](https://github.com/openapi4j/openapi4j/issues/98)
+- Unable to load refs when parsing with project in jar [\#96](https://github.com/openapi4j/openapi4j/issues/96)
+- Schema validator: rework Discriminator validator for external references [\#93](https://github.com/openapi4j/openapi4j/issues/93)
+- Operation validator: some canonical $ref fields \(abs$ref\) may be lost [\#91](https://github.com/openapi4j/openapi4j/issues/91)
+- ValidateHeaders fails when one httpStatus has headers [\#88](https://github.com/openapi4j/openapi4j/issues/88)
+- Body.from does not support List\<Object\> [\#86](https://github.com/openapi4j/openapi4j/issues/86)
+
+## [0.8](https://github.com/openapi4j/openapi4j/tree/0.8) (2020-03-23)
 
 [Full Changelog](https://github.com/openapi4j/openapi4j/compare/0.7...0.8)
 
