@@ -18,7 +18,6 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.ITEMS;
  */
 class ItemsValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(ITEMS, true);
-
   private final SchemaValidator schema;
 
   ItemsValidator(final ValidationContext<OAI3> context, final JsonNode schemaNode, final JsonNode schemaParentNode, final SchemaValidator parentSchema) {
@@ -33,11 +32,17 @@ class ItemsValidator extends BaseJsonValidator<OAI3> {
       return false;
     }
 
-    validate(() -> {
-      for (JsonNode itemNode : valueNode) {
-        schema.validateWithContext(itemNode, validation);
+    for (int idx = 0; idx < valueNode.size(); ++idx) {
+      JsonNode itemNode = valueNode.get(idx);
+
+      validation.results().withCrumb(
+        new ValidationResults.CrumbInfo(Integer.toString(idx), false),
+        () -> validate(() -> schema.validateWithContext(itemNode, validation)));
+
+      if (context.isFastFail() && !validation.isValid()) {
+        break;
       }
-    });
+    }
 
     return false;
   }
