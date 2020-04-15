@@ -250,6 +250,22 @@ public class ValidationTest {
     assertEquals("true", validation.results().items().get(1).message());
   }
 
+  @Test
+  public void dataJsonPointer() throws Exception {
+    JsonNode schemaNode = TreeUtil.json.readTree("{ \"properties\": { \"f~/oo\": { \"oneOf\": [ { \"type\": \"integer\" }, { \"minimum\": 2 } ] } }}");
+
+    OAI3Context apiContext = new OAI3Context(new URL("file:/"), schemaNode);
+    ValidationContext<OAI3> validationContext = new ValidationContext<>(apiContext);
+    validationContext.addValidator("type", TypeInfoValidator::new);
+
+    SchemaValidator validator = new SchemaValidator(validationContext, null, schemaNode);
+
+    ValidationData<TypeInfoDelegate> validation = new ValidationData<>();
+    validator.validate(JsonNodeFactory.instance.objectNode().set("f~/oo", JsonNodeFactory.instance.numberNode(1)), validation);
+
+    assertEquals("/f~0~1oo", validation.results().items().get(0).dataJsonPointer());
+  }
+
   @Test(expected = RuntimeException.class)
   public void schemaValidatorResolutionException() throws RuntimeException, IOException {
     new SchemaValidator(

@@ -188,6 +188,7 @@ public class ValidationResults implements Serializable {
     private static final String SCHEMA_CRUMB_START = "<";
     private static final String SCHEMA_CRUMB_END = ">";
     private static final String DOT = ".";
+    private static final String SLASH = "/";
     private static final String SEMI_COLON = ": ";
 
     private final List<CrumbInfo> crumbs;
@@ -229,6 +230,26 @@ public class ValidationResults implements Serializable {
     }
 
     /**
+     * Compile and get data path as JSON pointer.
+     * Warning, the compilation occurs at each call.
+     *
+     * @return The data path.
+     */
+    public String dataJsonPointer() {
+      StringJoiner joiner = new StringJoiner(SLASH);
+
+      for (CrumbInfo crumb : crumbs) {
+        if (crumb.crumb() == null) continue;
+
+        if (!crumb.isSchemaCrumb()) {
+          joiner.add(escapeJsonPointerFragment(crumb.crumb()));
+        }
+      }
+
+      return SLASH + joiner.toString();
+    }
+
+    /**
      * Compile and get schema path definition.
      * Warning, the compilation occurs at each call.
      *
@@ -265,6 +286,23 @@ public class ValidationResults implements Serializable {
       strBuilder.append(LINE_SEPARATOR).append(FROM).append(schemaCrumbs());
 
       return strBuilder.toString();
+    }
+
+    private static String escapeJsonPointerFragment(String fragment) {
+      StringBuilder sb = new StringBuilder();
+
+      for (int i = 0, end = fragment.length(); i < end; ++i) {
+        char c = fragment.charAt(i);
+        if (c == '/') {
+          sb.append("~1");
+        } else if (c == '~') {
+          sb.append("~0");
+        } else {
+          sb.append(c);
+        }
+      }
+
+      return sb.toString();
     }
   }
 
