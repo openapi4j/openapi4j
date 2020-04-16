@@ -85,6 +85,16 @@ public final class ValidationData<V> {
   }
 
   /**
+   * Append other results to the current stack with given parent crumbs.
+   *
+   * @param parentCrumbs The given parent crumbs to insert. Must be non {@code null}.
+   * @param resultItems  The stack to append. Must be non {@code null}.
+   */
+  public void add(Collection<ValidationResults.CrumbInfo> parentCrumbs, Collection<ValidationResults.ValidationItem> resultItems) {
+    validationResults.add(parentCrumbs, resultItems);
+  }
+
+  /**
    * Check if the results are below the {@code ValidationSeverity.ERROR}
    *
    * @return {@code true} if the results are below {@code ValidationSeverity.ERROR}.

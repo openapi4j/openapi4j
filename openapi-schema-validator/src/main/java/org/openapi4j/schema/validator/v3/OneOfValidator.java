@@ -64,8 +64,9 @@ class OneOfValidator extends DiscriminatorValidator {
       // Append potential results from sub validation (INFO / WARN)
       validation.add(validation.results().crumbs(), validResults);
     } else {
-      for (ValidationResults result : resultsOnError) {
-        validation.add(validation.results().crumbs(), result);
+      // Report errors only when schema selection failed
+      for (ValidationResults results : resultsOnError) {
+        validation.add(validation.results().crumbs(), results.items(ERROR));
       }
     }
   }

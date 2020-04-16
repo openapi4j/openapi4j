@@ -25,7 +25,7 @@ public class ValidationException extends Exception {
    * Get associated results from the validation.
    * @return The validation results.
    */
-  public ValidationResults getResults() {
+  public ValidationResults results() {
     return results;
   }
 

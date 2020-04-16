@@ -50,8 +50,9 @@ class AnyOfValidator extends DiscriminatorValidator {
       }
     }
 
-    for (ValidationResults result : resultsOnError) {
-      validation.add(validation.results().crumbs(), result);
+    // Report errors only when schema selection failed
+    for (ValidationResults results : resultsOnError) {
+      validation.add(validation.results().crumbs(), results.items(ERROR));
     }
   }
 }
