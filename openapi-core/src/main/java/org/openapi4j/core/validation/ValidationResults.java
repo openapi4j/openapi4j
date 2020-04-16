@@ -230,23 +230,30 @@ public class ValidationResults implements Serializable {
     }
 
     /**
-     * Compile and get data path as JSON pointer.
+     * Compile and get data path as JSON string representation.<br/>
+     * https://tools.ietf.org/html/rfc6901<br/>
      * Warning, the compilation occurs at each call.
      *
-     * @return The data path.
+     * @return The data path as JSON string representation.
      */
     public String dataJsonPointer() {
       StringJoiner joiner = new StringJoiner(SLASH);
+      boolean hasCrumb = false;
 
       for (CrumbInfo crumb : crumbs) {
         if (crumb.crumb() == null) continue;
 
         if (!crumb.isSchemaCrumb()) {
+          hasCrumb = true;
           joiner.add(escapeJsonPointerFragment(crumb.crumb()));
         }
       }
 
-      return SLASH + joiner.toString();
+      if (hasCrumb) {
+        return SLASH + joiner.toString();
+      } else {
+        return joiner.toString();
+      }
     }
 
     /**
