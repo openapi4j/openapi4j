@@ -2,6 +2,7 @@ package org.openapi4j.core.validation;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Representation of results from a validation process.
@@ -81,6 +82,25 @@ public class ValidationResults implements Serializable {
   }
 
   /**
+   * Append other results to the current stack with given parent crumbs.
+   *
+   * @param parentCrumbs The given parent crumbs to insert. Must be non {@code null}.
+   * @param resultItems  The stack to append. Must be non {@code null}.
+   */
+  public void add(Collection<ValidationResults.CrumbInfo> parentCrumbs, Collection<ValidationResults.ValidationItem> resultItems) {
+    // Add parent crumbs & update severity
+    for (ValidationItem item : resultItems) {
+      item.crumbs.addAll(0, parentCrumbs);
+
+      if (item.severity().gt(validationSeverity)) {
+        validationSeverity = item.severity();
+      }
+    }
+
+    items.addAll(resultItems);
+  }
+
+  /**
    * Get the current breadcrumb as read-only.
    *
    * @return The current breadcrumb.
@@ -94,6 +114,18 @@ public class ValidationResults implements Serializable {
    */
   public List<ValidationItem> items() {
     return Collections.unmodifiableList(items);
+  }
+
+  /**
+   * Get the individual results as view.
+   *
+   * @param severity filter items with the given severity.
+   */
+  public List<ValidationItem> items(ValidationSeverity severity) {
+    return Collections.unmodifiableList(items
+      .stream()
+      .filter(item -> severity == item.severity())
+      .collect(Collectors.toList()));
   }
 
   /**

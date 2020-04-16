@@ -37,7 +37,7 @@ class ItemsValidator extends BaseJsonValidator<OAI3> {
 
       validation.results().withCrumb(
         new ValidationResults.CrumbInfo(Integer.toString(idx), false),
-        () -> validate(() -> schema.validateWithContext(itemNode, validation)));
+        () -> schema.validate(itemNode, validation));
 
       if (context.isFastFail() && !validation.isValid()) {
         break;

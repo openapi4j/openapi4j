@@ -63,17 +63,19 @@ class AdditionalPropertiesValidator extends BaseJsonValidator<OAI3> {
   public boolean validate(final JsonNode valueNode, final ValidationData<?> validation) {
     if (Boolean.TRUE.equals(additionalPropertiesAllowed)) return false;
 
-    for (Iterator<String> it = valueNode.fieldNames(); it.hasNext(); ) {
-      String fieldName = it.next();
+    validate(() -> {
+      for (Iterator<String> it = valueNode.fieldNames(); it.hasNext(); ) {
+        String fieldName = it.next();
 
-      if (!checkAgainstPatternProperties(fieldName) && !checkAgainstProperties(fieldName)) {
-        if (additionalPropertiesSchema != null) {
-          validate(() -> additionalPropertiesSchema.validateWithContext(valueNode.get(fieldName), validation));
-        } else {
-          validation.add(CRUMB_INFO, ERR, fieldName);
+        if (!checkAgainstPatternProperties(fieldName) && !checkAgainstProperties(fieldName)) {
+          if (additionalPropertiesSchema != null) {
+            additionalPropertiesSchema.validateWithContext(valueNode.get(fieldName), validation);
+          } else {
+            validation.add(CRUMB_INFO, ERR, fieldName);
+          }
         }
       }
-    }
+    });
 
     return false;
   }

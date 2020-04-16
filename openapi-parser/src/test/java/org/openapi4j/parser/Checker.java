@@ -33,7 +33,7 @@ public class Checker {
     try {
       results = OpenApi3Validator.instance().validate(api);
     } catch (ValidationException ex) {
-      System.out.println(ex.getResults());
+      System.out.println(ex.results());
       throw ex;
     }
 
