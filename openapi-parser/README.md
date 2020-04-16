@@ -26,7 +26,7 @@ Add the following to your `pom.xml`:
 
 ```java
 // Parse without validation, setting to true is strongly recommended for further data validation.
-OpenApi3 api = new OpenApi3Parser().parse(specPath, false);
+OpenApi3 api = new OpenApi3Parser().parse(specURL, false);
 // Explicit validation of the API spec
 ValidationResults results = OpenApi3Validator.instance().validate(api);
 ```
@@ -41,7 +41,7 @@ authOptions.add(new AuthOption(QUERY, "sessionId", "xyz"));
 authOptions.add(new AuthOption(HEADER, "api_key", "xyz", url -> url.getHost().equals("localhost")));
 ...
 
-OpenApi3 api = new OpenApi3Parser().parse(specPath, authOptions, true);
+OpenApi3 api = new OpenApi3Parser().parse(specURL, authOptions, true);
 ```
 
 ## Limitations

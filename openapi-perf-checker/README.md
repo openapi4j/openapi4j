@@ -2,9 +2,9 @@
 
 This is the home page of the openapi4j performance check project for Java (or JVM platform in general).
 
-This project is available for **internal test use only** to check any pitfall before releasing.
+This project is available for **internal test use only** to check any pitfall before releasing or development phase.
 
-Values are globally slightly inaccurate but all tests are made in the same environment/block, so we're still comparing on the same basis.
+Values are globally slightly inaccurate but all tests run in the same environment/block, so we're still comparing on the same basis.
 Other libraries are included to keep the ratio and mitigate the fact that I may change computer in the future.
 
 ## Parser reports
@@ -12,6 +12,9 @@ Other libraries are included to keep the ratio and mitigate the fact that I may 
 Notes :
 * Swagger validates at parsing time, openapi4j as a second operation.
 * All parsers have validation option enabled. Still, Swagger validation seems incomplete.
+
+<details><summary>OLDER VALUES</summary>
+<p>
 
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
@@ -48,6 +51,9 @@ Notes :
 | Swagger           | 2.0.16        | 283,25 ms     | 10            | excl.   |
 | OpenApi4j         | 0.5           | 364,69 ms     | 10            | excl.   |
 
+</p>
+</details>
+
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
 | Swagger           | 2.0.18        | 502,30 ms     | 1             | 1       |
@@ -62,12 +68,20 @@ Notes :
 | Swagger           | 2.0.18        | 352,14 ms     | 10            | excl.   |
 | OpenApi4j         | 0.8           | 515,18 ms     | 10            | excl.   |
 
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| Swagger           | 2.0.19        | 485,08 ms     | 1             | 1       |
+| OpenApi4j         | 0.10          | 255,35 ms     | 1             | 1,9     |
+| Swagger           | 2.0.19        | 294,37 ms     | 10            | excl.   |
+| OpenApi4j         | 0.10          | 306,91 ms     | 10            | excl.   |
+
 ## Schema reports
 
 Notes :
 * JsonTools has only 100 iterations.
-* Networknt values are not so consistent.
 
+<details><summary>OLDER VALUES</summary>
+<p>
 
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
@@ -102,6 +116,8 @@ Notes :
 | OpenApi4j         | 0.5           | 186,83 ms     | 1000          | 6,13    |
 | Justify           | 1.1.0         | 1145,21 ms    | 1000          | 1       |
 | JsonTools         | 2.2.11        | 960,87 ms     | 100           | excl.   |
+</p>
+</details>
 
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
@@ -117,9 +133,19 @@ Notes :
 | Justify           | 1.1.0         | 1597,34 ms    | 1000          | 1       |
 | JsonTools         | 2.2.11        | 1515,00 ms    | 100           | excl.   |
 
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| Networknt         | 1.0.38        | 420,63 ms     | 1000          | 3,23    |
+| OpenApi4j         | 0.10          | 187,90 ms     | 1000          | 7,24    |
+| Justify           | 1.1.0         | 1360,72 ms    | 1000          | 1       |
+| JsonTools         | 2.2.11        | 1338,89 ms    | 100           | excl.   |
+
 ## Operation reports
 * Replaying multiple times this process shows much shorter time values, but it's not the point here.
 We stick with the first showed values for version comparison.
+
+<details><summary>OLDER VALUES</summary>
+<p>
 
 | Content type      | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
@@ -152,6 +178,8 @@ We stick with the first showed values for version comparison.
 | form-data         | 0.5           | 1024,62 ms    | 10000         | excl.   |
 | multipart/mixed   | 0.5           | 729,33 ms     | 10000         | excl.   |
 | application/xml   | 0.5           | 493,96 ms     | 10000         | excl.   |
+</p>
+</details>
 
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
@@ -168,6 +196,14 @@ We stick with the first showed values for version comparison.
 | form-data         | 0.8           | 1409,93 ms    | 10000         | excl.   |
 | multipart/mixed   | 0.8           | 1047,05 ms    | 10000         | excl.   |
 | application/xml   | 0.8           | 909,57 ms     | 10000         | excl.   |
+
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| application/json  | 0.10          | 362,15 ms     | 10000         | excl.   |
+| form-urlencoded   | 0.10          | 440,77 ms     | 10000         | excl.   |
+| form-data         | 0.10          | 1152,77 ms    | 10000         | excl.   |
+| multipart/mixed   | 0.10          | 664,09 ms     | 10000         | excl.   |
+| application/xml   | 0.10          | 537,20 ms     | 10000         | excl.   |
 
 ## Usage
 

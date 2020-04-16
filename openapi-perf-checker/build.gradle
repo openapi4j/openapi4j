@@ -11,7 +11,7 @@ application {
 
 ext.JUSTIFY_VERSION = '1.1.0'
 ext.JSONTOOLS_VERSION = '2.2.11'
-ext.NETWORKNT_VERSION = '1.0.29'
+ext.NETWORKNT_VERSION = '1.0.38'
 
 buildConfig {
   packageName("org.perf.check")

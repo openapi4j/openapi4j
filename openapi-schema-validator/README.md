@@ -32,7 +32,7 @@ Add the following to your `pom.xml`:
 ```java
 JsonNode schemaNode = // your schema tree node.
 JsonNode contentNode = // your data.
-SchemaValidator schemaValidator = new SchemaValidator("my_schema", schemaNode);
+SchemaValidator schemaValidator = new SchemaValidator(null, schemaNode);
 
 // Validation with exception
 try {
@@ -169,8 +169,9 @@ evi = new ExtValidatorInstance() {
     }
 };
 
-// Load an API context with the base URL for JSON references
-apiContext = new OAI3Context(new URL("file:/"), schemaNode);
+// Load an API context with the base URL
+// JSON references are registered from here
+apiContext = new OAI3Context(new URL("file:/"));
 // Setup a validation context
 validationContext = new ValidationContext<>(apiContext);
 // Link trigger 'x-myentity-val' (or known keyword such as maximum, format, ...) with MyValidator.
