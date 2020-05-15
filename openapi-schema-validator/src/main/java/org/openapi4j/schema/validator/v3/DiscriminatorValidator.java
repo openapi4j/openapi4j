@@ -25,7 +25,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
  * <a href="https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#discriminatorObject" />
  */
 abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
-  private static final ValidationResult INVALID_SCHEMA_ERR = new ValidationResult(ERROR, 1003, "Schema selection can't be made for discriminator '%s'.");
+  private static final ValidationResult INVALID_SCHEMA_ERR = new ValidationResult(ERROR, 1003, "Schema selection can't be made for discriminator '%s' with value '%s'.");
   private static final ValidationResult INVALID_PROPERTY_ERR = new ValidationResult(ERROR, 1004, "Property name in schema is not set.");
   private static final ValidationResult INVALID_PROPERTY_CONTENT_ERR = new ValidationResult(ERROR, 1005, "Property name in content '%s' is not set.");
 
@@ -75,7 +75,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
 
   private void validateAllOf(final JsonNode valueNode, final String discriminatorValue, final ValidationData<?> validation) {
     if (!checkAllOfValidator(discriminatorValue)) {
-      validation.add(CRUMB_INFO, INVALID_SCHEMA_ERR, discriminatorPropertyName);
+      validation.add(CRUMB_INFO, INVALID_SCHEMA_ERR, discriminatorPropertyName, discriminatorValue);
       return;
     }
 
@@ -89,7 +89,7 @@ abstract class DiscriminatorValidator extends BaseJsonValidator<OAI3> {
   private void validateOneAnyOf(final JsonNode valueNode, final String discriminatorValue, final ValidationData<?> validation) {
     SchemaValidator validator = getOneAnyOfValidator(discriminatorValue);
     if (validator == null) {
-      validation.add(CRUMB_INFO, INVALID_SCHEMA_ERR, discriminatorPropertyName);
+      validation.add(CRUMB_INFO, INVALID_SCHEMA_ERR, discriminatorPropertyName, discriminatorValue);
       return;
     }
 
