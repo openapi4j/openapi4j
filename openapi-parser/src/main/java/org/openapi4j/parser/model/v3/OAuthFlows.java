@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 public class OAuthFlows extends AbsExtendedOpenApiSchema<OAuthFlows> {
   private OAuthFlow implicit;
   private OAuthFlow password;
@@ -61,14 +59,14 @@ public class OAuthFlows extends AbsExtendedOpenApiSchema<OAuthFlows> {
   }
 
   @Override
-  public OAuthFlows copy(OAIContext context, boolean followRefs) {
+  public OAuthFlows copy() {
     OAuthFlows copy = new OAuthFlows();
 
-    copy.setImplicit(copyField(getImplicit(), context, followRefs));
-    copy.setPassword(copyField(getPassword(), context, followRefs));
-    copy.setClientCredentials(copyField(getClientCredentials(), context, followRefs));
-    copy.setAuthorizationCode(copyField(getAuthorizationCode(), context, followRefs));
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setImplicit(copyField(getImplicit()));
+    copy.setPassword(copyField(getPassword()));
+    copy.setClientCredentials(copyField(getClientCredentials()));
+    copy.setAuthorizationCode(copyField(getAuthorizationCode()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }

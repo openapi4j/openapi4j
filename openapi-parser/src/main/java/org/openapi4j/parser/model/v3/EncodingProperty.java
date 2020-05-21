@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,14 +74,14 @@ public class EncodingProperty extends AbsExtendedOpenApiSchema<EncodingProperty>
   }
 
   @Override
-  public EncodingProperty copy(OAIContext context, boolean followRefs) {
+  public EncodingProperty copy() {
     EncodingProperty copy = new EncodingProperty();
 
     copy.setContentType(getContentType());
     copy.setHeaders(copyMap(getHeaders()));
     copy.setStyle(getStyle());
     copy.setExplode(getExplode());
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }

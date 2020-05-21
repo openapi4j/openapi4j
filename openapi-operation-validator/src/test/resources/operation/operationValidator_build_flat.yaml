@@ -1,0 +1,77 @@
+openapi: 3.0.3
+info:
+  description: a description
+  version: 1.0.0
+  title: API
+paths:
+  /post:
+    post:
+      operationId: post
+      parameters:
+      - $ref: '#/components/parameters/paramWithSchema'
+      - $ref: '#/components/parameters/paramWithContent'
+      requestBody:
+        $ref: '#/components/requestBodies/requestBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/response'
+      callbacks:
+        cb1:
+          $ref: '#/components/callbacks/cb1'
+components:
+  parameters:
+    paramWithSchema:
+      in: header
+      name: paramWithSchema
+      required: true
+      schema:
+        $ref: '#/components/schemas/number'
+    paramWithContent:
+      in: header
+      name: paramWithContent
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/number'
+  requestBodies:
+    requestBody:
+      description: request
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schema'
+  responses:
+    response:
+      description: response
+      headers:
+        headerWithSchema:
+          $ref: '#/components/parameters/paramWithSchema'
+        headerWithContent:
+          $ref: '#/components/parameters/paramWithContent'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/schema'
+  schemas:
+    schema:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          $ref: '#/components/schemas/number'
+    number:
+      type: number
+  callbacks:
+    cb1:
+      expr1:
+        summary: summaryPathItem
+        description: descriptionPathItem
+        get:
+          summary: summaryOperation
+          operationId: operationId
+          responses:
+            '200':
+              description: descriptionOperation

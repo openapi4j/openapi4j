@@ -1,7 +1,6 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.openapi4j.core.model.OAIContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -118,22 +117,19 @@ public class Response extends AbsExtendedRefOpenApiSchema<Response> {
   }
 
   @Override
-  protected Response copyReference() {
-    Response copy = new Response();
-    copy.setRef(getRef());
-    copy.setCanonicalRef(getCanonicalRef());
-    return copy;
-  }
-
-  @Override
-  protected Response copyContent(OAIContext context, boolean followRefs) {
+  public Response copy() {
     Response copy = new Response();
 
-    copy.setDescription(getDescription());
-    copy.setHeaders(copyMap(getHeaders(), context, followRefs));
-    copy.setContentMediaTypes(copyMap(getContentMediaTypes(), context, followRefs));
-    copy.setLinks(copyMap(getLinks(), context, followRefs));
-    copy.setExtensions(copyMap(getExtensions()));
+    if (isRef()) {
+      copy.setRef(getRef());
+      copy.setCanonicalRef(getCanonicalRef());
+    } else {
+      copy.setDescription(getDescription());
+      copy.setHeaders(copyMap(getHeaders()));
+      copy.setContentMediaTypes(copyMap(getContentMediaTypes()));
+      copy.setLinks(copyMap(getLinks()));
+      copy.setExtensions(copySimpleMap(getExtensions()));
+    }
 
     return copy;
   }

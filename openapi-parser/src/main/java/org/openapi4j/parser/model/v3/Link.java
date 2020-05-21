@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -116,24 +114,21 @@ public class Link extends AbsExtendedRefOpenApiSchema<Link> {
   }
 
   @Override
-  protected Link copyReference() {
-    Link copy = new Link();
-    copy.setRef(getRef());
-    copy.setCanonicalRef(getCanonicalRef());
-    return copy;
-  }
-
-  @Override
-  protected Link copyContent(OAIContext context, boolean followRefs) {
+  public Link copy() {
     Link copy = new Link();
 
-    copy.setOperationId(getOperationId());
-    copy.setOperationRef(getOperationRef());
-    copy.setParameters(copyMap(getParameters()));
-    copy.setHeaders(copyMap(getHeaders(), context, followRefs));
-    copy.setDescription(getDescription());
-    copy.setServer(copyField(getServer(), context, followRefs));
-    copy.setExtensions(copyMap(getExtensions()));
+    if (isRef()) {
+      copy.setRef(getRef());
+      copy.setCanonicalRef(getCanonicalRef());
+    } else {
+      copy.setOperationId(getOperationId());
+      copy.setOperationRef(getOperationRef());
+      copy.setParameters(copySimpleMap(getParameters()));
+      copy.setHeaders(copyMap(getHeaders()));
+      copy.setDescription(getDescription());
+      copy.setServer(copyField(getServer()));
+      copy.setExtensions(copySimpleMap(getExtensions()));
+    }
 
     return copy;
   }

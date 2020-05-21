@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 
 import java.util.HashMap;
@@ -626,62 +625,58 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   @Override
-  protected Schema copyReference() {
-    Schema copy = new Schema();
-    copy.setRef(getRef());
-    copy.setCanonicalRef(getCanonicalRef());
-    return copy;
-  }
-
-  @Override
-  protected Schema copyContent(OAIContext context, boolean followRefs) {
+  public Schema copy() {
     Schema copy = new Schema();
 
-    copy.setTitle(getTitle());
-    copy.setMultipleOf(getMultipleOf());
-    copy.setMaximum(getMaximum());
-    copy.setExclusiveMaximum(getExclusiveMaximum());
-    copy.setMinimum(getMinimum());
-    copy.setExclusiveMinimum(getExclusiveMinimum());
-    copy.setMaxLength(getMaxLength());
-    copy.setMinLength(getMinLength());
-    copy.setPattern(getPattern());
-    copy.setMaxItems(getMaxItems());
-    copy.setMinItems(getMinItems());
-    copy.setUniqueItems(getUniqueItems());
-    copy.setMaxProperties(getMaxProperties());
-    copy.setMinProperties(getMinProperties());
-    copy.setRequiredFields(copyList(getRequiredFields()));
-    copy.setEnums(copyList(getEnums()));
-    copy.setType(getType());
-    // Exception, discriminator only works with referenced schemas.
-    final boolean followSchemaCollectionsRefs = followRefs && getDiscriminator() == null;
-    copy.setAllOfSchemas(copyList(getAllOfSchemas(), context, followSchemaCollectionsRefs));
-    copy.setOneOfSchemas(copyList(getOneOfSchemas(), context, followSchemaCollectionsRefs));
-    copy.setAnyOfSchemas(copyList(getAnyOfSchemas(), context, followSchemaCollectionsRefs));
+    if (isRef()) {
+      copy.setRef(getRef());
+      copy.setCanonicalRef(getCanonicalRef());
+    } else {
+      copy.setTitle(getTitle());
+      copy.setMultipleOf(getMultipleOf());
+      copy.setMaximum(getMaximum());
+      copy.setExclusiveMaximum(getExclusiveMaximum());
+      copy.setMinimum(getMinimum());
+      copy.setExclusiveMinimum(getExclusiveMinimum());
+      copy.setMaxLength(getMaxLength());
+      copy.setMinLength(getMinLength());
+      copy.setPattern(getPattern());
+      copy.setMaxItems(getMaxItems());
+      copy.setMinItems(getMinItems());
+      copy.setUniqueItems(getUniqueItems());
+      copy.setMaxProperties(getMaxProperties());
+      copy.setMinProperties(getMinProperties());
+      copy.setRequiredFields(copySimpleList(getRequiredFields()));
+      copy.setEnums(copySimpleList(getEnums()));
+      copy.setType(getType());
 
-    copy.setNotSchema(copyField(getNotSchema(), context, followRefs));
-    copy.setItemsSchema(copyField(getItemsSchema(), context, followRefs));
-    copy.setProperties(copyMap(getProperties(), context, followRefs));
+      copy.setAllOfSchemas(copyList(getAllOfSchemas()));
+      copy.setOneOfSchemas(copyList(getOneOfSchemas()));
+      copy.setAnyOfSchemas(copyList(getAnyOfSchemas()));
 
-    if (hasAdditionalProperties()) {
-      copy.setAdditionalProperties(copyField(getAdditionalProperties(), context, followRefs));
-    } else if (getAdditionalPropertiesAllowed() != null) {
-      copy.setAdditionalPropertiesAllowed(getAdditionalPropertiesAllowed());
+      copy.setNotSchema(copyField(getNotSchema()));
+      copy.setItemsSchema(copyField(getItemsSchema()));
+      copy.setProperties(copyMap(getProperties()));
+
+      if (hasAdditionalProperties()) {
+        copy.setAdditionalProperties(copyField(getAdditionalProperties()));
+      } else if (getAdditionalPropertiesAllowed() != null) {
+        copy.setAdditionalPropertiesAllowed(getAdditionalPropertiesAllowed());
+      }
+
+      copy.setDescription(getDescription());
+      copy.setFormat(getFormat());
+      copy.setDefault(getDefault());
+      copy.setNullable(getNullable());
+      copy.setDiscriminator(copyField(getDiscriminator()));
+      copy.setReadOnly(getReadOnly());
+      copy.setWriteOnly(getWriteOnly());
+      copy.setXml(copyField(getXml()));
+      copy.setExternalDocs(copyField(getExternalDocs()));
+      copy.setExample(getExample());
+      copy.setDeprecated(getDeprecated());
+      copy.setExtensions(copySimpleMap(getExtensions()));
     }
-
-    copy.setDescription(getDescription());
-    copy.setFormat(getFormat());
-    copy.setDefault(getDefault());
-    copy.setNullable(getNullable());
-    copy.setDiscriminator(copyField(getDiscriminator(), context, followRefs));
-    copy.setReadOnly(getReadOnly());
-    copy.setWriteOnly(getWriteOnly());
-    copy.setXml(copyField(getXml(), context, followRefs));
-    copy.setExternalDocs(copyField(getExternalDocs(), context, followRefs));
-    copy.setExample(getExample());
-    copy.setDeprecated(getDeprecated());
-    copy.setExtensions(copyMap(getExtensions()));
 
     return copy;
   }

@@ -8,6 +8,7 @@ paths:
   # from paramCheck operation ending with /fixed/ too.
   /fixed/:
     post:
+      operationId: op1
       requestBody:
         content:
           'application/json': {}
@@ -24,7 +25,7 @@ paths:
             'application/json': {}
   /fixed/{intPathParam}/fixed/{stringPathParam}/fixed/:
     get:
-      operationId: paramCheck
+      operationId: op2
       parameters:
         - name: intPathParam
           in: path

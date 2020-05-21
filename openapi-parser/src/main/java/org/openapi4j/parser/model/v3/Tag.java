@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class Tag extends AbsExtendedOpenApiSchema<Tag> {
   private String name;
@@ -39,13 +37,13 @@ public class Tag extends AbsExtendedOpenApiSchema<Tag> {
   }
 
   @Override
-  public Tag copy(OAIContext context, boolean followRefs) {
+  public Tag copy() {
     Tag copy = new Tag();
 
     copy.setName(getName());
     copy.setDescription(getDescription());
-    copy.setExternalDocs(copyField(getExternalDocs(), context, followRefs));
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setExternalDocs(copyField(getExternalDocs()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }

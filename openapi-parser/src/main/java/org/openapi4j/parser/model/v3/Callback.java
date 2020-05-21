@@ -3,7 +3,6 @@ package org.openapi4j.parser.model.v3;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 
@@ -70,6 +69,7 @@ public class Callback extends AbsRefOpenApiSchema<Callback> {
    * @return paths and/or extensions
    */
   @JsonAnyGetter
+  @SuppressWarnings("unused")
   private Map<String, Object> any() {
     if (callbackPaths != null && extensions != null) {
       extensions.putAll(callbackPaths);
@@ -90,6 +90,7 @@ public class Callback extends AbsRefOpenApiSchema<Callback> {
    * @param value the value : path or extension
    */
   @JsonAnySetter
+  @SuppressWarnings("unused")
   private void add(String name, Object value) {
     if (value == null) return;
 
@@ -102,18 +103,16 @@ public class Callback extends AbsRefOpenApiSchema<Callback> {
   }
 
   @Override
-  protected Callback copyReference() {
+  public Callback copy() {
     Callback copy = new Callback();
-    copy.setRef(getRef());
-    copy.setCanonicalRef(getCanonicalRef());
-    return copy;
-  }
 
-  @Override
-  protected Callback copyContent(OAIContext context, boolean followRefs) {
-    Callback copy = new Callback();
-    copy.setCallbackPaths(copyMap(getCallbackPaths(), context, followRefs));
-    copy.setExtensions(copyMap(getExtensions()));
+    if (isRef()) {
+      copy.setRef(getRef());
+      copy.setCanonicalRef(getCanonicalRef());
+    } else {
+      copy.setCallbackPaths(copyMap(getCallbackPaths()));
+      copy.setExtensions(copySimpleMap(getExtensions()));
+    }
 
     return copy;
   }

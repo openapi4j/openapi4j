@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -297,19 +295,19 @@ public class Components extends AbsExtendedOpenApiSchema<Components> {
   }
 
   @Override
-  public Components copy(OAIContext context, boolean followRefs) {
+  public Components copy() {
     Components copy = new Components();
 
-    copy.setSchemas(copyMap(getSchemas(), context, followRefs));
-    copy.setResponses(copyMap(getResponses(), context, followRefs));
-    copy.setParameters(copyMap(getParameters(), context, followRefs));
-    copy.setExamples(copyMap(getExamples(), context, followRefs));
-    copy.setRequestBodies(copyMap(getRequestBodies(), context, followRefs));
-    copy.setHeaders(copyMap(getHeaders(), context, followRefs));
-    copy.setSecuritySchemes(copyMap(getSecuritySchemes(), context, followRefs));
-    copy.setLinks(copyMap(getLinks(), context, followRefs));
-    copy.setCallbacks(copyMap(getCallbacks(), context, followRefs));
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setSchemas(copyMap(getSchemas()));
+    copy.setResponses(copyMap(getResponses()));
+    copy.setParameters(copyMap(getParameters()));
+    copy.setExamples(copyMap(getExamples()));
+    copy.setRequestBodies(copyMap(getRequestBodies()));
+    copy.setHeaders(copyMap(getHeaders()));
+    copy.setSecuritySchemes(copyMap(getSecuritySchemes()));
+    copy.setLinks(copyMap(getLinks()));
+    copy.setCallbacks(copyMap(getCallbacks()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }

@@ -6,7 +6,6 @@ import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.parser.model.v3.MediaType;
-import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 import org.openapi4j.schema.validator.ValidationData;
@@ -23,13 +22,11 @@ class BodyValidator {
   private static final String BODY = "body";
 
   private final ValidationContext<OAI3> context;
-  private final OpenApi3 openApi;
   private final MediaType mediaType;
   private final JsonValidator validator;
 
-  BodyValidator(ValidationContext<OAI3> context, OpenApi3 openApi, MediaType mediaType) {
+  BodyValidator(ValidationContext<OAI3> context, MediaType mediaType) {
     this.context = context;
-    this.openApi = openApi;
     this.mediaType = mediaType;
 
     validator = initValidator();
@@ -65,6 +62,6 @@ class BodyValidator {
     return new SchemaValidator(
       context,
       BODY,
-      TreeUtil.json.convertValue(mediaType.getSchema().copy(openApi.getContext(), true), JsonNode.class));
+      TreeUtil.json.convertValue(mediaType.getSchema().copy(), JsonNode.class));
   }
 }

@@ -322,7 +322,10 @@ public class ValidationResults implements Serializable {
       if (code() != null) {
         strBuilder.append(CODE_START_LBL).append(code()).append(CODE_END_LBL);
       }
-      strBuilder.append(LINE_SEPARATOR).append(FROM).append(schemaCrumbs());
+      String schemaCrumbs = schemaCrumbs();
+      if (schemaCrumbs != null && !schemaCrumbs.isEmpty()) {
+        strBuilder.append(LINE_SEPARATOR).append(FROM).append(schemaCrumbs());
+      }
 
       return strBuilder.toString();
     }

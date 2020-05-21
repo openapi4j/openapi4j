@@ -1,7 +1,6 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.OpenApiSchema;
 
 import java.util.HashMap;
@@ -178,22 +177,17 @@ public abstract class AbsParameter<M extends OpenApiSchema<M>> extends AbsExtend
     return this;
   }
 
-  void copyReference(AbsParameter<M> copy) {
-    copy.setRef(getRef());
-    copy.setCanonicalRef(getCanonicalRef());
-  }
-
-  void copyContent(OAIContext context, AbsParameter<M> copy, boolean followRefs) {
+  void copy(AbsParameter<M> copy) {
     copy.setDescription(getDescription());
     copy.setRequired(getRequired());
     copy.setDeprecated(getDeprecated());
     copy.setStyle(getStyle());
     copy.setExplode(getExplode());
     copy.setAllowReserved(getAllowReserved());
-    copy.setSchema(copyField(getSchema(), context, followRefs));
+    copy.setSchema(copyField(getSchema()));
     copy.setExample(getExample());
-    copy.setExamples(copyMap(getExamples(), context, followRefs));
+    copy.setExamples(copyMap(getExamples()));
     copy.setContentMediaTypes(getContentMediaTypes());
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
   }
 }

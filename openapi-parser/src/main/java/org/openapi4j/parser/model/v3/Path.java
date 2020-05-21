@@ -2,7 +2,6 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.openapi4j.core.model.OAIContext;
 
 import java.util.List;
 import java.util.Map;
@@ -196,24 +195,21 @@ public class Path extends AbsExtendedRefOpenApiSchema<Path> {
   }
 
   @Override
-  public Path copyContent(OAIContext context, boolean followRefs) {
+  public Path copy() {
     Path copy = new Path();
 
-    copy.setSummary(getSummary());
-    copy.setDescription(getDescription());
-    copy.setOperations(copyMap(getOperations(), context, followRefs));
-    copy.setServers(copyList(getServers(), context, followRefs));
-    copy.setParameters(copyList(getParameters(), context, followRefs));
-    copy.setExtensions(copyMap(getExtensions()));
+    if (isRef()) {
+      copy.setRef(getRef());
+      copy.setCanonicalRef(getCanonicalRef());
+    } else {
+      copy.setSummary(getSummary());
+      copy.setDescription(getDescription());
+      copy.setOperations(copyMap(getOperations()));
+      copy.setServers(copyList(getServers()));
+      copy.setParameters(copyList(getParameters()));
+      copy.setExtensions(copySimpleMap(getExtensions()));
+    }
 
-    return copy;
-  }
-
-  @Override
-  protected Path copyReference() {
-    Path copy = new Path();
-    copy.setRef(getRef());
-    copy.setCanonicalRef(getCanonicalRef());
     return copy;
   }
 }

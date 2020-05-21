@@ -1,7 +1,6 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.openapi4j.core.model.OAIContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -281,21 +280,22 @@ public class Operation extends AbsExtendedOpenApiSchema<Operation> {
   }
 
   @Override
-  public Operation copy(OAIContext context, boolean followRefs) {
+  public Operation copy() {
     Operation copy = new Operation();
 
-    copy.setTags(copyList(getTags()));
+    copy.setSummary(getSummary());
+    copy.setTags(copySimpleList(getTags()));
     copy.setDescription(getDescription());
-    copy.setExternalDocs(copyField(getExternalDocs(), context, followRefs));
+    copy.setExternalDocs(copyField(getExternalDocs()));
     copy.setOperationId(getOperationId());
-    copy.setParameters(copyList(getParameters(), context, followRefs));
-    copy.setRequestBody(copyField(getRequestBody(), context, followRefs));
-    copy.setResponses(copyMap(getResponses(), context, followRefs));
-    copy.setCallbacks(copyMap(getCallbacks(), context, followRefs));
+    copy.setParameters(copyList(getParameters()));
+    copy.setRequestBody(copyField(getRequestBody()));
+    copy.setResponses(copyMap(getResponses()));
+    copy.setCallbacks(copyMap(getCallbacks()));
     copy.setDeprecated(getDeprecated());
-    copy.setSecurityRequirements(copyList(getSecurityRequirements(), context, followRefs));
-    copy.setServers(copyList(getServers(), context, followRefs));
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setSecurityRequirements(copyList(getSecurityRequirements()));
+    copy.setServers(copyList(getServers()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }

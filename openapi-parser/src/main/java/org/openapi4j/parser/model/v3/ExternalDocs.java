@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 public class ExternalDocs extends AbsExtendedOpenApiSchema<ExternalDocs> {
   private String description;
   private String url;
@@ -27,12 +25,12 @@ public class ExternalDocs extends AbsExtendedOpenApiSchema<ExternalDocs> {
   }
 
   @Override
-  public ExternalDocs copy(OAIContext context, boolean followRefs) {
+  public ExternalDocs copy() {
     ExternalDocs copy = new ExternalDocs();
 
     copy.setDescription(getDescription());
     copy.setUrl(getUrl());
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }

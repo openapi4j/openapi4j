@@ -3,7 +3,6 @@ package org.openapi4j.parser.model;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openapi4j.core.exception.EncodeException;
-import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 
 import java.util.*;
@@ -30,16 +29,12 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
    * {@inheritDoc}
    */
   @Override
-  public JsonNode toNode(OAIContext context, boolean followRefs) throws EncodeException {
-    OpenApiSchema<M> model
-      = followRefs
-      ? copy(context, true)
-      : this;
+  public JsonNode toNode() throws EncodeException {
 
     try {
       byte[] content = TreeUtil.json
         .writerWithView(Views.Public.class)
-        .writeValueAsBytes(model);
+        .writeValueAsBytes(this);
 
       return TreeUtil.json.readTree(content);
     } catch (Exception e) {
@@ -51,12 +46,7 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
    * {@inheritDoc}
    */
   @Override
-  public String toString(OAIContext context, EnumSet<SerializationFlag> flags) throws EncodeException {
-    OpenApiSchema<M> model
-      = flags.contains(SerializationFlag.FOLLOW_REFS)
-      ? copy(context, true)
-      : this;
-
+  public String toString(EnumSet<SerializationFlag> flags) throws EncodeException {
     ObjectMapper mapper
       = flags.contains(SerializationFlag.OUT_AS_YAML)
       ? TreeUtil.yaml
@@ -65,63 +55,41 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
     try {
       return mapper
         .writerWithView(Views.Public.class)
-        .writeValueAsString(model);
+        .writeValueAsString(this);
     } catch (Exception e) {
       throw new EncodeException(String.format(ENCODE_ERR_MSG, e.getMessage()));
     }
   }
 
-  protected <T> List<T> copyList(List<T> original) {
+  protected <T extends OpenApiSchema<T>> T copyField(T original) {
     if (original != null) {
-      return new ArrayList<>(original);
+      return original.copy();
     }
 
     return null;
   }
 
-  protected <K, T> Map<K, T> copyMap(Map<K, T> original) {
-    if (original != null) {
-      return new LinkedHashMap<>(original);
-    }
-
-    return null;
-  }
-
-  protected <T extends OpenApiSchema<T>> T copyField(T original, OAIContext context, boolean followRefs) {
-    if (original != null) {
-      return original.copy(context, followRefs);
-    }
-
-    return null;
-  }
-
-  protected <T extends OpenApiSchema<T>> List<T> copyList(List<T> original, OAIContext context, boolean followRefs) {
-    if (original != null) {
-      List<T> copy = new ArrayList<>(original.size());
-      for (T element : original) {
-        copy.add(element.copy(context, followRefs));
-      }
-
-      return copy;
-    }
-
-    return null;
-  }
-
-  protected <K, T extends OpenApiSchema<T>> Map<K, T> copyMap(Map<K, T> original, OAIContext context, boolean followRefs) {
+  protected <K, T extends OpenApiSchema<T>> Map<K, T> copyMap(Map<K, T> original) {
     if (original != null) {
       Map<K, T> copy = new LinkedHashMap<>(original.size());
       for (Map.Entry<K, T> element : original.entrySet()) {
         OpenApiSchema<T> schema = element.getValue();
         if (schema != null) {
-          copy.put(element.getKey(), schema.copy(context, followRefs));
+          copy.put(element.getKey(), schema.copy());
         } else {
           copy.put(element.getKey(), null);
         }
-
       }
 
       return copy;
+    }
+
+    return null;
+  }
+
+  protected <K, T> Map<K, T> copySimpleMap(Map<K, T> original) {
+    if (original != null) {
+      return new LinkedHashMap<>(original);
     }
 
     return null;
@@ -151,6 +119,27 @@ public abstract class AbsOpenApiSchema<M extends OpenApiSchema<M>> implements Op
     if (map != null) {
       map.remove(key);
     }
+  }
+
+  protected <T extends OpenApiSchema<T>> List<T> copyList(List<T> original) {
+    if (original != null) {
+      List<T> copy = new ArrayList<>(original.size());
+      for (T element : original) {
+        copy.add(element.copy());
+      }
+
+      return copy;
+    }
+
+    return null;
+  }
+
+  protected <T> List<T> copySimpleList(List<T> original) {
+    if (original != null) {
+      return new ArrayList<>(original);
+    }
+
+    return null;
   }
 
   protected <K> List<K> listAdd(List<K> list, K value) {

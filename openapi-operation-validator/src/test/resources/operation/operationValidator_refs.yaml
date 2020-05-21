@@ -1,6 +1,7 @@
 paths:
   /refPath:
     post:
+      operationId: post
       responses:
         '200':
           content:

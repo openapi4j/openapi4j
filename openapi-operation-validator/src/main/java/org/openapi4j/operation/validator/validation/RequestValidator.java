@@ -144,7 +144,7 @@ public class RequestValidator {
   public RequestParameters validate(final Request request,
                                     final Path path,
                                     final Operation operation) throws ValidationException {
-    return validate(request, null, path, operation, new ValidationData<>());
+    return validate(request, path, operation, new ValidationData<>());
   }
 
   /**

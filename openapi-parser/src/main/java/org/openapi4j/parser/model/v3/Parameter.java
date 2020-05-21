@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -30,19 +28,17 @@ public class Parameter extends AbsParameter<Parameter> {
   }
 
   @Override
-  protected Parameter copyReference() {
-    Parameter copy = new Parameter();
-    super.copyReference(copy);
-    return copy;
-  }
-
-  @Override
-  protected Parameter copyContent(OAIContext context, boolean followRefs) {
+  public Parameter copy() {
     Parameter copy = new Parameter();
 
-    super.copyContent(context, copy, followRefs);
-    copy.setName(getName());
-    copy.setIn(getIn());
+    if (isRef()) {
+      copy.setRef(getRef());
+      copy.setCanonicalRef(getCanonicalRef());
+    } else {
+      super.copy(copy);
+      copy.setName(getName());
+      copy.setIn(getIn());
+    }
 
     return copy;
   }
