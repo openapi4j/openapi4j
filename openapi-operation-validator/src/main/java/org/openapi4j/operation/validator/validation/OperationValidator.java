@@ -451,8 +451,12 @@ public class OperationValidator {
     }
   }
 
-  // Re-create operation from original by avoiding recursion.
-  // Flatten the content for direct access to attributes.
+  /**
+   * Create operation from original by avoiding recursion.
+   * Flatten the content for direct access to attributes.
+   * @param operation the given operation to rebuild.
+   * @return The flatten operation.
+   */
   private Operation buildFlatOperation(Operation operation) {
     Operation result = new Operation();
 
@@ -480,8 +484,7 @@ public class OperationValidator {
       for (Map.Entry<String, Response> entry : responses.entrySet()) {
         Response flatResponse = getFlatModel(context.getContext(), entry.getValue(), Response.class);
         if (flatResponse.getHeaders() != null) {
-          Map<String, Header> headers = flatResponse.getHeaders();
-          for (Map.Entry<String, Header> entryHeader : headers.entrySet()) {
+          for (Map.Entry<String, Header> entryHeader : flatResponse.getHeaders().entrySet()) {
             Header flatHeader = getFlatModel(context.getContext(), entryHeader.getValue(), Header.class);
             flatHeader.setSchema(getFlatSchema(flatHeader.getSchema()));
             flatResponse.setHeader(entryHeader.getKey(), flatHeader);
