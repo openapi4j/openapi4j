@@ -8,8 +8,8 @@
 This is the home page of the openapi4j project for Java (Jakarta or JVM platform in general).
 
 openapi4j is a suite of tools, including the following :
-* [Open API specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md) parser and validator.
-* Open API [Schema Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject) validator.
+* [Open API specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md) parser and validator.
+* Open API [Schema Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#schemaObject) validator.
 * [JSON reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) implementation.
 * Request/response validator against operation.
 * For internal use only, performance project reports some numbers to 'manually' check any improvements or regressions between versions.
@@ -47,8 +47,8 @@ Check [perf-checker](https://github.com/openapi4j/openapi4j/tree/master/openapi-
 
 ## Native compilation (GraalVM)
 
-From version 0.7, the toolset is fully compliant with native compilation (AOT).  
-This was tested with GraalVM 19.3.1.  
+From version 0.7, the toolset is fully compliant with native compilation (AOT).
+This was tested with GraalVM 19.3.1.
 No further configuration or directive is needed to include the modules if available on classpath.
 
 ```shell script
@@ -61,14 +61,13 @@ FYI, testing runs made don't show much performance improvements but parser modul
 
 The modules currently support the OpenAPI Specification (OAS) version 3.x.x.
 
-This project has been developed while reading 3.0.2.  
 See related projects for limitations and issues.
 
 ## Roadmap
 
 - [See CHANGELOG.md for previous versions](https://github.com/openapi4j/openapi4j/blob/master/CHANGELOG.md)
 
-Common until version 1.0 :
+Common until version 1.0:
 * bug fixing / code coverage.
 * Quality of life accessors/features elected as easy and not risky.
 

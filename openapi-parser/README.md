@@ -3,10 +3,10 @@
 This is the home page of the openapi4j parser project for Java (or JVM platform in general).
 
 parser module includes the following features :
-* [Open API specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md) parser and validator.
+* [Open API specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md) parser and validator.
 * Manipulate the models and serialize back the modified API description.
 
-The validation is made internally by specific classes. Schema validator project could be used but many parts can't be checked via SchemaObject.  
+The validation is made internally by specific classes. Schema validator project could be used but many parts can't be checked via SchemaObject.
 That said, you can, if you want to, do the validation from it. Check at the integration tests to get an example.
 
 ## Installation
