@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 public class Example extends AbsExtendedOpenApiSchema<Example> {
   private String summary;
   private String description;
@@ -49,14 +47,14 @@ public class Example extends AbsExtendedOpenApiSchema<Example> {
   }
 
   @Override
-  public Example copy(OAIContext context, boolean followRefs) {
+  public Example copy() {
     Example copy = new Example();
 
     copy.setSummary(getSummary());
     copy.setDescription(getDescription());
     copy.setValue(getValue());
     copy.setExternalValue(getExternalValue());
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }

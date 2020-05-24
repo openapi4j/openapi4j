@@ -1,6 +1,8 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.openapi4j.core.exception.DecodeException;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -9,6 +11,7 @@ import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.operation.validator.model.impl.MediaTypeContainer;
 import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.operation.validator.util.convert.ParameterConverter;
+import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 import org.openapi4j.parser.model.v3.*;
 import org.openapi4j.schema.validator.ValidationContext;
 import org.openapi4j.schema.validator.ValidationData;
@@ -28,7 +31,6 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 public class OperationValidator {
   // Error messages
   private static final String VALIDATION_CTX_REQUIRED_ERR_MSG = "Validation context is required.";
-  private static final String OAI_REQUIRED_ERR_MSG = "OpenAPI is required.";
   private static final String PATH_REQUIRED_ERR_MSG = "Path is required.";
   private static final String OPERATION_REQUIRED_ERR_MSG = "Operation is required.";
   private static final ValidationResult BODY_CONTENT_TYPE_ERR = new ValidationResult(ERROR, 202, "Body content type cannot be determined. No 'Content-Type' header available.");
@@ -54,7 +56,6 @@ public class OperationValidator {
   // Map<status code, validator>
   private final Map<String, ParameterValidator<Header>> specResponseHeaderValidators;
   private final ValidationContext<OAI3> context;
-  private final OpenApi3 openApi;
   private final Operation operation;
   private final String templatePath;
   private final List<Pattern> pathPatterns;
@@ -102,12 +103,11 @@ public class OperationValidator {
                      final Operation operation) {
 
     this.context = requireNonNull(context, VALIDATION_CTX_REQUIRED_ERR_MSG);
-    this.openApi = requireNonNull(openApi, OAI_REQUIRED_ERR_MSG);
     requireNonNull(operation, OPERATION_REQUIRED_ERR_MSG);
     this.templatePath = openApi.getPathFrom(requireNonNull(path, PATH_REQUIRED_ERR_MSG));
 
-    // Clone operation and get the flatten content
-    this.operation = operation.copy(openApi.getContext(), true);
+    // Clone operation
+    this.operation = buildFlatOperation(operation);
 
     // Merge parameters with default parameters
     // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#operationObject
@@ -332,7 +332,7 @@ public class OperationValidator {
 
     return
       parameters.size() != 0
-        ? new ParameterValidator<>(context, openApi, parameters)
+        ? new ParameterValidator<>(context, parameters)
         : null;
   }
 
@@ -371,7 +371,7 @@ public class OperationValidator {
     final Map<MediaTypeContainer, BodyValidator> validators = new HashMap<>();
 
     for (Map.Entry<String, MediaType> entry : mediaTypes.entrySet()) {
-      validators.put(MediaTypeContainer.create(entry.getKey()), new BodyValidator(context, openApi, entry.getValue()));
+      validators.put(MediaTypeContainer.create(entry.getKey()), new BodyValidator(context, entry.getValue()));
     }
 
     return validators;
@@ -390,7 +390,7 @@ public class OperationValidator {
         if (response.getHeaders() != null) {
           Map<String, AbsParameter<Header>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
           headers.putAll(response.getHeaders());
-          validators.put(statusCode, new ParameterValidator<>(context, openApi, headers));
+          validators.put(statusCode, new ParameterValidator<>(context, headers));
         }
       }
     }
@@ -429,7 +429,7 @@ public class OperationValidator {
     List<Parameter> parentParameters = new ArrayList<>(path.getParameters().size());
     for (Parameter parentParam : path.getParameters()) {
       if (parentParam.isRef()) {
-        parentParameters.add(parentParam.copy(openApi.getContext(), true));
+        parentParameters.add(parentParam.copy());
       } else {
         parentParameters.add(parentParam);
       }
@@ -448,6 +448,104 @@ public class OperationValidator {
         .collect(Collectors.toList());
 
       operation.setParameters(result);
+    }
+  }
+
+  /**
+   * Create operation from original by avoiding recursion.
+   * Flatten the content for direct access to attributes.
+   * @param operation the given operation to rebuild.
+   * @return The flatten operation.
+   */
+  private Operation buildFlatOperation(Operation operation) {
+    Operation result = new Operation();
+
+    // Parameters
+    if (operation.hasParameters()) {
+      for (Parameter parameter : operation.getParameters()) {
+        Parameter flatParam = getFlatModel(context.getContext(), parameter, Parameter.class);
+        flatParam.setSchema(getFlatSchema(flatParam.getSchema()));
+        getFlatMediaTypes(flatParam.getContentMediaTypes());
+        result.addParameter(flatParam);
+      }
+    }
+
+    // Request body
+    RequestBody rqBody = operation.getRequestBody();
+    if (rqBody != null) {
+      RequestBody flatBody = getFlatModel(context.getContext(), rqBody, RequestBody.class);
+      getFlatMediaTypes(flatBody.getContentMediaTypes());
+      result.setRequestBody(flatBody);
+    }
+
+    // Responses
+    Map<String, Response> responses = operation.getResponses();
+    if (responses != null) {
+      for (Map.Entry<String, Response> entry : responses.entrySet()) {
+        Response flatResponse = getFlatModel(context.getContext(), entry.getValue(), Response.class);
+        if (flatResponse.getHeaders() != null) {
+          for (Map.Entry<String, Header> entryHeader : flatResponse.getHeaders().entrySet()) {
+            Header flatHeader = getFlatModel(context.getContext(), entryHeader.getValue(), Header.class);
+            flatHeader.setSchema(getFlatSchema(flatHeader.getSchema()));
+            flatResponse.setHeader(entryHeader.getKey(), flatHeader);
+
+            getFlatMediaTypes(entryHeader.getValue().getContentMediaTypes());
+          }
+        }
+        getFlatMediaTypes(flatResponse.getContentMediaTypes());
+        result.setResponse(entry.getKey(), flatResponse);
+      }
+    }
+
+    // Callbacks
+    if (operation.getCallbacks() != null) {
+      for (Map.Entry<String, Callback> entry : operation.getCallbacks().entrySet()) {
+        Callback flatCallback = getFlatModel(context.getContext(), entry.getValue(), Callback.class);
+        result.setCallback(entry.getKey(), flatCallback);
+      }
+    }
+
+    // All others without $ref
+    result.setOperationId(operation.getOperationId());
+    result.setSecurityRequirements(operation.getSecurityRequirements());
+    result.setExtensions(operation.getExtensions());
+    result.setTags(operation.getTags());
+    result.setDescription(operation.getDescription());
+    result.setExternalDocs(operation.getExternalDocs());
+    result.setDeprecated(operation.getDeprecated());
+    result.setServers(operation.getServers());
+
+    return result;
+  }
+
+  private Schema getFlatSchema(Schema schema) {
+    if (schema != null) {
+      return getFlatModel(context.getContext(), schema, Schema.class);
+    }
+    return null;
+  }
+
+  private <M extends AbsRefOpenApiSchema<M>> M getFlatModel(OAIContext context, M model, Class<M> clazz) {
+    try {
+      if (model.isRef()) {
+        return model.getReference(context).getMappedContent(clazz);
+      }
+    } catch (DecodeException ex) {
+      // Will never happen
+    }
+
+    return model.copy();
+  }
+
+  private void getFlatMediaTypes(Map<String, MediaType> mediaTypes) {
+    if (mediaTypes != null) {
+      for (Map.Entry<String, MediaType> entry : mediaTypes.entrySet()) {
+        MediaType mediaType = entry.getValue();
+        if (mediaType.getSchema() != null) {
+          mediaType.setSchema(
+            getFlatModel(context.getContext(), mediaType.getSchema(), Schema.class));
+        }
+      }
     }
   }
 }

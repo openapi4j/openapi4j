@@ -1,7 +1,6 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.openapi4j.core.model.OAIContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -86,15 +85,15 @@ public class OAuthFlow extends AbsExtendedOpenApiSchema<OAuthFlow> {
   }
 
   @Override
-  public OAuthFlow copy(OAIContext context, boolean followRefs) {
+  public OAuthFlow copy() {
     OAuthFlow copy = new OAuthFlow();
 
     copy.setAuthorizationUrl(getAuthorizationUrl());
     copy.setTokenUrl(getTokenUrl());
     copy.setRefreshUrl(getRefreshUrl());
-    copy.setScopes(copyMap(getScopes()));
+    copy.setScopes(copySimpleMap(getScopes()));
     copy.setConfiguration(getConfiguration());
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }

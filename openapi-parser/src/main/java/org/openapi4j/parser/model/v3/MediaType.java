@@ -1,7 +1,6 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.openapi4j.core.model.OAIContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -96,14 +95,14 @@ public class MediaType extends AbsExtendedOpenApiSchema<MediaType> {
   }
 
   @Override
-  public MediaType copy(OAIContext context, boolean followRefs) {
+  public MediaType copy() {
     MediaType copy = new MediaType();
 
-    copy.setSchema(copyField(getSchema(), context, followRefs));
+    copy.setSchema(copyField(getSchema()));
     copy.setExample(getExample());
-    copy.setExamples(copyMap(getExamples(), context, followRefs));
-    copy.setEncodings(copyMap(getEncodings(), context, followRefs));
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setExamples(copyMap(getExamples()));
+    copy.setEncodings(copyMap(getEncodings()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }

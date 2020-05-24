@@ -1,6 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.AbsOpenApiSchema;
 
 import java.util.Map;
@@ -28,11 +27,11 @@ public class Discriminator extends AbsOpenApiSchema<Discriminator> {
   }
 
   @Override
-  public Discriminator copy(OAIContext context, boolean followRefs) {
+  public Discriminator copy() {
     Discriminator copy = new Discriminator();
 
     copy.setPropertyName(getPropertyName());
-    copy.setMapping(copyMap(getMapping()));
+    copy.setMapping(copySimpleMap(getMapping()));
 
     return copy;
   }

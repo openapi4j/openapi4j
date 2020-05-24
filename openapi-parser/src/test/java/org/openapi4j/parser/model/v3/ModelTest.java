@@ -31,8 +31,7 @@ public class ModelTest extends Checker {
     URL specPath = getClass().getResource(name);
 
     OpenApi3 api = new OpenApi3Parser().parse(specPath, false);
-    api.copy(api.getContext(), false);
-    checkModel(specPath, api);
+    checkModel(specPath, api.copy());
   }
 
   @Test

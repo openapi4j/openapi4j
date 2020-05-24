@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.reference.Reference;
-import org.openapi4j.core.util.TreeUtil;
 
 import java.net.URL;
 
@@ -53,37 +52,4 @@ public abstract class AbsRefOpenApiSchema<M extends OpenApiSchema<M>> extends Ab
 
     return reference;
   }
-
-  @SuppressWarnings("unchecked")
-  public M copy(OAIContext context, boolean followRefs) {
-    if (isRef()) {
-      if (followRefs) {
-        Reference reference = getReference(context);
-        if (reference != null) {
-          M copy = (M) TreeUtil.json.convertValue(reference.getContent(), getClass());
-          return copy.copy(context, true);
-        }
-      } else {
-        return copyReference();
-      }
-    }
-
-    return copyContent(context, followRefs);
-  }
-
-  /**
-   * Copy the reference object.
-   *
-   * @return The copied reference object.
-   */
-  protected abstract M copyReference();
-
-  /**
-   * Copy the flat content of the current schema.
-   *
-   * @param context    The current context.
-   * @param followRefs {@code true} for following references.
-   * @return The copied model.
-   */
-  protected abstract M copyContent(OAIContext context, boolean followRefs);
 }

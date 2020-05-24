@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class SecurityScheme extends AbsExtendedRefOpenApiSchema<SecurityScheme> {
   private String type;
@@ -94,27 +92,24 @@ public class SecurityScheme extends AbsExtendedRefOpenApiSchema<SecurityScheme> 
   }
 
   @Override
-  public SecurityScheme copyContent(OAIContext context, boolean followRefs) {
+  public SecurityScheme copy() {
     SecurityScheme copy = new SecurityScheme();
 
-    copy.setType(getType());
-    copy.setDescription(getDescription());
-    copy.setName(getName());
-    copy.setIn(getIn());
-    copy.setScheme(getScheme());
-    copy.setBearerFormat(getBearerFormat());
-    copy.setFlows(copyField(getFlows(), context, followRefs));
-    copy.setOpenIdConnectUrl(getOpenIdConnectUrl());
-    copy.setExtensions(copyMap(getExtensions()));
+    if (isRef()) {
+      copy.setRef(getRef());
+      copy.setCanonicalRef(getCanonicalRef());
+    } else {
+      copy.setType(getType());
+      copy.setDescription(getDescription());
+      copy.setName(getName());
+      copy.setIn(getIn());
+      copy.setScheme(getScheme());
+      copy.setBearerFormat(getBearerFormat());
+      copy.setFlows(copyField(getFlows()));
+      copy.setOpenIdConnectUrl(getOpenIdConnectUrl());
+      copy.setExtensions(copySimpleMap(getExtensions()));
+    }
 
-    return copy;
-  }
-
-  @Override
-  protected SecurityScheme copyReference() {
-    SecurityScheme copy = new SecurityScheme();
-    copy.setRef(getRef());
-    copy.setCanonicalRef(getCanonicalRef());
     return copy;
   }
 }

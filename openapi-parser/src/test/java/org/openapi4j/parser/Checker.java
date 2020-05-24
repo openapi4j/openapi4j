@@ -45,14 +45,14 @@ public class Checker {
 
   protected void checkModel(URL resourcePath, OpenApi3 api) throws EncodeException, JSONException, DecodeException, JsonProcessingException {
     String expected = TreeUtil.toJson(TreeUtil.load(resourcePath, OpenApi3.class));
-    String actual = TreeUtil.json.writeValueAsString(api.toNode(api.getContext(), false));
+    String actual = TreeUtil.json.writeValueAsString(api.toNode());
 
     JSONAssert.assertEquals("JSON toNode test failed", expected, actual, true);
 
     JSONAssert.assertEquals(
       "JSON toString test failed",
       expected,
-      api.toString(api.getContext(), EnumSet.of(SerializationFlag.OUT_AS_JSON)),
+      api.toString(EnumSet.of(SerializationFlag.OUT_AS_JSON)),
       true);
   }
 }

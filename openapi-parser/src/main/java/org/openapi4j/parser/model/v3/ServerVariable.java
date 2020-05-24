@@ -1,7 +1,6 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.openapi4j.core.model.OAIContext;
 
 import java.util.List;
 
@@ -66,13 +65,13 @@ public class ServerVariable extends AbsExtendedOpenApiSchema<ServerVariable> {
   }
 
   @Override
-  public ServerVariable copy(OAIContext context, boolean followRefs) {
+  public ServerVariable copy() {
     ServerVariable copy = new ServerVariable();
 
-    copy.setEnums(copyList(getEnums()));
+    copy.setEnums(copySimpleList(getEnums()));
     copy.setDefault(getDefault());
     copy.setDescription(getDescription());
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }

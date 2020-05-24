@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 public class Info extends AbsExtendedOpenApiSchema<Info> {
   private Contact contact;
   private String description;
@@ -71,16 +69,16 @@ public class Info extends AbsExtendedOpenApiSchema<Info> {
   }
 
   @Override
-  public Info copy(OAIContext context, boolean followRefs) {
+  public Info copy() {
     Info copy = new Info();
 
     copy.setTitle(getTitle());
     copy.setDescription(getDescription());
     copy.setTermsOfService(getTermsOfService());
-    copy.setContact(copyField(getContact(), context, followRefs));
-    copy.setLicense(copyField(getLicense(), context, followRefs));
+    copy.setContact(copyField(getContact()));
+    copy.setLicense(copyField(getLicense()));
     copy.setVersion(getVersion());
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }

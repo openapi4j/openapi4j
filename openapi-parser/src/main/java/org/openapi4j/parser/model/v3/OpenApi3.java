@@ -252,18 +252,18 @@ public class OpenApi3 extends AbsExtendedOpenApiSchema<OpenApi3> implements OAI 
   }
 
   @Override
-  public OpenApi3 copy(OAIContext context, boolean followRefs) {
+  public OpenApi3 copy() {
     OpenApi3 copy = new OpenApi3();
 
     copy.setOpenapi(getOpenapi());
-    copy.setInfo(copyField(getInfo(), context, followRefs));
-    copy.setServers(copyList(getServers(), context, followRefs));
-    copy.setTags(copyList(getTags(), context, followRefs));
-    copy.setPaths(copyMap(getPaths(), context, followRefs));
-    copy.setComponents(copyField(getComponents(), context, followRefs));
-    copy.setExternalDocs(copyField(getExternalDocs(), context, followRefs));
-    copy.setSecurityRequirements(copyList(getSecurityRequirements(), context, followRefs));
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setInfo(copyField(getInfo()));
+    copy.setServers(copyList(getServers()));
+    copy.setTags(copyList(getTags()));
+    copy.setPaths(copyMap(getPaths()));
+    copy.setComponents(copyField(getComponents()));
+    copy.setExternalDocs(copyField(getExternalDocs()));
+    copy.setSecurityRequirements(copyList(getSecurityRequirements()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
     copy.setContext(context);
 
     return copy;

@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 @SuppressWarnings({"unused", "WeakerAccess", "UnusedReturnValue"})
 public class Xml extends AbsExtendedOpenApiSchema<Xml> {
   private String name;
@@ -69,7 +67,7 @@ public class Xml extends AbsExtendedOpenApiSchema<Xml> {
   }
 
   @Override
-  public Xml copy(OAIContext context, boolean followRefs) {
+  public Xml copy() {
     Xml copy = new Xml();
 
     copy.setName(getName());
@@ -77,7 +75,7 @@ public class Xml extends AbsExtendedOpenApiSchema<Xml> {
     copy.setPrefix(getPrefix());
     copy.setAttribute(getAttribute());
     copy.setWrapped(getWrapped());
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }

@@ -1,7 +1,6 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.openapi4j.core.model.OAIContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,21 +68,18 @@ public class RequestBody extends AbsExtendedRefOpenApiSchema<RequestBody> {
   }
 
   @Override
-  protected RequestBody copyReference() {
-    RequestBody copy = new RequestBody();
-    copy.setRef(getRef());
-    copy.setCanonicalRef(getCanonicalRef());
-    return copy;
-  }
-
-  @Override
-  protected RequestBody copyContent(OAIContext context, boolean followRefs) {
+  public RequestBody copy() {
     RequestBody copy = new RequestBody();
 
-    copy.setDescription(getDescription());
-    copy.setContentMediaTypes(copyMap(getContentMediaTypes(), context, followRefs));
-    copy.setRequired(getRequired());
-    copy.setExtensions(copyMap(getExtensions()));
+    if (isRef()) {
+      copy.setRef(getRef());
+      copy.setCanonicalRef(getCanonicalRef());
+    } else {
+      copy.setDescription(getDescription());
+      copy.setContentMediaTypes(copyMap(getContentMediaTypes()));
+      copy.setRequired(getRequired());
+      copy.setExtensions(copySimpleMap(getExtensions()));
+    }
 
     return copy;
   }

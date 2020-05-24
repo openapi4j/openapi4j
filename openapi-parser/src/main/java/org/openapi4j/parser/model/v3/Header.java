@@ -1,22 +1,17 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 public class Header extends AbsParameter<Header> {
-  @Override
-  protected Header copyReference() {
-    Header copy = new Header();
-
-    super.copyReference(copy);
-
-    return copy;
-  }
 
   @Override
-  protected Header copyContent(OAIContext context, boolean followRefs) {
+  public Header copy() {
     Header copy = new Header();
 
-    super.copyContent(context, copy, followRefs);
+    if (isRef()) {
+      copy.setRef(getRef());
+      copy.setCanonicalRef(getCanonicalRef());
+    } else {
+      super.copy(copy);
+    }
 
     return copy;
   }

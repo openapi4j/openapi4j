@@ -6,7 +6,8 @@ import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.AbsParameter;
-import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.model.v3.MediaType;
+import org.openapi4j.parser.model.v3.Schema;
 import org.openapi4j.schema.validator.JsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 import org.openapi4j.schema.validator.ValidationData;
@@ -21,13 +22,11 @@ class ParameterValidator<M extends OpenApiSchema<M>> {
   private static final ValidationResult PARAM_REQUIRED_ERR = new ValidationResult(ERROR, 206, "Parameter '%s' is required.");
 
   private final ValidationContext<OAI3> context;
-  private final OpenApi3 openApi;
   private final Map<String, JsonValidator> specValidators;
   private final Map<String, AbsParameter<M>> specParameters;
 
-  ParameterValidator(ValidationContext<OAI3> context, OpenApi3 openApi, Map<String, AbsParameter<M>> specParameters) {
+  ParameterValidator(ValidationContext<OAI3> context, Map<String, AbsParameter<M>> specParameters) {
     this.context = context;
-    this.openApi = openApi;
     this.specParameters = specParameters;
     specValidators = initValidators(specParameters);
   }
@@ -61,12 +60,23 @@ class ParameterValidator<M extends OpenApiSchema<M>> {
     for (Map.Entry<String, AbsParameter<M>> paramEntry : specParameters.entrySet()) {
       String paramName = paramEntry.getKey();
       AbsParameter<M> parameter = paramEntry.getValue();
+      Schema paramSchema = null;
 
-      if (parameter.getSchema() != null) { // Schema is not mandatory
+      if (parameter.getContentMediaTypes() != null) {
+        for (Map.Entry<String, MediaType> entry : parameter.getContentMediaTypes().entrySet()) {
+          MediaType mediaType = entry.getValue();
+          paramSchema = mediaType.getSchema();
+          break;
+        }
+      } else {
+        paramSchema = parameter.getSchema();
+      }
+
+      if (paramSchema != null) {
         SchemaValidator validator = new SchemaValidator(
           context,
           paramName,
-          TreeUtil.json.convertValue(parameter.getSchema().copy(openApi.getContext(), true), JsonNode.class));
+          TreeUtil.json.convertValue(paramSchema.copy(), JsonNode.class));
 
         validators.put(paramName, validator);
       }

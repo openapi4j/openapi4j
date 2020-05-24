@@ -5,10 +5,6 @@ package org.openapi4j.parser.model;
  */
 public enum SerializationFlag {
   /**
-   * Flag to follow the JSON references.
-   */
-  FOLLOW_REFS,
-  /**
    * Flag for returning a JSON node string.
    */
   OUT_AS_JSON,

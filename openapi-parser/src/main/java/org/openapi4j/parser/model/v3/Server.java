@@ -1,7 +1,5 @@
 package org.openapi4j.parser.model.v3;
 
-import org.openapi4j.core.model.OAIContext;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,13 +61,13 @@ public class Server extends AbsExtendedOpenApiSchema<Server> {
   }
 
   @Override
-  public Server copy(OAIContext context, boolean followRefs) {
+  public Server copy() {
     Server copy = new Server();
 
     copy.setUrl(getUrl());
     copy.setDescription(getDescription());
-    copy.setVariables(copyMap(getVariables(), context, followRefs));
-    copy.setExtensions(copyMap(getExtensions()));
+    copy.setVariables(copyMap(getVariables()));
+    copy.setExtensions(copySimpleMap(getExtensions()));
 
     return copy;
   }
