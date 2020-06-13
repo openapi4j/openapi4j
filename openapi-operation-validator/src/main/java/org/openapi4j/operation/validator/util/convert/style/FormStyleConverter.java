@@ -37,6 +37,7 @@ public class FormStyleConverter {
 
     JsonNode result;
 
+    param.setSchema(param.getSchema().getFlatSchema(context));
     String type = param.getSchema().getSupposedType(context);
     if (TYPE_ARRAY.equals(type)) {
       result = getArrayValues(context, param, paramPairs.get(paramName));

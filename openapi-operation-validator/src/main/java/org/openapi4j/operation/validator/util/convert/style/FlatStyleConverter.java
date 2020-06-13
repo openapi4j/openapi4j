@@ -23,6 +23,7 @@ abstract class FlatStyleConverter implements StyleConverter {
 
     Map<String, Object> values = new HashMap<>();
 
+    param.setSchema(param.getSchema().getFlatSchema(context));
     if (TYPE_OBJECT.equals(param.getSchema().getSupposedType(context))) {
       if (param.isExplode()) {
         handleExplodedObject(param, splitPattern, rawValue, values);
