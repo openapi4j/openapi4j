@@ -503,7 +503,7 @@ public class ModelTest extends Checker {
   public void schemaTest() {
     Schema obj = new Schema();
 
-    assertNull(obj.getSupposedType());
+    assertNull(obj.getSupposedType(null));
 
     listCheck(
       "fooenum",
@@ -581,29 +581,29 @@ public class ModelTest extends Checker {
   public void schemaSupposedTypeTest() {
     Schema obj = new Schema();
     obj.setProperty("foo", new Schema());
-    assertEquals(TYPE_OBJECT, obj.getSupposedType());
+    assertEquals(TYPE_OBJECT, obj.getSupposedType(null));
 
     obj = new Schema();
     obj.setItemsSchema(new Schema());
-    assertEquals(TYPE_ARRAY, obj.getSupposedType());
+    assertEquals(TYPE_ARRAY, obj.getSupposedType(null));
 
     obj = new Schema();
     obj.setFormat(FORMAT_INT32);
-    assertEquals(TYPE_INTEGER, obj.getSupposedType());
+    assertEquals(TYPE_INTEGER, obj.getSupposedType(null));
     obj.setFormat(FORMAT_INT64);
-    assertEquals(TYPE_INTEGER, obj.getSupposedType());
+    assertEquals(TYPE_INTEGER, obj.getSupposedType(null));
 
     obj.setFormat(FORMAT_FLOAT);
-    assertEquals(TYPE_NUMBER, obj.getSupposedType());
+    assertEquals(TYPE_NUMBER, obj.getSupposedType(null));
     obj.setFormat(FORMAT_DOUBLE);
-    assertEquals(TYPE_NUMBER, obj.getSupposedType());
+    assertEquals(TYPE_NUMBER, obj.getSupposedType(null));
 
     obj.setFormat(FORMAT_BINARY);
-    assertEquals(TYPE_STRING, obj.getSupposedType());
+    assertEquals(TYPE_STRING, obj.getSupposedType(null));
 
     obj = new Schema();
     obj.setType(TYPE_INTEGER);
-    assertEquals(TYPE_INTEGER, obj.getSupposedType());
+    assertEquals(TYPE_INTEGER, obj.getSupposedType(null));
   }
 
   @Test

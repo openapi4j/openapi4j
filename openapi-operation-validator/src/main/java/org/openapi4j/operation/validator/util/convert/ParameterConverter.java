@@ -3,6 +3,7 @@ package org.openapi4j.operation.validator.util.convert;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.operation.validator.util.convert.style.LabelStyleConverter;
 import org.openapi4j.operation.validator.util.convert.style.MatrixStyleConverter;
 import org.openapi4j.operation.validator.util.convert.style.SimpleStyleConverter;
@@ -89,7 +90,8 @@ public final class ParameterConverter {
    * @param path           The rendered path from the request.
    * @return A map with parameters names associated with the value as node.
    */
-  public static Map<String, JsonNode> pathToNode(final Map<String, AbsParameter<Parameter>> specParameters,
+  public static Map<String, JsonNode> pathToNode(final OAIContext context,
+                                                 final Map<String, AbsParameter<Parameter>> specParameters,
                                                  final Pattern pattern,
                                                  final String path) {
 
@@ -113,14 +115,14 @@ public final class ParameterConverter {
         final String style = param.getStyle();
 
         if (LABEL.equals(style)) {
-          convertedValue = LabelStyleConverter.instance().convert(param, paramName, matcher.group(paramName));
+          convertedValue = LabelStyleConverter.instance().convert(context, param, paramName, matcher.group(paramName));
         } else if (MATRIX.equals(style)) {
-          convertedValue = MatrixStyleConverter.instance().convert(param, paramName, matcher.group(paramName));
+          convertedValue = MatrixStyleConverter.instance().convert(context, param, paramName, matcher.group(paramName));
         } else { // simple is the default
-          convertedValue = SimpleStyleConverter.instance().convert(param, paramName, matcher.group(paramName));
+          convertedValue = SimpleStyleConverter.instance().convert(context, param, paramName, matcher.group(paramName));
         }
       } else {
-        convertedValue = getValueFromContentType(param.getContentMediaTypes(), matcher.group(paramName));
+        convertedValue = getValueFromContentType(context, param.getContentMediaTypes(), matcher.group(paramName));
       }
 
       mappedValues.put(paramName, convertedValue);
@@ -137,11 +139,12 @@ public final class ParameterConverter {
    * @param rawValue       The raw query string.
    * @return A map with parameters names associated with the value as node.
    */
-  public static Map<String, JsonNode> queryToNode(final Map<String, AbsParameter<Parameter>> specParameters,
+  public static Map<String, JsonNode> queryToNode(final OAIContext context,
+                                                  final Map<String, AbsParameter<Parameter>> specParameters,
                                                   final String rawValue,
                                                   final String encoding) {
 
-    return FormUrlConverter.instance().convert(specParameters, rawValue, false, encoding);
+    return FormUrlConverter.instance().convert(context, specParameters, rawValue, false, encoding);
   }
 
   /**
@@ -151,7 +154,8 @@ public final class ParameterConverter {
    * @param specParameters The spec header parameters.
    * @return A map with parameters names associated with the value as node.
    */
-  public static <M extends OpenApiSchema<M>> Map<String, JsonNode> headersToNode(final Map<String, AbsParameter<M>> specParameters,
+  public static <M extends OpenApiSchema<M>> Map<String, JsonNode> headersToNode(final OAIContext context,
+                                                                                 final Map<String, AbsParameter<M>> specParameters,
                                                                                  final Map<String, Collection<String>> headers) {
 
     final Map<String, JsonNode> mappedValues = new HashMap<>();
@@ -171,9 +175,10 @@ public final class ParameterConverter {
         Collection<String> headerValues = headers.get(paramName);
         if (headerValues != null) {
           if (param.getSchema() != null) {
-            convertedValue = SimpleStyleConverter.instance().convert(param, paramName, String.join(",", headerValues));
+            convertedValue = SimpleStyleConverter.instance().convert(context, param, paramName, String.join(",", headerValues));
           } else {
             convertedValue = getValueFromContentType(
+              context,
               param.getContentMediaTypes(),
               headerValues.stream().findFirst().orElse(null));
           }
@@ -197,7 +202,8 @@ public final class ParameterConverter {
    * @param specParameters The spec cookie parameters.
    * @return A map with parameters names associated with the value as node.
    */
-  public static Map<String, JsonNode> cookiesToNode(final Map<String, AbsParameter<Parameter>> specParameters,
+  public static Map<String, JsonNode> cookiesToNode(final OAIContext context,
+                                                    final Map<String, AbsParameter<Parameter>> specParameters,
                                                     final Map<String, String> cookies) {
 
     final Map<String, JsonNode> mappedValues = new HashMap<>();
@@ -221,9 +227,9 @@ public final class ParameterConverter {
         String value = cookies.get(paramName);
         if (value != null) {
           if (param.getSchema() != null) {
-            convertedValue = SimpleStyleConverter.instance().convert(param, paramName, value);
+            convertedValue = SimpleStyleConverter.instance().convert(context, param, paramName, value);
           } else {
-            convertedValue = getValueFromContentType(param.getContentMediaTypes(), value);
+            convertedValue = getValueFromContentType(context, param.getContentMediaTypes(), value);
           }
         } else {
           convertedValue = JsonNodeFactory.instance.nullNode();
@@ -238,7 +244,8 @@ public final class ParameterConverter {
     return mappedValues;
   }
 
-  private static JsonNode getValueFromContentType(final Map<String, MediaType> mediaTypes,
+  private static JsonNode getValueFromContentType(final OAIContext context,
+                                                  final Map<String, MediaType> mediaTypes,
                                                   final String value) {
 
     if (mediaTypes != null && value != null) {
@@ -248,7 +255,7 @@ public final class ParameterConverter {
         Map.Entry<String, MediaType> mediaType = entry.get();
 
         try {
-          return ContentConverter.convert(mediaType.getValue(), mediaType.getKey(), null, value);
+          return ContentConverter.convert(context, mediaType.getValue(), mediaType.getKey(), null, value);
         } catch (IOException e) {
           return null;
         }

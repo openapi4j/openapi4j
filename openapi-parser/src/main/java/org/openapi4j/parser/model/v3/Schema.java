@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.openapi4j.core.exception.DecodeException;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 
 import java.util.HashMap;
@@ -278,19 +280,23 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
   }
 
   @JsonIgnore
-  public String getSupposedType() {
-    if (type != null) {
-      return type;
+  public String getSupposedType(OAIContext context) {
+    // Ensure we're not in a $ref schema
+    final Schema schema = getFlatSchema(context);
+    assert schema != null;
+
+    if (schema.type != null) {
+      return schema.type;
     }
 
     // Deduce type from other properties
-    if (getProperties() != null) {
+    if (schema.getProperties() != null) {
       return TYPE_OBJECT;
-    } else if (getItemsSchema() != null) {
+    } else if (schema.getItemsSchema() != null) {
       return TYPE_ARRAY;
-    } else if (getFormat() != null) {
+    } else if (schema.getFormat() != null) {
       // Deduce type from format
-      switch (getFormat()) {
+      switch (schema.getFormat()) {
         case FORMAT_INT32:
         case FORMAT_INT64:
           return TYPE_INTEGER;
@@ -300,6 +306,21 @@ public class Schema extends AbsExtendedRefOpenApiSchema<Schema> {
         default:
           return TYPE_STRING;
       }
+    }
+
+    return null;
+  }
+
+  @JsonIgnore
+  public Schema getFlatSchema(OAIContext context) {
+    if (!isRef() || context == null) {
+      return this;
+    }
+
+    try {
+      return getReference(context).getMappedContent(Schema.class);
+    } catch (DecodeException ex) {
+      // Will never happen
     }
 
     return null;

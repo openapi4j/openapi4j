@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.json.JSONObject;
 import org.json.XML;
 import org.json.XMLParserConfiguration;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.parser.model.v3.Schema;
 import org.openapi4j.parser.model.v3.Xml;
@@ -41,13 +42,14 @@ class XmlConverter {
     return INSTANCE;
   }
 
-  JsonNode convert(final Schema schema, String body) {
+  JsonNode convert(OAIContext context, final Schema schema, String body) {
     return convert(
+      context,
       schema,
       XML.toJSONObject(nsPattern.matcher(body).replaceAll(nsReplace), XMLParserConfiguration.KEEP_STRINGS));
   }
 
-  private JsonNode convert(final Schema schema, final JSONObject xml) {
+  private JsonNode convert(OAIContext context, final Schema schema, final JSONObject xml) {
     if (xml.isEmpty()) {
       return JsonNodeFactory.instance.nullNode();
     }
@@ -60,42 +62,44 @@ class XmlConverter {
     }
 
     // Specific case of xml2json mapping : Unwrap first key to match JSON content
-    if (TYPE_OBJECT.equals(schema.getSupposedType())) {
+    Schema flatSchema = schema.getFlatSchema(context);
+    if (TYPE_OBJECT.equals(flatSchema.getSupposedType(context))) {
       content = content.fields().next().getValue();
     }
 
-    return processNode(schema, content);
+    return processNode(context, flatSchema, content);
   }
 
-  private JsonNode processNode(final Schema schema, final JsonNode node) {
-    JsonNode content = unwrap(schema, node, null);
+  private JsonNode processNode(OAIContext context, final Schema schema, final JsonNode node) {
+    JsonNode content = unwrap(context, schema, node, null);
     if (content == null) {
       return null;
     }
 
-    if (TYPE_ARRAY.equals(schema.getSupposedType())) {
-      return parseArray(schema, content);
-    } else if (TYPE_OBJECT.equals(schema.getSupposedType())) {
-      return parseObject(schema, content);
+    Schema flatSchema = schema.getFlatSchema(context);
+    if (TYPE_ARRAY.equals(flatSchema.getSupposedType(context))) {
+      return parseArray(context, flatSchema, content);
+    } else if (TYPE_OBJECT.equals(flatSchema.getSupposedType(context))) {
+      return parseObject(context, flatSchema, content);
     } else {
-      return TypeConverter.instance().convertPrimitive(schema, content.asText());
+      return TypeConverter.instance().convertPrimitive(context, flatSchema, content.asText());
     }
   }
 
-  private JsonNode parseArray(final Schema schema, final JsonNode node) {
+  private JsonNode parseArray(OAIContext context, final Schema schema, final JsonNode node) {
     if (!node.isArray()) {
       return JsonNodeFactory.instance.nullNode();
     }
 
     ArrayNode resultNode = JsonNodeFactory.instance.arrayNode();
     for (JsonNode arrayItem : node) {
-      resultNode.add(processNode(schema.getItemsSchema(), arrayItem));
+      resultNode.add(processNode(context, schema.getItemsSchema(), arrayItem));
     }
 
     return resultNode;
   }
 
-  private JsonNode parseObject(final Schema schema, final JsonNode node) {
+  private JsonNode parseObject(OAIContext context, final Schema schema, final JsonNode node) {
     if (!node.isObject()) {
       return JsonNodeFactory.instance.nullNode();
     }
@@ -106,7 +110,7 @@ class XmlConverter {
       String entryKey = entry.getKey();
       Schema propSchema = entry.getValue();
 
-      JsonNode value = processNode(propSchema, unwrap(schema, node, entryKey));
+      JsonNode value = processNode(context, propSchema, unwrap(context, schema, node, entryKey));
 
       if (value != null) {
         resultNode.set(entryKey, value);
@@ -116,10 +120,11 @@ class XmlConverter {
     return resultNode;
   }
 
-  private JsonNode unwrap(final Schema schema, final JsonNode content, final String defaultKey) {
+  private JsonNode unwrap(OAIContext context, final Schema schema, final JsonNode content, final String defaultKey) {
     Xml xmlConf = schema.getXml();
 
-    if (TYPE_ARRAY.equals(schema.getSupposedType())) {
+    Schema flatSchema = schema.getFlatSchema(context);
+    if (TYPE_ARRAY.equals(flatSchema.getSupposedType(context))) {
       // is array wrapped ?
       if (xmlConf != null && xmlConf.isWrapped()) {
         if (xmlConf.getName() != null) {
@@ -135,11 +140,11 @@ class XmlConverter {
       }
 
       // is unwrapped array has a renamed node ?
-      xmlConf = schema.getItemsSchema().getXml();
+      xmlConf = flatSchema.getItemsSchema().getXml();
       if (xmlConf != null) {
         return getRenamedNode(xmlConf, content, xmlConf.getName());
       }
-    } else if (TYPE_OBJECT.equals(schema.getSupposedType())) {
+    } else if (TYPE_OBJECT.equals(flatSchema.getSupposedType(context))) {
       return getRenamedNode(xmlConf, content, defaultKey);
     }
 

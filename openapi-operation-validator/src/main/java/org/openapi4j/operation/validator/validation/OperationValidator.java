@@ -167,6 +167,7 @@ public class OperationValidator {
     if (specRequestPathValidator == null) return null;
 
     Map<String, JsonNode> mappedValues = ParameterConverter.pathToNode(
+      context.getContext(),
       specRequestPathValidator.getParameters(),
       pathPattern,
       request.getPath());
@@ -187,6 +188,7 @@ public class OperationValidator {
     if (specRequestQueryValidator == null) return null;
 
     Map<String, JsonNode> mappedValues = ParameterConverter.queryToNode(
+      context.getContext(),
       specRequestQueryValidator.getParameters(),
       request.getQuery(),
       "UTF-8");
@@ -207,6 +209,7 @@ public class OperationValidator {
     if (specRequestHeaderValidator == null) return null;
 
     Map<String, JsonNode> mappedValues = ParameterConverter.headersToNode(
+      context.getContext(),
       specRequestHeaderValidator.getParameters(),
       request.getHeaders());
 
@@ -226,6 +229,7 @@ public class OperationValidator {
     if (specRequestCookieValidator == null) return null;
 
     final Map<String, JsonNode> mappedValues = ParameterConverter.cookiesToNode(
+      context.getContext(),
       specRequestCookieValidator.getParameters(),
       request.getCookies());
 
@@ -317,6 +321,7 @@ public class OperationValidator {
     if (validator == null) return;
 
     Map<String, JsonNode> mappedValues = ParameterConverter.headersToNode(
+      context.getContext(),
       validator.getParameters(),
       response.getHeaders());
 
@@ -454,16 +459,17 @@ public class OperationValidator {
   /**
    * Create operation from original by avoiding recursion.
    * Flatten the content for direct access to attributes.
+   *
    * @param operation the given operation to rebuild.
    * @return The flatten operation.
    */
   private Operation buildFlatOperation(Operation operation) {
-    Operation result = new Operation();
+    final Operation result = new Operation();
 
     // Parameters
     if (operation.hasParameters()) {
       for (Parameter parameter : operation.getParameters()) {
-        Parameter flatParam = getFlatModel(context.getContext(), parameter, Parameter.class);
+        Parameter flatParam = getFlatModel(parameter, Parameter.class);
         flatParam.setSchema(getFlatSchema(flatParam.getSchema()));
         getFlatMediaTypes(flatParam.getContentMediaTypes());
         result.addParameter(flatParam);
@@ -473,7 +479,7 @@ public class OperationValidator {
     // Request body
     RequestBody rqBody = operation.getRequestBody();
     if (rqBody != null) {
-      RequestBody flatBody = getFlatModel(context.getContext(), rqBody, RequestBody.class);
+      RequestBody flatBody = getFlatModel(rqBody, RequestBody.class);
       getFlatMediaTypes(flatBody.getContentMediaTypes());
       result.setRequestBody(flatBody);
     }
@@ -482,10 +488,10 @@ public class OperationValidator {
     Map<String, Response> responses = operation.getResponses();
     if (responses != null) {
       for (Map.Entry<String, Response> entry : responses.entrySet()) {
-        Response flatResponse = getFlatModel(context.getContext(), entry.getValue(), Response.class);
+        Response flatResponse = getFlatModel(entry.getValue(), Response.class);
         if (flatResponse.getHeaders() != null) {
           for (Map.Entry<String, Header> entryHeader : flatResponse.getHeaders().entrySet()) {
-            Header flatHeader = getFlatModel(context.getContext(), entryHeader.getValue(), Header.class);
+            Header flatHeader = getFlatModel(entryHeader.getValue(), Header.class);
             flatHeader.setSchema(getFlatSchema(flatHeader.getSchema()));
             flatResponse.setHeader(entryHeader.getKey(), flatHeader);
 
@@ -500,7 +506,7 @@ public class OperationValidator {
     // Callbacks
     if (operation.getCallbacks() != null) {
       for (Map.Entry<String, Callback> entry : operation.getCallbacks().entrySet()) {
-        Callback flatCallback = getFlatModel(context.getContext(), entry.getValue(), Callback.class);
+        Callback flatCallback = getFlatModel(entry.getValue(), Callback.class);
         result.setCallback(entry.getKey(), flatCallback);
       }
     }
@@ -520,15 +526,15 @@ public class OperationValidator {
 
   private Schema getFlatSchema(Schema schema) {
     if (schema != null) {
-      return getFlatModel(context.getContext(), schema, Schema.class);
+      return getFlatModel(schema, Schema.class);
     }
     return null;
   }
 
-  private <M extends AbsRefOpenApiSchema<M>> M getFlatModel(OAIContext context, M model, Class<M> clazz) {
+  private <M extends AbsRefOpenApiSchema<M>> M getFlatModel(M model, Class<M> clazz) {
     try {
       if (model.isRef()) {
-        return model.getReference(context).getMappedContent(clazz);
+        return model.getReference(context.getContext()).getMappedContent(clazz);
       }
     } catch (DecodeException ex) {
       // Will never happen
@@ -543,7 +549,7 @@ public class OperationValidator {
         MediaType mediaType = entry.getValue();
         if (mediaType.getSchema() != null) {
           mediaType.setSchema(
-            getFlatModel(context.getContext(), mediaType.getSchema(), Schema.class));
+            getFlatModel(mediaType.getSchema(), Schema.class));
         }
       }
     }

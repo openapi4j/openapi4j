@@ -3,6 +3,7 @@ package org.openapi4j.operation.validator.util.convert.style;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.MultiStringMap;
 import org.openapi4j.core.util.StringUtil;
 import org.openapi4j.operation.validator.util.convert.TypeConverter;
@@ -25,10 +26,15 @@ public class DeepObjectStyleConverter {
     return INSTANCE;
   }
 
-  public JsonNode convert(AbsParameter<?> param, String paramName, MultiStringMap<String> paramPairs, List<String> visitedParams) {
+  public JsonNode convert(OAIContext context,
+                          AbsParameter<?> param,
+                          String paramName,
+                          MultiStringMap<String> paramPairs,
+                          List<String> visitedParams) {
+
     ObjectNode result = JsonNodeFactory.instance.objectNode();
-    Schema propSchema = param.getSchema();
-    String type = propSchema.getSupposedType();
+    Schema propSchema = param.getSchema().getFlatSchema(context);
+    String type = propSchema.getSupposedType(context);
 
     for (Map.Entry<String, Collection<String>> valueEntry : paramPairs.entrySet()) {
       String propPath = valueEntry.getKey();
@@ -41,6 +47,7 @@ public class DeepObjectStyleConverter {
 
           // Convert value or get string representation
           JsonNode value = TypeConverter.instance().convertPrimitive(
+            context,
             propSchema.getProperty(propName),
             valueEntry.getValue().stream().findFirst().orElse(null));
 

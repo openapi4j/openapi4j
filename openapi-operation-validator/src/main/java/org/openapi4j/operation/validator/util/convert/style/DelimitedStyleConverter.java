@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.util.convert.style;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.MultiStringMap;
 import org.openapi4j.core.util.StringUtil;
 import org.openapi4j.parser.model.v3.AbsParameter;
@@ -17,7 +18,12 @@ class DelimitedStyleConverter extends FlatStyleConverter {
     this.delimiter = delimiter;
   }
 
-  public JsonNode convert(AbsParameter<?> param, String paramName, MultiStringMap<String> paramPairs, List<String> visitedParams) {
+  public JsonNode convert(OAIContext context,
+                          AbsParameter<?> param,
+                          String paramName,
+                          MultiStringMap<String> paramPairs,
+                          List<String> visitedParams) {
+
     Collection<String> paramValues = paramPairs.get(paramName);
 
     if (paramValues == null) {
@@ -32,12 +38,12 @@ class DelimitedStyleConverter extends FlatStyleConverter {
       ? paramValues.iterator().next()
       : String.join(delimiter, paramValues);
 
-    return convert(param, paramName, paramValue);
+    return convert(context, param, paramName, paramValue);
   }
 
   @Override
-  public JsonNode convert(AbsParameter<?> param, String paramName, String paramValue) {
-    if (!TYPE_ARRAY.equals(param.getSchema().getSupposedType())) {
+  public JsonNode convert(OAIContext context, AbsParameter<?> param, String paramName, String paramValue) {
+    if (!TYPE_ARRAY.equals(param.getSchema().getSupposedType(context))) {
       // delimited parameter cannot be an object or primitive
       return null;
     }
@@ -58,6 +64,6 @@ class DelimitedStyleConverter extends FlatStyleConverter {
 
     paramValues.put(paramName, arrayValues);
 
-    return convert(param, paramName, paramValues);
+    return convert(context, param, paramName, paramValues);
   }
 }

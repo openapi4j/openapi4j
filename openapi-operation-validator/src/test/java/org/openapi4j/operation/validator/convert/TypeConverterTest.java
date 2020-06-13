@@ -22,7 +22,7 @@ public class TypeConverterTest {
     // no schema
     assertEquals(
       JsonNodeFactory.instance.nullNode(),
-      TypeConverter.instance().convertObject(null, new HashMap<>()));
+      TypeConverter.instance().convertObject(null, null, new HashMap<>()));
 
     Schema schema = new Schema();
     schema.setType("object");
@@ -30,17 +30,17 @@ public class TypeConverterTest {
     // no properties
     assertEquals(
       JsonNodeFactory.instance.nullNode(),
-      TypeConverter.instance().convertObject(schema, new HashMap<>()));
+      TypeConverter.instance().convertObject(null, schema, new HashMap<>()));
     // empty properties
     schema.setProperties(new HashMap<>());
     assertEquals(
       JsonNodeFactory.instance.nullNode(),
-      TypeConverter.instance().convertObject(schema, new HashMap<>()));
+      TypeConverter.instance().convertObject(null, schema, new HashMap<>()));
     // no content
     schema.setProperties(new HashMap<>());
     assertEquals(
       JsonNodeFactory.instance.nullNode(),
-      TypeConverter.instance().convertObject(schema, null));
+      TypeConverter.instance().convertObject(null, schema, null));
 
     // object of object
     schema
@@ -54,7 +54,7 @@ public class TypeConverterTest {
 
     assertEquals(
       "{\"foo\":{\"bar\":1}}",
-      TypeConverter.instance().convertObject(schema, rootValue).toString());
+      TypeConverter.instance().convertObject(null, schema, rootValue).toString());
   }
 
   @Test
@@ -72,13 +72,13 @@ public class TypeConverterTest {
 
     assertEquals(
       "{\"foo\":{\"bar\":1}}",
-      TypeConverter.instance().convertObject(schema, foo).toString());
+      TypeConverter.instance().convertObject(null, schema, foo).toString());
 
     // wrong value
     foo.put("foo", "bar");
     assertEquals(
       "{\"foo\":null}",
-      TypeConverter.instance().convertObject(schema, foo).toString());
+      TypeConverter.instance().convertObject(null, schema, foo).toString());
   }
 
   @Test
@@ -86,26 +86,26 @@ public class TypeConverterTest {
     // no schema
     assertEquals(
       JsonNodeFactory.instance.nullNode(),
-      TypeConverter.instance().convertArray(null, new ArrayList<>()));
+      TypeConverter.instance().convertArray(null, null, new ArrayList<>()));
 
     Schema schema = new Schema();
 
     // no content
     assertEquals(
       JsonNodeFactory.instance.nullNode(),
-      TypeConverter.instance().convertArray(schema, null));
+      TypeConverter.instance().convertArray(null, schema, null));
 
     // empty content
     schema.setType("integer");
     assertEquals(
       JsonNodeFactory.instance.arrayNode(),
-      TypeConverter.instance().convertArray(schema, new ArrayList<>()));
+      TypeConverter.instance().convertArray(null, schema, new ArrayList<>()));
 
     // with values
     List<Object> values = new ArrayList<>();
     values.add(1);
     values.add(10);
-    JsonNode convertedNode = TypeConverter.instance().convertArray(schema, values);
+    JsonNode convertedNode = TypeConverter.instance().convertArray(null, schema, values);
     assertEquals(1, convertedNode.get(0).intValue());
     assertEquals(10, convertedNode.get(1).intValue());
   }
@@ -119,7 +119,7 @@ public class TypeConverterTest {
     values.add(1);
     values.add(10);
 
-    JsonNode convertedNode = TypeConverter.instance().convertArray(schema, values);
+    JsonNode convertedNode = TypeConverter.instance().convertArray(null, schema, values);
 
     assertEquals(1, convertedNode.get(0).intValue());
     assertEquals(10, convertedNode.get(1).intValue());
@@ -143,13 +143,13 @@ public class TypeConverterTest {
 
     assertEquals(
       "[{\"foo\":{\"bar\":1}}]",
-      TypeConverter.instance().convertArray(schema, value).toString());
+      TypeConverter.instance().convertArray(null, schema, value).toString());
 
     // wrong value
     foo.put("foo", "bar");
     assertEquals(
       "[{\"foo\":null}]",
-      TypeConverter.instance().convertArray(schema, value).toString());
+      TypeConverter.instance().convertArray(null, schema, value).toString());
   }
 
   @Test
@@ -168,20 +168,20 @@ public class TypeConverterTest {
 
     assertEquals(
       "[[1,2]]",
-      TypeConverter.instance().convertArray(schema, rootList).toString());
+      TypeConverter.instance().convertArray(null, schema, rootList).toString());
 
     // wrong value
     valueList.add("foo");
     assertEquals(
       "[[1,2,\"foo\"]]",
-      TypeConverter.instance().convertArray(schema, rootList).toString());
+      TypeConverter.instance().convertArray(null, schema, rootList).toString());
 
     // wrong sub list
     rootList.clear();
     rootList.add("foo");
     assertEquals(
       "[null]",
-      TypeConverter.instance().convertArray(schema, rootList).toString());
+      TypeConverter.instance().convertArray(null, schema, rootList).toString());
   }
 
   @Test
@@ -189,20 +189,20 @@ public class TypeConverterTest {
     // no schema
     assertEquals(
       JsonNodeFactory.instance.nullNode(),
-      TypeConverter.instance().convertPrimitive(null, new ArrayList<>()));
+      TypeConverter.instance().convertPrimitive(null, null, new ArrayList<>()));
 
     Schema schema = new Schema();
 
     // no content
     assertEquals(
       JsonNodeFactory.instance.nullNode(),
-      TypeConverter.instance().convertPrimitive(schema, null));
+      TypeConverter.instance().convertPrimitive(null, schema, null));
 
     // wrong content
     schema.setType("integer");
     assertEquals(
       JsonNodeFactory.instance.textNode("wrong"),
-      TypeConverter.instance().convertPrimitive(schema, "wrong"));
+      TypeConverter.instance().convertPrimitive(null, schema, "wrong"));
   }
 
   @Test
@@ -213,15 +213,15 @@ public class TypeConverterTest {
     // no format
     assertEquals(
       JsonNodeFactory.instance.numberNode(BigInteger.valueOf(1)),
-      TypeConverter.instance().convertPrimitive(schema, 1));
+      TypeConverter.instance().convertPrimitive(null, schema, 1));
     schema.setFormat("int32");
     assertEquals(
       JsonNodeFactory.instance.numberNode(Integer.valueOf(1)),
-      TypeConverter.instance().convertPrimitive(schema, 1));
+      TypeConverter.instance().convertPrimitive(null, schema, 1));
     schema.setFormat("int64");
     assertEquals(
       JsonNodeFactory.instance.numberNode(Long.valueOf(1)),
-      TypeConverter.instance().convertPrimitive(schema, 1));
+      TypeConverter.instance().convertPrimitive(null, schema, 1));
 
     // DECIMAL
     // no format
@@ -229,27 +229,27 @@ public class TypeConverterTest {
     schema.setFormat(null);
     assertEquals(
       JsonNodeFactory.instance.numberNode(BigDecimal.valueOf(1)),
-      TypeConverter.instance().convertPrimitive(schema, 1));
+      TypeConverter.instance().convertPrimitive(null, schema, 1));
     schema.setFormat("float");
     assertEquals(
       JsonNodeFactory.instance.numberNode(Float.valueOf(1)),
-      TypeConverter.instance().convertPrimitive(schema, 1));
+      TypeConverter.instance().convertPrimitive(null, schema, 1));
     schema.setFormat("double");
     assertEquals(
       JsonNodeFactory.instance.numberNode(Double.valueOf(1)),
-      TypeConverter.instance().convertPrimitive(schema, 1));
+      TypeConverter.instance().convertPrimitive(null, schema, 1));
 
     // BOOLEAN
     schema.setType("boolean");
     schema.setFormat(null);
     assertEquals(
       JsonNodeFactory.instance.booleanNode(true),
-      TypeConverter.instance().convertPrimitive(schema, "TrUe"));
+      TypeConverter.instance().convertPrimitive(null, schema, "TrUe"));
     assertEquals(
       JsonNodeFactory.instance.booleanNode(false),
-      TypeConverter.instance().convertPrimitive(schema, "fAlSe"));
+      TypeConverter.instance().convertPrimitive(null, schema, "fAlSe"));
     assertEquals(
       JsonNodeFactory.instance.textNode("pofkpfosdkfsd"),
-      TypeConverter.instance().convertPrimitive(schema, "pofkpfosdkfsd"));
+      TypeConverter.instance().convertPrimitive(null, schema, "pofkpfosdkfsd"));
   }
 }

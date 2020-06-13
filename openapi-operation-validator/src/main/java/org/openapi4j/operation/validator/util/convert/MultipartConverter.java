@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.type.MapType;
 import org.apache.commons.fileupload.*;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.IOUtil;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.parser.model.v3.EncodingProperty;
@@ -35,12 +36,12 @@ class MultipartConverter {
     return INSTANCE;
   }
 
-  JsonNode convert(final MediaType mediaType, final String body, final String rawContentType, final String encoding) throws IOException {
+  JsonNode convert(final OAIContext context, final MediaType mediaType, final String body, final String rawContentType, final String encoding) throws IOException {
     InputStream is = new ByteArrayInputStream(body.getBytes(encoding));
-    return convert(mediaType, is, rawContentType, encoding);
+    return convert(context, mediaType, is, rawContentType, encoding);
   }
 
-  JsonNode convert(final MediaType mediaType, final InputStream body, final String rawContentType, final String encoding) throws IOException {
+  JsonNode convert(final OAIContext context, final MediaType mediaType, final InputStream body, final String rawContentType, final String encoding) throws IOException {
     UploadContext requestContext = UPLOAD_CONTEXT_INSTANCE.create(body, rawContentType, encoding);
 
     ObjectNode result = JsonNodeFactory.instance.objectNode();
@@ -52,7 +53,7 @@ class MultipartConverter {
         String name = item.getFieldName();
 
         if (item.isFormField()) {
-          JsonNode convertedValue = mapValue(result, mediaType, item, name, encoding);
+          JsonNode convertedValue = mapValue(context, result, mediaType, item, name, encoding);
           if (convertedValue != null) {
             addValue(result, name, convertedValue);
           }
@@ -67,12 +68,12 @@ class MultipartConverter {
     return result;
   }
 
-  private JsonNode mapValue(ObjectNode result, MediaType mediaType, FileItemStream item, String name, String encoding) throws IOException {
+  private JsonNode mapValue(OAIContext context, ObjectNode result, MediaType mediaType, FileItemStream item, String name, String encoding) throws IOException {
     Schema propSchema = mediaType.getSchema().getProperty(name);
     String itemContentType = item.getContentType();
 
     if (itemContentType != null) {
-      final int checkResult = checkContentType(propSchema, mediaType.getEncoding(name), item);
+      final int checkResult = checkContentType(context, propSchema, mediaType.getEncoding(name), item);
       if (checkResult == -1) {
         // content type mismatch
         String content = IOUtil.toString(item.openStream(), encoding);
@@ -81,7 +82,7 @@ class MultipartConverter {
         // Process with the given content type
         String content = IOUtil.toString(item.openStream(), encoding);
         try {
-          return ContentConverter.convert(new MediaType().setSchema(propSchema), itemContentType, null, content);
+          return ContentConverter.convert(context, new MediaType().setSchema(propSchema), itemContentType, null, content);
         } catch (IOException ex) {
           // content type mismatch
           return JsonNodeFactory.instance.textNode(content);
@@ -90,7 +91,7 @@ class MultipartConverter {
     }
 
     // Process as JSON
-    return convertToJsonNode(result, name, propSchema, item, encoding);
+    return convertToJsonNode(context, result, name, propSchema, item, encoding);
   }
 
   /**
@@ -100,7 +101,7 @@ class MultipartConverter {
    * 0: if content should be processed with the given content type<br/>
    * 1: if the content should be processed as JSON.<br/>
    */
-  private int checkContentType(Schema propSchema, EncodingProperty encProperty, FileItemStream item) {
+  private int checkContentType(OAIContext context, Schema propSchema, EncodingProperty encProperty, FileItemStream item) {
     String itemContentType = item.getContentType();
     String specContentType = (encProperty != null && encProperty.getContentType() != null) ? encProperty.getContentType() : null;
 
@@ -110,16 +111,17 @@ class MultipartConverter {
     }
 
     // Cheking by default value
-    switch (propSchema.getSupposedType()) {
+    Schema flatSchema = propSchema.getFlatSchema(context);
+    switch (flatSchema.getSupposedType(context)) {
       case TYPE_OBJECT:
         // for object - application/json
         return itemContentType.equals("application/json") ? 1 : 0;
       case TYPE_ARRAY:
         // for array - defined based on the inner type
-        return checkContentType(propSchema.getItemsSchema(), encProperty, item);
+        return checkContentType(context, flatSchema.getItemsSchema(), encProperty, item);
       case TYPE_STRING:
         // for string with format being binary - application/octet-stream
-        if (FORMAT_BINARY.equals(propSchema.getFormat())) {
+        if (FORMAT_BINARY.equals(flatSchema.getFormat())) {
           return itemContentType.equals("application/octet-stream") ? 1 : 0;
         }
       default:
@@ -128,20 +130,21 @@ class MultipartConverter {
     }
   }
 
-  private JsonNode convertToJsonNode(final ObjectNode result,
+  private JsonNode convertToJsonNode(final OAIContext context,
+                                     final ObjectNode result,
                                      final String name,
                                      final Schema schema,
                                      final FileItemStream item,
                                      final String encoding) throws IOException {
 
-    switch (schema.getSupposedType()) {
+    switch (schema.getSupposedType(context)) {
       case TYPE_OBJECT:
         Map<String, Object> jsonContent = TreeUtil.json.readValue(item.openStream(), MAP_TYPE);
-        return TypeConverter.instance().convertObject(schema, jsonContent);
+        return TypeConverter.instance().convertObject(context, schema, jsonContent);
       case TYPE_ARRAY:
         // Special case for arrays
         // They can be referenced multiple times in different ways
-        JsonNode convertedValue = convertToJsonNode(result, name, schema.getItemsSchema(), item, encoding);
+        JsonNode convertedValue = convertToJsonNode(context, result, name, schema.getItemsSchema(), item, encoding);
         JsonNode previousValue = result.get(name);
         if ((previousValue instanceof ArrayNode)) {
           ((ArrayNode) previousValue).add(convertedValue);
@@ -150,7 +153,7 @@ class MultipartConverter {
         }
         return null;
       default:
-        return TypeConverter.instance().convertPrimitive(schema, IOUtil.toString(item.openStream(), encoding));
+        return TypeConverter.instance().convertPrimitive(context, schema, IOUtil.toString(item.openStream(), encoding));
     }
   }
 

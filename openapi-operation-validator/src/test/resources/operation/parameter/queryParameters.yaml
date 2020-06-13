@@ -201,12 +201,6 @@ components:
             $ref: '#/components/schemas/stringType'
           boolProp:
             $ref: '#/components/schemas/boolType'
-    stringType:
-      type: string
-    intType:
-      type: integer
-    boolType:
-      type: boolean
     content:
       in: query
       name: content
@@ -219,4 +213,10 @@ components:
                 type: string
               boolProp:
                 type: boolean
-
+  schemas:
+    stringType:
+      type: string
+    intType:
+      type: integer
+    boolType:
+      type: boolean

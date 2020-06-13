@@ -83,7 +83,7 @@ public class ContentConverterTest {
 
   private void check(MediaType mediaType, String contentType, String input, String expected, String description) throws Exception {
     // With string
-    JsonNode actual = ContentConverter.convert(mediaType, contentType, null, input);
+    JsonNode actual = ContentConverter.convert(api.getContext(), mediaType, contentType, null, input);
     JSONAssert.assertEquals(
       String.format("JSON matching test failed on test '%s'", description),
       expected,
@@ -91,7 +91,12 @@ public class ContentConverterTest {
       true);
 
     // With input stream
-    actual = ContentConverter.convert(mediaType, contentType, new ByteArrayInputStream(input != null ? input.getBytes() : "".getBytes()), null);
+    actual = ContentConverter.convert(
+      api.getContext(),
+      mediaType,
+      contentType,
+      new ByteArrayInputStream(input != null ? input.getBytes() : "".getBytes()), null);
+
     JSONAssert.assertEquals(
       String.format("JSON matching test failed on test '%s'", description),
       expected,
