@@ -104,7 +104,7 @@ public class ServletTest {
 
     Assert.assertEquals(
       JsonNodeFactory.instance.textNode("a body"),
-      rq.getBody().getContentAsNode(null, null));
+      rq.getBody().getContentAsNode(null, null, null));
   }
 
   private void checkCommons(Request rq, boolean checkCookies, boolean checkHeaders) {

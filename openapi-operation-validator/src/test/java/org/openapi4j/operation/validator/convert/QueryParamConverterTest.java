@@ -1,14 +1,20 @@
 package org.openapi4j.operation.validator.convert;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.junit.Test;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.operation.validator.OpenApi3Util;
+import org.openapi4j.operation.validator.model.Request;
+import org.openapi4j.operation.validator.model.impl.DefaultRequest;
 import org.openapi4j.operation.validator.util.convert.ParameterConverter;
-import org.openapi4j.parser.model.v3.AbsParameter;
-import org.openapi4j.parser.model.v3.OpenApi3;
-import org.openapi4j.parser.model.v3.Parameter;
+import org.openapi4j.operation.validator.validation.OperationValidator;
+import org.openapi4j.parser.OpenApi3Parser;
+import org.openapi4j.parser.model.v3.*;
+import org.openapi4j.schema.validator.ValidationData;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -156,15 +162,17 @@ public class QueryParamConverterTest {
     parameters.put(parameterName, api.getComponents().getParameters().get(parameterName));
 
     // Valid check
-    validChecker.accept(mapToNodes(parameters, validValue), parameterName);
+    validChecker.accept(mapToNodes(api.getContext(), parameters, validValue), parameterName);
     // Invalid check
-    invalidChecker.accept(mapToNodes(parameters, invalidValue), parameterName);
+    invalidChecker.accept(mapToNodes(api.getContext(), parameters, invalidValue), parameterName);
 
     // null
-    assertNull(mapToNodes(parameters, null).get(parameterName));
+    assertNull(mapToNodes(api.getContext(), parameters, null).get(parameterName));
   }
 
-  private Map<String, JsonNode> mapToNodes(Map<String, AbsParameter<Parameter>> parameters, String values) {
-    return ParameterConverter.queryToNode(parameters, values, "UTF-8");
+  private Map<String, JsonNode> mapToNodes(OAIContext context,
+                                           Map<String, AbsParameter<Parameter>> parameters,
+                                           String values) {
+    return ParameterConverter.queryToNode(context, parameters, values, "UTF-8");
   }
 }

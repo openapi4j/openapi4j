@@ -2,6 +2,7 @@ package org.openapi4j.operation.validator.util.convert.style;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.v3.AbsParameter;
 
 import java.util.ArrayList;
@@ -20,29 +21,30 @@ public class MatrixStyleConverter extends FlatStyleConverter {
 
   private static final MatrixStyleConverter INSTANCE = new MatrixStyleConverter();
 
-  private MatrixStyleConverter() {}
+  private MatrixStyleConverter() {
+  }
 
   public static MatrixStyleConverter instance() {
     return INSTANCE;
   }
 
   @Override
-  public JsonNode convert(AbsParameter<?> param, String paramName, String rawValue) {
+  public JsonNode convert(OAIContext context, AbsParameter<?> param, String paramName, String rawValue) {
     if (rawValue == null) {
       return null;
     }
 
     final Map<String, Object> paramValues;
-    paramValues = getValues(param, paramName, rawValue, param.isExplode() ? ";" : ",");
+    paramValues = getValues(context, param, paramName, rawValue, param.isExplode() ? ";" : ",");
 
-    return convert(param, paramName, paramValues);
+    return convert(context, param, paramName, paramValues);
   }
 
-  private Map<String, Object> getValues(AbsParameter<?> param, String paramName, String rawValue, String splitPattern) {
-    String type = param.getSchema().getSupposedType();
+  private Map<String, Object> getValues(OAIContext context, AbsParameter<?> param, String paramName, String rawValue, String splitPattern) {
+    String type = param.getSchema().getSupposedType(context);
 
     if (TYPE_OBJECT.equals(type)) {
-      return getObjectValues(param, paramName, rawValue, splitPattern);
+      return getObjectValues(context, param, paramName, rawValue, splitPattern);
     } else {
       Map<String, Object> values = new HashMap<>();
 
@@ -62,7 +64,12 @@ public class MatrixStyleConverter extends FlatStyleConverter {
     }
   }
 
-  private Map<String, Object> getObjectValues(AbsParameter<?> param, String paramName, String rawValue, String splitPattern) {
+  private Map<String, Object> getObjectValues(OAIContext context,
+                                              AbsParameter<?> param,
+                                              String paramName,
+                                              String rawValue,
+                                              String splitPattern) {
+
     Matcher matcher = PREFIXED_SEMICOLON_NAME_REGEX.matcher(rawValue);
 
     if (param.isExplode()) {
@@ -73,7 +80,7 @@ public class MatrixStyleConverter extends FlatStyleConverter {
       return values;
     } else {
       return (matcher.find())
-        ? getParameterValues(param, paramName, matcher.group(2), splitPattern)
+        ? getParameterValues(context, param, paramName, matcher.group(2), splitPattern)
         : null;
     }
   }

@@ -1,5 +1,6 @@
 package org.openapi4j.operation.validator.util.convert.style;
 
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.v3.AbsParameter;
 
 import java.util.Arrays;
@@ -11,20 +12,25 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 
 abstract class FlatStyleConverter implements StyleConverter {
-  Map<String, Object> getParameterValues(AbsParameter<?> param, String paramName, String rawValue, String splitPattern) {
+  Map<String, Object> getParameterValues(OAIContext context,
+                                         AbsParameter<?> param,
+                                         String paramName,
+                                         String rawValue,
+                                         String splitPattern) {
     if (rawValue == null) {
       return null;
     }
 
     Map<String, Object> values = new HashMap<>();
 
-    if (TYPE_OBJECT.equals(param.getSchema().getSupposedType())) {
+    param.setSchema(param.getSchema().getFlatSchema(context));
+    if (TYPE_OBJECT.equals(param.getSchema().getSupposedType(context))) {
       if (param.isExplode()) {
         handleExplodedObject(param, splitPattern, rawValue, values);
       } else {
         handleNotExplodedObject(param, splitPattern, rawValue, values);
       }
-    } else if (TYPE_ARRAY.equals(param.getSchema().getSupposedType())) {
+    } else if (TYPE_ARRAY.equals(param.getSchema().getSupposedType(context))) {
       values.put(paramName, Arrays.asList(rawValue.split(splitPattern)));
     } else {
       values.put(paramName, rawValue);

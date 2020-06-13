@@ -2,6 +2,7 @@ package org.openapi4j.operation.validator.model.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.operation.validator.util.convert.ContentConverter;
 import org.openapi4j.parser.model.v3.MediaType;
@@ -99,14 +100,15 @@ public class Body {
     return new Body(body);
   }
 
-  public JsonNode getContentAsNode(final MediaType mediaType,
+  public JsonNode getContentAsNode(final OAIContext context,
+                                   final MediaType mediaType,
                                    final String rawContentType) throws IOException {
     if (bodyNode != null) {
       return bodyNode;
     } else if (bodyObject != null) {
       return TreeUtil.json.convertValue(bodyObject, JsonNode.class);
     } else {
-      return ContentConverter.convert(mediaType, rawContentType, bodyIs, bodyStr);
+      return ContentConverter.convert(context, mediaType, rawContentType, bodyIs, bodyStr);
     }
   }
 }

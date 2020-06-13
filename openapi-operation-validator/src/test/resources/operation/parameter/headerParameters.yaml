@@ -60,63 +60,62 @@ components:
       name: simpleNotExplodedPrimitive
       required: true
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     simpleExplodedPrimitive:
       in: header
       name: simpleExplodedPrimitive
       required: true
       explode: true
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     simpleNotExplodedArray:
       in: header
       name: simpleNotExplodedArray
       required: true
       schema:
-        type: array
-        items:
-          type: integer
+        $ref: '#/components/schemas/intArrayType'
     simpleExplodedArray:
       in: header
       name: simpleExplodedArray
       required: true
       explode: true
       schema:
-        type: array
-        items:
-          type: integer
+        $ref: '#/components/schemas/intArrayType'
     simpleNotExplodedObject:
       in: header
       name: simpleNotExplodedObject
       required: true
       schema:
-        type: object
-        properties:
-          stringProp:
-            type: string
-          boolProp:
-            type: boolean
+        $ref: '#/components/schemas/objectType'
     simpleExplodedObject:
       in: header
       name: simpleExplodedObject
       required: true
       explode: true
       schema:
-        type: object
-        properties:
-          stringProp:
-            type: string
-          boolProp:
-            type: boolean
+        $ref: '#/components/schemas/objectType'
     content:
       in: query
       name: content
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              stringProp:
-                type: string
-              boolProp:
-                type: boolean
+            $ref: '#/components/schemas/objectType'
+  schemas:
+    objectType:
+      type: object
+      properties:
+        stringProp:
+          $ref: '#/components/schemas/stringType'
+        boolProp:
+          $ref: '#/components/schemas/boolType'
+    intArrayType:
+      type: array
+      items:
+        $ref: '#/components/schemas/intType'
+    stringType:
+      type: string
+    intType:
+      type: integer
+    boolType:
+      type: boolean

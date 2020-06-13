@@ -146,7 +146,7 @@ public class PathParamConverterTest {
   public void noPathPattern() {
     Map<String, AbsParameter<Parameter>> parameters = new HashMap<>();
 
-    Map<String, JsonNode> values = ParameterConverter.pathToNode(parameters, null, "/foo");
+    Map<String, JsonNode> values = ParameterConverter.pathToNode(null, parameters, null, "/foo");
     assertNotNull(values);
     assertTrue(values.isEmpty());
   }
@@ -160,6 +160,7 @@ public class PathParamConverterTest {
     Pattern pattern = PathResolver.instance().solve("/" + parameterName + "/{" + parameterName + "}");
 
     return ParameterConverter.pathToNode(
+      api.getContext(),
       parameters,
       pattern,
       "/" + parameterName + "/" + value);

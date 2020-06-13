@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.parser.model.v3.Schema;
 
 import java.math.BigDecimal;
@@ -23,7 +24,8 @@ public final class TypeConverter {
     return INSTANCE;
   }
 
-  public JsonNode convertObject(final Schema schema,
+  public JsonNode convertObject(final OAIContext context,
+                                final Schema schema,
                                 final Map<String, Object> content) {
 
     if (schema == null || content == null) {
@@ -46,16 +48,16 @@ public final class TypeConverter {
 
       Object value = content.get(entryKey);
 
-      Schema propSchema = entry.getValue();
-      switch (propSchema.getSupposedType()) {
+      Schema flatSchema = entry.getValue().getFlatSchema(context);
+      switch (flatSchema.getSupposedType(context)) {
         case TYPE_OBJECT:
-          convertedContent.set(entryKey, convertObject(propSchema, castMap(value)));
+          convertedContent.set(entryKey, convertObject(context, flatSchema, castMap(value)));
           break;
         case TYPE_ARRAY:
-          convertedContent.set(entryKey, convertArray(propSchema.getItemsSchema(), castList(value)));
+          convertedContent.set(entryKey, convertArray(context, flatSchema.getItemsSchema(), castList(value)));
           break;
         default:
-          convertedContent.set(entryKey, convertPrimitive(propSchema, value));
+          convertedContent.set(entryKey, convertPrimitive(context, flatSchema, value));
           break;
       }
     }
@@ -63,7 +65,8 @@ public final class TypeConverter {
     return convertedContent;
   }
 
-  public JsonNode convertArray(final Schema schema,
+  public JsonNode convertArray(final OAIContext context,
+                               final Schema schema,
                                final Collection<Object> content) {
 
     if (schema == null || content == null) {
@@ -72,20 +75,21 @@ public final class TypeConverter {
 
     ArrayNode convertedContent = JsonNodeFactory.instance.arrayNode();
 
-    switch (schema.getSupposedType()) {
+    Schema flatSchema = schema.getFlatSchema(context);
+    switch (flatSchema.getSupposedType(context)) {
       case TYPE_OBJECT:
         for (Object value : content) {
-          convertedContent.add(convertObject(schema, castMap(value)));
+          convertedContent.add(convertObject(context, flatSchema, castMap(value)));
         }
         break;
       case TYPE_ARRAY:
         for (Object value : content) {
-          convertedContent.add(convertArray(schema.getItemsSchema(), castList(value)));
+          convertedContent.add(convertArray(context, flatSchema.getItemsSchema(), castList(value)));
         }
         break;
       default:
         for (Object value : content) {
-          convertedContent.add(convertPrimitive(schema, value));
+          convertedContent.add(convertPrimitive(context, flatSchema, value));
         }
         break;
     }
@@ -93,27 +97,31 @@ public final class TypeConverter {
     return convertedContent;
   }
 
-  public JsonNode convertPrimitive(final Schema schema, Object value) {
+  public JsonNode convertPrimitive(final OAIContext context,
+                                   final Schema schema,
+                                   Object value) {
+
     if (schema == null || value == null) {
       return JsonNodeFactory.instance.nullNode();
     }
 
     try {
-      switch (schema.getSupposedType()) {
+      Schema flatSchema = schema.getFlatSchema(context);
+      switch (flatSchema.getSupposedType(context)) {
         case TYPE_BOOLEAN:
           return JsonNodeFactory.instance.booleanNode(parseBoolean(value.toString()));
         case TYPE_INTEGER:
-          if (FORMAT_INT32.equals(schema.getFormat())) {
+          if (FORMAT_INT32.equals(flatSchema.getFormat())) {
             return JsonNodeFactory.instance.numberNode(Integer.parseInt(value.toString()));
-          } else if (FORMAT_INT64.equals(schema.getFormat())) {
+          } else if (FORMAT_INT64.equals(flatSchema.getFormat())) {
             return JsonNodeFactory.instance.numberNode(Long.parseLong(value.toString()));
           } else {
             return JsonNodeFactory.instance.numberNode(new BigInteger(value.toString()));
           }
         case TYPE_NUMBER:
-          if (FORMAT_FLOAT.equals(schema.getFormat())) {
+          if (FORMAT_FLOAT.equals(flatSchema.getFormat())) {
             return JsonNodeFactory.instance.numberNode(Float.parseFloat(value.toString()));
-          } else if (FORMAT_DOUBLE.equals(schema.getFormat())) {
+          } else if (FORMAT_DOUBLE.equals(flatSchema.getFormat())) {
             return JsonNodeFactory.instance.numberNode(Double.parseDouble(value.toString()));
           } else {
             return JsonNodeFactory.instance.numberNode(new BigDecimal(value.toString()));

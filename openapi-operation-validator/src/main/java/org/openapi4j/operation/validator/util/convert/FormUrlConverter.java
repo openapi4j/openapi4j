@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.util.convert;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.IOUtil;
 import org.openapi4j.core.util.MultiStringMap;
 import org.openapi4j.core.util.StringUtil;
@@ -36,16 +37,17 @@ class FormUrlConverter {
 
   private final Map<MediaType, Map<String, AbsParameter<Parameter>>> mediaTypesCache = new HashMap<>();
 
-  JsonNode convert(final MediaType mediaType, final InputStream body, String encoding) throws IOException {
-    return convert(mediaType, IOUtil.toString(body, encoding), encoding);
+  JsonNode convert(final OAIContext context, final MediaType mediaType, final InputStream body, String encoding) throws IOException {
+    return convert(context, mediaType, IOUtil.toString(body, encoding), encoding);
   }
 
-  JsonNode convert(final MediaType mediaType, final String body, final String encoding) {
-    Map<String, JsonNode> params = convert(getParameters(mediaType), body, true, encoding);
+  JsonNode convert(final OAIContext context, final MediaType mediaType, final String body, final String encoding) {
+    Map<String, JsonNode> params = convert(context, getParameters(mediaType), body, true, encoding);
     return TreeUtil.json.valueToTree(params);
   }
 
-  Map<String, JsonNode> convert(final Map<String, AbsParameter<Parameter>> specParameters,
+  Map<String, JsonNode> convert(final OAIContext context,
+                                final Map<String, AbsParameter<Parameter>> specParameters,
                                 final String body,
                                 final boolean caseSensitive,
                                 final String encoding) {
@@ -68,19 +70,19 @@ class FormUrlConverter {
         final String style = specParam.getStyle();
 
         if (SPACE_DELIMITED.equals(style)) {
-          convertedValue = SpaceDelimitedStyleConverter.instance().convert(specParam, specParamName, paramPairs, visitedParams);
+          convertedValue = SpaceDelimitedStyleConverter.instance().convert(context, specParam, specParamName, paramPairs, visitedParams);
         } else if (PIPE_DELIMITED.equals(style)) {
-          convertedValue = PipeDelimitedStyleConverter.instance().convert(specParam, specParamName, paramPairs, visitedParams);
+          convertedValue = PipeDelimitedStyleConverter.instance().convert(context, specParam, specParamName, paramPairs, visitedParams);
         } else if (DEEP_OBJECT.equals(style)) {
-          convertedValue = DeepObjectStyleConverter.instance().convert(specParam, specParamName, paramPairs, visitedParams);
+          convertedValue = DeepObjectStyleConverter.instance().convert(context, specParam, specParamName, paramPairs, visitedParams);
         } else { // form is the default
           if (specParam.getExplode() == null) { // explode true is default
             specParam.setExplode(true);
           }
-          convertedValue = FormStyleConverter.instance().convert(specParam, specParamName, paramPairs, visitedParams);
+          convertedValue = FormStyleConverter.instance().convert(context, specParam, specParamName, paramPairs, visitedParams);
         }
       } else {
-        convertedValue = getValueFromContentType(specParam.getContentMediaTypes(), specParamName, paramPairs, visitedParams);
+        convertedValue = getValueFromContentType(context, specParam.getContentMediaTypes(), specParamName, paramPairs, visitedParams);
       }
 
       if (convertedValue != null) {
@@ -99,6 +101,7 @@ class FormUrlConverter {
       Collection<String> values = valueEntry.getValue();
 
       JsonNode value = TypeConverter.instance().convertPrimitive(
+        context,
         defaultSchema,
         values.iterator().next());
 
@@ -138,7 +141,8 @@ class FormUrlConverter {
     }
   }
 
-  private JsonNode getValueFromContentType(final Map<String, MediaType> mediaTypes,
+  private JsonNode getValueFromContentType(final OAIContext context,
+                                           final Map<String, MediaType> mediaTypes,
                                            final String paramName,
                                            final MultiStringMap<String> paramPairs,
                                            final List<String> visitedParams) {
@@ -158,6 +162,7 @@ class FormUrlConverter {
 
         try {
           return ContentConverter.convert(
+            context,
             mediaType.getValue(),
             mediaType.getKey(),
             null,

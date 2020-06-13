@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 import org.junit.Test;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.operation.validator.OpenApi3Util;
 import org.openapi4j.operation.validator.util.convert.ParameterConverter;
 import org.openapi4j.parser.model.v3.AbsParameter;
@@ -57,24 +58,27 @@ public class CookieParamConverterTest {
     // Valid check
     Map<String, String> values = new HashMap<>();
     values.put(parameterName, validValue);
-    validChecker.accept(mapToNodes(parameters, values), parameterName);
+    validChecker.accept(mapToNodes(api.getContext(), parameters, values), parameterName);
     // Invalid check
     values.put(parameterName, invalidValue);
-    invalidChecker.accept(mapToNodes(parameters, values), parameterName);
+    invalidChecker.accept(mapToNodes(api.getContext(), parameters, values), parameterName);
 
     // null value
     values.put(parameterName, null);
-    assertEquals(JsonNodeFactory.instance.nullNode(), mapToNodes(parameters, values).get(parameterName));
+    assertEquals(JsonNodeFactory.instance.nullNode(), mapToNodes(api.getContext(), parameters, values).get(parameterName));
 
     // unlinked param/value
     // empty map
     values.clear();
-    assertNull(mapToNodes(parameters, values).get(parameterName));
+    assertNull(mapToNodes(api.getContext(), parameters, values).get(parameterName));
     // null map
-    assertNull(mapToNodes(parameters, null).get(parameterName));
+    assertNull(mapToNodes(api.getContext(), parameters, null).get(parameterName));
   }
 
-  private Map<String, JsonNode> mapToNodes(Map<String, AbsParameter<Parameter>> parameters, Map<String, String> values) {
-    return ParameterConverter.cookiesToNode(parameters, values);
+  private Map<String, JsonNode> mapToNodes(OAIContext context,
+                                           Map<String, AbsParameter<Parameter>> parameters,
+                                           Map<String, String> values) {
+
+    return ParameterConverter.cookiesToNode(context, parameters, values);
   }
 }

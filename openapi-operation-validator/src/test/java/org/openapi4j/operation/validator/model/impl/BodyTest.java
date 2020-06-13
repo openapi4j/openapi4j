@@ -74,6 +74,6 @@ public class BodyTest {
 
     assertEquals(
       values,
-      body.getContentAsNode(new MediaType().setSchema(schema), "application/json"));
+      body.getContentAsNode(null, new MediaType().setSchema(schema), "application/json"));
   }
 }

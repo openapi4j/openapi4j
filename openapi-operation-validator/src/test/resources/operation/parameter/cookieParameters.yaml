@@ -48,43 +48,49 @@ components:
       required: true
       explode: false
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     formExplodedPrimitive:
       in: cookie
       name: formExplodedPrimitive
       required: true
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     formNotExplodedArray:
       in: cookie
       name: formNotExplodedArray
       required: true
       explode: false
       schema:
-        type: array
-        items:
-          type: integer
+        $ref: '#/components/schemas/intArrayType'
     formNotExplodedObject:
       in: cookie
       name: formNotExplodedObject
       required: true
       explode: false
       schema:
-        type: object
-        properties:
-          stringProp:
-            type: string
-          boolProp:
-            type: boolean
+        $ref: '#/components/schemas/objectType'
     content:
       in: cookie
       name: content
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              stringProp:
-                type: string
-              boolProp:
-                type: boolean
+            $ref: '#/components/schemas/objectType'
+  schemas:
+    objectType:
+      type: object
+      properties:
+        stringProp:
+          $ref: '#/components/schemas/stringType'
+        boolProp:
+          $ref: '#/components/schemas/boolType'
+    intArrayType:
+      type: array
+      items:
+        $ref: '#/components/schemas/intType'
+    stringType:
+      type: string
+    intType:
+      type: integer
+    boolType:
+      type: boolean

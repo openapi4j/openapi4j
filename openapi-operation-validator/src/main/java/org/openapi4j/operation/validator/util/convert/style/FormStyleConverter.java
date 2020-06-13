@@ -3,6 +3,7 @@ package org.openapi4j.operation.validator.util.convert.style;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.util.MultiStringMap;
 import org.openapi4j.core.util.StringUtil;
 import org.openapi4j.operation.validator.util.convert.TypeConverter;
@@ -17,34 +18,41 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_OBJECT;
 public class FormStyleConverter {
   private static final FormStyleConverter INSTANCE = new FormStyleConverter();
 
-  private FormStyleConverter() {}
+  private FormStyleConverter() {
+  }
 
   public static FormStyleConverter instance() {
     return INSTANCE;
   }
 
-  public JsonNode convert(AbsParameter<?> param, String paramName, MultiStringMap<String> paramPairs, List<String> visitedParams) {
+  public JsonNode convert(OAIContext context,
+                          AbsParameter<?> param,
+                          String paramName,
+                          MultiStringMap<String> paramPairs,
+                          List<String> visitedParams) {
+
     if (paramPairs == null) {
       return null;
     }
 
     JsonNode result;
 
-    String type = param.getSchema().getSupposedType();
+    param.setSchema(param.getSchema().getFlatSchema(context));
+    String type = param.getSchema().getSupposedType(context);
     if (TYPE_ARRAY.equals(type)) {
-      result = getArrayValues(param, paramPairs.get(paramName));
+      result = getArrayValues(context, param, paramPairs.get(paramName));
       visitedParams.add(paramName);
     } else if (TYPE_OBJECT.equals(type)) {
-      result = getObjectValues(param, paramName, paramPairs, visitedParams);
+      result = getObjectValues(context, param, paramName, paramPairs, visitedParams);
     } else {
-      result = getPrimitiveValue(param, paramPairs.get(paramName));
+      result = getPrimitiveValue(context, param, paramPairs.get(paramName));
       visitedParams.add(paramName);
     }
 
     return result;
   }
 
-  private JsonNode getArrayValues(AbsParameter<?> param, Collection<String> paramValues) {
+  private JsonNode getArrayValues(OAIContext context, AbsParameter<?> param, Collection<String> paramValues) {
     if (paramValues == null) {
       return null;
     }
@@ -58,18 +66,18 @@ public class FormStyleConverter {
       }
     }
 
-    return TypeConverter.instance().convertArray(param.getSchema().getItemsSchema(), values);
+    return TypeConverter.instance().convertArray(context, param.getSchema().getItemsSchema(), values);
   }
 
-  private JsonNode getObjectValues(AbsParameter<?> param, String paramName, MultiStringMap<String> values, List<String> visitedParams) {
+  private JsonNode getObjectValues(OAIContext context, AbsParameter<?> param, String paramName, MultiStringMap<String> values, List<String> visitedParams) {
     if (param.isExplode()) {
-      return getExplodedObjectValues(param, values, visitedParams);
+      return getExplodedObjectValues(context, param, values, visitedParams);
     } else {
-      return getNotExplodedObjectValues(param, paramName, values, visitedParams);
+      return getNotExplodedObjectValues(context, param, paramName, values, visitedParams);
     }
   }
 
-  private JsonNode getExplodedObjectValues(AbsParameter<?> param, MultiStringMap<String> values, List<String> visitedParams) {
+  private JsonNode getExplodedObjectValues(OAIContext context, AbsParameter<?> param, MultiStringMap<String> values, List<String> visitedParams) {
     ObjectNode result = JsonNodeFactory.instance.objectNode();
 
     for (Map.Entry<String, Schema> propEntry : param.getSchema().getProperties().entrySet()) {
@@ -78,6 +86,7 @@ public class FormStyleConverter {
 
       if (paramValues != null) {
         JsonNode value = TypeConverter.instance().convertPrimitive(
+          context,
           propEntry.getValue(),
           paramValues.stream().findFirst().orElse(null));
 
@@ -90,7 +99,7 @@ public class FormStyleConverter {
     return result.size() != 0 ? result : null;
   }
 
-  private JsonNode getNotExplodedObjectValues(AbsParameter<?> param, String paramName, MultiStringMap<String> values, List<String> visitedParams) {
+  private JsonNode getNotExplodedObjectValues(OAIContext context, AbsParameter<?> param, String paramName, MultiStringMap<String> values, List<String> visitedParams) {
     Collection<String> paramValues = values.get(paramName);
     visitedParams.add(paramName);
 
@@ -112,17 +121,20 @@ public class FormStyleConverter {
       String propValue = arrayValues.get(idx++);
       Schema propSchema = param.getSchema().getProperty(propName);
 
-      result.set(propName, TypeConverter.instance().convertPrimitive(propSchema, propValue));
+      result.set(propName, TypeConverter.instance().convertPrimitive(context, propSchema, propValue));
     }
 
     return result;
   }
 
-  private JsonNode getPrimitiveValue(AbsParameter<?> param, Collection<String> paramValues) {
+  private JsonNode getPrimitiveValue(OAIContext context, AbsParameter<?> param, Collection<String> paramValues) {
     if (paramValues == null) {
       return null;
     }
 
-    return TypeConverter.instance().convertPrimitive(param.getSchema(), paramValues.stream().findFirst().orElse(null));
+    return TypeConverter.instance().convertPrimitive(
+      context,
+      param.getSchema(),
+      paramValues.stream().findFirst().orElse(null));
   }
 }

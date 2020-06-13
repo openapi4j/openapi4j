@@ -144,14 +144,14 @@ components:
       name: simpleNotExplodedPrimitive
       required: true
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     simpleExplodedPrimitive:
       in: path
       name: simpleExplodedPrimitive
       required: true
       explode: true
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     simpleNotExplodedArray:
       in: path
       name: simpleNotExplodedArray
@@ -159,7 +159,7 @@ components:
       schema:
         type: array
         items:
-          type: integer
+          $ref: '#/components/schemas/intType'
     simpleExplodedArray:
       in: path
       name: simpleExplodedArray
@@ -168,7 +168,7 @@ components:
       schema:
         type: array
         items:
-          type: integer
+          $ref: '#/components/schemas/intType'
     simpleNotExplodedObject:
       in: path
       name: simpleNotExplodedObject
@@ -177,9 +177,9 @@ components:
         type: object
         properties:
           stringProp:
-            type: string
+            $ref: '#/components/schemas/stringType'
           boolProp:
-            type: boolean
+            $ref: '#/components/schemas/boolType'
     simpleExplodedObject:
       in: path
       name: simpleExplodedObject
@@ -189,9 +189,9 @@ components:
         type: object
         properties:
           stringProp:
-            type: string
+            $ref: '#/components/schemas/stringType'
           boolProp:
-            type: boolean
+            $ref: '#/components/schemas/boolType'
     # LABEL
     labelNotExplodedPrimitive:
       in: path
@@ -199,7 +199,7 @@ components:
       required: true
       style: label
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     labelExplodedPrimitive:
       in: path
       name: labelExplodedPrimitive
@@ -207,16 +207,14 @@ components:
       style: label
       explode: true
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     labelNotExplodedArray:
       in: path
       name: labelNotExplodedArray
       required: true
       style: label
       schema:
-        type: array
-        items:
-          type: integer
+        $ref: '#/components/schemas/intArrayType'
     labelExplodedArray:
       in: path
       name: labelExplodedArray
@@ -224,21 +222,14 @@ components:
       style: label
       explode: true
       schema:
-        type: array
-        items:
-          type: integer
+        $ref: '#/components/schemas/intArrayType'
     labelNotExplodedObject:
       in: path
       name: labelNotExplodedObject
       required: true
       style: label
       schema:
-        type: object
-        properties:
-          stringProp:
-            type: string
-          boolProp:
-            type: boolean
+        $ref: '#/components/schemas/objectType'
     labelExplodedObject:
       in: path
       name: labelExplodedObject
@@ -246,12 +237,7 @@ components:
       style: label
       explode: true
       schema:
-        type: object
-        properties:
-          stringProp:
-            type: string
-          boolProp:
-            type: boolean
+        $ref: '#/components/schemas/objectType'
     # MATRIX
     matrixNotExplodedPrimitive:
       in: path
@@ -259,7 +245,7 @@ components:
       required: true
       style: matrix
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     matrixExplodedPrimitive:
       in: path
       name: matrixExplodedPrimitive
@@ -267,16 +253,14 @@ components:
       style: matrix
       explode: true
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     matrixNotExplodedArray:
       in: path
       name: matrixNotExplodedArray
       required: true
       style: matrix
       schema:
-        type: array
-        items:
-          type: integer
+        $ref: '#/components/schemas/intArrayType'
     matrixExplodedArray:
       in: path
       name: matrixExplodedArray
@@ -284,21 +268,14 @@ components:
       style: matrix
       explode: true
       schema:
-        type: array
-        items:
-          type: integer
+        $ref: '#/components/schemas/intArrayType'
     matrixNotExplodedObject:
       in: path
       name: matrixNotExplodedObject
       required: true
       style: matrix
       schema:
-        type: object
-        properties:
-          stringProp:
-            type: string
-          boolProp:
-            type: boolean
+        $ref: '#/components/schemas/objectType'
     matrixExplodedObject:
       in: path
       name: matrixExplodedObject
@@ -306,21 +283,29 @@ components:
       style: matrix
       explode: true
       schema:
-        type: object
-        properties:
-          stringProp:
-            type: string
-          boolProp:
-            type: boolean
+        $ref: '#/components/schemas/objectType'
     content:
       in: query
       name: content
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              stringProp:
-                type: string
-              boolProp:
-                type: boolean
+            $ref: '#/components/schemas/objectType'
+  schemas:
+    objectType:
+      type: object
+      properties:
+        stringProp:
+          $ref: '#/components/schemas/stringType'
+        boolProp:
+          $ref: '#/components/schemas/boolType'
+    intArrayType:
+      type: array
+      items:
+        $ref: '#/components/schemas/intType'
+    stringType:
+      type: string
+    intType:
+      type: integer
+    boolType:
+      type: boolean
