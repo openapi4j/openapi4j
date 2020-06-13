@@ -51,15 +51,15 @@ Notes :
 | Swagger           | 2.0.16        | 283,25 ms     | 10            | excl.   |
 | OpenApi4j         | 0.5           | 364,69 ms     | 10            | excl.   |
 
-</p>
-</details>
-
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
 | Swagger           | 2.0.18        | 502,30 ms     | 1             | 1       |
 | OpenApi4j         | 0.7           | 248,57 ms     | 1             | 2,02    |
 | Swagger           | 2.0.18        | 325,65 ms     | 10            | excl.   |
 | OpenApi4j         | 0.7           | 461,44 ms     | 10            | excl.   |
+
+</p>
+</details>
 
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
@@ -71,9 +71,16 @@ Notes :
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
 | Swagger           | 2.0.19        | 485,08 ms     | 1             | 1       |
-| OpenApi4j         | 0.10          | 255,35 ms     | 1             | 1,9     |
+| OpenApi4j         | 0.9           | 255,35 ms     | 1             | 1,9     |
 | Swagger           | 2.0.19        | 294,37 ms     | 10            | excl.   |
-| OpenApi4j         | 0.10          | 306,91 ms     | 10            | excl.   |
+| OpenApi4j         | 0.9           | 306,91 ms     | 10            | excl.   |
+
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| Swagger           | 2.0.20        | 471,49 ms     | 1             | 1       |
+| OpenApi4j         | 1.0.1         | 269,09 ms     | 1             | 1,75    |
+| Swagger           | 2.0.20        | 312,00 ms     | 10            | excl.   |
+| OpenApi4j         | 1.0.1         | 366,51 ms     | 10            | excl.   |
 
 ## Schema reports
 
@@ -116,8 +123,6 @@ Notes :
 | OpenApi4j         | 0.5           | 186,83 ms     | 1000          | 6,13    |
 | Justify           | 1.1.0         | 1145,21 ms    | 1000          | 1       |
 | JsonTools         | 2.2.11        | 960,87 ms     | 100           | excl.   |
-</p>
-</details>
 
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
@@ -125,6 +130,9 @@ Notes :
 | OpenApi4j         | 0.7           | 214,22 ms     | 1000          | 5,19    |
 | Justify           | 1.1.0         | 1111,41 ms    | 1000          | 1       |
 | JsonTools         | 2.2.11        | 932,68 ms     | 100           | excl.   |
+</p>
+</details>
+
 
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
@@ -136,9 +144,16 @@ Notes :
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
 | Networknt         | 1.0.38        | 420,63 ms     | 1000          | 3,23    |
-| OpenApi4j         | 0.10          | 187,90 ms     | 1000          | 7,24    |
+| OpenApi4j         | 0.9           | 187,90 ms     | 1000          | 7,24    |
 | Justify           | 1.1.0         | 1360,72 ms    | 1000          | 1       |
 | JsonTools         | 2.2.11        | 1338,89 ms    | 100           | excl.   |
+
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| Networknt         | 1.0.38        | 433,66 ms     | 1000          | 3,17    |
+| OpenApi4j         | 1.0.1         | 194,54 ms     | 1000          | 7,06    |
+| Justify           | 1.1.0         | 1374,02 ms    | 1000          | 1       |
+| JsonTools         | 2.2.11        | 1309,52 ms    | 100           | excl.   |
 
 ## Operation reports
 * Replaying multiple times this process shows much shorter time values, but it's not the point here.
@@ -178,8 +193,6 @@ We stick with the first showed values for version comparison.
 | form-data         | 0.5           | 1024,62 ms    | 10000         | excl.   |
 | multipart/mixed   | 0.5           | 729,33 ms     | 10000         | excl.   |
 | application/xml   | 0.5           | 493,96 ms     | 10000         | excl.   |
-</p>
-</details>
 
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
@@ -188,6 +201,9 @@ We stick with the first showed values for version comparison.
 | form-data         | 0.7           | 1065,83 ms    | 10000         | excl.   |
 | multipart/mixed   | 0.7           | 629,08 ms     | 10000         | excl.   |
 | application/xml   | 0.7           | 636,69 ms     | 10000         | excl.   |
+
+</p>
+</details>
 
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
@@ -199,11 +215,19 @@ We stick with the first showed values for version comparison.
 
 | Library           | Version       | Time          | Iterations    | Gain    |
 |-------------------|---------------|---------------|---------------|---------|
-| application/json  | 0.10          | 362,15 ms     | 10000         | excl.   |
-| form-urlencoded   | 0.10          | 440,77 ms     | 10000         | excl.   |
-| form-data         | 0.10          | 1152,77 ms    | 10000         | excl.   |
-| multipart/mixed   | 0.10          | 664,09 ms     | 10000         | excl.   |
-| application/xml   | 0.10          | 537,20 ms     | 10000         | excl.   |
+| application/json  | 0.9           | 362,15 ms     | 10000         | excl.   |
+| form-urlencoded   | 0.9           | 440,77 ms     | 10000         | excl.   |
+| form-data         | 0.9           | 1152,77 ms    | 10000         | excl.   |
+| multipart/mixed   | 0.9           | 664,09 ms     | 10000         | excl.   |
+| application/xml   | 0.9           | 537,20 ms     | 10000         | excl.   |
+
+| Library           | Version       | Time          | Iterations    | Gain    |
+|-------------------|---------------|---------------|---------------|---------|
+| application/json  | 1.0.1         | 317,47 ms     | 10000         | excl.   |
+| form-urlencoded   | 1.0.1         | 422,31 ms     | 10000         | excl.   |
+| form-data         | 1.0.1         | 1428,29 ms    | 10000         | excl.   |
+| multipart/mixed   | 1.0.1         | 743,70 ms     | 10000         | excl.   |
+| application/xml   | 1.0.1         | 617,66 ms     | 10000         | excl.   |
 
 ## Usage
 
