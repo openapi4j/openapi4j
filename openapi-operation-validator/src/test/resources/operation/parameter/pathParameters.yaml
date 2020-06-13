@@ -214,9 +214,7 @@ components:
       required: true
       style: label
       schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/intType'
+        $ref: '#/components/schemas/intArrayType'
     labelExplodedArray:
       in: path
       name: labelExplodedArray
@@ -224,21 +222,14 @@ components:
       style: label
       explode: true
       schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/intType'
+        $ref: '#/components/schemas/intArrayType'
     labelNotExplodedObject:
       in: path
       name: labelNotExplodedObject
       required: true
       style: label
       schema:
-        type: object
-        properties:
-          stringProp:
-            $ref: '#/components/schemas/stringType'
-          boolProp:
-            $ref: '#/components/schemas/boolType'
+        $ref: '#/components/schemas/objectType'
     labelExplodedObject:
       in: path
       name: labelExplodedObject
@@ -246,12 +237,7 @@ components:
       style: label
       explode: true
       schema:
-        type: object
-        properties:
-          stringProp:
-            $ref: '#/components/schemas/stringType'
-          boolProp:
-            $ref: '#/components/schemas/boolType'
+        $ref: '#/components/schemas/objectType'
     # MATRIX
     matrixNotExplodedPrimitive:
       in: path
@@ -274,9 +260,7 @@ components:
       required: true
       style: matrix
       schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/intType'
+        $ref: '#/components/schemas/intArrayType'
     matrixExplodedArray:
       in: path
       name: matrixExplodedArray
@@ -284,21 +268,14 @@ components:
       style: matrix
       explode: true
       schema:
-        type: array
-        items:
-          $ref: '#/components/schemas/intType'
+        $ref: '#/components/schemas/intArrayType'
     matrixNotExplodedObject:
       in: path
       name: matrixNotExplodedObject
       required: true
       style: matrix
       schema:
-        type: object
-        properties:
-          stringProp:
-            $ref: '#/components/schemas/stringType'
-          boolProp:
-            $ref: '#/components/schemas/boolType'
+        $ref: '#/components/schemas/objectType'
     matrixExplodedObject:
       in: path
       name: matrixExplodedObject
@@ -306,25 +283,26 @@ components:
       style: matrix
       explode: true
       schema:
-        type: object
-        properties:
-          stringProp:
-            $ref: '#/components/schemas/stringType'
-          boolProp:
-            $ref: '#/components/schemas/boolType'
+        $ref: '#/components/schemas/objectType'
     content:
       in: query
       name: content
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              stringProp:
-                type: string
-              boolProp:
-                type: boolean
+            $ref: '#/components/schemas/objectType'
   schemas:
+    objectType:
+      type: object
+      properties:
+        stringProp:
+          $ref: '#/components/schemas/stringType'
+        boolProp:
+          $ref: '#/components/schemas/boolType'
+    intArrayType:
+      type: array
+      items:
+        $ref: '#/components/schemas/intType'
     stringType:
       type: string
     intType:
