@@ -60,14 +60,14 @@ components:
       name: simpleNotExplodedPrimitive
       required: true
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     simpleExplodedPrimitive:
       in: header
       name: simpleExplodedPrimitive
       required: true
       explode: true
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     simpleNotExplodedArray:
       in: header
       name: simpleNotExplodedArray
@@ -75,7 +75,7 @@ components:
       schema:
         type: array
         items:
-          type: integer
+          $ref: '#/components/schemas/intType'
     simpleExplodedArray:
       in: header
       name: simpleExplodedArray
@@ -84,7 +84,7 @@ components:
       schema:
         type: array
         items:
-          type: integer
+          $ref: '#/components/schemas/intType'
     simpleNotExplodedObject:
       in: header
       name: simpleNotExplodedObject
@@ -93,9 +93,9 @@ components:
         type: object
         properties:
           stringProp:
-            type: string
+            $ref: '#/components/schemas/stringType'
           boolProp:
-            type: boolean
+            $ref: '#/components/schemas/boolType'
     simpleExplodedObject:
       in: header
       name: simpleExplodedObject
@@ -105,9 +105,15 @@ components:
         type: object
         properties:
           stringProp:
-            type: string
+            $ref: '#/components/schemas/stringType'
           boolProp:
-            type: boolean
+            $ref: '#/components/schemas/boolType'
+    stringType:
+      type: string
+    intType:
+      type: integer
+    boolType:
+      type: boolean
     content:
       in: query
       name: content

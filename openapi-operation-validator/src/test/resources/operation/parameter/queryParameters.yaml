@@ -100,13 +100,13 @@ components:
       required: true
       explode: false
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     formExplodedPrimitive:
       in: query
       name: formExplodedPrimitive
       required: true
       schema:
-        type: integer
+        $ref: '#/components/schemas/intType'
     formNotExplodedArray:
       in: query
       name: formNotExplodedArray
@@ -115,7 +115,7 @@ components:
       schema:
         type: array
         items:
-          type: integer
+          $ref: '#/components/schemas/intType'
     formExplodedArray:
       in: query
       name: formExplodedArray
@@ -123,7 +123,7 @@ components:
       schema:
         type: array
         items:
-          type: integer
+          $ref: '#/components/schemas/intType'
     formNotExplodedObject:
       in: query
       name: formNotExplodedObject
@@ -133,9 +133,9 @@ components:
         type: object
         properties:
           stringProp:
-            type: string
+            $ref: '#/components/schemas/stringType'
           boolProp:
-            type: boolean
+            $ref: '#/components/schemas/boolType'
     formExplodedObject:
       in: query
       name: formExplodedObject
@@ -144,9 +144,9 @@ components:
         type: object
         properties:
           stringProp:
-            type: string
+            $ref: '#/components/schemas/stringType'
           boolProp:
-            type: boolean
+            $ref: '#/components/schemas/boolType'
     # SPACE DELIMITED
     spaceNotExplodedArray:
       in: query
@@ -156,7 +156,7 @@ components:
       schema:
         type: array
         items:
-          type: integer
+          $ref: '#/components/schemas/intType'
     spaceExplodedArray:
       in: query
       name: spaceExplodedArray
@@ -166,7 +166,7 @@ components:
       schema:
         type: array
         items:
-          type: integer
+          $ref: '#/components/schemas/intType'
     # PIPE DELIMITED
     pipeNotExplodedArray:
       in: query
@@ -176,7 +176,7 @@ components:
       schema:
         type: array
         items:
-          type: integer
+          $ref: '#/components/schemas/intType'
     pipeExplodedArray:
       in: query
       name: pipeExplodedArray
@@ -186,7 +186,7 @@ components:
       schema:
         type: array
         items:
-          type: integer
+          $ref: '#/components/schemas/intType'
     # DEEP OBJECT
     deepExplodedObject:
       in: query
@@ -198,9 +198,15 @@ components:
         type: object
         properties:
           stringProp:
-            type: string
+            $ref: '#/components/schemas/stringType'
           boolProp:
-            type: boolean
+            $ref: '#/components/schemas/boolType'
+    stringType:
+      type: string
+    intType:
+      type: integer
+    boolType:
+      type: boolean
     content:
       in: query
       name: content
