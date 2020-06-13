@@ -6,7 +6,7 @@
 
 **Fixed bugs:**
 
-- Stackoverflow when reading OpenAPI spec with recursive data structure [\#106](https://github.com/openapi4j/openapi4j/issues/106)
+- Operation Validator - regression when converting content with nested $refs [\#109](https://github.com/openapi4j/openapi4j/pull/109)
 
 ## [1.0](https://github.com/openapi4j/openapi4j/tree/0.9) (2020-06-04)
 
