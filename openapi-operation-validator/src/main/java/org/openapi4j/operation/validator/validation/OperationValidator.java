@@ -2,7 +2,6 @@ package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.openapi4j.core.exception.DecodeException;
-import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
