@@ -3,17 +3,6 @@
 Implementation of the [Schema Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#schemaObject) specification for Open API 3.
 As a reminder, Schema Object is a subset of [JSON schema draft #00](https://tools.ietf.org/html/draft-wright-json-schema-validation-00) with additions.
 
-## Features
-
-This module allows the validation of your data against a given schema.
-The aim of this module is accuracy and compliancy with the specifications.
-
-That said, there's options to enrich to current definitions with the `ValidationContext` object :
-* ADDITIONAL_PROPS_RESTRICT : By default, Schema Object can have additional properties. This option let's you invert the behaviour.
-* You can override keywords and add your own validators. More on this with [extensions](#extensions).
-
-Credits to [JSON-Schema-Test-Suite](https://github.com/json-schema-org/JSON-Schema-Test-Suite) where the majority of tests are coming from.
-
 ## Documentation
 
 [Documentation is available here](https://www.openapi4j.org/schema-validator.html)
