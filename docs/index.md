@@ -80,7 +80,8 @@ See related projects for limitations and issues.
 
 Reporting issues, making comments, ... Any help is welcome !  
 
-We accept Pull Requests via GitHub. There are some guidelines which will make applying PRs easier for us :  
+We accept Pull Requests via GitHub.  
+There are some guidelines which will make applying PRs easier for us :  
 
 * Respect the code style and indentation. .editorconfig file is provided to not be worried about this.
 * Create minimal diffs - disable on save actions like reformat source code or organize imports. If you feel the source code should be reformatted create a separate PR for this change.

@@ -66,7 +66,7 @@ JsonNode node = myModel.toNode()
 String out = myModel.toString(EnumSet<SerializationFlag> flags);
 ```
 
-## $Ref
+## $ref
 When manipulating models you can get/set $ref from/to your model.
 
 ```java
@@ -76,13 +76,12 @@ When manipulating models you can get/set $ref from/to your model.
 // String ref: the $ref string value.
 Reference ref = myModel.setReference(OAIContext context, URL url, String ref);
 Reference ref = myModel.getReference(OAIContext context);
-```java
+```
 
 ## Limitations
 
 * Serialisation: The module is not able to (re-)split the given input if any.
 * Discriminator: Since Schema Object can be outside of `components/schemas`, mapping with schema name is not supported, you must use JSON reference.
-
 
 ## License
 

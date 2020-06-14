@@ -121,14 +121,19 @@ To illustrate the purpose, think about XML Schema Definition, Protocol Buffers, 
 This is where `extensions` will let you fill the gap!  
 By implementing your own validation, you don't create a subset of the official OpenAPI Specification, you use it at its maximum!  
 
-There's no overhead to use extensions, default validators are built directly with this process.
+There's no overhead to use extensions, default validators are built directly with this process.  
+
 
 ### Chaining validators
 
 You can implicitly chain the validators for both extension types.  
 
-`JsonValidator.validate` returns a boolean to allow breaking the chain if you need to: `false` to break, `true` to chain.  
-Also, you can add multiple custom validators to the same keyword with the order you applied.
+`JsonValidator.validate` returns a boolean to allow breaking the chain if you need to.  
+`false` to break, `true` to chain.  
+
+Also, you can add multiple custom validators to the same keyword.  
+The chain will processed in the order you applied.  
+
 
 ### Overriding a known keyword
 
@@ -138,7 +143,8 @@ Look at the example to start linking a known keyword with your implementation.
 Note: default/core validators will always be the last validation entry if you've overridden the keyword.  
 
 Feel free to contribute to those extensions if you think your implementation could help the community!  
-There's no plan yet for releasing contributions on validation extensions, for now it's "only" for sharing.
+There's no plan yet for releasing contributions on validation extensions, for now it's "only" for sharing.  
+
 
 ### Business validator
 
@@ -150,11 +156,20 @@ Using specification extensions for new keywords is strongly recommended in this 
 
 Some ideas : checking full entity, dateStart > now() && dateStart < dateEnd, ...
 
-### Examples :
+### Examples
 
-Declaration examples :
+Declaration examples :  
 All JSON types are accepted, it's up to you to describe it and setup the validation in the corresponding validator.
 
+Custom format:  
+```json
+{
+  "type": "string",
+  "x-format-business": "my_business_format"
+}
+```
+
+Entity validation:
 ```yaml
 type: object
 properties:
@@ -164,16 +179,9 @@ properties:
       foo:
         type: string
     x-sub-object-val:  # it's up to you to place the trigger where your validation should occur.
-      fooParam: 0.2 # You need variables?
-      barParam: true
+      aFloatParam: 0.2 # You need variables?
+      aBoolParam: true
 x-myentity-val: null (or a variable) # Just trigger on full object!
-```
-or
-```json
-{
-  "type": "string",
-  "x-format-business": "my_business_format"
-}
 ```
 
 Instantiation:
@@ -193,13 +201,17 @@ evi = new ExtValidatorInstance() {
 
 // Load an API context with the base URL
 // JSON references are registered from here
-apiContext = new OAI3Context(new URL("file:/"));
+apiContext = new OAI3Context(new URL('somewhere'));
 // Setup a validation context
 validationContext = new ValidationContext<>(apiContext);
 // Link trigger 'x-myentity-val' (or known keyword such as maximum, format, ...) with MyValidator.
 validationContext.addValidator("x-myentity-val", evi);
+// Validate
 schemaValidator = new SchemaValidator(validationContext, "entity_schema", schemaNode);
 ```
+
+See [Here for a MyEntityValidator code](https://github.com/openapi4j/openapi4j/blob/master/openapi-schema-validator/src/test/java/org/openapi4j/schema/validator/v3/MyEntityValidator.java)
+See [Here for a YAML definition](https://github.com/openapi4j/openapi4j/blob/master/openapi-schema-validator/src/test/resources/schema/override/myEntityValidation.json)
 
 ### Custom data and delegation:
 You can setup some custom data when calling `validate` method.  
@@ -221,6 +233,9 @@ public boolean validate(JsonNode valueNode, ValidationData<?> validation) {
   return true;
 }
 ```
+
+See [Here for TypeInfoValidator code](https://github.com/openapi4j/openapi4j/blob/master/openapi-schema-validator/src/test/java/org/openapi4j/schema/validator/v3/TypeInfoValidator.java)
+See [Here for TypeInfoDelegate code](https://github.com/openapi4j/openapi4j/blob/master/openapi-schema-validator/src/test/java/org/openapi4j/schema/validator/v3/TypeInfoDelegate.java)
 
 ## Limitations
 
