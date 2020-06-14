@@ -1,4 +1,4 @@
-# Core module
+# OpenAPI for java core project home
 
 This is the home page of the openapi4j core project for Java (or JVM platform in general).
 

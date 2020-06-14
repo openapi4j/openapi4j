@@ -3,23 +3,27 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=org.openapi4j%3Aopenapi4j&metric=security_rating)](https://sonarcloud.io/dashboard?id=org.openapi4j%3Aopenapi4j)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.openapi4j%3Aopenapi4j&metric=coverage)](https://sonarcloud.io/dashboard?id=org.openapi4j%3Aopenapi4j)
 
-# OpenAPI for java
+# OpenAPI for java project home
 
 This is the home page of the openapi4j project for Java (Jakarta or JVM platform in general).
 
 openapi4j is a suite of tools, including the following :
-* [Open API specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md) parser and validator.
-* Open API [Schema Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schemaObject) validator.
+* [Open API specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md) parser and validator.
+* Open API [Schema Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#schemaObject) validator.
 * [JSON reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) implementation.
 * Request/response validator against operation.
 * For internal use only, performance project reports some numbers to 'manually' check any improvements or regressions between versions.
 
 ## Modules
 
-* [Parser](parser.md) allows the (de-)serialization and manipulation of the schema and its validation.
-* [Schema validator](schema-validator.md) allows the validation of data against a given schema.
-* [Request validator](operation-validator.md) is high level module to manage validation for requests and/or responses against operations. More details in the related project.
-* [Request adapters](adapters.md) is the repository of specific adapters to wrap requests and responses.
+* [Parser](openapi-parser) allows the (de-)serialization and manipulation of the schema and its validation.
+* [Schema validator](openapi-schema-validator) allows the validation of data against a given schema.
+* [Request validator](openapi-operation-validator) is high level module to manage validation for requests and/or responses against operations. More details in the related project.
+* [Request adapters](openapi-operation-adapters) is the repository of specific adapters to wrap requests and responses.
+
+## Documentation
+
+The documentation for all modules is available [here](https://openapi4j.github.io/openapi4j/).
 
 ## Versioning and compatibility
 
@@ -39,14 +43,33 @@ Snapshot is available for latest valid commit on master branch.
 
 ## Performance
 
-Check [perf-checker](https://github.com/openapi4j/openapi4j/tree/master/openapi-perf-checker) project for some values.
+Check [perf-checker](openapi-perf-checker) project for some values.
+
+## Native compilation (GraalVM)
+
+From version 0.7, the toolset is fully compliant with native compilation (AOT).
+This was tested with GraalVM 19.3.1.
+No further configuration or directive is needed to include the modules if available on classpath.
+
+```shell script
+native-image -H:+ReportExceptionStackTraces --no-fallback -jar your-app.jar
+```
+
+FYI, testing runs made don't show much performance improvements but parser module.
 
 ## Supported versions
 
-The modules currently support the OpenAPI Specification (OAS) version 3.x.x.  
+The modules currently support the OpenAPI Specification (OAS) version 3.x.x.
 
-This project has been developed while reading 3.0.2.  
 See related projects for limitations and issues.
+
+## Roadmap
+
+- [See CHANGELOG.md for previous versions](https://github.com/openapi4j/openapi4j/blob/master/CHANGELOG.md)
+
+Common until version 1.0:
+* bug fixing / code coverage.
+* Quality of life accessors/features elected as easy and not risky.
 
 ## Contributing
 

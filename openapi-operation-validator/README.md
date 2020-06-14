@@ -63,7 +63,7 @@ Response response = [Adapter]Response.of([AdapterResponseObject] resp);
 
 Adapters dependencies are not provided, you must add the one you need.
 
-See [openapi-operation-adapters](https://github.com/openapi4j/openapi4j/tree/master/openapi-operation-adapters) to get
+See [openapi-operation-adapters](../openapi-operation-adapters/README.md) to get
 the list of currently available adapters and further documentation.
 
 Feel free to contribute to add more adapters and additional features.
