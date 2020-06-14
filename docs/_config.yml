@@ -6,7 +6,7 @@ texture:
 
   style: black
   showPicker: false
-  showNav: true
+  showNav: false
 
   social_links:
     github:  openapi4j
