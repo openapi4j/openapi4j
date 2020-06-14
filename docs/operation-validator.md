@@ -110,10 +110,6 @@ Here's a list of currently non supported keywords:
     * Note, prefix and namespace are not considered too since namespace information is always removed before processing. Not really an issue, the information is useless.
     * Note, attributes are kept and always converted to direct children JSON properties.
 
-## Supported versions
-
-[See main page](index.md#supported-versions)
-
 ## License
 
 [See main page](index.md#license)

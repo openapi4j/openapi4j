@@ -1,10 +1,10 @@
 ---
 layout: default
-title: Home
+title: OpenAPI4J
 nav_order: 1
 ---
 
-# Parser
+# OpenAPI4J
 {:.no_toc}
 
 ## Table of contents
@@ -20,7 +20,7 @@ nav_order: 1
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=org.openapi4j%3Aopenapi4j&metric=security_rating)](https://sonarcloud.io/dashboard?id=org.openapi4j%3Aopenapi4j)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.openapi4j%3Aopenapi4j&metric=coverage)](https://sonarcloud.io/dashboard?id=org.openapi4j%3Aopenapi4j)
 
-# OpenAPI for java project home
+## OpenAPI for java project home
 
 This is the home page of the openapi4j project for Java (Jakarta or JVM platform in general).
 
@@ -75,14 +75,6 @@ FYI, testing runs made don't show much performance improvements but parser modul
 The modules currently support the OpenAPI Specification (OAS) version 3.x.x.
 
 See related projects for limitations and issues.
-
-## Roadmap
-
-- [See CHANGELOG.md for previous versions](https://github.com/openapi4j/openapi4j/blob/master/CHANGELOG.md)
-
-Common until version 1.0:
-* bug fixing / code coverage.
-* Quality of life accessors/features elected as easy and not risky.
 
 ## Contributing
 

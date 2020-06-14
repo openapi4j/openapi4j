@@ -4,5 +4,5 @@ search_enabled: true
 heading_anchors: true
 
 aux_links:
-  "Docs on GitHub":
+  "GitHub repository":
     - "//github.com/openapi4j/openapi4j"
