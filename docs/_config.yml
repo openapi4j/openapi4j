@@ -1,1 +1,24 @@
-theme: jekyll-theme-leap-day
+remote_theme: thelehhman/texture
+
+texture:
+  title: OpenAPI4J
+  tagline: OpenAPI for Java
+
+  style: black
+  showPicker: false
+  showNav: true
+
+  social_links:
+    github:  openapi4j
+
+  navigation:
+    - title: Parser
+      url: "/parser"
+    - title: Schema validator
+      url: "/schema-validator"
+    - title: Operation validator
+      url: "/operation-validator"
+    - title: Operation validator adapters
+      url: "/adapters"
+    - title: Core
+      url: "/core"
