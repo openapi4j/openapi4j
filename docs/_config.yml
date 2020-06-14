@@ -3,12 +3,4 @@ plugins:
 
 remote_theme: openapi4j/openapi4j
 
-theme: texture
-texture:
-  title: OpenAPI4J
-  tagline: OpenAPI for Java
-  style: black
-  showPicker: false
-  showNav: true
-  social_links:
-    github:  openapi4j
+theme: jekyll-whiteglass
