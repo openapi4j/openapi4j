@@ -28,7 +28,7 @@ openapi4j is a suite of tools, including the following :
 * [Open API specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md) parser and validator.
 * Open API [Schema Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#schemaObject) validator.
 * [JSON reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) implementation.
-* Request/response validator against operation.
+* Request and response validator.
 * For internal use only, performance project reports some numbers to 'manually' check any improvements or regressions between versions.
 
 ## Modules
@@ -60,8 +60,8 @@ Check [here](perf-values.md) for some values.
 
 ## Native compilation (GraalVM)
 
-From version 0.7, the toolset is fully compliant with native compilation (AOT).
-This was tested with GraalVM 19.3.1.
+From version 0.7, the toolset is fully compliant with native compilation (AOT).  
+This was tested with GraalVM 19.3.1.  
 No further configuration or directive is needed to include the modules if available on classpath.
 
 ```shell script
@@ -78,9 +78,9 @@ See related projects for limitations and issues.
 
 ## Contributing
 
-Reporting issues, making comments, ... Any help is welcome !
+Reporting issues, making comments, ... Any help is welcome !  
 
-We accept Pull Requests via GitHub. There are some guidelines which will make applying PRs easier for us :
+We accept Pull Requests via GitHub. There are some guidelines which will make applying PRs easier for us :  
 
 * Respect the code style and indentation. .editorconfig file is provided to not be worried about this.
 * Create minimal diffs - disable on save actions like reformat source code or organize imports. If you feel the source code should be reformatted create a separate PR for this change.
@@ -89,4 +89,5 @@ We accept Pull Requests via GitHub. There are some guidelines which will make ap
 
 ## License
 
-openapi4j and all the modules are released under the Apache 2.0 license. See [LICENSE](LICENSE.md) for details.
+openapi4j and all the modules are released under the Apache 2.0 license.  
+See [LICENSE](LICENSE.md) for details.

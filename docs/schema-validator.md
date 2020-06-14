@@ -17,15 +17,15 @@ nav_order: 3
 
 ## OpenAPI Schema Object validator
 
-Implementation of the [Schema Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#schemaObject) specification for Open API 3.
+Implementation of the [Schema Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#schemaObject) specification for Open API 3.  
 As a reminder, Schema Object is a subset of [JSON schema draft #00](https://tools.ietf.org/html/draft-wright-json-schema-validation-00) with additions.
 
 ## Features
 
-This module allows the validation of your data against a given schema.
-The aim of this module is accuracy and compliancy with the specifications.
+This module allows the validation of your data against a given schema.  
+The aim of this module is accuracy and compliancy with the specifications.  
 
-That said, there's options to enrich to current definitions with the `ValidationContext` object :
+That said, there's options to enrich to current definitions with the `ValidationContext` object :  
 * ADDITIONAL_PROPS_RESTRICT : By default, Schema Object can have additional properties. This option let's you invert the behaviour.
 * You can override keywords and add your own validators. More on this with [extensions](#extensions).
 
@@ -76,10 +76,10 @@ validationContext.setFastFail(true);
 
 ## Report outputs showcase
 
-You can easily locate the error(s)/info(s)/warning(s) with the results as we keep the path of the validation.
+You can easily locate the error(s)/info(s)/warning(s) with the results as we keep the path of the validation.  
 Also, a code is assigned to each type of result to ease lookups.
 
-Outputs of `ValidationResults` object :
+Outputs of `ValidationResults` object :  
 ```
 foo: Additional property 'bar' is not allowed. (code: 1000)
 From: foo.<additionalProperties>
@@ -105,44 +105,44 @@ From: <pattern>
 
 ## Extensions
 
-Without doing any anything with the options, the Schema validator is compliant with the specification.
+Without doing any anything with the options, the Schema validator is compliant with the specification.  
 
-So why?
+So why?  
 
-Extensions have two distinct goals:
+Extensions have two distinct goals:  
 - Overriding a known keyword.
 - Adding your business validator.
 
-The validation integrated in OpenAPI Specification with the Schema Object part covers only basic/medium scenarios but we all know that more complex validation rules are always needed in projects.
-JSON Schema further drafts try to cover more and more scenarios, but we think it's a waste since it will never fulfill the needs.
-Schema Object is not perfect but has the advantage to not overly complexify the specification and its location is near the right spot.
-To illustrate the purpose, think about XML Schema Definition, Protocol Buffers, simpleSchema and other alternatives old or new, none of those go the JSON Schema way because nobody can maintain this for APIs.
+The validation integrated in OpenAPI Specification with the Schema Object part covers only basic/medium scenarios but we all know that more complex validation rules are always needed in projects.  
+JSON Schema further drafts try to cover more and more scenarios, but we think it's a waste since it will never fulfill the needs.  
+Schema Object is not perfect but has the advantage to not overly complexify the specification and its location is near the right spot.  
+To illustrate the purpose, think about XML Schema Definition, Protocol Buffers, simpleSchema and other alternatives old or new, none of those go the JSON Schema way because nobody can maintain this for APIs.  
 
-This is where `extensions` will let you fill the gap!
-By implementing your own validation, you don't create a subset of the official OpenAPI Specification, you use it at its maximum!
+This is where `extensions` will let you fill the gap!  
+By implementing your own validation, you don't create a subset of the official OpenAPI Specification, you use it at its maximum!  
 
 There's no overhead to use extensions, default validators are built directly with this process.
 
 ### Chaining validators
 
-You can implicitly chain the validators for both extension types.
+You can implicitly chain the validators for both extension types.  
 
-`JsonValidator.validate` returns a boolean to allow breaking the chain if you need to: `false` to break, `true` to chain.
+`JsonValidator.validate` returns a boolean to allow breaking the chain if you need to: `false` to break, `true` to chain.  
 Also, you can add multiple custom validators to the same keyword with the order you applied.
 
 ### Overriding a known keyword
 
-You can override a known keyword with your own validator.
-Look at the example to start linking a known keyword with your implementation.
+You can override a known keyword with your own validator.  
+Look at the example to start linking a known keyword with your implementation.  
 
-Note: default/core validators will always be the last validation entry if you've overridden the keyword.
+Note: default/core validators will always be the last validation entry if you've overridden the keyword.  
 
-Feel free to contribute to those extensions if you think your implementation could help the community!
+Feel free to contribute to those extensions if you think your implementation could help the community!  
 There's no plan yet for releasing contributions on validation extensions, for now it's "only" for sharing.
 
 ### Business validator
 
-Whatever you need, you has now the possibility to (re-)locate almost all the validation at this SINGLE front level and not after traversing all layers of the architecture before checking business values.
+Whatever you need, you have now the possibility to (re-)locate almost all the validation at this SINGLE front level and not after traversing all layers of the architecture before checking business values.
 
 Your project should be more readable, maintainable and performance increased without efforts.
 
@@ -202,7 +202,7 @@ schemaValidator = new SchemaValidator(validationContext, "entity_schema", schema
 ```
 
 ### Custom data and delegation:
-You can setup some custom data when calling `validate` method.
+You can setup some custom data when calling `validate` method.  
 Also, this allows you to delegate when your validator is triggered.
 
 ```java

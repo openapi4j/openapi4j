@@ -17,11 +17,11 @@ nav_order: 7
 
 # OpenAPI for java performance check project home
 
-This is the home page of the openapi4j performance check project for Java (or JVM platform in general).
+This is the home page of the openapi4j performance check project for Java (or JVM platform in general).  
 
-This project is available for **internal test use only** to check any pitfall before releasing or development phase.
+This project is available for **internal test use only** to check any pitfall before releasing or development phase.  
 
-Values are globally slightly inaccurate but all tests run in the same environment/block, so we're still comparing on the same basis.
+Values are globally slightly inaccurate but all tests run in the same environment/block, so we're still comparing on the same basis.  
 Other libraries are included to keep the ratio and mitigate the fact that I may change computer in the future.
 
 ## Parser reports

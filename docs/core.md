@@ -25,10 +25,6 @@ JSON reference implementation always throws a ResolutionException if :
 * The JSON pointer leads to a dead end.
 * The reference and its subsequents references are cycling.
 
-## Supported versions
-
-[See main page](index.md#supported-versions)
-
 ## License
 
 [See main page](index.md#license)
