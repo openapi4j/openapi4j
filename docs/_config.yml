@@ -3,3 +3,30 @@ remote_theme: pmarsceill/just-the-docs
 aux_links:
   "Docs on GitHub":
     - "//github.com/openapi4j/openapi4j"
+
+---
+layout: default
+title: Parser
+nav_order: 1
+---
+---
+layout: default
+title: Schema validator
+nav_order: 2
+---
+---
+layout: default
+title: Operation validator
+nav_order: 3
+---
+---
+layout: default
+title: Operation validator adapters
+nav_order: 4
+has_children: true
+---
+---
+layout: default
+title: Core module
+nav_order: 5
+---

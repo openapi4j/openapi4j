@@ -16,10 +16,10 @@ openapi4j is a suite of tools, including the following :
 
 ## Modules
 
-* [Parser](openapi-parser) allows the (de-)serialization and manipulation of the schema and its validation.
-* [Schema validator](openapi-schema-validator) allows the validation of data against a given schema.
-* [Request validator](openapi-operation-validator) is high level module to manage validation for requests and/or responses against operations. More details in the related project.
-* [Request adapters](openapi-operation-adapters) is the repository of specific adapters to wrap requests and responses.
+* [Parser](parser.md) allows the (de-)serialization and manipulation of the schema and its validation.
+* [Schema validator](schema-validator.md) allows the validation of data against a given schema.
+* [Request validator](operation-validator.md) is high level module to manage validation for requests and/or responses against operations. More details in the related project.
+* [Request adapters](operation-validator-adapters) is the repository of specific adapters to wrap requests and responses.
 
 ## Documentation
 
@@ -43,7 +43,7 @@ Snapshot is available for latest valid commit on master branch.
 
 ## Performance
 
-Check [perf-checker](openapi-perf-checker) project for some values.
+Check [perf-checker](perf-values.md) project for some values.
 
 ## Native compilation (GraalVM)
 
