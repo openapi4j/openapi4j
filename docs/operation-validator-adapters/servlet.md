@@ -43,4 +43,4 @@ Request request = ServletRequest.of(HttpServletRequest hsr);
 
 ## License
 
-[See main page](https://github.com/openapi4j/openapi4j#license)
+[See main page](../index.md#license)

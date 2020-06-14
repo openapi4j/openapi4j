@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Operation validator
-nav_order: 3
+nav_order: 4
 ---
 
 # Operation validator
@@ -15,7 +15,7 @@ nav_order: 3
 
 ---
 
-## Features:
+## Features
 
 * Operation validator for requests and/or responses.
 * Collection of requests/responses adapters for your environment (with associated helpers).
@@ -112,8 +112,8 @@ Here's a list of currently non supported keywords:
 
 ## Supported versions
 
-[See main page](https://github.com/openapi4j/openapi4j#supported-versions)
+[See main page](index.md#supported-versions)
 
 ## License
 
-[See main page](https://github.com/openapi4j/openapi4j#license)
+[See main page](index.md#license)

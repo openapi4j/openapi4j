@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Parser
-nav_order: 1
+nav_order: 2
 ---
 
 # Parser
@@ -15,7 +15,7 @@ nav_order: 1
 
 ---
 
-## Features :
+## Features
 
 * [Open API specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md) parser and validator.
 * Manipulate the models and serialize back the modified API description.
@@ -64,8 +64,8 @@ OpenApi3 api = new OpenApi3Parser().parse(specURL, authOptions, true);
 
 ## Supported versions
 
-[See main page](https://github.com/openapi4j/openapi4j#supported-versions)
+[See main page](index.md#supported-versions)
 
 ## License
 
-[See main page](https://github.com/openapi4j/openapi4j#license)
+[See main page](index.md#license)

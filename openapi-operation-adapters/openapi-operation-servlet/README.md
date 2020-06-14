@@ -11,18 +11,10 @@ Add the following to your `pom.xml` :
 [![Release version](https://img.shields.io/nexus/r/org.openapi4j/openapi-schema-validator?style=for-the-badge&color=blue&label=Release&server=https%3A%2F%2Foss.sonatype.org)](https://search.maven.org/search?q=g:org.openapi4j%20a:openapi-operation-servlet)
 [![Snapshot version](https://img.shields.io/nexus/s/org.openapi4j/openapi-schema-validator?style=for-the-badge&color=blue&label=Snapshot&server=https%3A%2F%2Foss.sonatype.org)](https://oss.sonatype.org/content/repositories/snapshots/org/openapi4j/openapi-operation-servlet/)
 
-## Usage
+## Documentation
 
-Requests and responses are wrapped with the specific adapter.
-```java
-// Servlet
-Request request = ServletRequest.of(HttpServletRequest hsr);
-// validate...
-```
+[Documentation is available here](https://www.openapi4j.org/operation-validator-adapters/servlet.html)
 
-| Library         | Version     | Client | Server                  | Dependency                   |
-|-----------------|-------------|--------|-------------------------|------------------------------|
-| Servlet         | `>= 2.0`    | No     | ServletRequest          | The spec dependency you use  |
 
 ## License
 

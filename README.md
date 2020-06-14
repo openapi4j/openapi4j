@@ -39,11 +39,11 @@ All modules follow the [Semantic Versioning 2.0.0](https://semver.org) and are a
 [![Release version](https://img.shields.io/nexus/r/org.openapi4j/openapi-operation-validator?style=for-the-badge&color=blue&label=Release&server=https%3A%2F%2Foss.sonatype.org)](https://search.maven.org/search?q=g:org.openapi4j)
 [![Snapshot version](https://img.shields.io/nexus/s/org.openapi4j/openapi-operation-validator?style=for-the-badge&color=blue&label=Snapshot&server=https%3A%2F%2Foss.sonatype.org)](https://oss.sonatype.org/content/repositories/snapshots/org/openapi4j/)
 
-Snapshot is available for latest valid commit on master branch.
+Snapshot is available for latest valid commit on 'master' branch.
 
 ## Performance
 
-Check [perf-checker](openapi-perf-checker) project for some values.
+Check [here](https://www.openapi4j.org/perf-values.html) for some values.
 
 ## Native compilation (GraalVM)
 
@@ -62,14 +62,6 @@ FYI, testing runs made don't show much performance improvements but parser modul
 The modules currently support the OpenAPI Specification (OAS) version 3.x.x.
 
 See related projects for limitations and issues.
-
-## Roadmap
-
-- [See CHANGELOG.md for previous versions](https://github.com/openapi4j/openapi4j/blob/master/CHANGELOG.md)
-
-Common until version 1.0:
-* bug fixing / code coverage.
-* Quality of life accessors/features elected as easy and not risky.
 
 ## Contributing
 

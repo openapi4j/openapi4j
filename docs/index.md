@@ -1,3 +1,20 @@
+---
+layout: default
+title: Home
+nav_order: 1
+---
+
+# Parser
+{:.no_toc}
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
 [![Build Status](https://travis-ci.org/openapi4j/openapi4j.svg?branch=master)](https://travis-ci.org/openapi4j/openapi4j)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=org.openapi4j%3Aopenapi4j&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=org.openapi4j%3Aopenapi4j)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=org.openapi4j%3Aopenapi4j&metric=security_rating)](https://sonarcloud.io/dashboard?id=org.openapi4j%3Aopenapi4j)
@@ -21,13 +38,9 @@ openapi4j is a suite of tools, including the following :
 * [Request validator](operation-validator.md) is high level module to manage validation for requests and/or responses against operations. More details in the related project.
 * [Request adapters](operation-validator-adapters) is the repository of specific adapters to wrap requests and responses.
 
-## Documentation
-
-The documentation for all modules is available [here](https://openapi4j.github.io/openapi4j/).
-
 ## Versioning and compatibility
 
-All modules follow the [Semantic Versioning 2.0.0](https://semver.org) and are aligned on each release even there's no changes.
+All modules follow the [Semantic Versioning 2.0.0](https://semver.org) and are aligned on each release even there're no changes.
 
 ```xml
 <dependency>
@@ -39,11 +52,11 @@ All modules follow the [Semantic Versioning 2.0.0](https://semver.org) and are a
 [![Release version](https://img.shields.io/nexus/r/org.openapi4j/openapi-operation-validator?style=for-the-badge&color=blue&label=Release&server=https%3A%2F%2Foss.sonatype.org)](https://search.maven.org/search?q=g:org.openapi4j)
 [![Snapshot version](https://img.shields.io/nexus/s/org.openapi4j/openapi-operation-validator?style=for-the-badge&color=blue&label=Snapshot&server=https%3A%2F%2Foss.sonatype.org)](https://oss.sonatype.org/content/repositories/snapshots/org/openapi4j/)
 
-Snapshot is available for latest valid commit on master branch.
+Snapshot is available for latest valid commit on 'master' branch.
 
 ## Performance
 
-Check [perf-checker](perf-values.md) project for some values.
+Check [here](perf-values.md) for some values.
 
 ## Native compilation (GraalVM)
 
@@ -84,4 +97,4 @@ We accept Pull Requests via GitHub. There are some guidelines which will make ap
 
 ## License
 
-openapi4j and all the modules are released under the Apache 2.0 license. See [LICENSE](https://github.com/openapi4j/openapi4j/blob/master/LICENSE.md) for details.
+openapi4j and all the modules are released under the Apache 2.0 license. See [LICENSE](LICENSE.md) for details.

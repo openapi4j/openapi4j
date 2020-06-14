@@ -1,4 +1,3 @@
-Here's the lis of currently supported adapters:
-* [Servlet](openapi-operation-servlet/README.md)
-* [Undertow](openapi-operation-undertow/README.md)
-* [Vert.x](openapi-operation-vertx/README.md)
+## Documentation
+
+[Documentation is available here](https://www.openapi4j.org/operation-validator-adapters/)

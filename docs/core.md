@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Core
-nav_order: 5
+nav_order: 6
 ---
 
 # Core
@@ -27,8 +27,8 @@ JSON reference implementation always throws a ResolutionException if :
 
 ## Supported versions
 
-[See main page](https://github.com/openapi4j/openapi4j#supported-versions)
+[See main page](index.md#supported-versions)
 
 ## License
 
-[See main page](https://github.com/openapi4j/openapi4j#license)
+[See main page](index.md#license)

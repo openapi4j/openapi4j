@@ -1,3 +1,20 @@
+---
+layout: default
+title: Performance
+nav_order: 7
+---
+
+# Performance
+{:.no_toc}
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
 # OpenAPI for java performance check project home
 
 This is the home page of the openapi4j performance check project for Java (or JVM platform in general).
@@ -240,4 +257,4 @@ build/install/openapi-perf-checker/bin/openapi-perf-checker (.bat)
 
 ## License
 
-[See main page](https://github.com/openapi4j/openapi4j#license)
+[See main page](index.md#license)

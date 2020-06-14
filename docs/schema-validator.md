@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Schema validator
-nav_order: 2
+nav_order: 3
 ---
 
 # Schema validator
@@ -292,4 +292,4 @@ Any keyword missing in the following table has to be considered NOT supported.
 
 ## License
 
-[See main page](https://github.com/openapi4j/openapi4j#license)
+[See main page](index.md#license)
