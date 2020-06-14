@@ -1,4 +1,21 @@
-# OpenAPI Schema Object validator
+---
+layout: default
+title: Schema validator
+nav_order: 2
+---
+
+# Schema validator
+{:.no_toc}
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
+## OpenAPI Schema Object validator
 
 Implementation of the [Schema Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#schemaObject) specification for Open API 3.
 As a reminder, Schema Object is a subset of [JSON schema draft #00](https://tools.ietf.org/html/draft-wright-json-schema-validation-00) with additions.

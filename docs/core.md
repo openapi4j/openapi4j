@@ -1,8 +1,22 @@
-# OpenAPI for java core project home
+---
+layout: default
+title: Core
+nav_order: 5
+---
 
-This is the home page of the openapi4j core project for Java (or JVM platform in general).
+# Core
+{:.no_toc}
 
-core module includes the following features :
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
+## Features
+
 * [JSON reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) implementation.
 * Definitions of OpenAPI versions and contexts.
 * Various utility classes.

@@ -1,8 +1,21 @@
-# OpenAPI for java Operation validator project home
+---
+layout: default
+title: Operation validator
+nav_order: 3
+---
 
-This is the home page of the openapi4j Operation validator project for Java (or JVM platform in general).
+# Operation validator
+{:.no_toc}
 
-Operation validator module includes the following features:
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
+## Features:
 
 * Operation validator for requests and/or responses.
 * Collection of requests/responses adapters for your environment (with associated helpers).

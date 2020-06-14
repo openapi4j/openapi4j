@@ -1,3 +1,20 @@
+---
+layout: default
+title: Servlet
+parent: Operation validator adapters
+---
+
+# Servlet
+{:.no_toc}
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
 ## Installation
 
 Add the following to your `pom.xml` :

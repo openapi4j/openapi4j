@@ -1,3 +1,20 @@
+---
+layout: default
+title: Vert.x
+parent: Operation validator adapters
+---
+
+# Vert.x
+{:.no_toc}
+
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
 ## Installation
 
 Add the following to your `pom.xml` :
@@ -64,9 +81,9 @@ routerFactory.addOperationHandler("my_op", commonBodyHandler, routingContext -> 
 });
 ```
 
-Mounting the security handlers :  
+Mounting the security handlers :
 
-You must conform to your specification when an operation declares security requirements.  
+You must conform to your specification when an operation declares security requirements.
 Otherwise, the router generation (#.getRouter()) will fail by throwing a ResolutionException.
 ```java
 // security handlers can be custom or official handlers from the Vert.x stack

@@ -1,12 +1,26 @@
-# OpenAPI for java parser project home
+---
+layout: default
+title: Parser
+nav_order: 1
+---
 
-This is the home page of the openapi4j parser project for Java (or JVM platform in general).
+# Parser
+{:.no_toc}
 
-parser module includes the following features :
+## Table of contents
+{: .no_toc .text-delta }
+
+1. TOC
+{:toc}
+
+---
+
+## Features :
+
 * [Open API specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md) parser and validator.
 * Manipulate the models and serialize back the modified API description.
 
-The validation is made internally by specific classes. Schema validator project could be used but many parts can't be checked via SchemaObject.
+The validation is made internally by specific classes. Schema validator project could be used, but many parts can't be checked via SchemaObject.
 That said, you can, if you want to, do the validation from it. Check at the integration tests to get an example.
 
 ## Installation
