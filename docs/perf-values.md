@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Performance
+title: -- Performance --
 nav_order: 7
 ---
 

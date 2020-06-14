@@ -66,7 +66,7 @@ if (!validation.isValid()) {
 }
 ```
 
-Activate fast failing behaviour:
+## Fast failing behaviour
 
 Validation will stop as soon as an error has been encountered instead of collecting all the validation results.
 ```java
@@ -74,10 +74,12 @@ validationContext = new ValidationContext<>(apiContext);
 validationContext.setFastFail(true);
 ```
 
-You can easily locate the error(s) with the results as we keep the path of the validation.
+## Report outputs showcase
+
+You can easily locate the error(s)/info(s)/warning(s) with the results as we keep the path of the validation.
 Also, a code is assigned to each type of result to ease lookups.
 
-Here's few outputs of `ValidationResults` object :
+Outputs of `ValidationResults` object :
 ```
 foo: Additional property 'bar' is not allowed. (code: 1000)
 From: foo.<additionalProperties>
@@ -85,8 +87,8 @@ From: foo.<additionalProperties>
 foo : Type expected 'integer', found 'string'. (code: 1027)
 From: foo.</#/definitions/c>.</#/definitions/b>.>/#/definitions/a>.<type>
 
-foo : Type expected 'string', found 'integer'. (code: 1027)
-From: <allOf>.foo.<items>.<type>
+tags.0: Type expected 'string', found 'integer'. (code: 1027)
+From: <allOf>.tags.0.<items>.<type>
 
 foo: Excluded maximum is '3.0', found '3.0'. (code: 1009)
 From: foo.<maximum>
@@ -96,6 +98,9 @@ From: <allOf>.<required>
 
 foo : Value 'bar' is not defined in the schema. (code: 1006)
 From: <allOf>.foo.<enum>
+
+'abc' does not respect pattern '^a*$'. (code: 1025)
+From: <pattern>
 ```
 
 ## Extensions

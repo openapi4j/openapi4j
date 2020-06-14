@@ -2,6 +2,10 @@
 
 This is the home page of the openapi4j Operation validator project for Java (or JVM platform in general).
 
+## Documentation
+
+[Documentation is available here](https://www.openapi4j.org/operation-validator.html)
+
 ## Installation
 
 Add the following to your `pom.xml` :
@@ -15,10 +19,6 @@ Add the following to your `pom.xml` :
 
 [![Release version](https://img.shields.io/nexus/r/org.openapi4j/openapi-schema-validator?style=for-the-badge&color=blue&label=Release&server=https%3A%2F%2Foss.sonatype.org)](https://search.maven.org/search?q=g:org.openapi4j%20a:openapi-operation-validator)
 [![Snapshot version](https://img.shields.io/nexus/s/org.openapi4j/openapi-schema-validator?style=for-the-badge&color=blue&label=Snapshot&server=https%3A%2F%2Foss.sonatype.org)](https://oss.sonatype.org/content/repositories/snapshots/org/openapi4j/openapi-operation-validator/)
-
-## Documentation
-
-[Documentation is available here](https://www.openapi4j.org/operation-validator.html)
 
 ## License
 

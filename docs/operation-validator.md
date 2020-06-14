@@ -84,8 +84,8 @@ It should be very straightforward to implement a builder. Look at the code of cu
 
 ## Supported body content types
 
-* JSON (i.e pseudo (application|text)/(json|*+json))
-* Form URL encoded (application/x-www-form-urlencoded)
+* ```JSON (i.e pseudo (application|text)/(json|*+json))```
+* ```Form URL encoded (application/x-www-form-urlencoded)```
 * Or _whatever_ if you can provide a JsonNode or Map<String, Object> when building the body wrapper.
 
 Optional additions (add the corresponding dependencies):
