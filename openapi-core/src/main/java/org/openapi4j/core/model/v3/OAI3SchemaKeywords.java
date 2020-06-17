@@ -62,4 +62,5 @@ public final class OAI3SchemaKeywords {
   public static final String FORMAT_URI = "uri";
   public static final String FORMAT_URIREF = "uriref";
   public static final String FORMAT_URI_REFERENCE = "uri-reference";
+  public static final String FORMAT_UUID = "uuid";
 }

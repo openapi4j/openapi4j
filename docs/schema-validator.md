@@ -308,6 +308,7 @@ Any keyword missing in the following table has to be considered NOT supported.
 | uri                               | Yes           |                                                      |
 | uriref                            | Yes           |                                                      |
 | uri-reference                     | Yes           |                                                      |
+| uuid                              | Yes           |                                                      |
 
 
 ## License
