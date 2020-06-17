@@ -304,6 +304,34 @@
     ]
   },
   {
+    "description": "validation of UUID",
+    "schema": {
+      "format": "uuid"
+    },
+    "tests": [
+      {
+        "description": "a valid uuid V4",
+        "data": "ab652f30-8ae7-4466-bdf9-a5e493f3d664",
+        "valid": true
+      },
+      {
+        "description": "a valid uuid V1",
+        "data": "22428eaa-b0a2-11ea-b3de-0242ac130004",
+        "valid": true
+      },
+      {
+        "description": "ignores invalid uuid string",
+        "data": 500000000000000000,
+        "valid": true
+      },
+      {
+        "description": "an invalid uuid format",
+        "data": "ab652f30-8ae7-4466-bdf9-a5",
+        "valid": false
+      }
+    ]
+  },
+  {
     "description": "validation of hostnames",
     "schema": {
       "format": "hostname",
