@@ -15,7 +15,9 @@ public class MediaTypeContainer {
 
   public static MediaTypeContainer create(String rawContentType) {
     String contentType = ContentType.getTypeOnly(rawContentType);
-    if (contentType == null) return null;
+    if (contentType == null) {
+      contentType = "";
+    }
 
     String charset = ContentType.getCharSetOrNull(rawContentType);
 
@@ -44,9 +46,12 @@ public class MediaTypeContainer {
     // Wildcard subtypes
     if (hasPlaceholder) {
       String definitionType = contentType.substring(0, contentType.indexOf('/'));
-      String valueType = mediaTypeContainer.contentType.substring(0, mediaTypeContainer.contentType.indexOf('/'));
-
-      return definitionType.equalsIgnoreCase(valueType);
+      // contentType can be empty
+      final int endIndex = mediaTypeContainer.contentType.indexOf('/');
+      if (endIndex != -1) {
+        String valueType = mediaTypeContainer.contentType.substring(0, endIndex);
+        return definitionType.equalsIgnoreCase(valueType);
+      }
     }
 
     return false;

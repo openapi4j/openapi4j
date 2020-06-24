@@ -93,7 +93,7 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     Router router = routerFactory.getRouter();
 
     startServer(context, vertx, router);
-    testRequest(context, HttpMethod.POST, "/rqBodyCheck", 200, Buffer.buffer("{\"foo\": \"bar\"}"));
+    testRequest(context, HttpMethod.POST, "/rqBodyCheck", 200, "application/json", Buffer.buffer("{\"foo\": \"bar\"}"));
   }
 
   @Test
@@ -108,7 +108,7 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     Router router = routerFactory.getRouter();
 
     startServer(context, vertx, router);
-    testRequest(context, HttpMethod.POST, "/rqBodyCheck", 400, Buffer.buffer("{\"wrong\": \"bar\"}"));
+    testRequest(context, HttpMethod.POST, "/rqBodyCheck", 400, "application/json", Buffer.buffer("{\"wrong\": \"bar\"}"));
   }
 
   @Test
@@ -278,7 +278,7 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
     Router router = routerFactory.getRouter();
 
     startServer(context, vertx, router);
-    testRequest(context, HttpMethod.POST, "/noContentType", 200, Buffer.buffer("{\"anything\": \"bar\"}"));
+    testRequest(context, HttpMethod.POST, "/noContentType", 200, null, Buffer.buffer("{\"anything\": \"bar\"}"));
   }
 
   private void loadSpec(TestContext context, String path) {

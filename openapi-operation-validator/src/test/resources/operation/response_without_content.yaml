@@ -1,0 +1,29 @@
+paths:
+  /apath:
+    post:
+      operationId: post
+      responses:
+        201:
+          description: let's continue
+          headers:
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestType'
+        description: request
+components:
+  schemas:
+    RequestType:
+      properties:
+        type:
+          type: string
+      required:
+        - type
+      type: object
