@@ -71,6 +71,18 @@ public class ResponseTest extends OperationValidatorTestBase {
       new DefaultResponse.Builder(500).header("X-Rate-Limit", "1").build(),
       val::validateHeaders,
       true);
+
+    val = loadOperationValidator("/operation/response_without_content.yaml", "post");
+
+    check(
+      new DefaultResponse.Builder(201).build(),
+      val::validateBody,
+      true);
+
+    check(
+      new DefaultResponse.Builder(201).build(),
+      val::validateHeaders,
+      true);
   }
 
   @Test

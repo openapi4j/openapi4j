@@ -48,11 +48,11 @@ class VertxTestBase {
   }
 
   protected void testRequest(TestContext context, HttpMethod method, String path, int statusCode) {
-    testRequest(context, client, method, 8080, path, statusCode, null, null);
+    testRequest(context, client, method, 8080, path, statusCode, null, null, null);
   }
 
-  protected void testRequest(TestContext context, HttpMethod method, String path, int statusCode, Buffer requestBodyBuffer) {
-    testRequest(context, client, method, 8080, path, statusCode, requestBodyBuffer, null);
+  protected void testRequest(TestContext context, HttpMethod method, String path, int statusCode, String contentType, Buffer requestBodyBuffer) {
+    testRequest(context, client, method, 8080, path, statusCode, contentType, requestBodyBuffer, null);
   }
 
   protected void testRequest(TestContext context,
@@ -61,6 +61,7 @@ class VertxTestBase {
                              int port,
                              String path,
                              int statusCode,
+                             String contentType,
                              Buffer requestBodyBuffer,
                              Buffer responseBodyBuffer) {
 
@@ -79,7 +80,7 @@ class VertxTestBase {
     });
 
     if (requestBodyBuffer != null) {
-      req.putHeader("Content-Type", "application/json");
+      req.putHeader("Content-Type", contentType);
       req.end(requestBodyBuffer);
     } else {
       req.end();

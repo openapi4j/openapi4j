@@ -368,14 +368,14 @@ public class OperationValidator {
   }
 
   private Map<MediaTypeContainer, BodyValidator> createBodyValidators(final Map<String, MediaType> mediaTypes) {
-    if (mediaTypes == null) {
-      return null;
-    }
-
     final Map<MediaTypeContainer, BodyValidator> validators = new HashMap<>();
 
-    for (Map.Entry<String, MediaType> entry : mediaTypes.entrySet()) {
-      validators.put(MediaTypeContainer.create(entry.getKey()), new BodyValidator(context, entry.getValue()));
+    if (mediaTypes == null) {
+      validators.put(MediaTypeContainer.create(null), new BodyValidator(context, null));
+    } else {
+      for (Map.Entry<String, MediaType> entry : mediaTypes.entrySet()) {
+        validators.put(MediaTypeContainer.create(entry.getKey()), new BodyValidator(context, entry.getValue()));
+      }
     }
 
     return validators;
