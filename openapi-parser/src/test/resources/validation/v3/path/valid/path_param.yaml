@@ -1,0 +1,62 @@
+---
+openapi: 3.0.0
+info:
+  description: REST Service
+  title: RequestService
+  version: '1.0'
+paths:
+  /getPrice/{param1}/{param2}:
+    parameters:
+      - required: true
+        style: simple
+        in: path
+        name: param1
+      - required: true
+        style: simple
+        in: path
+        name: param2
+  /getPrice/{param3}/{param4}:
+    parameters:
+      - required: true
+        style: simple
+        in: path
+        name: param3
+      - required: true
+        style: simple
+        in: path
+        name: param4
+    post:
+      parameters:
+        - style: simple
+          in: header
+          name: foo
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Success response
+          content:
+            application/json: {}
+  /getPrice/{param5}/{param6}:
+    post:
+      parameters:
+        - required: true
+          style: simple
+          in: path
+          name: param5
+        - required: true
+          style: simple
+          in: path
+          name: param6
+        - style: simple
+          in: header
+          name: foo
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Success response
+          content:
+            application/json: {}

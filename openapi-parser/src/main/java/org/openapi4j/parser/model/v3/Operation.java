@@ -1,6 +1,9 @@
 package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.openapi4j.core.exception.DecodeException;
+import org.openapi4j.core.model.OAIContext;
+import org.openapi4j.core.model.reference.Reference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,12 +124,21 @@ public class Operation extends AbsExtendedOpenApiSchema<Operation> {
     return this;
   }
 
-  public List<Parameter> getParametersIn(String in) {
+  public List<Parameter> getParametersIn(String in, OAIContext context) {
     List<Parameter> inParameters = new ArrayList<>();
 
     if (parameters != null) {
       for (Parameter param : parameters) {
-        if (in.equals(param.getIn())) {
+        if (param.isRef()) {
+          Reference ref = context.getReferenceRegistry().getRef(param.getCanonicalRef());
+          try {
+            param = ref.getMappedContent(Parameter.class);
+          } catch (DecodeException e) {
+            // Will never happen
+          }
+        }
+
+        if (in.equalsIgnoreCase(param.getIn())) {
           inParameters.add(param);
         }
       }

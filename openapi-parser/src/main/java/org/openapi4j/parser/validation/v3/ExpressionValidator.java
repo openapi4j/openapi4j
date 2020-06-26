@@ -1,6 +1,7 @@
 package org.openapi4j.parser.validation.v3;
 
 import org.openapi4j.core.exception.DecodeException;
+import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.*;
@@ -52,7 +53,7 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
 
         results.add(PARAM_NOT_FOUND_ERR, propValue);
       } else {
-        if (checkParameterIn(matcher.group(2), matcher.group(3), operation, results)) {
+        if (checkParameterIn(matcher.group(2), matcher.group(3), api.getContext(), operation, results)) {
           return true;
         }
       }
@@ -139,8 +140,13 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
     return false;
   }
 
-  private boolean checkParameterIn(String in, String propName, Operation operation, ValidationResults results) {
-    for (Parameter param : operation.getParametersIn(in)) {
+  private boolean checkParameterIn(String in,
+                                   String propName,
+                                   OAIContext context,
+                                   Operation operation,
+                                   ValidationResults results) {
+
+    for (Parameter param : operation.getParametersIn(in, context)) {
       if (param.getName().equals(propName)) {
         return true;
       }
