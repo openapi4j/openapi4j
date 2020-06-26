@@ -10,6 +10,11 @@ public class PathTest extends Checker {
     validate("/validation/v3/path/valid/pathWithReference.yaml");
   }
 
+  @Test
+  public void testPath() throws Exception {
+    validate("/validation/v3/path/valid/path_param.yaml");
+  }
+
   //////////////////////////////////////////////////////////////
   // INVALID
   //////////////////////////////////////////////////////////////

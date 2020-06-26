@@ -328,7 +328,7 @@ public class OperationValidator {
   }
 
   private ParameterValidator<Parameter> createParameterValidator(final String in) {
-    List<Parameter> specParameters = operation.getParametersIn(in);
+    List<Parameter> specParameters = operation.getParametersIn(in, context.getContext());
 
     Map<String, AbsParameter<Parameter>> parameters = specParameters
       .stream()
