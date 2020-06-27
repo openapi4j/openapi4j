@@ -67,7 +67,7 @@ class PathValidator extends Validator3Base<OpenApi3, Path> {
 
       final Map<String, Operation> operations = pathItem.getOperations();
 
-      if (operations == null || operations.isEmpty()) {
+      if (operations == null) {
         // Check parameters from path only
         discoverAndCheckParams(api, path, pathParams, pathItem.getParameters(), results);
       } else {
@@ -84,11 +84,13 @@ class PathValidator extends Validator3Base<OpenApi3, Path> {
                                               final Path path,
                                               final Operation operation) {
 
-    if (operation.getParameters() == null || operation.getParametersIn("path", api.getContext()).isEmpty()) {
+    final List<Parameter> opParams = operation.getParametersIn(api.getContext(), PATH);
+    if (opParams.isEmpty()) {
       return path.getParameters();
     } else {
+      final List<Parameter> pathParams = path.getParametersIn(api.getContext(), PATH);
       return Stream
-        .concat(operation.getParameters().stream(), path.getParametersIn("path", api.getContext()).stream())
+        .concat(opParams.stream(), pathParams.stream())
         .distinct()
         .collect(Collectors.toList());
     }

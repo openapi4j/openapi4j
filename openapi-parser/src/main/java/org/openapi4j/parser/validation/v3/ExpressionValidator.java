@@ -146,7 +146,7 @@ abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
                                    Operation operation,
                                    ValidationResults results) {
 
-    for (Parameter param : operation.getParametersIn(in, context)) {
+    for (Parameter param : operation.getParametersIn(context, in)) {
       if (param.getName().equals(propName)) {
         return true;
       }

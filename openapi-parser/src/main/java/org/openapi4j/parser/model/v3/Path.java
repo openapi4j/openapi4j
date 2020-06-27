@@ -2,11 +2,8 @@ package org.openapi4j.parser.model.v3;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.openapi4j.core.exception.DecodeException;
 import org.openapi4j.core.model.OAIContext;
-import org.openapi4j.core.model.reference.Reference;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -198,27 +195,8 @@ public class Path extends AbsExtendedRefOpenApiSchema<Path> {
     return this;
   }
 
-  public List<Parameter> getParametersIn(String in, OAIContext context) {
-    List<Parameter> inParameters = new ArrayList<>();
-
-    if (parameters != null) {
-      for (Parameter param : parameters) {
-        if (param.isRef()) {
-          Reference ref = context.getReferenceRegistry().getRef(param.getCanonicalRef());
-          try {
-            param = ref.getMappedContent(Parameter.class);
-          } catch (DecodeException e) {
-            // Will never happen
-          }
-        }
-
-        if (in.equalsIgnoreCase(param.getIn())) {
-          inParameters.add(param);
-        }
-      }
-    }
-
-    return inParameters;
+  public List<Parameter> getParametersIn(OAIContext context, String in) {
+    return ParameterUtil.getIn(context, parameters, in);
   }
 
   @Override
