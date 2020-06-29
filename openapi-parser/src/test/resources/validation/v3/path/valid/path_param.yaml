@@ -39,16 +39,14 @@ paths:
           content:
             application/json: {}
   /getPrice/{param5}/{param6}:
+    parameters:
+      - $ref: '#/components/parameters/param6'
     post:
       parameters:
         - required: true
           style: simple
           in: path
           name: param5
-        - required: true
-          style: simple
-          in: path
-          name: param6
         - style: simple
           in: header
           name: foo
@@ -60,3 +58,10 @@ paths:
           description: Success response
           content:
             application/json: {}
+components:
+  parameters:
+    param6:
+      required: true
+      style: simple
+      in: path
+      name: param6

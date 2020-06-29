@@ -54,10 +54,6 @@ class PathValidator extends Validator3Base<OpenApi3, Path> {
   }
 
   private void checkPathsParams(OpenApi3 api, Map<String, Path> paths, ValidationResults results) {
-    if (paths == null) {
-      return;
-    }
-
     for (Map.Entry<String, Path> pathEntry : paths.entrySet()) {
       String path = pathEntry.getKey();
       final List<String> pathParams = getPathParams(path);
@@ -69,12 +65,12 @@ class PathValidator extends Validator3Base<OpenApi3, Path> {
 
       if (operations == null) {
         // Check parameters from path only
-        discoverAndCheckParams(api, path, pathParams, pathItem.getParameters(), results);
+        discoverAndCheckParams(path, pathParams, pathItem.getParameters(), results);
       } else {
         // Check parameters from both path & operation
         for (Operation operation : operations.values()) {
           final List<Parameter> params = mergePathParameters(api, pathItem, operation);
-          discoverAndCheckParams(api, path, pathParams, params, results);
+          discoverAndCheckParams(path, pathParams, params, results);
         }
       }
     }
@@ -96,8 +92,7 @@ class PathValidator extends Validator3Base<OpenApi3, Path> {
     }
   }
 
-  private void discoverAndCheckParams(OpenApi3 api,
-                                      String path,
+  private void discoverAndCheckParams(String path,
                                       List<String> pathParams,
                                       Collection<Parameter> parameters,
                                       ValidationResults results) {
@@ -105,7 +100,7 @@ class PathValidator extends Validator3Base<OpenApi3, Path> {
     List<String> discoveredPathParameters = new ArrayList<>();
     if (parameters != null) {
       for (Parameter parameter : parameters) {
-        String paramName = checkPathParam(api, path, pathParams, parameter, results);
+        String paramName = checkPathParam(path, parameter, pathParams, results);
         if (paramName != null) {
           discoveredPathParameters.add(paramName);
         }
@@ -116,22 +111,7 @@ class PathValidator extends Validator3Base<OpenApi3, Path> {
     validatePathParametersMatching(path, pathParams, discoveredPathParameters, results);
   }
 
-  private String checkPathParam(OpenApi3 api, String path, List<String> pathParams, Parameter parameter, ValidationResults results) {
-    final Parameter unwrapped;
-    if (parameter.isRef()) {
-      unwrapped = getReferenceContent(api, parameter, results, CRUMB_$REF, Parameter.class);
-    } else {
-      unwrapped = parameter;
-    }
-
-    return checkPathParam(path, unwrapped, pathParams, results);
-  }
-
   private String checkPathParam(String path, Parameter parameter, List<String> pathParams, ValidationResults results) {
-    if (!PATH.equals(parameter.getIn())) {
-      return null;
-    }
-
     if (!parameter.isRequired()) {
       results.add(CRUMB_REQUIRED, REQUIRED_PATH_PARAM, parameter.getName(), path);
     }

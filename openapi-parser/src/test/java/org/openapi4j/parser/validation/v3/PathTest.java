@@ -19,7 +19,17 @@ public class PathTest extends Checker {
   // INVALID
   //////////////////////////////////////////////////////////////
   @Test(expected = ValidationException.class)
+  public void testNoPathsIsInvalid() throws Exception {
+    validate("/validation/v3/path/invalid/no_paths.yaml");
+  }
+
+  @Test(expected = ValidationException.class)
   public void testPathWithReferenceInvalid() throws Exception {
     validate("/validation/v3/path/invalid/pathWithReference.yaml");
+  }
+
+  @Test(expected = ValidationException.class)
+  public void testPathNameInvalid() throws Exception {
+    validate("/validation/v3/path/invalid/path_param_name.yaml");
   }
 }

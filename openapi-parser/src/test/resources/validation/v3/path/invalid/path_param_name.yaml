@@ -1,0 +1,22 @@
+---
+openapi: 3.0.0
+info:
+  description: REST Service
+  title: RequestService
+  version: '1.0'
+paths:
+  /getPrice/{param7}:
+    post:
+      parameters:
+        - required: true
+          style: simple
+          in: path
+          # name missing
+      requestBody:
+        content:
+          application/json: {}
+      responses:
+        '200':
+          description: Success response
+          content:
+            application/json: {}
