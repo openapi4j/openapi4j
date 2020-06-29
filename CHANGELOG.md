@@ -1,6 +1,21 @@
 # Changelog
 
-## [1.0.1](https://github.com/openapi4j/openapi4j/tree/1.0)
+## [1.0.2](https://github.com/openapi4j/openapi4j/tree/1.0.2) (2020-06-29)
+
+[Full Changelog](https://github.com/openapi4j/openapi4j/compare/1.0.1...1.0.2)
+
+**Implemented enhancements:**
+
+- Severity WARNING is excessive for format: uuid [\#110](https://github.com/openapi4j/openapi4j/issues/110)
+
+**Fixed bugs:**
+
+- OpenApi3Validator doesn't consider path parameters in Operation validation [\#116](https://github.com/openapi4j/openapi4j/issues/116)
+- Cannot validate response with empty body if there is a default response with a body. [\#113](https://github.com/openapi4j/openapi4j/issues/113)
+- NPE when validating an array query parameter [\#108](https://github.com/openapi4j/openapi4j/issues/108)
+
+
+## [1.0.1](https://github.com/openapi4j/openapi4j/tree/1.0.1)
 
 [Full Changelog](https://github.com/openapi4j/openapi4j/compare/1.0...1.0.1)
 
@@ -8,7 +23,7 @@
 
 - Operation Validator - regression when converting content with nested $refs [\#109](https://github.com/openapi4j/openapi4j/pull/109)
 
-## [1.0](https://github.com/openapi4j/openapi4j/tree/0.9) (2020-06-04)
+## [1.0](https://github.com/openapi4j/openapi4j/tree/1.0) (2020-06-04)
 
 [Full Changelog](https://github.com/openapi4j/openapi4j/compare/0.9...1.0)
 
