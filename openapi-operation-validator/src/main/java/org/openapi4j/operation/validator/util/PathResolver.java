@@ -6,17 +6,11 @@ import org.openapi4j.parser.model.v3.Server;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.openapi4j.operation.validator.util.PathResolver.Options.END_STRING;
-import static org.openapi4j.operation.validator.util.PathResolver.Options.RETURN_FIXED_PATTERN;
-import static org.openapi4j.operation.validator.util.PathResolver.Options.START_STRING;
+import static org.openapi4j.operation.validator.util.PathResolver.Options.*;
 
 public class PathResolver {
   public enum Options {
@@ -28,6 +22,7 @@ public class PathResolver {
 
   private static final Pattern OAS_PATH_PARAMETERS_PATTERN = Pattern.compile("\\{[.;?*+]*([^{}.;?*+]+)[^}]*}");
   private static final Pattern ABSOLUTE_URL_PATTERN = Pattern.compile("\\A[a-z0-9.+-]+://.*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern PATH_URL_PATTERN = Pattern.compile("(?:([^:/?#]+):)?(?://([^/?#]*))?([^?#]*)(?:\\?([^#]*))?(?:#(.*))?");
   private static final String START_STRING_ANCHOR = "^";
   private static final String END_STRING_ANCHOR = "$";
   private static final String START_PARAM_NAMED_GROUP = "(?<";
@@ -104,13 +99,17 @@ public class PathResolver {
     // https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#server-object
     try {
       if (isAbsoluteUrl(url)) {
-        return new URL(url).getPath();
+        // We do not compute directly with URL#getPath()
+        // to avoid MalformedURLException
+        Matcher m = PATH_URL_PATTERN.matcher(url);
+        return m.find() ? m.group(3) : "/";
+
       } else {
         // Check if there's a defined file name in URL
         URL resource = context.getBaseUrl();
         // trim query & anchor
         String basePath = StringUtil.tokenize(resource.toString(), "(?:\\?.*|#.*)", false, true).get(0);
-          // handle scheme://api.com
+        // handle scheme://api.com
         String host = resource.getHost();
         if (host.length() > 0 && basePath.endsWith(host)) {
           return "/";

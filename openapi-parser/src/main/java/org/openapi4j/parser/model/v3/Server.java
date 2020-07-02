@@ -60,6 +60,22 @@ public class Server extends AbsExtendedOpenApiSchema<Server> {
     return this;
   }
 
+  /**
+   * @return The URL with default variables values
+   */
+  public String getDefaultUrl() {
+    String result = url;
+
+    // setup default variables if any
+    if (getVariables() != null) {
+      for (Map.Entry<String, ServerVariable> entry : getVariables().entrySet()) {
+        result = result.replace("{" + entry.getKey() + "}", entry.getValue().getDefault());
+      }
+    }
+
+    return result;
+  }
+
   @Override
   public Server copy() {
     Server copy = new Server();

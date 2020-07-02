@@ -87,7 +87,8 @@ abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T>
     } else if (!api.hasServers()) {
       results.add(crumbInfo, INVALID_RELATIVE_URL, urlSpec);
     } else {
-      String serverUrl = api.getServers().get(0).getUrl();
+      // setup default variables before validating URL
+      String serverUrl = api.getServers().get(0).getDefaultUrl();
 
       if (isAbsoluteUrl(serverUrl)) {
         // Server URL is absolute, check with it

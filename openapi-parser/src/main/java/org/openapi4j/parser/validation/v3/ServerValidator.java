@@ -4,6 +4,7 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Server;
+import org.openapi4j.parser.model.v3.ServerVariable;
 import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
@@ -11,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,10 +42,9 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
   }
 
   private void checkUrlWithVariables(OpenApi3 api, Server server, ValidationResults results) {
-    String url = server.getUrl();
+    final String url = server.getUrl();
 
-    checkServerUrl(api, url, results);
-
+    boolean hasVariableIssues = false;
     if (url != null) {
       // Find variables
       Matcher matcher = PATTERN_VARIABLES.matcher(url);
@@ -54,41 +55,50 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
 
       if (!variables.isEmpty() && server.getVariables() == null) {
         results.add(CRUMB_URL, VARIABLES_NOT_DEFINED, url);
+        hasVariableIssues = true;
       } else if (server.getVariables() != null) {
         // Validate defined variables
         for (String variable : variables) {
           if (!server.getVariables().containsKey(variable)) {
             results.add(CRUMB_URL, VARIABLE_NOT_DEFINED, variable, url);
+            hasVariableIssues = true;
           }
         }
       }
     }
+
+    if (!hasVariableIssues) {
+      checkServerUrl(api, server, results);
+    }
   }
 
   private void checkServerUrl(final OpenApi3 api,
-                              final String serverUrl,
+                              final Server server,
                               final ValidationResults results) {
 
-    validateString(serverUrl, results, true, null, CRUMB_URL);
-    if (serverUrl == null) {
+    validateString(server.getUrl(), results, true, null, CRUMB_URL);
+    if (server.getUrl() == null) {
       return;
     }
 
-    if (isAbsoluteUrl(serverUrl)) {
+    // setup default variables before validating URL
+    final String defaultUrl = server.getDefaultUrl();
+
+    if (isAbsoluteUrl(defaultUrl)) {
       // Server URL is absolute, check it
       try {
-        new URL(serverUrl);
+        new URL(defaultUrl);
       } catch (MalformedURLException ignored) {
-        results.add(CRUMB_URL, INVALID_URL, serverUrl);
+        results.add(CRUMB_URL, INVALID_URL, defaultUrl);
       }
     } else {
       // Server URL is relative, check with context base URL
       final URL contextBaseUrl = api.getContext().getBaseUrl();
 
       try {
-        new URL(contextBaseUrl, serverUrl);
+        new URL(contextBaseUrl, defaultUrl);
       } catch (MalformedURLException ignored) {
-        results.add(CRUMB_URL, INVALID_URL, contextBaseUrl.toString() + serverUrl);
+        results.add(CRUMB_URL, INVALID_URL, contextBaseUrl.toString() + defaultUrl);
       }
     }
   }
