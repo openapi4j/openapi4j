@@ -76,35 +76,29 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
                               final Server server,
                               final ValidationResults results) {
 
-    String url = server.getUrl();
-
-    validateString(url, results, true, null, CRUMB_URL);
-    if (url == null) {
+    validateString(server.getUrl(), results, true, null, CRUMB_URL);
+    if (server.getUrl() == null) {
       return;
     }
 
     // setup default variables before validating URL
-    if (server.getVariables() != null) {
-      for (Map.Entry<String, ServerVariable> entry : server.getVariables().entrySet()) {
-        url = url.replace("{" + entry.getKey() + "}", entry.getValue().getDefault());
-      }
-    }
+    final String defaultUrl = server.getDefaultUrl();
 
-    if (isAbsoluteUrl(url)) {
+    if (isAbsoluteUrl(defaultUrl)) {
       // Server URL is absolute, check it
       try {
-        new URL(url);
+        new URL(defaultUrl);
       } catch (MalformedURLException ignored) {
-        results.add(CRUMB_URL, INVALID_URL, url);
+        results.add(CRUMB_URL, INVALID_URL, defaultUrl);
       }
     } else {
       // Server URL is relative, check with context base URL
       final URL contextBaseUrl = api.getContext().getBaseUrl();
 
       try {
-        new URL(contextBaseUrl, url);
+        new URL(contextBaseUrl, defaultUrl);
       } catch (MalformedURLException ignored) {
-        results.add(CRUMB_URL, INVALID_URL, contextBaseUrl.toString() + url);
+        results.add(CRUMB_URL, INVALID_URL, contextBaseUrl.toString() + defaultUrl);
       }
     }
   }
