@@ -8,6 +8,9 @@ info:
     email: apiteam@swagger.io
     url: relative_to_server
 servers:
-  - url: /v1
+  - url: /v1/{param}
     description: Development server
+    variables:
+      param:
+        default: 'ws'
 paths: {}

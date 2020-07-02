@@ -7,12 +7,15 @@ import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.AbsRefOpenApiSchema;
 import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.model.v3.Server;
+import org.openapi4j.parser.model.v3.ServerVariable;
 import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 import org.openapi4j.parser.validation.ValidatorBase;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
@@ -87,7 +90,15 @@ abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T>
     } else if (!api.hasServers()) {
       results.add(crumbInfo, INVALID_RELATIVE_URL, urlSpec);
     } else {
-      String serverUrl = api.getServers().get(0).getUrl();
+      Server server = api.getServers().get(0);
+      String serverUrl = server.getUrl();
+
+      // setup default variables before validating URL
+      if (server.getVariables() != null) {
+        for (Map.Entry<String, ServerVariable> entry : server.getVariables().entrySet()) {
+          serverUrl = serverUrl.replace("{" + entry.getKey() + "}", entry.getValue().getDefault());
+        }
+      }
 
       if (isAbsoluteUrl(serverUrl)) {
         // Server URL is absolute, check with it
