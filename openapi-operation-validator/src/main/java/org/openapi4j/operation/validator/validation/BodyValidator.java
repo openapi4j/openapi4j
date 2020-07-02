@@ -1,6 +1,7 @@
 package org.openapi4j.operation.validator.validation;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResult;
@@ -16,7 +17,6 @@ import java.io.IOException;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
 class BodyValidator {
-  private static final ValidationResult BODY_REQUIRED_ERR = new ValidationResult(ERROR, 200, "Body is required but none provided.");
   private static final ValidationResult BODY_CONTENT_ERR = new ValidationResult(ERROR, 201, "An error occurred when getting the body content from type '%s'.%n%s");
 
   private static final String BODY = "body";
@@ -34,15 +34,12 @@ class BodyValidator {
 
   void validate(final Body body,
                 final String rawContentType,
-                final boolean isBodyRequired,
                 final ValidationData<?> validation) {
 
     if (validator == null) {
       return; // No schema specified for body
     } else if (body == null) {
-      if (isBodyRequired) {
-        validation.add(BODY_REQUIRED_ERR);
-      }
+      validator.validate(JsonNodeFactory.instance.nullNode(), validation);
       return;
     }
 

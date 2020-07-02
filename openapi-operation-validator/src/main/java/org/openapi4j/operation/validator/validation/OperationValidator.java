@@ -32,6 +32,7 @@ public class OperationValidator {
   private static final String VALIDATION_CTX_REQUIRED_ERR_MSG = "Validation context is required.";
   private static final String PATH_REQUIRED_ERR_MSG = "Path is required.";
   private static final String OPERATION_REQUIRED_ERR_MSG = "Operation is required.";
+  private static final ValidationResult BODY_REQUIRED_ERR = new ValidationResult(ERROR, 200, "Body is required but none provided.");
   private static final ValidationResult BODY_CONTENT_TYPE_ERR = new ValidationResult(ERROR, 202, "Body content type cannot be determined. No 'Content-Type' header available.");
   private static final ValidationResult BODY_WRONG_CONTENT_TYPE_ERR = new ValidationResult(ERROR, 203, "Content type '%s' is not allowed for body content.");
   private static final ValidationResult PATH_NOT_FOUND_ERR = new ValidationResult(ERROR, 205, "Path template '%s' has not been found from value '%s'.");
@@ -246,11 +247,20 @@ public class OperationValidator {
   public void validateBody(final Request request, final ValidationData<?> validation) {
     if (specRequestBodyValidators == null) return;
 
-    validateBody(
+    if (operation.getRequestBody().isRequired()) {
+      if (request.getContentType() == null) {
+        validation.add(BODY_CONTENT_TYPE_ERR);
+        return;
+      } else if (request.getBody() == null) {
+        validation.add(BODY_REQUIRED_ERR);
+        return;
+      }
+    }
+
+    validateBodyWithContentType(
       specRequestBodyValidators,
       request.getContentType(),
       request.getBody(),
-      operation.getRequestBody().isRequired(),
       validation);
   }
 
@@ -267,26 +277,19 @@ public class OperationValidator {
 
     if (validators == null) return;
 
-    validateBody(
+    validateBodyWithContentType(
       validators,
       response.getContentType(),
       response.getBody(),
-      true,
       validation);
   }
 
-  private void validateBody(final Map<MediaTypeContainer, BodyValidator> validators,
-                            final String rawContentType,
-                            final Body body,
-                            final boolean isRequired,
-                            final ValidationData<?> validation) {
+  private void validateBodyWithContentType(final Map<MediaTypeContainer, BodyValidator> validators,
+                                           final String rawContentType,
+                                           final Body body,
+                                           final ValidationData<?> validation) {
 
     final MediaTypeContainer contentType = MediaTypeContainer.create(rawContentType);
-
-    if (contentType == null) {
-      validation.add(BODY_CONTENT_TYPE_ERR);
-      return;
-    }
 
     BodyValidator validator = null;
     for (Map.Entry<MediaTypeContainer, BodyValidator> mediaType : validators.entrySet()) {
@@ -295,6 +298,7 @@ public class OperationValidator {
         break;
       }
     }
+
     if (validator == null) {
       validation.add(BODY_WRONG_CONTENT_TYPE_ERR, rawContentType);
       return;
@@ -302,7 +306,6 @@ public class OperationValidator {
 
     validator.validate(body,
       rawContentType,
-      isRequired,
       validation);
   }
 
