@@ -23,6 +23,6 @@ class ContactValidator extends Validator3Base<OpenApi3, Contact> {
     validateString(contact.getEmail(), results, false, EMAIL_REGEX, CRUMB_EMAIL);
     validateMap(context, api, contact.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
     validateString(contact.getName(), results, false, CRUMB_NAME);
-    validateUrl(api, contact.getUrl(), results, false, true, CRUMB_URL);
+    validateUrl(api, contact.getUrl(), results, false, CRUMB_URL);
   }
 }

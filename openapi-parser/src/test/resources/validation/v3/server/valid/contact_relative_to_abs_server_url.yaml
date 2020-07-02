@@ -6,5 +6,8 @@ info:
   contact:
     name: Me
     email: apiteam@swagger.io
-    url: http://swagger.io
+    url: relative_to_server
+servers:
+  - url: https://development.gigantic-server.com/v1
+    description: Development server
 paths: {}

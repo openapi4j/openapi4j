@@ -25,7 +25,7 @@ class InfoValidator extends Validator3Base<OpenApi3, Info> {
     validateField(context, api, info.getContact(), results, false, CRUMB_CONTACT, ContactValidator.instance());
     validateMap(context, api, info.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
     validateField(context, api, info.getLicense(), results, false, CRUMB_LICENSE, LicenseValidator.instance());
-    validateUrl(api, info.getTermsOfService(), results, false, true, CRUMB_TERMSOFSERVICE);
+    validateUrl(api, info.getTermsOfService(), results, false, CRUMB_TERMSOFSERVICE);
     validateString(info.getTitle(), results, true, CRUMB_TITLE);
     validateString(info.getVersion(), results, true, CRUMB_VERSION);
   }

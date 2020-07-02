@@ -3,8 +3,7 @@ info:
   description: A description
   version: 1.0.0
   title: My API
-  contact:
-    name: Me
-    email: apiteam@swagger.io
-    url: http://swagger.io
+servers:
+  - url: relative-url/
+    description: No variables
 paths: {}

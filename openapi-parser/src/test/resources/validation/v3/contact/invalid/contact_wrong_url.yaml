@@ -5,6 +5,5 @@ info:
   title: My API
   contact:
     name: Me
-    email: apiteam@swagger.io
-    url: http://swagger.io
+    url: https://fooscheme:io
 paths: {}

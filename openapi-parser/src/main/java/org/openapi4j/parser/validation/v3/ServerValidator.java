@@ -7,6 +7,8 @@ import org.openapi4j.parser.model.v3.Server;
 import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -40,23 +42,53 @@ class ServerValidator extends Validator3Base<OpenApi3, Server> {
   private void checkUrlWithVariables(OpenApi3 api, Server server, ValidationResults results) {
     String url = server.getUrl();
 
-    validateUrl(api, url, results, true, true, CRUMB_URL);
+    checkServerUrl(api, url, results);
 
-    // Find variables
-    Matcher matcher = PATTERN_VARIABLES.matcher(url);
-    final List<String> variables = new ArrayList<>();
-    while (matcher.find()) {
-      variables.add(matcher.group(2));
+    if (url != null) {
+      // Find variables
+      Matcher matcher = PATTERN_VARIABLES.matcher(url);
+      final List<String> variables = new ArrayList<>();
+      while (matcher.find()) {
+        variables.add(matcher.group(2));
+      }
+
+      if (!variables.isEmpty() && server.getVariables() == null) {
+        results.add(CRUMB_URL, VARIABLES_NOT_DEFINED, url);
+      } else if (server.getVariables() != null) {
+        // Validate defined variables
+        for (String variable : variables) {
+          if (!server.getVariables().containsKey(variable)) {
+            results.add(CRUMB_URL, VARIABLE_NOT_DEFINED, variable, url);
+          }
+        }
+      }
+    }
+  }
+
+  private void checkServerUrl(final OpenApi3 api,
+                              final String serverUrl,
+                              final ValidationResults results) {
+
+    validateString(serverUrl, results, true, null, CRUMB_URL);
+    if (serverUrl == null) {
+      return;
     }
 
-    if (!variables.isEmpty() && server.getVariables() == null) {
-      results.add(CRUMB_URL, VARIABLES_NOT_DEFINED, url);
-    } else if (server.getVariables() != null) {
-      // Validate defined variables
-      for (String variable : variables) {
-        if (!server.getVariables().containsKey(variable)) {
-          results.add(CRUMB_URL, VARIABLE_NOT_DEFINED, variable, url);
-        }
+    if (isAbsoluteUrl(serverUrl)) {
+      // Server URL is absolute, check it
+      try {
+        new URL(serverUrl);
+      } catch (MalformedURLException ignored) {
+        results.add(CRUMB_URL, INVALID_URL, serverUrl);
+      }
+    } else {
+      // Server URL is relative, check with context base URL
+      final URL contextBaseUrl = api.getContext().getBaseUrl();
+
+      try {
+        new URL(contextBaseUrl, serverUrl);
+      } catch (MalformedURLException ignored) {
+        results.add(CRUMB_URL, INVALID_URL, contextBaseUrl.toString() + serverUrl);
       }
     }
   }
