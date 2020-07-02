@@ -1,0 +1,11 @@
+openapi: 3.0.0
+info:
+  description: A description
+  version: 1.0.0
+  title: My API
+servers:
+  - description: Wrong abs url
+    url: https://development:gigantic-server:com/v1
+  - description: Wrong relative url
+    url: development:gigantic-server:com/v1
+paths: {}

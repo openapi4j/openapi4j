@@ -61,7 +61,7 @@ class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
             results.add(CRUMB_FLOWS, OAUTH_FLOW_REQUIRED);
           }
         } else if (OPENIDCONNECT.equals(s)) {
-          validateUrl(api, securityScheme.getOpenIdConnectUrl(), results, true, true, CRUMB_OPENIDCONNECTURL);
+          validateUrl(api, securityScheme.getOpenIdConnectUrl(), results, true, CRUMB_OPENIDCONNECTURL);
 
         }
       }

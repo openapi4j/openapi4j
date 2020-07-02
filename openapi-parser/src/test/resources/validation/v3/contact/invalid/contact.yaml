@@ -6,10 +6,4 @@ info:
   contact:
     name: Me
     email: yo.io
-    url: fooscheme//io
-paths:
-  /:
-    get:
-      responses:
-        '200':
-          description: The description
+paths: {}

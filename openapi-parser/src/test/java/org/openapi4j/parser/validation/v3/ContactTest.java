@@ -14,7 +14,12 @@ public class ContactTest extends Checker {
   // INVALID
   //////////////////////////////////////////////////////////////
   @Test(expected = ValidationException.class)
-  public void serverInvalid() throws Exception {
+  public void contactInvalid() throws Exception {
     validate("/validation/v3/contact/invalid/contact.yaml");
+  }
+
+  @Test(expected = ValidationException.class)
+  public void contactWrongUrlInvalid() throws Exception {
+    validate("/validation/v3/contact/invalid/contact_wrong_url.yaml");
   }
 }

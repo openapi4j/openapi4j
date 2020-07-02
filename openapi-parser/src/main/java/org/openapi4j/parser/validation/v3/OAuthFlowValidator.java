@@ -28,18 +28,18 @@ class OAuthFlowValidator extends Validator3Base<OpenApi3, OAuthFlow> {
     String conf = oauthFlow.getConfiguration();
 
     if (IMPLICIT.equals(conf) || AUTHORIZATIONCODE.equals(conf)) {
-      validateUrl(api, oauthFlow.getAuthorizationUrl(), results, true, true, CRUMB_AUTHORIZATIONURL);
+      validateUrl(api, oauthFlow.getAuthorizationUrl(), results, true, CRUMB_AUTHORIZATIONURL);
     } else if (oauthFlow.getAuthorizationUrl() != null) {
       results.add(CRUMB_AUTHORIZATIONURL, AUTH_URL_NOT_ALLOWED);
     }
 
     if (PASSWORD.equals(conf) || CLIENTCREDENTIALS.equals(conf) || AUTHORIZATIONCODE.equals(conf)) {
-      validateUrl(api, oauthFlow.getTokenUrl(), results, true, true, CRUMB_TOKENURL);
+      validateUrl(api, oauthFlow.getTokenUrl(), results, true, CRUMB_TOKENURL);
     } else if (oauthFlow.getTokenUrl() != null) {
       results.add(CRUMB_TOKENURL, TOKEN_URL_NOT_ALLOWED);
     }
 
-    validateUrl(api, oauthFlow.getRefreshUrl(), results, false, true, CRUMB_REFRESHURL);
+    validateUrl(api, oauthFlow.getRefreshUrl(), results, false, CRUMB_REFRESHURL);
     validateMap(context, api, oauthFlow.getScopes(), results, true, CRUMB_SCOPES, Regexes.NOEXT_REGEX, null);
     validateMap(context, api, oauthFlow.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
   }
