@@ -4,7 +4,6 @@ import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Server;
-import org.openapi4j.parser.model.v3.ServerVariable;
 import org.openapi4j.parser.validation.ValidationContext;
 import org.openapi4j.parser.validation.Validator;
 
@@ -12,7 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
