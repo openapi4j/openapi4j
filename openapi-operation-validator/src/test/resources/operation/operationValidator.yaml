@@ -117,12 +117,12 @@ paths:
     post:
       operationId: wrong_definition_for_body_response
       requestBody:
-        required: true
+        required: false
   /wrong_definition_for_body_response2:
     post:
       operationId: wrong_definition_for_body_response2
       requestBody:
-        required: true
+        required: false
       responses:
   /discriminator:
     post:

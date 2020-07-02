@@ -271,14 +271,14 @@ public class OpenApi3RouterFactoryTest extends VertxTestBase {
       context.assertEquals("{\"anything\": \"bar\"}", rc.getBodyAsString());
       rc
         .response()
-        .setStatusCode(200)
+        .setStatusCode(400)
         .end();
     });
 
     Router router = routerFactory.getRouter();
 
     startServer(context, vertx, router);
-    testRequest(context, HttpMethod.POST, "/noContentType", 200, null, Buffer.buffer("{\"anything\": \"bar\"}"));
+    testRequest(context, HttpMethod.POST, "/noContentType", 400, null, Buffer.buffer("{\"anything\": \"bar\"}"));
   }
 
   private void loadSpec(TestContext context, String path) {
