@@ -1,5 +1,7 @@
 package org.openapi4j.parser.model.v3;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,6 +65,7 @@ public class Server extends AbsExtendedOpenApiSchema<Server> {
   /**
    * @return The URL with default variables values
    */
+  @JsonIgnore
   public String getDefaultUrl() {
     String result = url;
 
