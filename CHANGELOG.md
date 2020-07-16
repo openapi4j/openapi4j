@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.3](https://github.com/openapi4j/openapi4j/tree/1.0.3) (2020-07-16)
+
+[Full Changelog](https://github.com/openapi4j/openapi4j/compare/1.0.2...1.0.3)
+
+**Fixed bugs:**
+
+- OpenApi3Validator doesn't resolve server variables [\#125](https://github.com/openapi4j/openapi4j/issues/125)
+- No template support for server URLs [\#121](https://github.com/openapi4j/openapi4j/issues/121)
+- Cannot validate request with no content-type if body is not required. [\#119](https://github.com/openapi4j/openapi4j/issues/119)
+- relative server urls are wrongly considered as error when validating [\#118](https://github.com/openapi4j/openapi4j/issues/118)
+
 ## [1.0.2](https://github.com/openapi4j/openapi4j/tree/1.0.2) (2020-06-29)
 
 [Full Changelog](https://github.com/openapi4j/openapi4j/compare/1.0.1...1.0.2)
