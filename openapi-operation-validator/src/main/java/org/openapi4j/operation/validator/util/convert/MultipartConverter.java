@@ -136,6 +136,10 @@ class MultipartConverter {
                                      final Schema schema,
                                      final FileItemStream item,
                                      final String encoding) throws IOException {
+    
+    if (schema == null) {
+      return JsonNodeFactory.instance.nullNode();
+    }
 
     switch (schema.getSupposedType(context)) {
       case TYPE_OBJECT:
