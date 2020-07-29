@@ -6,21 +6,23 @@ labels: bug
 assignees: ''
 
 ---
+**Version**  
+Version  
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Describe the bug**  
+A clear and concise description of what the bug is.  
 
-**To Reproduce**
+**Expected behavior**  
+A clear and concise description of what you expected to happen.  
+
+**Additional context**  
+Add any other context about the problem here.  
+
+**To Reproduce**  
 Steps to reproduce the behavior:
 1. ...
 2. ...
-3. ...
+3. ...  
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Additional context**
-Add any other context about the problem here.
-
-**Reproducer**
+**Reproducer**  
 Please fill a reproducer for debugging purpose.
