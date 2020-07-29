@@ -101,8 +101,12 @@ public final class TypeConverter {
                                    final Schema schema,
                                    Object value) {
 
-    if (schema == null || value == null) {
+    if (value == null) {
       return JsonNodeFactory.instance.nullNode();
+    }
+
+    if (schema == null) {
+      return JsonNodeFactory.instance.textNode(value.toString());
     }
 
     try {

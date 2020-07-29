@@ -83,5 +83,15 @@
       },
       "file": "foo.file"
     }
+  },
+  {
+    "description": "array with Content-Type: text/plain",
+    "schemaModel": "additionalProp",
+    "contentType": "multipart/form-data;boundary=\"1234\"",
+    "input": "--1234\r\nContent-Disposition: form-data; name=\"fieldInt\"\r\n\r\n1\r\n--1234\r\nContent-Disposition: form-data; name=\"foo\"\r\n\r\nbar\r\n--1234--\r\n",
+    "expected": {
+      "fieldInt": 1,
+      "foo": "bar"
+    }
   }
 ]
