@@ -8,7 +8,7 @@ import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class ContactValidator extends Validator3Base<OpenApi3, Contact> {
+public class ContactValidator extends Validator3Base<OpenApi3, Contact> {
   private static final Validator<OpenApi3, Contact> INSTANCE = new ContactValidator();
 
   private ContactValidator() {

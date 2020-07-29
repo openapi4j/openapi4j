@@ -9,7 +9,7 @@ import org.openapi4j.parser.validation.Validator;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_EXTENSIONS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_EXTERNALDOCS;
 
-class ExternalDocsValidator extends Validator3Base<OpenApi3, ExternalDocs> {
+public class ExternalDocsValidator extends Validator3Base<OpenApi3, ExternalDocs> {
   private static final Validator<OpenApi3, ExternalDocs> INSTANCE = new ExternalDocsValidator();
 
   private ExternalDocsValidator() {

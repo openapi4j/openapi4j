@@ -19,6 +19,9 @@ public abstract class OpenApiParser<O extends OAI> {
   private static final String INVALID_FILE = "File must be specified";
   private static final String INVALID_URL = "Unable to read from url";
 
+  protected static final String NULL_SPEC_URL = "Failed to load spec from 'null' location";
+  protected static final String INVALID_SPEC = "Failed to load spec at '%s'";
+
   /**
    * Parse the Open API specification from the given file.
    *

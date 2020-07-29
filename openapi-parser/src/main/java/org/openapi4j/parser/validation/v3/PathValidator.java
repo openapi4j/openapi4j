@@ -27,7 +27,7 @@ import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_REQUIRED;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_SERVERS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.PATH;
 
-class PathValidator extends Validator3Base<OpenApi3, Path> {
+public class PathValidator extends Validator3Base<OpenApi3, Path> {
   private static final Validator<OpenApi3, Path> INSTANCE = new PathValidator();
 
   private static final ValidationResult REQUIRED_PATH_PARAM = new ValidationResult(ERROR, 122, "Parameter '%s' in path '%s' must have 'required' property set to true");

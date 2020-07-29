@@ -3,6 +3,8 @@ package org.openapi4j.parser.model.v3;
 public class License extends AbsExtendedOpenApiSchema<License> {
   private String name;
   private String url;
+  // 3.1
+  private String identifier;
 
   // Name
   public String getName() {
@@ -24,6 +26,15 @@ public class License extends AbsExtendedOpenApiSchema<License> {
     return this;
   }
 
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  public License setIdentifier(String identifier) {
+    this.identifier = identifier;
+    return this;
+  }
+
   @Override
   public License copy() {
     License copy = new License();
@@ -31,6 +42,7 @@ public class License extends AbsExtendedOpenApiSchema<License> {
     copy.setName(getName());
     copy.setUrl(getUrl());
     copy.setExtensions(copySimpleMap(getExtensions()));
+    copy.setIdentifier(getIdentifier());
 
     return copy;
   }

@@ -10,7 +10,7 @@ import org.openapi4j.parser.validation.Validator;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class OAuthFlowValidator extends Validator3Base<OpenApi3, OAuthFlow> {
+public class OAuthFlowValidator extends Validator3Base<OpenApi3, OAuthFlow> {
   private static final ValidationResult AUTH_URL_NOT_ALLOWED = new ValidationResult(ERROR, 120, "'authorizationUrl' is not allowed when OAuth2 configuration is 'implicit' or 'authorizationCode'.");
   private static final ValidationResult TOKEN_URL_NOT_ALLOWED = new ValidationResult(ERROR, 121, "'tokenUrl' is not allowed when OAuth2 configuration is 'implicit'.");
 

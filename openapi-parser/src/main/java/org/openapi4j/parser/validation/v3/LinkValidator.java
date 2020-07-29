@@ -13,7 +13,7 @@ import org.openapi4j.parser.validation.ValidationContext;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class LinkValidator extends ExpressionValidator<Link> {
+public class LinkValidator extends ExpressionValidator<Link> {
   private static final ValidationResult OP_FIELD_MISSING_ERR = new ValidationResult(ERROR, 115, "'operationRef', 'operationId' or '$ref' field missing.");
   private static final ValidationResult OP_FIELD_EXCLUSIVE_ERR = new ValidationResult(ERROR, 116, "'operationRef' and 'operationId' fields are mutually exclusives.");
   private static final ValidationResult OP_NOT_FOUND_ERR = new ValidationResult(ERROR, 117, "'%s' not found.");

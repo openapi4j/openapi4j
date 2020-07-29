@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class OperationValidator extends Validator3Base<OpenApi3, Operation> {
+public class OperationValidator extends Validator3Base<OpenApi3, Operation> {
   private static final Validator<OpenApi3, Operation> INSTANCE = new OperationValidator();
 
   private OperationValidator() {

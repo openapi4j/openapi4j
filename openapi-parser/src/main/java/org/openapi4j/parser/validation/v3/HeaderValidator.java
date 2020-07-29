@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class HeaderValidator extends Validator3Base<OpenApi3, Header> {
+public class HeaderValidator extends Validator3Base<OpenApi3, Header> {
   private static final ValidationResult CONTENT_ONY_ONE_ERR = new ValidationResult(ERROR, 113, "Content can only contain one media type.");
   private static final ValidationResult CONTENT_SCHEMA_EXCLUSIVE_ERR = new ValidationResult(ERROR, 114, "Content and schema are mutually exclusive.");
 

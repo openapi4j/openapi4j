@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
+public class SecuritySchemeValidator extends Validator3Base<OpenApi3, SecurityScheme> {
   private static final ValidationResult OAUTH_FLOW_REQUIRED = new ValidationResult(ERROR, 141, "At least one OAuth flow is required");
 
   private static final Pattern TYPE_REGEX = Pattern.compile(String.join("|", APIKEY, HTTP, OAUTH2, OPENIDCONNECT));

@@ -8,7 +8,7 @@ import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class EncodingPropertyValidator extends Validator3Base<OpenApi3, EncodingProperty> {
+public class EncodingPropertyValidator extends Validator3Base<OpenApi3, EncodingProperty> {
   private static final Validator<OpenApi3, EncodingProperty> INSTANCE = new EncodingPropertyValidator();
 
   private EncodingPropertyValidator() {

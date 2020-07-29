@@ -8,7 +8,7 @@ import org.openapi4j.parser.validation.Validator;
 
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class TagValidator extends Validator3Base<OpenApi3, Tag> {
+public class TagValidator extends Validator3Base<OpenApi3, Tag> {
   private static final Validator<OpenApi3, Tag> INSTANCE = new TagValidator();
 
   private TagValidator() {

@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class ServerValidator extends Validator3Base<OpenApi3, Server> {
+public class ServerValidator extends Validator3Base<OpenApi3, Server> {
   private static final ValidationResult VARIABLE_NOT_DEFINED = new ValidationResult(ERROR, 142, "Undefined variable '%s' for url '%s'");
   private static final ValidationResult VARIABLES_NOT_DEFINED = new ValidationResult(ERROR, 143, "Undefined variables for url '%s'");
 

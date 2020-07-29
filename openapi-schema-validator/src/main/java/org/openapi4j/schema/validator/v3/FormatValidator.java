@@ -1,6 +1,7 @@
 package org.openapi4j.schema.validator.v3;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.core.validation.ValidationResults;
@@ -8,9 +9,32 @@ import org.openapi4j.schema.validator.BaseJsonValidator;
 import org.openapi4j.schema.validator.ValidationContext;
 import org.openapi4j.schema.validator.ValidationData;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.regex.Pattern;
 
-import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_BINARY;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_BYTE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DATE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DATE_TIME;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_DOUBLE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_EMAIL;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_FLOAT;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_HOSTNAME;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT32;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_INT64;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_IPV4;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_IPV6;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_PASSWORD;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_TIME;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URI;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URIREF;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_URI_REFERENCE;
+import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.FORMAT_UUID;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.core.validation.ValidationSeverity.WARNING;
 
@@ -28,8 +52,9 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
   private static final ValidationResults.CrumbInfo CRUMB_INFO = new ValidationResults.CrumbInfo(FORMAT, true);
 
   private static final Pattern BASE64_PATTERN = Pattern.compile("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$");
-  private static final Pattern DATE_PATTERN = Pattern.compile("^\\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(0?[1-9]|[12][0-9]|3[01])$");
-  private static final Pattern DATETIME_PATTERN = Pattern.compile("^\\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(0?[1-9]|[12][0-9]|3[01])[tT ]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([zZ]|[+-]\\d{2}:\\d{2})$");
+  private static final String DATE_PATTERN = "^\\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(0?[1-9]|[12][0-9]|3[01])$";
+  private static final String DATETIME_PATTERN = "^\\d{4}-(?:0[0-9]{1}|1[0-2]{1})-(0?[1-9]|[12][0-9]|3[01])[tT ]\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([zZ]|[+-]\\d{2}:\\d{2})$";
+  private static final String TIME_PATTERN = "^\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([zZ]|[+-]\\d{2}:\\d{2})$";
   private static final Pattern EMAIL_PATTERN = Pattern.compile("^\\S+@\\S+$");
   private static final Pattern HOSTNAME_PATTERN = Pattern.compile("^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*$");
   private static final Pattern IPV4_PATTERN = Pattern.compile("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
@@ -74,10 +99,10 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
         validated = valueNode.isTextual();
         break;
       case FORMAT_DATE:
-        validated = !valueNode.isTextual() || DATE_PATTERN.matcher(valueNode.textValue()).matches();
+        validated = !valueNode.isTextual() || validateDate(valueNode.textValue());
         break;
       case FORMAT_DATE_TIME:
-        validated = !valueNode.isTextual() || DATETIME_PATTERN.matcher(valueNode.textValue()).matches();
+        validated = !valueNode.isTextual() || validateDateTime(valueNode.textValue());
         break;
       case FORMAT_EMAIL:
         validated = !valueNode.isTextual() || EMAIL_PATTERN.matcher(valueNode.textValue()).matches();
@@ -90,6 +115,9 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
         break;
       case FORMAT_IPV6:
         validated = !valueNode.isTextual() || IPV6_PATTERN.matcher(valueNode.textValue()).matches();
+        break;
+      case FORMAT_TIME:
+        validated = !valueNode.isTextual() || validateTime(valueNode.textValue());
         break;
       case FORMAT_UUID:
         validated = !valueNode.isTextual() || UUID_PATTERN.matcher(valueNode.textValue()).matches();
@@ -110,5 +138,32 @@ class FormatValidator extends BaseJsonValidator<OAI3> {
     }
 
     return false;
+  }
+
+  private boolean validateDate(String date) {
+    try {
+      LocalDate.parse(date, DateTimeFormatter.ofPattern(DATE_PATTERN));
+      return true;
+    } catch (DateTimeParseException e) {
+      return false;
+    }
+  }
+
+  private boolean validateDateTime(String dateTime) {
+    try {
+      LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern(DATETIME_PATTERN));
+      return true;
+    } catch (DateTimeParseException e) {
+      return false;
+    }
+  }
+
+  private boolean validateTime(String time) {
+    try {
+      LocalTime.parse(time, DateTimeFormatter.ofPattern(TIME_PATTERN));
+      return true;
+    } catch (DateTimeParseException e) {
+      return false;
+    }
   }
 }

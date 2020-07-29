@@ -9,7 +9,7 @@ import org.openapi4j.parser.validation.Validator;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_EXTENSIONS;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_NAMESPACE;
 
-class XmlValidator extends Validator3Base<OpenApi3, Xml> {
+public class XmlValidator extends Validator3Base<OpenApi3, Xml> {
   private static final Validator<OpenApi3, Xml> INSTANCE = new XmlValidator();
 
   private XmlValidator() {

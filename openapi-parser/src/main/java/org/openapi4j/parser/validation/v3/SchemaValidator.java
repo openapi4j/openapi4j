@@ -18,7 +18,7 @@ import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.*;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
+public class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
   private static final Pattern TYPE_REGEX = Pattern.compile(
     String.join("|", TYPE_BOOLEAN, TYPE_OBJECT, TYPE_ARRAY, TYPE_NUMBER, TYPE_INTEGER, TYPE_STRING));
 

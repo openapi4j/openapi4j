@@ -11,7 +11,7 @@ import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.core.validation.ValidationSeverity.WARNING;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
+public class ParameterValidator extends Validator3Base<OpenApi3, Parameter> {
   private static final ValidationResult ALLOWED_RESERVED_IGNORED = new ValidationResult(WARNING, 125, "AllowReserved is ignored for non-query parameter '%s'");
   private static final ValidationResult STYLE_ONLY_IN = new ValidationResult(ERROR, 126, "Style '%s' is only allowed in %s");
   private static final ValidationResult STYLE_ONLY_IN_AND = new ValidationResult(ERROR, 127, "Style '%s' is only allowed in %s and %s");

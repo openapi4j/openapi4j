@@ -252,6 +252,9 @@ Any keyword missing in the following table has to be considered NOT supported.
 |                                   |               |                                                      |
 | $ref                              | Yes           |                                                      |
 |                                   |               |                                                      |
+| const                             | Yes           |                                                      |
+| contains                          | Yes           |                                                      |
+| if / then / else                  | Yes           |                                                      |
 | multipleOf                        | Yes           |                                                      |
 | maximum                           | Yes           |                                                      |
 | exclusiveMaximum                  | Yes           |                                                      |
@@ -299,8 +302,9 @@ Any keyword missing in the following table has to be considered NOT supported.
 | binary                            | Yes           | as textual                                           |
 | password                          | Yes           | as textual                                           |
 |                                   |               |                                                      |
-| date                              | Yes           | as defined by full-date - RFC3339                    |
-| date-time                         | Yes           | as defined by date-time - RFC3339                    |
+| date                              | Yes           | as defined by full-date - RFC3339 (pattern & value are validated)                    |
+| date-time                         | Yes           | as defined by date-time - RFC3339 (pattern & value are validated)                    |
+| time                              | Yes           | as defined by full-time - RFC3339 (pattern & value are validated)                    |
 | email                             | Yes           |                                                      |
 | hostname                          | Yes           |                                                      |
 | ipv4                              | Yes           |                                                      |

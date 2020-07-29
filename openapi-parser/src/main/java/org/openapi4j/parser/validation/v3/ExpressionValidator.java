@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import static org.openapi4j.core.model.v3.OAI3SchemaKeywords.TYPE_ARRAY;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
-abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
+public abstract class ExpressionValidator<M> extends Validator3Base<OpenApi3, M> {
   private static final ValidationResult PARAM_NOT_FOUND_ERR = new ValidationResult(ERROR, 111, "Parameter '%s' not found in operation.");
   private static final ValidationResult PARAM_PATH_EXCEPTION_ERR = new ValidationResult(ERROR, 112, "Path '%s' is malformed.\n'%s'");
 

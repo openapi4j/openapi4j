@@ -8,7 +8,7 @@ import org.openapi4j.parser.validation.ValidationContext;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_$REF;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_EXTENSIONS;
 
-class CallbackValidator extends ExpressionValidator<Callback> {
+public class CallbackValidator extends ExpressionValidator<Callback> {
   private static final CallbackValidator INSTANCE = new CallbackValidator();
 
   private CallbackValidator() {

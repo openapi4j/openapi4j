@@ -73,9 +73,12 @@ class ValidatorsRegistry {
       case ADDITIONALPROPERTIES: return AdditionalPropertiesValidator::new;
       case ALLOF: return AllOfValidator::new;
       case ANYOF: return AnyOfValidator::new;
+      case CONST: return ConstValidator::new;
+      case CONTAINS: return ContainsValidator::new;
       case DEPENDENCIES: return DependenciesValidator::new;
       case ENUM: return EnumValidator::new;
       case FORMAT: return FormatValidator::new;
+      case IF: return IfValidator::new;
       case ITEMS: return ItemsValidator::new;
       case MAXIMUM: return MaximumValidator::new;
       case MAXITEMS: return MaxItemsValidator::new;

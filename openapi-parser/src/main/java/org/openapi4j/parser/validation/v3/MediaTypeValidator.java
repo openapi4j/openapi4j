@@ -15,7 +15,7 @@ import java.util.Set;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class MediaTypeValidator extends Validator3Base<OpenApi3, MediaType> {
+public class MediaTypeValidator extends Validator3Base<OpenApi3, MediaType> {
   private static final ValidationResult ENCODING_MISMATCH = new ValidationResult(ERROR, 119, "Encoding property '%s' is not a corresponding schema property");
 
   private static final Validator<OpenApi3, MediaType> INSTANCE = new MediaTypeValidator();

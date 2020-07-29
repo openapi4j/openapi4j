@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 
-abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T> {
+public abstract class Validator3Base<O extends OpenApi3, T> extends ValidatorBase<O, T> {
   protected static final ValidationResult INVALID_URL = new ValidationResult(ERROR, 108, "Invalid URL '%s'");
   protected static final ValidationResult REF_MISSING = new ValidationResult(ERROR, 109, "Missing $ref '%s'");
   protected static final ValidationResult REF_CONTENT_UNREADABLE = new ValidationResult(ERROR, 110, "Unable to read $ref content for '%s' pointer.");

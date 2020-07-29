@@ -13,7 +13,7 @@ import java.util.Map;
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
 import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
 
-class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
+public class RequestBodyValidator extends Validator3Base<OpenApi3, RequestBody> {
   private static final ValidationResult ENCODING_MISMATCH = new ValidationResult(ERROR, 131, "The encoding object SHALL only apply to requestBody objects when the media type is multipart or application/x-www-form-urlencoded");
 
   private static final String MULTIPART = "multipart/";

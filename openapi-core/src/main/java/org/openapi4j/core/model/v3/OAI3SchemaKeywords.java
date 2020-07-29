@@ -9,11 +9,15 @@ public final class OAI3SchemaKeywords {
   public static final String ADDITIONALPROPERTIES = "additionalProperties";
   public static final String ALLOF = "allOf";
   public static final String ANYOF = "anyOf";
+  public static final String CONST = "const";
+  public static final String CONTAINS = "contains";
   public static final String DEFAULT = "default";
   public static final String DEPENDENCIES = "dependencies";
   public static final String DISCRIMINATOR = "discriminator";
+  public static final String ELSE = "else";
   public static final String ENUM = "enum";
   public static final String FORMAT = "format";
+  public static final String IF = "if";
   public static final String ITEMS = "items";
   public static final String MAXIMUM = "maximum";
   public static final String EXCLUSIVEMAXIMUM = "exclusiveMaximum";
@@ -36,6 +40,7 @@ public final class OAI3SchemaKeywords {
   public static final String PROPERTYNAME = "propertyName";
   public static final String $REF = "$ref";
   public static final String REQUIRED = "required";
+  public static final String THEN = "then";
   public static final String TYPE = "type";
   public static final String UNIQUEITEMS = "uniqueItems";
 
@@ -59,6 +64,7 @@ public final class OAI3SchemaKeywords {
   public static final String FORMAT_HOSTNAME = "hostname";
   public static final String FORMAT_IPV4 = "ipv4";
   public static final String FORMAT_IPV6 = "ipv6";
+  public static final String FORMAT_TIME = "time";
   public static final String FORMAT_URI = "uri";
   public static final String FORMAT_URIREF = "uriref";
   public static final String FORMAT_URI_REFERENCE = "uri-reference";
