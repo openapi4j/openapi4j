@@ -137,6 +137,10 @@ class MultipartConverter {
                                      final FileItemStream item,
                                      final String encoding) throws IOException {
 
+    if (schema == null) {
+      return TypeConverter.instance().convertPrimitive(context, null, IOUtil.toString(item.openStream(), encoding));
+    }
+
     switch (schema.getSupposedType(context)) {
       case TYPE_OBJECT:
         Map<String, Object> jsonContent = TreeUtil.json.readValue(item.openStream(), MAP_TYPE);
