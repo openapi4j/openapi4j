@@ -19,7 +19,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.openapi4j.core.validation.ValidationSeverity.ERROR;
-import static org.openapi4j.parser.validation.v3.OAI3Keywords.*;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_$REF;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_EXTENSIONS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_NAME;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_PARAMETERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_REQUIRED;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.CRUMB_SERVERS;
+import static org.openapi4j.parser.validation.v3.OAI3Keywords.PATH;
 
 class PathValidator extends Validator3Base<OpenApi3, Path> {
   private static final Validator<OpenApi3, Path> INSTANCE = new PathValidator();
@@ -49,23 +55,20 @@ class PathValidator extends Validator3Base<OpenApi3, Path> {
       validateList(context, api, path.getParameters(), results, false, 0, CRUMB_PARAMETERS, ParameterValidator.instance());
       validateList(context, api, path.getServers(), results, false, 0, CRUMB_SERVERS, ServerValidator.instance());
 
-      checkPathsParams(api, api.getPaths(), results);
+      checkPathParams(api, path, results);
     }
   }
 
-  private void checkPathsParams(OpenApi3 api, Map<String, Path> paths, ValidationResults results) {
-    for (Map.Entry<String, Path> pathEntry : paths.entrySet()) {
-      String path = pathEntry.getKey();
+  private void checkPathParams(OpenApi3 api, Path pathItem, ValidationResults results) {
+    String path = getPathKey(api, api.getPaths(), pathItem, results);
+    if (path != null) { // will be null when called from CallbackValidator
       final List<String> pathParams = getPathParams(path);
-
-      Path pathItem = pathEntry.getValue();
-      if (pathItem.isRef()) pathItem = getReferenceContent(api, pathItem, results, CRUMB_$REF, Path.class);
 
       final Map<String, Operation> operations = pathItem.getOperations();
 
       if (operations == null) {
         // Check parameters from path only
-        discoverAndCheckParams(path, pathParams, pathItem.getParameters(), results);
+        discoverAndCheckParams(path, pathParams, pathItem.getParametersIn(api.getContext(), PATH), results);
       } else {
         // Check parameters from both path & operation
         for (Operation operation : operations.values()) {
@@ -76,13 +79,25 @@ class PathValidator extends Validator3Base<OpenApi3, Path> {
     }
   }
 
+  private String getPathKey(OpenApi3 api, Map<String, Path> map, Path value, ValidationResults results) {
+    for (Map.Entry<String, Path> entry : map.entrySet()) {
+      Path pathItem = entry.getValue();
+      if (pathItem.isRef()) pathItem = getReferenceContent(api, pathItem, results, CRUMB_$REF, Path.class);
+
+      if (pathItem.equals(value)) {
+        return entry.getKey();
+      }
+    }
+    return null;
+  }
+
   private List<Parameter> mergePathParameters(final OpenApi3 api,
                                               final Path path,
                                               final Operation operation) {
 
     final List<Parameter> opParams = operation.getParametersIn(api.getContext(), PATH);
     if (opParams.isEmpty()) {
-      return path.getParameters();
+      return path.getParametersIn(api.getContext(), PATH);
     } else {
       final List<Parameter> pathParams = path.getParametersIn(api.getContext(), PATH);
       return Stream
