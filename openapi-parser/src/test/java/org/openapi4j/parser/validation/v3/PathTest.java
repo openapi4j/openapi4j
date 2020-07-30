@@ -11,7 +11,7 @@ public class PathTest extends Checker {
   }
 
   @Test
-  public void testPath() throws Exception {
+  public void testPathParam() throws Exception {
     validate("/validation/v3/path/valid/path_param.yaml");
   }
 
