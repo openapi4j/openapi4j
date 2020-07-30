@@ -88,7 +88,7 @@ public class FormStyleConverter {
         JsonNode value = TypeConverter.instance().convertPrimitive(
           context,
           propEntry.getValue(),
-          paramValues.stream().findFirst().orElse(null));
+          getParamValue(paramValues));
 
         result.set(propName, value);
 
@@ -107,7 +107,7 @@ public class FormStyleConverter {
       return null;
     }
 
-    String value = paramValues.stream().findFirst().orElse(null);
+    String value = getParamValue(paramValues);
     if (value == null) {
       return null;
     }
@@ -135,6 +135,14 @@ public class FormStyleConverter {
     return TypeConverter.instance().convertPrimitive(
       context,
       param.getSchema(),
-      paramValues.stream().findFirst().orElse(null));
+      getParamValue(paramValues));
+  }
+
+  private String getParamValue(Collection<String> paramValues) {
+    if (paramValues == null) {
+      return null;
+    }
+
+    return paramValues.stream().filter(Objects::nonNull).findFirst().orElse(null);
   }
 }

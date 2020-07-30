@@ -42,6 +42,11 @@ paths:
           schema:
             type: integer
             format: int32
+        - name: stringQueryParam
+          in: query
+          schema:
+            type: string
+            nullable: true
         - name: floatHeaderParam
           in: header
           required: true

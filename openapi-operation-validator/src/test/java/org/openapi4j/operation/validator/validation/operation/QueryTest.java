@@ -17,6 +17,11 @@ public class QueryTest extends OperationValidatorTestBase {
       true);
 
     check(
+      new DefaultRequest.Builder("/foo", GET).query("boolQueryParam=true&stringQueryParam").build(),
+      val::validateQuery,
+      true);
+
+    check(
       new DefaultRequest.Builder("/foo", GET).query("boolQueryParam=false&intQueryParam=12").build(),
       val::validateQuery,
       true);
@@ -29,6 +34,16 @@ public class QueryTest extends OperationValidatorTestBase {
 
     check(
       new DefaultRequest.Builder("/foo", GET).query("boolQueryParam=yes").build(),
+      val::validateQuery,
+      false);
+
+    check(
+      new DefaultRequest.Builder("/foo", GET).query("boolQueryParam").build(),
+      val::validateQuery,
+      false);
+
+    check(
+      new DefaultRequest.Builder("/foo", GET).query("boolQueryParam=true&intQueryParam").build(),
       val::validateQuery,
       false);
 
