@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.4](https://github.com/openapi4j/openapi4j/tree/1.0.4) (2020-08-25)
+
+[Full Changelog](https://github.com/openapi4j/openapi4j/compare/1.0.3...1.0.4)
+
+**Fixed bugs:**
+
+- NPE when validating a null query parameter [\#146](https://github.com/openapi4j/openapi4j/issues/146)
+- Cannot use references for path params [\#131](https://github.com/openapi4j/openapi4j/issues/131)
+- multipart/form-data Request with additional property throws Null pointer exception [\#126](https://github.com/openapi4j/openapi4j/issues/126)
+
 ## [1.0.3](https://github.com/openapi4j/openapi4j/tree/1.0.3) (2020-07-16)
 
 [Full Changelog](https://github.com/openapi4j/openapi4j/compare/1.0.2...1.0.3)
