@@ -7,10 +7,10 @@ import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationResult;
 import org.openapi4j.operation.validator.model.impl.Body;
 import org.openapi4j.parser.model.v3.MediaType;
-import org.openapi4j.schema.validator.JsonValidator;
-import org.openapi4j.schema.validator.ValidationContext;
-import org.openapi4j.schema.validator.ValidationData;
-import org.openapi4j.schema.validator.v3.SchemaValidator;
+import org.openapi4j.schema.validator.common.JsonValidator;
+import org.openapi4j.schema.validator.common.ValidationContext;
+import org.openapi4j.schema.validator.common.ValidationData;
+import org.openapi4j.schema.validator.common.SchemaValidator;
 
 import java.io.IOException;
 

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.validation.ValidationResults;
-import org.openapi4j.schema.validator.ValidationData;
-import org.openapi4j.schema.validator.v3.SchemaValidator;
+import org.openapi4j.schema.validator.common.ValidationData;
+import org.openapi4j.schema.validator.common.SchemaValidator;
 
 class OpenApi4j implements JsonValidator {
   private final SchemaValidator schemaValidator;

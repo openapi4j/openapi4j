@@ -8,7 +8,7 @@ import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
 import org.openapi4j.core.util.TreeUtil;
 import org.openapi4j.core.validation.ValidationSeverity;
-import org.openapi4j.schema.validator.v3.*;
+import org.openapi4j.schema.validator.common.*;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.openapi4j.schema.validator.v3.ValidationOptions.ADDITIONAL_PROPS_RESTRICT;
+import static org.openapi4j.schema.validator.common.ValidationOptions.ADDITIONAL_PROPS_RESTRICT;
 
 public class ValidationTest {
   @Test

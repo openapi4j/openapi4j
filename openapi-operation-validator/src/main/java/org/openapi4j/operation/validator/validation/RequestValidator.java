@@ -10,8 +10,8 @@ import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
-import org.openapi4j.schema.validator.ValidationContext;
-import org.openapi4j.schema.validator.ValidationData;
+import org.openapi4j.schema.validator.common.ValidationContext;
+import org.openapi4j.schema.validator.common.ValidationData;
 
 import java.util.ArrayList;
 import java.util.HashMap;

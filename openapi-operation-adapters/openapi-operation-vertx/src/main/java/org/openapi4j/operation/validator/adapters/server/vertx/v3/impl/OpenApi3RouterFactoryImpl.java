@@ -11,7 +11,7 @@ import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
 import org.openapi4j.parser.model.v3.RequestBody;
 import org.openapi4j.parser.model.v3.Response;
-import org.openapi4j.schema.validator.ValidationContext;
+import org.openapi4j.schema.validator.common.ValidationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;

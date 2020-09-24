@@ -5,7 +5,7 @@ import org.openapi4j.operation.validator.model.Response;
 import org.openapi4j.operation.validator.validation.OperationValidator;
 import org.openapi4j.parser.OpenApi3Parser;
 import org.openapi4j.parser.model.v3.OpenApi3;
-import org.openapi4j.schema.validator.ValidationData;
+import org.openapi4j.schema.validator.common.ValidationData;
 
 import java.net.URL;
 import java.util.function.BiConsumer;

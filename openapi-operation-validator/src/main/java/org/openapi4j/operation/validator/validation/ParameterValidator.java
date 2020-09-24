@@ -8,10 +8,10 @@ import org.openapi4j.parser.model.OpenApiSchema;
 import org.openapi4j.parser.model.v3.AbsParameter;
 import org.openapi4j.parser.model.v3.MediaType;
 import org.openapi4j.parser.model.v3.Schema;
-import org.openapi4j.schema.validator.JsonValidator;
-import org.openapi4j.schema.validator.ValidationContext;
-import org.openapi4j.schema.validator.ValidationData;
-import org.openapi4j.schema.validator.v3.SchemaValidator;
+import org.openapi4j.schema.validator.common.JsonValidator;
+import org.openapi4j.schema.validator.common.ValidationContext;
+import org.openapi4j.schema.validator.common.ValidationData;
+import org.openapi4j.schema.validator.common.SchemaValidator;
 
 import java.util.HashMap;
 import java.util.Map;

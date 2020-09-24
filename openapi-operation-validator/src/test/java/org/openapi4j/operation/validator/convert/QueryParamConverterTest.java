@@ -4,17 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Test;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.operation.validator.OpenApi3Util;
-import org.openapi4j.operation.validator.model.Request;
-import org.openapi4j.operation.validator.model.impl.DefaultRequest;
 import org.openapi4j.operation.validator.util.convert.ParameterConverter;
-import org.openapi4j.operation.validator.validation.OperationValidator;
-import org.openapi4j.parser.OpenApi3Parser;
 import org.openapi4j.parser.model.v3.*;
-import org.openapi4j.schema.validator.ValidationData;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;

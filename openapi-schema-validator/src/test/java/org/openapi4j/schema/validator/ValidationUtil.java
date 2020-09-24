@@ -6,8 +6,10 @@ import org.junit.Assert;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.model.v3.OAI3Context;
 import org.openapi4j.core.util.TreeUtil;
-import org.openapi4j.schema.validator.v3.SchemaValidator;
-import org.openapi4j.schema.validator.v3.ValidatorInstance;
+import org.openapi4j.schema.validator.common.SchemaValidator;
+import org.openapi4j.schema.validator.common.ValidationContext;
+import org.openapi4j.schema.validator.common.ValidationData;
+import org.openapi4j.schema.validator.common.ValidatorInstance;
 
 import java.net.URL;
 import java.util.Map;
