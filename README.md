@@ -59,7 +59,13 @@ FYI, testing runs made don't show much performance improvements but parser modul
 
 ## Supported versions
 
-The modules currently support the OpenAPI Specification (OAS) version 3.x.x.
+The modules currently support the OpenAPI Specification (OAS) version 3.0.x.
+
+OAI 3.1.0 has been released as candidate.  
+There's too much changes too keep code on same basis and keep a fairly low level of complexity.  
+As a consequence, OAI 3.1.x support will be made in a version 2 of openapi4j.  
+
+As my time is very limited, version 1 should be considered as freezed for now.
 
 See related projects for limitations and issues.
 
