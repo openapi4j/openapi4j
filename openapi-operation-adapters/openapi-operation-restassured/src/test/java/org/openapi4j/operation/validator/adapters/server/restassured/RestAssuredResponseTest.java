@@ -25,7 +25,7 @@ public class RestAssuredResponseTest {
     ResponseBody<?> mockBody = Mockito.mock(ResponseBody.class);
     Mockito.when(mockBody.asByteArray()).thenReturn("hello".getBytes());
 
-    Mockito.when(mockResponse.getStatusCode()).thenReturn(200);
+    Mockito.when(mockResponse.statusCode()).thenReturn(200);
     Mockito.when(mockResponse.body()).thenReturn(mockBody);
     Mockito.when(mockResponse.headers()).thenReturn(new Headers(
       new Header("Content-Type", "application/json"),
@@ -35,11 +35,14 @@ public class RestAssuredResponseTest {
 
     RestAssuredResponse underTest = new RestAssuredResponse(mockResponse);
 
+    Assert.assertEquals(200, underTest.getStatus());
     Assert.assertEquals(JsonNodeFactory.instance.textNode("hello"), underTest.getBody().getContentAsNode(null, null, null));
+
     Map<String, Collection<String>> expectedHeaders = new HashMap<>();
     expectedHeaders.put("Other-Header", Arrays.asList("value", "other value"));
     expectedHeaders.put("Content-Type", Collections.singletonList("application/json"));
     Assert.assertEquals(expectedHeaders, underTest.getHeaders());
     Assert.assertEquals("application/json", underTest.getContentType());
+    Assert.assertEquals("hello", underTest.toString());
   }
 }
