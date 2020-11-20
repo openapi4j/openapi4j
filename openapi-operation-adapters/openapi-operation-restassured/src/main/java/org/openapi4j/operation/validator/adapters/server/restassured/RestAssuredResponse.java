@@ -42,7 +42,9 @@ public class RestAssuredResponse implements org.openapi4j.operation.validator.mo
 
   @Override
   public Collection<String> getHeaderValues(String s) {
-    return response.getHeaders().asList().stream().filter(h -> s.equals(h.getName())).map(Header::getValue)
+    return response.headers().asList().stream()
+      .filter(h -> s.equals(h.getName()))
+      .map(Header::getValue)
       .collect(toList());
   }
 

@@ -37,19 +37,21 @@ public class RestAssuredRequestTest {
   @Test
   public void test()
     throws IOException {
-    Request rq = new RestAssuredRequest(restAssuredRequest);
-    Assert.assertEquals(QUERY_PARAM_NAME + "=" + QUERY_PARAM_VALUE, rq.getQuery());
-    Assert.assertEquals(PATH, rq.getPath());
+    Request underTest = new RestAssuredRequest(restAssuredRequest);
+    System.out.println(restAssuredRequest.getURI());
+    Assert.assertEquals(QUERY_PARAM_NAME + "=" + QUERY_PARAM_VALUE, underTest.getQuery());
+    Assert.assertEquals(PATH, underTest.getPath());
+    Assert.assertEquals("http://localhost:8080/path?paramName=paramValue", underTest.getURL());
 
-    Assert.assertNotNull(rq.getCookies());
-    Assert.assertTrue(rq.getCookies().containsKey(COOKIE_NAME));
-    Assert.assertEquals(COOKIE_VALUE, rq.getCookies().get(COOKIE_NAME));
+    Assert.assertNotNull(underTest.getCookies());
+    Assert.assertTrue(underTest.getCookies().containsKey(COOKIE_NAME));
+    Assert.assertEquals(COOKIE_VALUE, underTest.getCookies().get(COOKIE_NAME));
 
-    Assert.assertEquals("atype", rq.getContentType());
-    Assert.assertNotNull(rq.getHeaders());
-    Assert.assertTrue(rq.getHeaders().containsKey(H_NAME));
-    Assert.assertEquals(H_VALUE, rq.getHeaders().get(H_NAME).iterator().next());
-    Assert.assertEquals(JsonNodeFactory.instance.textNode("a body"), rq.getBody().getContentAsNode(null, null, null));
+    Assert.assertEquals("atype", underTest.getContentType());
+    Assert.assertNotNull(underTest.getHeaders());
+    Assert.assertTrue(underTest.getHeaders().containsKey(H_NAME));
+    Assert.assertEquals(H_VALUE, underTest.getHeaders().get(H_NAME).iterator().next());
+    Assert.assertEquals(JsonNodeFactory.instance.textNode("a body"), underTest.getBody().getContentAsNode(null, null, null));
   }
 
 }
