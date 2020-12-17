@@ -1,14 +1,6 @@
 package org.openapi4j.operation.validator.validation;
 
-import static java.util.Objects.requireNonNull;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 import org.openapi4j.core.model.v3.OAI3;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.operation.validator.model.Request;
@@ -20,6 +12,15 @@ import org.openapi4j.parser.model.v3.Operation;
 import org.openapi4j.parser.model.v3.Path;
 import org.openapi4j.schema.validator.ValidationContext;
 import org.openapi4j.schema.validator.ValidationData;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Validate a request data against a given OpenAPI Operation defined in the Spec.
