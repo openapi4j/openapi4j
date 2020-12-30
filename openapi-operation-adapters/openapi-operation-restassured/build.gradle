@@ -1,0 +1,18 @@
+plugins {
+  id 'java-library'
+  id 'maven-publish'
+  id 'signing'
+}
+
+description = "openapi4j test project"
+
+description = "openapi4j operation Servlet adapter"
+
+dependencies {
+  api(project(":openapi-operation-validator"))
+  implementation("io.rest-assured:rest-assured:4.3.2")
+  testImplementation("junit:junit:4.12")
+  testImplementation("org.mockito:mockito-inline:3.1.0")
+}
+
+apply from: "../../publish.gradle"
