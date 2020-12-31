@@ -129,8 +129,8 @@ public class RequestValidator {
    * @param request The request to validate. Must be {@code nonnull}.
    * @throws ValidationException A validation report containing validation errors
    */
-  public void validate(final Request request) throws ValidationException {
-    validate(request, new ValidationData<>());
+  public RequestParameters validate(final Request request) throws ValidationException {
+    return validate(request, new ValidationData<>());
   }
 
   /**
