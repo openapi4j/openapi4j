@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.5](https://github.com/openapi4j/openapi4j/tree/1.0.5) (2020-12-30)
+
+[Full Changelog](https://github.com/openapi4j/openapi4j/compare/1.0.4...1.0.5)
+
+**Implemented enhancements:**
+
+- Convenience methods to support easy response validation [\#156](https://github.com/openapi4j/openapi4j/issues/156) (Thanks to [aburmeis](https://github.com/aburmeis))
+- REST Assured adapter [\#155](https://github.com/openapi4j/openapi4j/pull/155) (Thanks to [erosb](https://github.com/erosb))
+
+**Fixed bugs:**
+
+- Parser: default values are now checked with format [\#152](https://github.com/openapi4j/openapi4j/issues/152)
+
 ## [1.0.4](https://github.com/openapi4j/openapi4j/tree/1.0.4) (2020-08-25)
 
 [Full Changelog](https://github.com/openapi4j/openapi4j/compare/1.0.3...1.0.4)
