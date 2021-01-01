@@ -72,6 +72,28 @@ public class RequestValidator {
   }
 
   /**
+   * Compile the given request and fill the validators to associate with.
+   * <p/>
+   * In no server URL has been defined in the Document,
+   * any path fragment from the request prior to the
+   * path operation template will lead to a failure in path lookup.<br/>
+   * Thus, a {@code ValidationException} will be thrown.
+   *
+   * @param request The request to validate. Must be {@code nonnull}.
+   * @return The generated validator for the operation or cached version.
+   * @throws ValidationException A validation report containing validation errors
+   */
+  public OperationValidator getValidator(final Request request) throws ValidationException {
+    requireNonNull(request, REQUEST_REQUIRED_ERR_MSG);
+
+    Pattern pathPattern = getRequiredPathPattern(request);
+    Path path = pathPatterns.get(pathPattern);
+    Operation operation = getRequiredOperation(request, path);
+
+    return getValidator(path, operation);
+  }
+
+  /**
    * Compile the given path/operation and fill the validators to associate with.
    *
    * @param path      The OAS path model of the operation.
@@ -112,23 +134,42 @@ public class RequestValidator {
   }
 
   /**
+   * Validate the response from the validators associated with the request.
+   * The request is not validated except for the path and operation,
+   * use {@link #validate(Request)} instead to validate the request.
+   * <p/>
+   * In no server URL has been defined in the Document,
+   * any path fragment from the request prior to the
+   * path operation template will lead to a failure in path lookup.<br/>
+   * Thus, a {@code ValidationException} will be thrown.
+   *
+   * @param response The response to validate. Must be {@code nonnull}.
+   * @param request  The request to validate. Must be {@code nonnull}.
+   * @throws ValidationException A validation report containing validation errors
+   * @see #getValidator(Request)
+   */
+  public void validate(final Response response,
+                       final Request request) throws ValidationException {
+    requireNonNull(response, RESPONSE_REQUIRED_ERR_MSG);
+
+    final OperationValidator validator = getValidator(request);
+    final ValidationData<?> validation = new ValidationData<>();
+
+    validateResponse(response, validator, validation);
+  }
+
+  /**
    * {@link #validate(Request)}
    *
    * @param request    The request to validate. Must be non {@code null}.
    * @param validation The validation results with your own data/delegates. Must be non {@code null}.
    * @throws ValidationException A validation report containing validation errors
    */
-  public RequestParameters validate(final Request request, final ValidationData<?> validation) throws ValidationException {
-    Pattern pathPattern = PathResolver.instance().findPathPattern(pathPatterns.keySet(), request.getPath());
-    if (pathPattern == null) {
-      throw new ValidationException(String.format(INVALID_OP_PATH_ERR_MSG, request.getURL()));
-    }
-
-    Path path = pathPatterns.get(pathPattern);
-    Operation operation = path.getOperation(request.getMethod().name().toLowerCase());
-    if (operation == null) {
-      throw new ValidationException(String.format(INVALID_OP_ERR_MSG, request.getURL(), request.getMethod().name()));
-    }
+  public RequestParameters validate(final Request request,
+                                    final ValidationData<?> validation) throws ValidationException {
+    final Pattern pathPattern = getRequiredPathPattern(request);
+    final Path path = pathPatterns.get(pathPattern);
+    final Operation operation = getRequiredOperation(request, path);
 
     return validate(request, pathPattern, path, operation, validation);
   }
@@ -195,12 +236,7 @@ public class RequestValidator {
 
     final OperationValidator opValidator = getValidator(path, operation);
 
-    opValidator.validateHeaders(response, validation);
-    opValidator.validateBody(response, validation);
-
-    if (!validation.isValid()) {
-      throw new ValidationException(INVALID_RESPONSE_ERR_MSG, validation.results());
-    }
+    validateResponse(response, opValidator, validation);
   }
 
   /**
@@ -243,6 +279,32 @@ public class RequestValidator {
       headerParameters,
       cookieParameters
     );
+  }
+
+  private Operation getRequiredOperation(final Request request,
+                                         final Path path) throws ValidationException {
+    final Operation operation = path.getOperation(request.getMethod().name().toLowerCase());
+    if (operation == null) {
+      throw new ValidationException(String.format(INVALID_OP_ERR_MSG, request.getURL(), request.getMethod().name()));
+    }
+    return operation;
+  }
+
+  private Pattern getRequiredPathPattern(final Request request) throws ValidationException {
+    final Pattern pathPattern = PathResolver.instance().findPathPattern(pathPatterns.keySet(), request.getPath());
+    if (pathPattern == null) {
+      throw new ValidationException(String.format(INVALID_OP_PATH_ERR_MSG, request.getURL()));
+    }
+    return pathPattern;
+  }
+
+  private void validateResponse(final Response response,
+                                final OperationValidator opValidator,
+                                final ValidationData<?> validation) throws ValidationException {
+    opValidator.validateResponse(response, validation);
+    if (!validation.isValid()) {
+      throw new ValidationException(INVALID_RESPONSE_ERR_MSG, validation.results());
+    }
   }
 
   private Map<Pattern, Path> buildPathPatterns() {

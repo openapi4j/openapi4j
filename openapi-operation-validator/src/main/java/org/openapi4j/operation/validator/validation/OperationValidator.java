@@ -265,6 +265,18 @@ public class OperationValidator {
   }
 
   /**
+   * Validate headers and body content from the given response.
+   *
+   * @param response   The response to validate.
+   * @param validation The validation data delegate and results.
+   */
+  public void validateResponse(final org.openapi4j.operation.validator.model.Response response,
+                               final ValidationData<?> validation) {
+    validateHeaders(response, validation);
+    validateBody(response, validation);
+  }
+
+  /**
    * Validate body content from the given response.
    *
    * @param response   The response to validate.
