@@ -47,6 +47,11 @@ public class ResponseTest extends OperationValidatorTestBase {
       val::validateBody,
       true);
 
+    check(
+      new DefaultResponse.Builder(200).header("Content-Type", "text/plain").body(Body.from("dummy")).build(),
+      val::validateResponse,
+      true);
+
     // Wrong content type
     check(
       new DefaultResponse.Builder(500).header("Content-Type", "foo").build(),

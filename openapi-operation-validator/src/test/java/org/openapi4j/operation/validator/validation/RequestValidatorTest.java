@@ -15,6 +15,7 @@ import org.openapi4j.parser.model.v3.Path;
 import java.net.URL;
 
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
 import static org.openapi4j.operation.validator.model.Request.Method.GET;
 import static org.openapi4j.operation.validator.model.Request.Method.POST;
 
@@ -94,6 +95,12 @@ public class RequestValidatorTest {
       requestValidator,
       new DefaultRequest.Builder("https://api.com/v1/fixed/1/fixed/2/fixed/", GET).build(),
       true);
+    checkValidator(
+      api,
+      "op2",
+      requestValidator,
+      new DefaultRequest.Builder("https://api.com/fixed/1/fixed/2/fixed/", GET).build(),
+      true);
 
     // relative (value = file:/2, so we serve from file:/.../openapi4j/openapi-operation-validator/build/resources/test/request/requestValidator-with-servers.yaml)
     checkRequest(
@@ -127,7 +134,7 @@ public class RequestValidatorTest {
 
   @Test
   public void responseTest() throws Exception {
-    URL specPath = RequestValidatorTest.class.getResource("/request/requestValidator.yaml");
+    URL specPath = RequestValidatorTest.class.getResource("/request/requestValidator-with-servers.yaml");
     OpenApi3 api = new OpenApi3Parser().parse(specPath, false);
     RequestValidator requestValidator = new RequestValidator(api);
 
@@ -140,11 +147,35 @@ public class RequestValidatorTest {
       false);
 
     checkResponse(
+      new DefaultRequest.Builder("https://foo.api.com/bar/fixed/1/fixed/2/fixed/", GET).build(),
+      requestValidator,
+      new DefaultResponse.Builder(200).header("Content-Type", "application/json").header("X-Rate-Limit", "1").build(),
+      true
+    );
+
+    checkResponse(
       api,
       "op2",
       requestValidator,
       new DefaultResponse.Builder(200).header("Content-Type", "application/json").header("X-Rate-Limit", "1").build(),
       true);
+  }
+
+  private void checkValidator(OpenApi3 api, String opId, RequestValidator requestValidator, Request rq, boolean shouldBeValid) {
+    // Check with request definition detection
+    try {
+      requestValidator.getValidator(rq);
+    } catch (ValidationException e) {
+      if (shouldBeValid) {
+        fail();
+      }
+    }
+
+    // Check with request definition given
+    Path path = api.getPathItemByOperationId(opId);
+    Operation operation = api.getOperationById(opId);
+
+    assertNotNull(requestValidator.getValidator(path, operation));
   }
 
   private void checkRequest(OpenApi3 api, String opId, RequestValidator requestValidator, Request rq, boolean shouldBeValid) {
@@ -163,6 +194,17 @@ public class RequestValidatorTest {
 
     try {
       requestValidator.validate(rq, path, operation);
+    } catch (ValidationException e) {
+      if (shouldBeValid) {
+        System.out.println(e.toString());
+        fail();
+      }
+    }
+  }
+
+  private void checkResponse(Request rq, RequestValidator requestValidator, Response resp, boolean shouldBeValid) {
+    try {
+      requestValidator.validate(resp, rq);
     } catch (ValidationException e) {
       if (shouldBeValid) {
         System.out.println(e.toString());

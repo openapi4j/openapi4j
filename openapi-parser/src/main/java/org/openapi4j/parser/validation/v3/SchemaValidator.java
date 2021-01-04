@@ -67,7 +67,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
       validateField(context, api, schema.getAdditionalProperties(), results, false, CRUMB_ADDITIONALPROPERTIES, SchemaValidator.instance());
       validateField(context, api, schema.getDiscriminator(), results, false, CRUMB_DISCRIMINATOR, DiscriminatorValidator.instance());
       checkDiscriminator(api, schema, results);
-      validateDefaultType(schema.getDefault(), schema.getType(), results);
+      validateDefaultType(schema.getDefault(), schema.getFormat(), schema.getType(), results);
       validateList(context, api, schema.getEnums(), results, false, 1, CRUMB_ENUM, null);
       validateMap(context, api, schema.getExtensions(), results, false, CRUMB_EXTENSIONS, Regexes.EXT_REGEX, null);
       validateField(context, api, schema.getExternalDocs(), results, false, CRUMB_EXTERNALDOCS, ExternalDocsValidator.instance());
@@ -197,6 +197,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
   }
 
   private void validateDefaultType(final Object defaultValue,
+                                   final String format,
                                    final String type,
                                    final ValidationResults results) {
 
@@ -225,6 +226,8 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
       }
       if (!ok) {
         results.add(CRUMB_DEFAULT, VALUE_TYPE_MISMATCH, defaultValue, type);
+      } else {
+        validateFormat(format, type, results);
       }
     }
   }
