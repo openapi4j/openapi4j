@@ -1,0 +1,40 @@
+openapi: 3.0.0
+info:
+  title: Mock MVC Test API
+  version: '1.0'
+servers:
+  - url: 'http://localhost:8080/api'
+    description: The local development server.
+paths:
+  /examples:
+    get:
+      description: simple list endpoint with filtering
+      responses:
+        200:
+          description: filtered list
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Example'
+    post:
+      description: add an example
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Example'
+      responses:
+        201:
+          description: successfully created
+components:
+  schemas:
+    Example:
+      type: object
+      properties:
+        name:
+          type: string
+      required: [name]
+
