@@ -86,13 +86,12 @@ public class OpenApiMatchersTest {
   }
 
   @Test
-  public void invalidResponseStatus() throws Exception {
+  public void undocumentedResponseStatusIsIgnored() throws Exception {
     mvc.perform(post("/examples")
       .contentType(MediaType.APPLICATION_JSON)
       .content(EXAMPLE_CONTENT))
       .andExpect(status().isCreated());
-    exception.expect(ValidationException.class);
-    exception.expectMessage("Invalid response.");
+
     mvc.perform(post("/examples")
       .contentType(MediaType.APPLICATION_JSON)
       .content(EXAMPLE_CONTENT));

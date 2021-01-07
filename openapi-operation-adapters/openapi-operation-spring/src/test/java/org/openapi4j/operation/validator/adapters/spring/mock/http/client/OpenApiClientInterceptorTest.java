@@ -79,13 +79,11 @@ public class OpenApiClientInterceptorTest {
   }
 
   @Test
-  public void invalidStatusFails() {
+  public void undocumentedStatusIsIgnored() {
     server.expect(method(HttpMethod.POST))
       .andExpect(requestTo("http://localhost/examples"))
       .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
       .andRespond(withSuccess());
-    exception.expect(ResourceAccessException.class);
-    exception.expectMessage("invalid response");
 
     client.postForEntity("http://localhost/examples", Collections.singletonMap("name", "test"), Void.class);
   }
