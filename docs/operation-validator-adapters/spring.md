@@ -24,7 +24,8 @@ Add the following to your `pom.xml` :
 
 <dependency>
   <groupId>org.openapi4j</groupId>
-  <artifactId>openapi-operation-mockmvc</artifactId>
+  <artifactId>openapi-operation-spring</artifactId>
+  <!-- for MockMVC testing, not for client side validation: -->
   <scope>test</scope>
 </dependency>
 ```
@@ -36,7 +37,7 @@ Add the following to your `pom.xml` :
 
 ### Client side validation
 
-Client side validation of requests and reponses using an interceptor for the `RestTemplate.
+Client side validation of requests and reponses using an interceptor for the `RestTemplate`.
 
 ```java
 Resource spec = new ClassPathResource("openapi3.yaml");
@@ -48,8 +49,8 @@ client.setInterceptors(Collections.singletonList(OpenApiClientInterceptor.openAp
 ### Mock MVC tests
 
 Mock MVC tests get automatic request and response validation.
-A dependency of `spring-test` is needed and
-`openapi-operation-spring` can also be of scope `test` if client validation is not needed.
+A dependency of `spring-test` is needed and `openapi-operation-spring` can also be of scope `test`
+if client validation is not needed.
 
 ```java
 // Test setup
@@ -64,9 +65,9 @@ MockMvc mvc = MockMvcBuilders.standaloneSetup(new TestController())
   .andExpect(status().isOk());
 ```
 
-| Library | Version  | Client                        | Server                  | Dependency                    |
-|---------|----------|-------------------------------|-------------------------|-------------------------------|
-| Spring  | `>= 5.0` | ClientRequest, ClientResponse | MvcRequest, MvcResponse | The Spring dependency you use |
+| Library | Version  | Client                        | Server                  | Dependency                             |
+|---------|----------|-------------------------------|-------------------------|----------------------------------------|
+| Spring  | `>= 5.0` | ClientRequest, ClientResponse | MvcRequest, MvcResponse | The Spring web/test dependency you use |
 
 ## License
 
