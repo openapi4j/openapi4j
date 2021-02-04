@@ -1,12 +1,12 @@
 package org.openapi4j.operation.validator.adapters.spring.mock.mvc;
 
-import javax.imageio.IIOException;
 import org.openapi4j.core.validation.ValidationException;
 import org.openapi4j.operation.validator.adapters.spring.mock.OpenApiCache;
 import org.openapi4j.operation.validator.validation.RequestValidator;
 import org.openapi4j.parser.model.v3.OpenApi3;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -85,8 +85,16 @@ public class OpenApiMatchers implements MockMvcConfigurer {
     }
   }
 
-  private void validateResponse(MvcResult result) throws ValidationException
+  private void validateResponse(MvcResult result)
   {
-    new RequestValidator(api).validate(MvcResponse.of(result.getResponse()), MvcRequest.of(result.getRequest()));
+    MockHttpServletResponse response = result.getResponse();
+    try {
+      new RequestValidator(api).validate(MvcResponse.of(response), MvcRequest.of(result.getRequest()));
+    } catch (ValidationException e)
+      {
+        String reason = e.results() == null ? "not documented" : "invalid";
+        String message = String.format("Response %d '%s' is %s", response.getStatus(), response.getContentType(), reason);
+        throw new AssertionError(message, e);
+      }
   }
 }
