@@ -86,9 +86,9 @@ public class RequestValidator {
   public OperationValidator getValidator(final Request request) throws ValidationException {
     requireNonNull(request, REQUEST_REQUIRED_ERR_MSG);
 
-    Pattern pathPattern = getRequiredPathPattern(request);
-    Path path = pathPatterns.get(pathPattern);
-    Operation operation = getRequiredOperation(request, path);
+    final Pattern pathPattern = getRequiredPathPattern(request);
+    final Path path = getRequiredPath(request, pathPattern);
+    final Operation operation = getRequiredOperation(request, path);
 
     return getValidator(path, operation);
   }
@@ -168,7 +168,7 @@ public class RequestValidator {
   public RequestParameters validate(final Request request,
                                     final ValidationData<?> validation) throws ValidationException {
     final Pattern pathPattern = getRequiredPathPattern(request);
-    final Path path = pathPatterns.get(pathPattern);
+    final Path path = getRequiredPath(request, pathPattern);
     final Operation operation = getRequiredOperation(request, path);
 
     return validate(request, pathPattern, path, operation, validation);
@@ -296,6 +296,14 @@ public class RequestValidator {
       throw new ValidationException(String.format(INVALID_OP_PATH_ERR_MSG, request.getURL()));
     }
     return pathPattern;
+  }
+
+  private Path getRequiredPath(Request request, Pattern pathPattern) throws ValidationException {
+    final Path path = pathPatterns.get(pathPattern);
+    if (path == null) {
+      throw new ValidationException(String.format(INVALID_OP_PATH_ERR_MSG, request.getURL()));
+    }
+    return path;
   }
 
   private void validateResponse(final Response response,
