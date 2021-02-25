@@ -1,0 +1,33 @@
+plugins {
+  id 'java-library'
+  id 'maven-publish'
+  id 'signing'
+}
+
+description = "openapi4j operation Spring adapter"
+
+ext {
+  springVersion = '5.0.20.RELEASE'
+  servletVersion = '3.1.0'
+}
+
+java {
+  registerFeature('mockMvc') {
+    usingSourceSet(sourceSets.main)
+  }
+}
+
+dependencies {
+  api project(":openapi-operation-validator"),
+    "org.springframework:spring-web:${springVersion}"
+  mockMvcApi "org.springframework:spring-test:${springVersion}",
+    "javax.servlet:javax.servlet-api:${servletVersion}"
+
+  testImplementation "org.springframework:spring-test:${springVersion}",
+    "org.springframework:spring-webmvc:${springVersion}",
+    "javax.servlet:javax.servlet-api:${servletVersion}",
+    "junit:junit:4.12",
+    "org.mockito:mockito-inline:3.1.0"
+}
+
+apply from: "../../publish.gradle"
