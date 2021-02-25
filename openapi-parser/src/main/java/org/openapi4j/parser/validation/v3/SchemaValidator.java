@@ -211,10 +211,10 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
           ok = defaultValue instanceof Number;
           break;
         case TYPE_INTEGER:
-          if (format.equals(FORMAT_INT32)) {
+          if (format == null || format.equals(FORMAT_INT64)) {
+            ok = defaultValue instanceof Integer || defaultValue instanceof Long;
+          } else if (format.equals(FORMAT_INT32)) {
             ok = defaultValue instanceof Integer;
-          } else if (format.equals(FORMAT_INT64)) {
-            ok = defaultValue instanceof Long;
           }
           break;
         case TYPE_BOOLEAN:
