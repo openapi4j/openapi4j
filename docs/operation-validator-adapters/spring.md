@@ -5,14 +5,13 @@ parent: Operation validator adapters
 ---
 
 # Spring
-
 {:.no_toc}
 
 ## Table of contents
-
 {: .no_toc .text-delta }
 
-1. TOC {:toc}
+1. TOC
+{:toc}
 
 ---
 
@@ -21,7 +20,6 @@ parent: Operation validator adapters
 Add the following to your `pom.xml` :
 
 ```xml
-
 <dependency>
   <groupId>org.openapi4j</groupId>
   <artifactId>openapi-operation-spring</artifactId>
