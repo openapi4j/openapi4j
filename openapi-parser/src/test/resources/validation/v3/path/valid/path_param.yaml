@@ -5,7 +5,7 @@ info:
   title: RequestService
   version: '1.0'
 paths:
-  /getPrice/{param1}/{param2}:
+  /getPrice/{param1}/{param-2}:
     parameters:
     - required: true
       style: simple
@@ -14,8 +14,8 @@ paths:
     - required: true
       style: simple
       in: path
-      name: param2
-  /getPrice/{param3}/{param4}:
+      name: param-2
+  /getPrice/{param3}/{param_4}:
     parameters:
     - required: true
       style: simple
@@ -24,7 +24,7 @@ paths:
     - required: true
       style: simple
       in: path
-      name: param4
+      name: param_4
     post:
       parameters:
       - style: simple

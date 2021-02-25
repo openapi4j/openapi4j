@@ -34,7 +34,7 @@ class PathValidator extends Validator3Base<OpenApi3, Path> {
   private static final ValidationResult UNEXPECTED_PATH_PARAM = new ValidationResult(ERROR, 123, "Path parameter '%s' in path '%s' is unexpected");
   private static final ValidationResult MISMATCH_PATH_PARAM = new ValidationResult(ERROR, 124, "Path parameter '%s' in path '%s' is expected but undefined");
 
-  private static final Pattern PATTERN_PATH_PARAM = Pattern.compile("/\\{(\\w+)}");
+  private static final Pattern PATTERN_PATH_PARAM = Pattern.compile("\\{[.;?*+]*([^{}.;?*+]+)[^}]*}");
 
   private PathValidator() {
   }
