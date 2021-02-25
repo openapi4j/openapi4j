@@ -202,7 +202,7 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
                                    final ValidationResults results) {
 
     if (defaultValue != null && type != null) {
-      boolean ok;
+      boolean ok = false;
       switch (type) {
         case TYPE_STRING:
           ok = defaultValue instanceof String;
@@ -211,7 +211,11 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
           ok = defaultValue instanceof Number;
           break;
         case TYPE_INTEGER:
-          ok = defaultValue instanceof Integer;
+          if (format.equals(FORMAT_INT32)) {
+            ok = defaultValue instanceof Integer;
+          } else if (format.equals(FORMAT_INT64)) {
+            ok = defaultValue instanceof Long;
+          }
           break;
         case TYPE_BOOLEAN:
           ok = defaultValue instanceof Boolean;
@@ -225,7 +229,8 @@ class SchemaValidator extends Validator3Base<OpenApi3, Schema> {
           break;
       }
       if (!ok) {
-        results.add(CRUMB_DEFAULT, VALUE_TYPE_MISMATCH, defaultValue, type);
+        final String typeMsg = (format != null) ? type + "/" + format : type;
+        results.add(CRUMB_DEFAULT, VALUE_TYPE_MISMATCH, defaultValue, typeMsg);
       } else {
         validateFormat(format, type, results);
       }

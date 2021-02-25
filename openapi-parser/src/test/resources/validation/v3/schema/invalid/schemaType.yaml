@@ -22,6 +22,10 @@ components:
       type: integer
       format: int32
       default: foo
+    Int32DefaultLong:
+      type: integer
+      format: int32
+      default: 429496729500
     Int64Default:
       type: integer
       format: int64
