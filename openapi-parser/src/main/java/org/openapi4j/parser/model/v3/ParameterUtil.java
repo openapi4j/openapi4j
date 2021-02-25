@@ -26,7 +26,7 @@ final class ParameterUtil {
           }
         }
 
-        if (in.equalsIgnoreCase(param.getIn())) {
+        if (param != null && in.equalsIgnoreCase(param.getIn())) {
           inParameters.add(param);
         }
       }
