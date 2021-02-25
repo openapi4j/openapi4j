@@ -1,6 +1,7 @@
 package org.openapi4j.core.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.MissingNode;
 import org.json.JSONException;
 import org.junit.Test;
 import org.openapi4j.core.exception.DecodeException;
@@ -83,6 +84,6 @@ public class TreeUtilTest {
 
   @Test
   public void emptyDocumentValid() throws DecodeException {
-    assertNull(TreeUtil.load(getClass().getResource("/parsing/empty.yaml")));
+    assertTrue(TreeUtil.load(getClass().getResource("/parsing/empty.yaml")) instanceof MissingNode);
   }
 }
