@@ -9,7 +9,7 @@ description = "openapi4j schema parser & validator"
 dependencies {
   api(project(":openapi-core"))
 
-  testImplementation("junit:junit:4.12")
+  testImplementation("junit:junit:4.13.2")
   testImplementation("org.skyscreamer:jsonassert:1.5.0")
 }
 

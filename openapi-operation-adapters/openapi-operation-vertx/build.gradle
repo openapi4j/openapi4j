@@ -12,7 +12,7 @@ dependencies {
   implementation("io.vertx:vertx-web:3.8.3")
   implementation("io.vertx:vertx-codegen:3.8.3")
 
-  testImplementation("junit:junit:4.12")
+  testImplementation("junit:junit:4.13.2")
   testImplementation("org.mockito:mockito-inline:3.1.0")
   testImplementation("org.skyscreamer:jsonassert:1.5.0")
   testImplementation("io.vertx:vertx-unit:3.8.3")

@@ -26,7 +26,7 @@ dependencies {
   testImplementation "org.springframework:spring-test:${springVersion}",
     "org.springframework:spring-webmvc:${springVersion}",
     "javax.servlet:javax.servlet-api:${servletVersion}",
-    "junit:junit:4.12",
+    "junit:junit:4.13.2",
     "org.mockito:mockito-inline:3.1.0"
 }
 
