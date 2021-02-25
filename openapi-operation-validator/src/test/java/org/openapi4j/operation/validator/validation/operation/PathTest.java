@@ -56,11 +56,11 @@ public class PathTest extends OperationValidatorTestBase {
       val::validatePath,
       false);
 
-    // Empty string is still valid
+    // Empty string is not valid
     check(
       new DefaultRequest.Builder("https://api.com/fixed/1/fixed//fixed/", GET).build(),
       val::validatePath,
-      true);
+      false);
 
 
     // Validation with full fixed path template

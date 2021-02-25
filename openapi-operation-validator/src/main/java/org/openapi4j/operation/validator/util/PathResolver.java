@@ -26,7 +26,7 @@ public class PathResolver {
   private static final String START_STRING_ANCHOR = "^";
   private static final String END_STRING_ANCHOR = "$";
   private static final String START_PARAM_NAMED_GROUP = "(?<";
-  private static final String END_PARAM_NAMED_GROUP = ">[^\\/]*)";
+  private static final String END_PARAM_NAMED_GROUP = ">[^\\/]+)";
 
   private static final PathResolver INSTANCE = new PathResolver();
 

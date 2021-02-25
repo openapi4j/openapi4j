@@ -67,13 +67,13 @@ public class RequestValidatorTest {
       new DefaultRequest.Builder("https://api.com/fixed/fixed/2/fixed/", GET).build(),
       false);
 
-    // Empty string is still valid
+    // Empty string is not valid
     checkRequest(
       api,
       "op2",
       requestValidator,
       new DefaultRequest.Builder("https://api.com/fixed/1/fixed//fixed/", GET).build(),
-      true);
+      false);
   }
 
   @Test
