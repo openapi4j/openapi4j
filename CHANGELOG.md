@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.6](https://github.com/openapi4j/openapi4j/tree/1.0.6) (2021-02-25)
+
+[Full Changelog](https://github.com/openapi4j/openapi4j/compare/1.0.5...1.0.6)
+
+**Implemented enhancements:**
+
+- Added spring adapter [\#159](https://github.com/openapi4j/openapi4j/issues/159) (Thanks to [aburmeis](https://github.com/aburmeis))
+
+**Fixed bugs:**
+
+- Parser: default values are now checked with format [\#164](https://github.com/openapi4j/openapi4j/issues/164)
+- Parser: path parameter regex in validation phase [\#165](https://github.com/openapi4j/openapi4j/issues/165)
+- Operation validator: Disallow empty path parameters [\#161](https://github.com/openapi4j/openapi4j/issues/161)
+
 ## [1.0.5](https://github.com/openapi4j/openapi4j/tree/1.0.5) (2020-12-30)
 
 [Full Changelog](https://github.com/openapi4j/openapi4j/compare/1.0.4...1.0.5)
