@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.7](https://github.com/openapi4j/openapi4j/tree/1.0.7) (2021-03-08)
+
+[Full Changelog](https://github.com/openapi4j/openapi4j/compare/1.0.6...1.0.7)
+
+**Fixed bugs:**
+
+- Allow non word character in path parameter names [\#168](https://github.com/openapi4j/openapi4j/issues/168)
+- RestAssured adapter: make RestAssuredResponse ctor public
+
 ## [1.0.6](https://github.com/openapi4j/openapi4j/tree/1.0.6) (2021-02-25)
 
 [Full Changelog](https://github.com/openapi4j/openapi4j/compare/1.0.5...1.0.6)
