@@ -17,7 +17,7 @@ public class RestAssuredResponse implements org.openapi4j.operation.validator.mo
 
   private final String rawResponseBody;
 
-  RestAssuredResponse(Response response) {
+  public RestAssuredResponse(Response response) {
     this.response = response;
     rawResponseBody = new String(response.body().asByteArray());
   }
