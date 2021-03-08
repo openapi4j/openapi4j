@@ -4,6 +4,7 @@ package org.openapi4j.operation.validator.util.convert;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.openapi4j.core.model.OAIContext;
+import org.openapi4j.operation.validator.util.PathResolver;
 import org.openapi4j.operation.validator.util.convert.style.LabelStyleConverter;
 import org.openapi4j.operation.validator.util.convert.style.MatrixStyleConverter;
 import org.openapi4j.operation.validator.util.convert.style.SimpleStyleConverter;
@@ -109,20 +110,21 @@ public final class ParameterConverter {
     for (Map.Entry<String, AbsParameter<Parameter>> paramEntry : specParameters.entrySet()) {
       final String paramName = paramEntry.getKey();
       final AbsParameter<Parameter> param = paramEntry.getValue();
+      String paramGroupName = PathResolver.instance().getParamGroupName(paramName);
       final JsonNode convertedValue;
 
       if (param.getSchema() != null) {
         final String style = param.getStyle();
 
         if (LABEL.equals(style)) {
-          convertedValue = LabelStyleConverter.instance().convert(context, param, paramName, matcher.group(paramName));
+          convertedValue = LabelStyleConverter.instance().convert(context, param, paramName, matcher.group(paramGroupName));
         } else if (MATRIX.equals(style)) {
-          convertedValue = MatrixStyleConverter.instance().convert(context, param, paramName, matcher.group(paramName));
+          convertedValue = MatrixStyleConverter.instance().convert(context, param, paramName, matcher.group(paramGroupName));
         } else { // simple is the default
-          convertedValue = SimpleStyleConverter.instance().convert(context, param, paramName, matcher.group(paramName));
+          convertedValue = SimpleStyleConverter.instance().convert(context, param, paramName, matcher.group(paramGroupName));
         }
       } else {
-        convertedValue = getValueFromContentType(context, param.getContentMediaTypes(), matcher.group(paramName));
+        convertedValue = getValueFromContentType(context, param.getContentMediaTypes(), matcher.group(paramGroupName));
       }
 
       mappedValues.put(paramName, convertedValue);

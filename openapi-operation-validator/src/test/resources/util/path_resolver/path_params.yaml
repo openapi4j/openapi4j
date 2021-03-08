@@ -1,0 +1,55 @@
+---
+openapi: "3.0.1"
+info:
+  title: "title"
+  version: "1.0"
+servers:
+  - url: "https://example.com"
+    variables: {}
+paths:
+  /some/{first-ref-id}/path/{second-ref-id}/then/{third-ref-id}/update:
+    put:
+      operationId: "update"
+      description: "description"
+      parameters:
+        - required: true
+          schema:
+            nullable: false
+            type: "string"
+          in: "path"
+          name: "first-ref-id"
+        - required: true
+          schema:
+            nullable: false
+            type: "string"
+          in: "path"
+          name: "second-ref-id"
+        - required: true
+          schema:
+            nullable: false
+            type: "string"
+          in: "path"
+          name: "third-ref-id"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                prop:
+                  example: "some text"
+                  nullable: false
+                  type: "string"
+              type: "object"
+      responses:
+        "200":
+          description: "description"
+          content:
+            application/json:
+              schema:
+                properties:
+                  prop:
+                    example: "some text"
+                    nullable: false
+                    type: "string"
+                type: "object"
+      x-codegen-request-body-name: "body"

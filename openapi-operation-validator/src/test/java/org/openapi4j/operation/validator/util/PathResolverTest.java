@@ -1,8 +1,13 @@
 package org.openapi4j.operation.validator.util;
 
 import org.junit.Test;
+import org.openapi4j.core.exception.ResolutionException;
 import org.openapi4j.core.model.OAIContext;
 import org.openapi4j.core.model.v3.OAI3Context;
+import org.openapi4j.core.validation.ValidationException;
+import org.openapi4j.operation.validator.validation.RequestValidatorTest;
+import org.openapi4j.parser.OpenApi3Parser;
+import org.openapi4j.parser.model.v3.OpenApi3;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -31,4 +36,14 @@ public class PathResolverTest {
       assertEquals("/", PathResolver.instance().findPathPattern(patternList, null).pattern());
       assertEquals("/", PathResolver.instance().findPathPattern(patternList, "").pattern());
     }
+
+  @Test
+  public void pathParams() throws ResolutionException, ValidationException {
+    URL specPath = RequestValidatorTest.class.getResource("/util/path_resolver/path_params.yaml");
+    OpenApi3 api = new OpenApi3Parser().parse(specPath, false);
+
+    for (String path : api.getPaths().keySet()) {
+      PathResolver.instance().solve(path);
+    }
+  }
 }

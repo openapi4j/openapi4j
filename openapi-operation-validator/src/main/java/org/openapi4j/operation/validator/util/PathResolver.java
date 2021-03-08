@@ -161,6 +161,18 @@ public class PathResolver {
     return null;
   }
 
+  /**
+   * Ugly method to workaround named group limitations
+   *
+   * @param paramName The parameter name
+   * @return The computed group name
+   */
+  public String getParamGroupName(String paramName) {
+    // Append hash code to avoid conflicting parameter names
+    return paramName.replaceAll("[^a-zA-Z]", "") +
+      Math.abs(paramName.hashCode());
+  }
+
   private Pattern buildPathPattern(String basePath, String templatePath) {
     return solve(
       basePath + templatePath,
@@ -199,7 +211,7 @@ public class PathResolver {
   private void addVariableFragment(StringBuilder regex, String paramName) {
     regex
       .append(START_PARAM_NAMED_GROUP)
-      .append(paramName)
+      .append(getParamGroupName(paramName))
       .append(END_PARAM_NAMED_GROUP);
   }
 
