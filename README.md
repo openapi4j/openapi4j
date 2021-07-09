@@ -3,6 +3,8 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=org.openapi4j%3Aopenapi4j&metric=security_rating)](https://sonarcloud.io/dashboard?id=org.openapi4j%3Aopenapi4j)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=org.openapi4j%3Aopenapi4j&metric=coverage)](https://sonarcloud.io/dashboard?id=org.openapi4j%3Aopenapi4j)
 
+__This repository is now archived. I don't have enough spare time to maintain this project (well actually revamp) and follow OAI specs. This project deserves much more that I can give to source code and followers to provide appropriate output.__
+
 # OpenAPI for java project home
 
 This is the home page of the openapi4j project for Java (Jakarta or JVM platform in general).
